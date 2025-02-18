@@ -1,0 +1,11 @@
+{
+  "name": "Figm.ai.kr",
+  "id": "figma-ai-kr",
+  "api": "1.0.0",
+  "main": "code.global.js",
+  "ui": "index.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  }
+} 
