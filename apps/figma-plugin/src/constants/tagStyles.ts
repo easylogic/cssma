@@ -70,6 +70,84 @@ export const TAG_STYLES: TagStyleConfig = {
         disabled: 'text/color/disabled'
       }
     },
+    primary: {
+      background: {
+        default: 'status/info/default',
+        hover: 'status/info/hover',
+        pressed: 'status/info/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'status/info/default',
+        hover: 'status/info/hover',
+        pressed: 'status/info/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      text: {
+        default: 'text/color/inverse',
+        hover: 'text/color/inverse',
+        pressed: 'text/color/inverse',
+        disabled: 'text/color/disabled'
+      },
+      icon: {
+        default: 'text/color/inverse',
+        hover: 'text/color/inverse',
+        pressed: 'text/color/inverse',
+        disabled: 'text/color/disabled'
+      }
+    },
+    neutral: {
+      background: {
+        default: 'status/neutral/default',
+        hover: 'status/neutral/hover',
+        pressed: 'status/neutral/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'status/neutral/default',
+        hover: 'status/neutral/hover',
+        pressed: 'status/neutral/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      text: {
+        default: 'text/color/inverse',
+        hover: 'text/color/inverse',
+        pressed: 'text/color/inverse',
+        disabled: 'text/color/disabled'
+      },
+      icon: {
+        default: 'text/color/inverse',
+        hover: 'text/color/inverse',
+        pressed: 'text/color/inverse',
+        disabled: 'text/color/disabled'
+      }
+    },
+    secondary: {
+      background: {
+        default: 'status/secondary/default',
+        hover: 'status/secondary/hover',
+        pressed: 'status/secondary/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'status/secondary/default',
+        hover: 'status/secondary/hover',
+        pressed: 'status/secondary/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      text: {
+        default: 'text/color/default',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      icon: {
+        default: 'text/color/default',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      }
+    },
     info: {
       background: {
         default: 'status/info/default',
@@ -199,6 +277,84 @@ export const TAG_STYLES: TagStyleConfig = {
         default: 'text/color/secondary',
         hover: 'text/color/secondary',
         pressed: 'text/color/secondary',
+        disabled: 'text/color/disabled'
+      }
+    },
+    primary: {
+      background: {
+        default: 'surface/color/transparent',
+        hover: 'status/info/ghost/hover',
+        pressed: 'status/info/ghost/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'status/info/default',
+        hover: 'status/info/hover',
+        pressed: 'status/info/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      text: {
+        default: 'status/info/default',
+        hover: 'status/info/hover',
+        pressed: 'status/info/pressed',
+        disabled: 'text/color/disabled'
+      },
+      icon: {
+        default: 'status/info/default',
+        hover: 'status/info/hover',
+        pressed: 'status/info/pressed',
+        disabled: 'text/color/disabled'
+      }
+    },
+    neutral: {
+      background: {
+        default: 'surface/color/transparent',
+        hover: 'status/neutral/ghost/hover',
+        pressed: 'status/neutral/ghost/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'status/neutral/default',
+        hover: 'status/neutral/hover',
+        pressed: 'status/neutral/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      text: {
+        default: 'status/neutral/default',
+        hover: 'status/neutral/hover',
+        pressed: 'status/neutral/pressed',
+        disabled: 'text/color/disabled'
+      },
+      icon: {
+        default: 'status/neutral/default',
+        hover: 'status/neutral/hover',
+        pressed: 'status/neutral/pressed',
+        disabled: 'text/color/disabled'
+      }
+    },
+    secondary: {
+      background: {
+        default: 'surface/color/transparent',
+        hover: 'status/secondary/ghost/hover',
+        pressed: 'status/secondary/ghost/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'status/secondary/default',
+        hover: 'status/secondary/hover',
+        pressed: 'status/secondary/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      text: {
+        default: 'status/secondary/default',
+        hover: 'status/secondary/hover',
+        pressed: 'status/secondary/pressed',
+        disabled: 'text/color/disabled'
+      },
+      icon: {
+        default: 'status/secondary/default',
+        hover: 'status/secondary/hover',
+        pressed: 'status/secondary/pressed',
         disabled: 'text/color/disabled'
       }
     },
@@ -334,6 +490,84 @@ export const TAG_STYLES: TagStyleConfig = {
         disabled: 'text/color/disabled'
       }
     },
+    primary: {
+      background: {
+        default: 'surface/color/transparent',
+        hover: 'status/info/ghost/hover',
+        pressed: 'status/info/ghost/pressed',
+        disabled: 'surface/color/transparent'
+      },
+      border: {
+        default: 'surface/color/transparent',
+        hover: 'surface/color/transparent',
+        pressed: 'surface/color/transparent',
+        disabled: 'surface/color/transparent'
+      },
+      text: {
+        default: 'status/info/default',
+        hover: 'status/info/hover',
+        pressed: 'status/info/pressed',
+        disabled: 'text/color/disabled'
+      },
+      icon: {
+        default: 'status/info/default',
+        hover: 'status/info/hover',
+        pressed: 'status/info/pressed',
+        disabled: 'text/color/disabled'
+      }
+    },
+    neutral: {
+      background: {
+        default: 'surface/color/transparent',
+        hover: 'status/neutral/ghost/hover',
+        pressed: 'status/neutral/ghost/pressed',
+        disabled: 'surface/color/transparent'
+      },
+      border: {
+        default: 'surface/color/transparent',
+        hover: 'surface/color/transparent',
+        pressed: 'surface/color/transparent',
+        disabled: 'surface/color/transparent'
+      },
+      text: {
+        default: 'status/neutral/default',
+        hover: 'status/neutral/hover',
+        pressed: 'status/neutral/pressed',
+        disabled: 'text/color/disabled'
+      },
+      icon: {
+        default: 'status/neutral/default',
+        hover: 'status/neutral/hover',
+        pressed: 'status/neutral/pressed',
+        disabled: 'text/color/disabled'
+      }
+    },
+    secondary: {
+      background: {
+        default: 'surface/color/transparent',
+        hover: 'status/secondary/ghost/hover',
+        pressed: 'status/secondary/ghost/pressed',
+        disabled: 'surface/color/transparent'
+      },
+      border: {
+        default: 'surface/color/transparent',
+        hover: 'surface/color/transparent',
+        pressed: 'surface/color/transparent',
+        disabled: 'surface/color/transparent'
+      },
+      text: {
+        default: 'status/secondary/default',
+        hover: 'status/secondary/hover',
+        pressed: 'status/secondary/pressed',
+        disabled: 'text/color/disabled'
+      },
+      icon: {
+        default: 'status/secondary/default',
+        hover: 'status/secondary/hover',
+        pressed: 'status/secondary/pressed',
+        disabled: 'text/color/disabled'
+      }
+    },
     info: {
       background: {
         default: 'surface/color/transparent',
@@ -452,6 +686,21 @@ export const TAG_VARIANTS: TagVariantProps[] = [
   { size: 'large', variant: 'filled', status: 'default', shape: 'rounded' },
   { size: 'large', variant: 'outlined', status: 'default', shape: 'rounded' },
   { size: 'large', variant: 'ghost', status: 'default', shape: 'rounded' },
+
+  // Primary variants
+  { size: 'medium', variant: 'filled', status: 'primary', shape: 'rounded' },
+  { size: 'medium', variant: 'outlined', status: 'primary', shape: 'rounded' },
+  { size: 'medium', variant: 'ghost', status: 'primary', shape: 'rounded' },
+
+  // Neutral variants
+  { size: 'medium', variant: 'filled', status: 'neutral', shape: 'rounded' },
+  { size: 'medium', variant: 'outlined', status: 'neutral', shape: 'rounded' },
+  { size: 'medium', variant: 'ghost', status: 'neutral', shape: 'rounded' },
+
+  // Secondary variants
+  { size: 'medium', variant: 'filled', status: 'secondary', shape: 'rounded' },
+  { size: 'medium', variant: 'outlined', status: 'secondary', shape: 'rounded' },
+  { size: 'medium', variant: 'ghost', status: 'secondary', shape: 'rounded' },
 
   // Status variants
   { size: 'medium', variant: 'filled', status: 'info', shape: 'rounded' },

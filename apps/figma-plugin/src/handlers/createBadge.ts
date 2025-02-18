@@ -1,4 +1,4 @@
-import { BadgeVariant } from '../types/badge';
+import { BadgeVariantProps } from '../types/badge';
 import { BADGE_SIZES, BADGE_STYLES, BADGE_VARIANTS } from '../constants/badgeStyles';
 import { ComponentPageData, createComponentPage, createHandlers } from './createBase';
 import { variables } from '@/variables';
@@ -26,22 +26,69 @@ class ComponentCache {
 }
 
 export const badgeHandlers = {
-  createBadge: async (variant: BadgeVariant) => {
-    const size = BADGE_SIZES[variant.size || 'medium'];
-    const state = variant.state || 'default';
-    const shape = variant.shape || 'text';
+  createBadge: async (variant: BadgeVariantProps) => {
+    const size = BADGE_SIZES[(variant.size || 'medium') as keyof typeof BADGE_SIZES];
+    const styleKey = `${variant.status || 'default'}-${variant.variant || 'filled'}` as keyof typeof BADGE_STYLES;
+    const style = BADGE_STYLES[styleKey];
 
+    // Create badge component
     const badge = figma.createComponent();
-    badge.name = `size=${variant.size || 'medium'}, type=${variant.type || 'default'}, variant=${variant.variant || 'filled'}, state=${state}, shape=${shape}`;
-    
-    await setupBadgeLayout(badge, size);
-    await applyBadgeStyle(badge, variant);
+    const shape = variant.shape || 'rounded';
+    badge.name = `size=${variant.size || 'medium'}, variant=${variant.variant || 'filled'}, status=${variant.status || 'default'}, shape=${shape}`;
 
-    if (shape === 'text') {
-      await addBadgeText(badge, size, variant);
-    } else {
-      await addBadgeDot(badge, size, variant);
+    // Set layout
+    badge.layoutMode = "HORIZONTAL";
+    badge.counterAxisAlignItems = "CENTER";
+    badge.primaryAxisAlignItems = "CENTER";
+
+    // Set size
+    variables.setBindVariable(badge, 'height', size.height);
+
+    // Set padding
+    variables.setBindVariable(badge, 'paddingLeft', size.paddingHorizontal);
+    variables.setBindVariable(badge, 'paddingRight', size.paddingHorizontal);
+    variables.setBindVariable(badge, 'paddingTop', size.paddingVertical);
+    variables.setBindVariable(badge, 'paddingBottom', size.paddingVertical);
+    variables.setBindVariable(badge, 'itemSpacing', size.spacing);
+
+    // Set border radius based on shape
+    const borderRadius = size.borderRadius[shape];
+    
+    variables.setBindVariable(badge, 'topLeftRadius', borderRadius);
+    variables.setBindVariable(badge, 'topRightRadius', borderRadius);
+    variables.setBindVariable(badge, 'bottomLeftRadius', borderRadius);
+    variables.setBindVariable(badge, 'bottomRightRadius', borderRadius);
+
+    // Set background and border
+    badge.fills = [variables.bindVariable(style.background)];
+    if (variant.variant === 'outlined') {
+      badge.strokes = [variables.bindVariable(style.border)];
+      variables.setBindVariable(badge, 'strokeWeight', 'border/width/default');
+      badge.strokeAlign = 'INSIDE';
     }
+
+    // Add icon if needed
+    if (variant.icon) {
+      const icon = figma.createFrame();
+      icon.name = "Icon";
+      variables.setBindVariable(icon, 'width', size.iconSize);
+      variables.setBindVariable(icon, 'height', size.iconSize);
+      icon.fills = [variables.bindVariable(style.text)];
+      badge.appendChild(icon);
+    }
+
+    // Add label
+    const text = await createHandlers.text({
+      text: variant.label || 'Badge',
+      fills: [variables.bindVariable(style.text)]
+    });
+    variables.setBindVariable(text, 'fontSize', size.fontSize);
+    variables.setBindVariable(text, 'lineHeight', size.lineHeight);
+    text.name = "label";
+    badge.appendChild(text);
+
+    badge.primaryAxisSizingMode = "AUTO";
+    badge.counterAxisSizingMode = "AUTO";
 
     return badge;
   },
@@ -52,47 +99,30 @@ export const badgeHandlers = {
 
     const components: ComponentNode[] = [];
     
-    // Create components for each variant
     for (const variant of BADGE_VARIANTS) {
       const component = await badgeHandlers.createBadge(variant);
       components.push(component);
     }
 
-    // Combine components as variants
     const componentSet = figma.combineAsVariants(components, figma.currentPage);
     componentSet.name = "Badge";
-
-    // Add component properties
-    componentSet.addComponentProperty('content', 'TEXT', '1');
-    componentSet.addComponentProperty('shape', 'VARIANT', 'text');
-    componentSet.addComponentProperty('position', 'VARIANT', 'top-right');
-
-    // Set up layout
     setupComponentSetLayout(componentSet);
 
-    // Cache the component set
     cache.setBadgeSet(componentSet);
-
     return componentSet;
   },
 
-  createInstance: async (variant: BadgeVariant, props: { text?: string } = {}) => {
+  createInstance: async (variant: BadgeVariantProps, props: { label?: string } = {}) => {
     const component = ComponentCache.getInstance().getBadgeSet()?.defaultVariant.createInstance();
     if (!component) return null;
 
     component.setProperties({
       size: variant.size || 'medium',
-      type: variant.type || 'default',
       variant: variant.variant || 'filled',
-      state: variant.state || 'default',
-      shape: variant.shape || 'text',
-      position: variant.position || 'top-right'
+      status: variant.status || 'default',
+      label: props.label || variant.label || 'Badge',
+      icon: variant.icon || ''
     });
-
-    if (props.text && variant.shape === 'text') {
-      const textNode = component.findOne(node => node.type === "TEXT") as TextNode;
-      if (textNode) textNode.characters = props.text;
-    }
 
     return component;
   },
@@ -100,11 +130,12 @@ export const badgeHandlers = {
   createPage: async () => {
     const pageData: ComponentPageData = {
       title: "Badge",
-      description: "Badges are small visual indicators for numeric values, status, or labels.",
+      description: "Badges are used to highlight status, show counts, or emphasize small pieces of information.",
       anatomy: {
         parts: [
-          { name: "Container", description: "The wrapper that holds the badge content" },
-          { name: "Content", description: "Text or dot that represents the badge value" }
+          { name: "Container", description: "The main wrapper that holds the badge content" },
+          { name: "Icon", description: "Optional icon to provide visual context" },
+          { name: "Label", description: "Text content of the badge" }
         ]
       },
       properties: [
@@ -113,63 +144,108 @@ export const badgeHandlers = {
           type: "enum",
           default: "medium",
           description: "The size of the badge",
-          options: ["small", "medium"]
-        },
-        {
-          name: "type",
-          type: "enum",
-          default: "default",
-          description: "The type of the badge",
-          options: ["default", "primary", "success", "warning", "danger"]
+          options: ["small", "medium", "large"]
         },
         {
           name: "variant",
           type: "enum",
           default: "filled",
-          description: "The variant of the badge",
-          options: ["filled", "outlined", "ghost"]
+          description: "The visual style of the badge",
+          options: ["filled", "outlined"]
         },
         {
-          name: "shape",
-          type: "enum",
-          default: "text",
-          description: "The shape of the badge",
-          options: ["text", "dot"]
-        },
-        {
-          name: "state",
+          name: "status",
           type: "enum",
           default: "default",
-          description: "The state of the badge",
-          options: ["default", "hover", "pressed", "disabled"]
+          description: "The status of the badge",
+          options: ["default", "info", "success", "warning", "error"]
+        },
+        {
+          name: "label",
+          type: "string",
+          description: "The label text"
+        },
+        {
+          name: "icon",
+          type: "string",
+          description: "The icon name"
         }
       ],
       variants: [
         {
-          title: "Types",
-          description: "Different types for different contexts.",
-          examples: [
-            await badgeHandlers.createInstance({ type: 'default', variant: 'filled', shape: 'text' }, { text: "Default" }),
-            await badgeHandlers.createInstance({ type: 'primary', variant: 'filled', shape: 'text' }, { text: "Primary" }),
-            await badgeHandlers.createInstance({ type: 'success', variant: 'filled', shape: 'text' }, { text: "Success" }),
-            await badgeHandlers.createInstance({ type: 'warning', variant: 'filled', shape: 'text' }, { text: "Warning" }),
-            await badgeHandlers.createInstance({ type: 'danger', variant: 'filled', shape: 'text' }, { text: "Danger" })
-          ]
-        },
-        {
-          title: "Shapes",
-          description: "Badges can be displayed as text or dots.",
-          examples: [
-            await badgeHandlers.createInstance({ type: 'primary', variant: 'filled', shape: 'text' }, { text: "99+" }),
-            await badgeHandlers.createInstance({ type: 'primary', variant: 'filled', shape: 'dot' })
-          ]
-        },
-        {
           title: "Sizes",
-          description: "Badges come in two sizes.",
+          description: "Different sizes of badges.",
           examples: [
-            await badgeHandlers.createInstance({ size: 'small', type: 'primary', shape: 'text' }, { text: "Small" }),
-            await badgeHandlers.createInstance({ size: 'medium', type: 'primary', shape: 'text' }, { text: "Medium" })
+            await badgeHandlers.createInstance(
+              { size: 'small' },
+              { label: "Small" }
+            ),
+            await badgeHandlers.createInstance(
+              { size: 'medium' },
+              { label: "Medium" }
+            ),
+            await badgeHandlers.createInstance(
+              { size: 'large' },
+              { label: "Large" }
+            )
+          ]
+        },
+        {
+          title: "Variants",
+          description: "Different visual styles of badges.",
+          examples: [
+            await badgeHandlers.createInstance(
+              { variant: 'filled' },
+              { label: "Filled" }
+            ),
+            await badgeHandlers.createInstance(
+              { variant: 'outlined' },
+              { label: "Outlined" }
+            )
+          ]
+        },
+        {
+          title: "Statuses",
+          description: "Different status styles of badges.",
+          examples: [
+            await badgeHandlers.createInstance(
+              { status: 'info' },
+              { label: "Info" }
+            ),
+            await badgeHandlers.createInstance(
+              { status: 'success' },
+              { label: "Success" }
+            ),
+            await badgeHandlers.createInstance(
+              { status: 'warning' },
+              { label: "Warning" }
+            ),
+            await badgeHandlers.createInstance(
+              { status: 'error' },
+              { label: "Error" }
+            )
+          ]
+        },
+        {
+          title: "With Icons",
+          description: "Badges with different icons.",
+          examples: [
+            await badgeHandlers.createInstance(
+              { status: 'info', icon: 'info' },
+              { label: "Info" }
+            ),
+            await badgeHandlers.createInstance(
+              { status: 'success', icon: 'check' },
+              { label: "Success" }
+            ),
+            await badgeHandlers.createInstance(
+              { status: 'warning', icon: 'warning' },
+              { label: "Warning" }
+            ),
+            await badgeHandlers.createInstance(
+              { status: 'error', icon: 'error' },
+              { label: "Error" }
+            )
           ]
         }
       ],
@@ -178,7 +254,7 @@ export const badgeHandlers = {
         examples: [
           {
             title: "Status Indicators",
-            description: "Use badges to show status information.",
+            description: "Using badges to show status.",
             component: await (async () => {
               const container = figma.createFrame();
               container.name = "Status Indicators Example";
@@ -189,49 +265,20 @@ export const badgeHandlers = {
 
               const badges = [
                 await badgeHandlers.createInstance(
-                  { type: 'success', variant: 'filled', shape: 'text' },
-                  { text: "Active" }
+                  { variant: 'filled', status: 'success', icon: 'check' },
+                  { label: "Active" }
                 ),
                 await badgeHandlers.createInstance(
-                  { type: 'warning', variant: 'filled', shape: 'text' },
-                  { text: "Pending" }
+                  { variant: 'filled', status: 'warning', icon: 'warning' },
+                  { label: "Pending" }
                 ),
                 await badgeHandlers.createInstance(
-                  { type: 'danger', variant: 'filled', shape: 'text' },
-                  { text: "Failed" }
+                  { variant: 'filled', status: 'error', icon: 'error' },
+                  { label: "Failed" }
                 )
               ];
 
-              badges.forEach(badge => container.appendChild(badge!));
-              return container;
-            })()
-          },
-          {
-            title: "Notification Badges",
-            description: "Use badges to show notification counts.",
-            component: await (async () => {
-              const container = figma.createFrame();
-              container.name = "Notification Badges Example";
-              container.layoutMode = "HORIZONTAL";
-              container.itemSpacing = 24;
-              container.fills = [];
-              container.counterAxisAlignItems = "CENTER";
-
-              const badges = [
-                await badgeHandlers.createInstance(
-                  { size: 'small', type: 'primary', variant: 'filled', shape: 'dot' }
-                ),
-                await badgeHandlers.createInstance(
-                  { size: 'small', type: 'primary', variant: 'filled', shape: 'text' },
-                  { text: "3" }
-                ),
-                await badgeHandlers.createInstance(
-                  { size: 'small', type: 'primary', variant: 'filled', shape: 'text' },
-                  { text: "99+" }
-                )
-              ];
-
-              badges.forEach(badge => container.appendChild(badge!));
+              badges.forEach(badge => badge && container.appendChild(badge));
               return container;
             })()
           }
@@ -243,59 +290,6 @@ export const badgeHandlers = {
   }
 };
 
-// Helper functions
-async function setupBadgeLayout(badge: ComponentNode, size: typeof BADGE_SIZES[keyof typeof BADGE_SIZES]) {
-  badge.layoutMode = "HORIZONTAL";
-  badge.counterAxisAlignItems = "CENTER";
-  badge.primaryAxisAlignItems = "CENTER";
-  badge.paddingLeft = badge.paddingRight = size.padding;
-  badge.cornerRadius = size.height / 2;
-}
-
-async function applyBadgeStyle(badge: ComponentNode, variant: BadgeVariant) {
-  const styleKey = `${variant.type}-${variant.variant}-${variant.state}` as keyof typeof BADGE_STYLES;
-  const style = BADGE_STYLES[styleKey];
-
-  if (variant.variant === 'outlined') {
-    badge.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
-    badge.strokes = [variables.bindVariable(style.border)];
-    badge.strokeWeight = 1;
-    badge.strokeAlign = 'INSIDE';
-  } else {
-    badge.fills = [variables.bindVariable(style.background)];
-    badge.strokes = [];
-  }
-
-  if (variant.state === 'disabled') {
-    badge.opacity = 0.5;
-  }
-}
-
-async function addBadgeText(badge: ComponentNode, size: typeof BADGE_SIZES[keyof typeof BADGE_SIZES], variant: BadgeVariant) {
-  const styleKey = `${variant.type}-${variant.variant}-${variant.state}` as keyof typeof BADGE_STYLES;
-  const style = BADGE_STYLES[styleKey];
-
-  const text = await createHandlers.text({
-    text: "1",
-    fontSize: size.fontSize,
-    fills: [variables.bindVariable(style.text)],
-    textAlignHorizontal: "CENTER"
-  });
-
-  badge.appendChild(text);
-}
-
-async function addBadgeDot(badge: ComponentNode, size: typeof BADGE_SIZES[keyof typeof BADGE_SIZES], variant: BadgeVariant) {
-  const styleKey = `${variant.type}-${variant.variant}-${variant.state}` as keyof typeof BADGE_STYLES;
-  const style = BADGE_STYLES[styleKey];
-
-  const dot = figma.createEllipse();
-  dot.resize(size.dotSize, size.dotSize);
-  dot.fills = [variables.bindVariable(style.background)];
-
-  badge.appendChild(dot);
-}
-
 function setupComponentSetLayout(componentSet: ComponentSetNode) {
   componentSet.layoutMode = "HORIZONTAL";
   componentSet.layoutWrap = "WRAP";
@@ -303,8 +297,8 @@ function setupComponentSetLayout(componentSet: ComponentSetNode) {
   componentSet.counterAxisSpacing = 40;
   componentSet.paddingLeft = componentSet.paddingRight = 40;
   componentSet.paddingTop = componentSet.paddingBottom = 40;
-  componentSet.resize(800, componentSet.height);
+  componentSet.resize(1200, componentSet.height);
   componentSet.primaryAxisSizingMode = "FIXED";
   componentSet.counterAxisSizingMode = "AUTO";
-  componentSet.fills = [variables.bindVariable('semantic/bg/default')];
+  componentSet.fills = [variables.bindVariable('surface/color/white')];
 } 

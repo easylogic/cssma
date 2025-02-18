@@ -131,6 +131,7 @@ export const PRIMITIVE: Collection = {
     "redalpha/500/dark/32": { Value: { r: 1.00, g: 0.32, b: 0.32, a: 0.32 } },
 
     // Typography - Font Sizes
+    "typography/size/2xs": { Value: 10 },
     "typography/size/xs": { Value: 12 },
     "typography/size/sm": { Value: 14 },
     "typography/size/md": { Value: 16 },
@@ -141,6 +142,7 @@ export const PRIMITIVE: Collection = {
     "typography/size/4xl": { Value: 36 },
 
     // Typography - Line Heights
+    "typography/lineHeight/2xs": { Value: 14 },
     "typography/lineHeight/xs": { Value: 16 },
     "typography/lineHeight/sm": { Value: 20 },
     "typography/lineHeight/md": { Value: 24 },
@@ -207,6 +209,9 @@ export const PRIMITIVE: Collection = {
 
     // Colors - Transparent
     "color/transparent": { Value: { r: 0, g: 0, b: 0, a: 0 } },
+
+    // Colors - Base
+    "color/white": { Value: { r: 1, g: 1, b: 1 } },
 
     // Colors - Text
     "color/text/light": { Value: { r: 0.12, g: 0.12, b: 0.12 } },

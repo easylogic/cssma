@@ -1,6 +1,23 @@
-export interface BadgeSize {
-  small: { height: number; fontSize: number; padding: number; dotSize: number };
-  medium: { height: number; fontSize: number; padding: number; dotSize: number };
+export type BadgeSize = 'small' | 'medium' | 'large';
+export type BadgeVariant = 'filled' | 'outlined';
+export type BadgeStatus = 'default' | 'info' | 'success' | 'warning' | 'error' | 'neutral' | 'secondary';
+export type BadgeShape = 'rounded' | 'pill' | 'square';
+
+export type BadgeSizeConfig = {
+  [key in BadgeSize]: {
+    height: string;
+    fontSize: string;
+    lineHeight: string;
+    paddingHorizontal: string;
+    paddingVertical: string;
+    iconSize: string;
+    spacing: string;
+    borderRadius: {
+      rounded: string;
+      pill: string;
+      square: string;
+    };
+  };
 }
 
 export interface BadgeStyle {
@@ -13,13 +30,18 @@ export interface BadgeStyles {
   [key: string]: BadgeStyle;
 }
 
-export interface BadgeVariant {
-  size?: 'small' | 'medium';
-  type?: 'default' | 'primary' | 'success' | 'warning' | 'danger';
-  variant?: 'filled' | 'outlined' | 'ghost';
-  state?: 'default' | 'hover' | 'pressed' | 'disabled';
-  shape?: 'text' | 'dot';
-  position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
+export interface BadgeVariantProps {
+  size?: BadgeSize;
+  variant?: BadgeVariant;
+  status?: BadgeStatus;
+  shape?: BadgeShape;
+  icon?: string;
+  label?: string;
+}
+
+export interface BadgeInstance {
+  text?: string;
+  icon?: string;
 }
 
 export interface CreateBadgeOptions {

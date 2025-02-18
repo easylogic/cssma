@@ -5,6 +5,7 @@ export const SEMANTIC: Collection = {
   modes: ["Value"],
   values: {
     // Typography
+    "text/body/2xs": { Value: "{typography/size/2xs}" },
     "text/body/xs": { Value: "{typography/size/xs}" },
     "text/body/sm": { Value: "{typography/size/sm}" },
     "text/body/md": { Value: "{typography/size/md}" },
@@ -59,6 +60,18 @@ export const SEMANTIC: Collection = {
     "text/color/inverse": { Value: "{gray/50/light}" },
 
     // Colors - Status
+    "status/neutral/default": { Value: "{gray/400/light}" },
+    "status/neutral/hover": { Value: "{gray/500/light}" },
+    "status/neutral/pressed": { Value: "{gray/600/light}" },
+    "status/neutral/ghost/hover": { Value: "{grayalpha/50/light/16}" },
+    "status/neutral/ghost/pressed": { Value: "{grayalpha/50/light/32}" },
+
+    "status/secondary/default": { Value: "{blue/200/light}" },
+    "status/secondary/hover": { Value: "{blue/300/light}" },
+    "status/secondary/pressed": { Value: "{blue/400/light}" },
+    "status/secondary/ghost/hover": { Value: "{bluealpha/500/light/16}" },
+    "status/secondary/ghost/pressed": { Value: "{bluealpha/500/light/32}" },
+
     "status/info/default": { Value: "{blue/500/light}" },
     "status/info/hover": { Value: "{blue/600/light}" },
     "status/info/pressed": { Value: "{blue/700/light}" },
@@ -84,9 +97,10 @@ export const SEMANTIC: Collection = {
     "status/error/ghost/pressed": { Value: "{color/error/ghost/pressed/light}" },
 
     // Colors - Surface
-    "surface/color/default": { Value: "{gray/50/light}" },
-    "surface/color/hover": { Value: "{gray/100/light}" },
-    "surface/color/pressed": { Value: "{gray/200/light}" },
+    "surface/color/white": { Value: "{color/white}" },
+    "surface/color/default": { Value: "{gray/200/light}" },
+    "surface/color/hover": { Value: "{gray/300/light}" },
+    "surface/color/pressed": { Value: "{gray/400/light}" },
     "surface/color/disabled": { Value: "{gray/100/light}" },
     "surface/color/transparent": { Value: "{color/transparent}" }
   }

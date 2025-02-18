@@ -1,43 +1,62 @@
-export type AvatarSize = 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge';
-export type AvatarVariant = 'circle' | 'square';
-export type AvatarStatus = 'online' | 'offline' | 'away' | 'busy';
+export type AvatarSize = 'small' | 'medium' | 'large';
+export type AvatarType = 'image' | 'initial' | 'icon';
+export type AvatarState = 'default' | 'error';
+export type AvatarShape = 'circle' | 'square';
 
-export interface AvatarVariantProps {
-  size?: AvatarSize;
-  variant?: AvatarVariant;
-  status?: AvatarStatus;
-  hasImage?: boolean;
-  initials?: string;
-  ariaLabel?: string;
-  role?: string;
+export interface AvatarStyle {
+  background: Record<AvatarState, string>;
+  text: Record<AvatarState, string>;
+  border: Record<AvatarState, string>;
 }
 
 export type AvatarSizeConfig = {
   [key in AvatarSize]: {
-    size: number;
-    fontSize: number;
-    lineHeight: number;
-    borderRadius: number;
-    statusSize: number;
-    statusOffset: number;
+    fontSize: string;
+    borderRadius: string;
+    borderWidth: string;
+    size: string;    
+    badgeSize: string;
+    badgeOffset: number;
   };
 };
 
-export type AvatarStyleConfig = {
-  background: {
-    default: string;
-    placeholder: string;
+export interface AvatarStyles {
+  [key: string]: AvatarStyle;
+}
+
+export interface AvatarVariantProps {
+  size?: AvatarSize;
+  type?: AvatarType;
+  state?: AvatarState;
+  shape?: AvatarShape;
+  image?: string;
+  initials?: string;
+  icon?: string;
+  badge?: {
+    status?: 'online' | 'offline' | 'away' | 'busy';
+    count?: number;
   };
-  text: {
-    default: string;
-  };
-  status: {
-    [key in AvatarStatus]: {
-      background: string;
-      border: string;
-    };
-  };
-  border: {
-    default: string;
-  };
-}; 
+  badgeContent?: string;
+}
+
+export interface AvatarGroupProps {
+  max?: number;
+  spacing?: number;
+  direction?: 'left' | 'right';
+}
+
+export interface AvatarComponent extends ComponentNode {
+  readonly type: 'COMPONENT';
+}
+
+export interface AvatarInstance extends InstanceNode {
+  readonly type: 'INSTANCE';
+}
+
+export interface AvatarGroupComponent extends ComponentNode {
+  readonly type: 'COMPONENT';
+}
+
+export interface AvatarExampleContainer extends FrameNode {
+  readonly type: 'FRAME';
+} 

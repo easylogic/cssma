@@ -59,8 +59,8 @@ export async function handleCreateDesignSystem() {
     figma.currentPage = componentsPage;
 
     const list = [
-      buttonHandlers,
-      // avatarHandlers,
+      // buttonHandlers,
+      avatarHandlers,
       // badgeHandlers,
       // breadcrumbHandlers,
       // alertHandlers,
@@ -106,14 +106,14 @@ export async function handleCreateDesignSystem() {
     //   }
     // }
 
-    // // Components 페이지로 이동하고 모든 컴포넌트 선택
-    // figma.currentPage = componentsPage;
-    // // 현재 페이지가 변경된 후에 selection 설정
-    // const componentsToSelect = [...componentsPage.children];
-    // if (componentsToSelect.length > 0) {
-    //   figma.currentPage.selection = componentsToSelect;
-    //   figma.viewport.scrollAndZoomIntoView(componentsToSelect);
-    // }
+    // Components 페이지로 이동하고 모든 컴포넌트 선택
+    figma.currentPage = componentsPage;
+    // 현재 페이지가 변경된 후에 selection 설정
+    const componentsToSelect = [...componentsPage.children];
+    if (componentsToSelect.length > 0) {
+      figma.currentPage.selection = componentsToSelect;
+      figma.viewport.scrollAndZoomIntoView(componentsToSelect);
+    }
 
     figma.notify('Component sets and documentation created successfully');
 

@@ -1,6 +1,6 @@
 export type TagSize = 'small' | 'medium' | 'large';
 export type TagVariant = 'filled' | 'outlined' | 'ghost';
-export type TagStatus = 'default' | 'info' | 'success' | 'warning' | 'error';
+export type TagStatus = 'default' | 'primary' | 'neutral' | 'secondary' | 'info' | 'success' | 'warning' | 'error';
 export type TagShape = 'rounded' | 'circular';
 
 export interface TagVariantProps {

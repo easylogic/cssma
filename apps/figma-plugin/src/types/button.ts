@@ -1,25 +1,10 @@
-export interface ButtonSize {
-  small: {
-    height: string;
-    fontSize: string;
-    lineHeight: string;
-    paddingHorizontal: string;
-    paddingVertical: string;
-    iconSize: string;
-    spacing: string;
-    borderRadius: string;
-  };
-  medium: {
-    height: string;
-    fontSize: string;
-    lineHeight: string;
-    paddingHorizontal: string;
-    paddingVertical: string;
-    iconSize: string;
-    spacing: string;
-    borderRadius: string;
-  };
-  large: {
+export type ButtonSize = 'small' | 'medium' | 'large';
+export type ButtonVariant = 'filled' | 'outlined' | 'ghost';
+export type ButtonType = 'default' | 'primary' | 'neutral' | 'secondary' | 'danger';
+export type ButtonState = 'default' | 'hover' | 'pressed' | 'disabled';
+
+export type ButtonSizeConfig = {
+  [key in ButtonSize]: {
     height: string;
     fontSize: string;
     lineHeight: string;
@@ -32,23 +17,44 @@ export interface ButtonSize {
 }
 
 export interface ButtonStyle {
-  background: string;
-  text: string;
-  border: string;
+  background: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+  };
+  text: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+  };
+  border: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+  };
 }
 
 export interface ButtonStyles {
   [key: string]: ButtonStyle;
 }
 
-export interface ButtonVariant {
-  size?: keyof ButtonSize;
-  type?: 'primary' | 'secondary' | 'tertiary' | 'danger';
-  variant?: 'filled' | 'outlined' | 'ghost';
-  state?: 'default' | 'hover' | 'pressed' | 'disabled';
+export interface ButtonVariantProps {
+  size?: ButtonSize;
+  variant?: ButtonVariant;
+  type?: ButtonType;
+  state?: ButtonState;
+  icon?: string;
+  label?: string;
 }
 
 export interface ButtonInstance {
   text?: string;
-  // 기타 인스턴스 관련 속성들
+  icon?: string;
+}
+
+export interface CreateButtonOptions {
+  variants?: ButtonVariant[];
 } 

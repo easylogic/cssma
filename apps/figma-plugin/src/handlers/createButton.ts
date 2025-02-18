@@ -1,4 +1,4 @@
-import { ButtonVariant } from '../types/button';
+import { ButtonVariant, ButtonVariantProps } from '../types/button';
 import { BUTTON_SIZES, BUTTON_STYLES, BUTTON_VARIANTS } from '../constants/buttonStyles';
 import { ComponentPageData, createComponentPage, createHandlers } from './createBase';
 import { variables } from '@/variables';
@@ -25,14 +25,24 @@ class ComponentCache {
   }
 }
 
+async function createExampleContainer(name: string) {
+  const container = figma.createComponent();
+  container.name = name;
+  container.layoutMode = "HORIZONTAL";
+  container.itemSpacing = 16;
+  container.fills = [];
+  container.counterAxisAlignItems = "CENTER";
+  return container;
+}
+
 export const buttonHandlers = {
-  createButton: async (variant: ButtonVariant) => {
+  createButton: async (variant: ButtonVariantProps) => {
     const size = BUTTON_SIZES[variant.size || 'medium'];
     const state = variant.state || 'default';
 
     // 버튼 컴포넌트 생성
     const button = figma.createComponent();
-    button.name = `size=${variant.size || 'medium'}, type=${variant.type || 'primary'}, variant=${variant.variant || 'filled'}, state=${state}`;
+    button.name = `size=${variant.size || 'medium'}, type=${variant.type || 'default'}, variant=${variant.variant || 'filled'}, state=${state}`;
     
     // 레이아웃 설정
     await setupButtonLayout(button, size);
@@ -40,8 +50,14 @@ export const buttonHandlers = {
     // 스타일 적용
     await applyButtonStyle(button, variant);
 
+    // 아이콘 추가 (텍스트 전에)
+    await addButtonIcon(button, size, variant);
+
     // 텍스트 추가
     await addButtonText(button, size, variant);
+
+    button.primaryAxisSizingMode = "AUTO";
+    button.counterAxisSizingMode = "AUTO";    
 
     return button;
   },
@@ -57,7 +73,7 @@ export const buttonHandlers = {
     return componentSet;
   },
 
-  createInstance: async (variant: ButtonVariant, props: { 
+  createInstance: async (variant: ButtonVariantProps, props: { 
     text?: string;
     icon?: string;
   } = {}) => {
@@ -65,10 +81,10 @@ export const buttonHandlers = {
     if (!component) return null;
 
     component.setProperties({
-      size: variant.size!,
-      type: variant.type!,
-      variant: variant.variant!,
-      state: variant.state!,
+      size: variant.size || 'medium',
+      type: variant.type || 'default',
+      variant: variant.variant || 'filled',
+      state: variant.state || 'default',
     });
 
     if (props.text) {
@@ -76,9 +92,17 @@ export const buttonHandlers = {
       if (textNode) textNode.characters = props.text;
     }
 
-
-    // swap icon component
-    if (props.icon) {
+    // Update icon if needed
+    if (props.icon || variant.icon) {
+      const iconNode = component.findOne(node => node.name === "Icon") as FrameNode;
+      if (iconNode) {
+        // Here you would update the icon's content based on the icon name
+        // For now, we'll just ensure it's visible and has the correct color
+        const styleKey = `${variant.type || 'default'}-${variant.variant || 'filled'}` as keyof typeof BUTTON_STYLES;
+        const style = BUTTON_STYLES[styleKey];
+        const state = variant.state || 'default';
+        iconNode.fills = [variables.bindVariable(style.text[state])];
+      }
     }
 
     return component;
@@ -90,29 +114,20 @@ export const buttonHandlers = {
       description: "Buttons allow users to trigger an action or event, such as submitting a form, opening a dialog, canceling an action, or performing a delete operation.",
       anatomy: {
         image: await (async () => {
-          // Create container frame for anatomy visualization
-          const container = figma.createFrame();
-          container.name = "Button Anatomy";
-          container.layoutMode = "HORIZONTAL";
-          container.counterAxisAlignItems = "CENTER";
+          const container = await createExampleContainer("Button Anatomy");
           container.itemSpacing = 80;  // Increased spacing between button and annotations
-          container.fills = [];
           container.resize(800, 300);  // Increased size for better visibility
           container.paddingLeft = container.paddingRight = 40;
           container.paddingTop = container.paddingBottom = 40;
 
           // Create simplified button visualization
-          const buttonVisualization = figma.createFrame();
-          buttonVisualization.name = "Button Visualization";
+          const buttonVisualization = await createExampleContainer("Button Visualization");
           buttonVisualization.resize(200, 48);  // Wider button for better visibility
           buttonVisualization.cornerRadius = 6;
           buttonVisualization.fills = [{ type: 'SOLID', color: { r: 0.95, g: 0.95, b: 0.95 } }];
           buttonVisualization.strokes = [{ type: 'SOLID', color: { r: 0.8, g: 0.8, b: 0.8 } }];
           buttonVisualization.strokeWeight = 1;
-          buttonVisualization.layoutMode = "HORIZONTAL";
           buttonVisualization.primaryAxisAlignItems = "CENTER";
-          buttonVisualization.counterAxisAlignItems = "CENTER";
-          buttonVisualization.itemSpacing = 8;
           buttonVisualization.paddingLeft = buttonVisualization.paddingRight = 16;
 
           // Add icon placeholder
@@ -369,33 +384,22 @@ export const buttonHandlers = {
             title: "Form Actions",
             description: "Use primary and secondary buttons for form submission and cancellation.",
             component: await (async () => {
-              const container = figma.createFrame();
-              container.name = "Form Actions Example";
-              container.layoutMode = "HORIZONTAL";
-              container.itemSpacing = 16;
-              container.fills = [];
-              container.counterAxisAlignItems = "CENTER";
+              const container = await createExampleContainer("Form Actions Example");
+              container.resize(400, 40);
 
-              const submitButton = await buttonHandlers.createInstance({
-                size: 'medium',
-                type: 'primary',
-                variant: 'filled',
-                state: 'default'
-              }, {
-                text: "Submit",
-              });
+              const submitButton = await buttonHandlers.createInstance(
+                { size: 'medium', type: 'primary', variant: 'filled', state: 'default' },
+                { text: "Submit" }
+              );
 
-              container.appendChild(submitButton!);
+              if (submitButton) container.appendChild(submitButton);
 
-              const cancelButton = await buttonHandlers.createInstance({
-                size: 'medium',
-                type: 'secondary',
-                variant: 'ghost',
-                state: 'default'
-              }, {
-                text: "Cancel",
-              });
+              const cancelButton = await buttonHandlers.createInstance(
+                { size: 'medium', type: 'secondary', variant: 'ghost', state: 'default' },
+                { text: "Cancel" }
+              );
 
+              if (cancelButton) container.appendChild(cancelButton);
 
               return container;
             })()
@@ -404,33 +408,22 @@ export const buttonHandlers = {
             title: "Dialog Actions",
             description: "Use buttons in dialogs to confirm or cancel actions.",
             component: await (async () => {
-              const container = figma.createFrame();
-              container.name = "Dialog Actions Example";
-              container.layoutMode = "HORIZONTAL";
-              container.itemSpacing = 16;
-              container.fills = [];
-              container.counterAxisAlignItems = "CENTER";
+              const container = await createExampleContainer("Dialog Actions Example");
+              container.resize(400, 40);
 
-              const confirmButton = await buttonHandlers.createInstance({
-                size: 'medium',
-                type: 'primary',
-                variant: 'filled',
-                state: 'default'
-              }, {
-                text: "Confirm",
-              });
+              const confirmButton = await buttonHandlers.createInstance(
+                { size: 'medium', type: 'primary', variant: 'filled', state: 'default' },
+                { text: "Confirm" }
+              );
 
-              const closeButton = await buttonHandlers.createInstance({
-                size: 'medium',
-                type: 'secondary',
-                variant: 'outlined',
-                state: 'default'
-              }, {
-                text: "Close",
-              });
+              if (confirmButton) container.appendChild(confirmButton);
 
-              container.appendChild(confirmButton!);
-              container.appendChild(closeButton!);
+              const closeButton = await buttonHandlers.createInstance(
+                { size: 'medium', type: 'secondary', variant: 'outlined', state: 'default' },
+                { text: "Close" }
+              );
+
+              if (closeButton) container.appendChild(closeButton);
 
               return container;
             })()
@@ -439,45 +432,30 @@ export const buttonHandlers = {
             title: "Toolbar Actions",
             description: "Use ghost or outlined buttons in toolbars for frequent actions.",
             component: await (async () => {
-              const container = figma.createFrame();
-              container.name = "Toolbar Actions Example";
-              container.layoutMode = "HORIZONTAL";
+              const container = await createExampleContainer("Toolbar Actions Example");
+              container.resize(400, 40);
               container.itemSpacing = 8;
-              container.fills = [];
-              container.counterAxisAlignItems = "CENTER";
 
-              const editButton = await buttonHandlers.createInstance({
-                size: 'small',
-                type: 'secondary',
-                variant: 'ghost',
-                state: 'default'
-              }, {
-                text: "Edit",
-              });
+              const buttons = [
+                { text: "Edit", icon: "edit" },
+                { text: "Copy", icon: "copy" },
+                { text: "Share", icon: "share" }
+              ];
 
+              for (const button of buttons) {
+                const instance = await buttonHandlers.createInstance(
+                  { 
+                    size: 'small',
+                    type: 'secondary',
+                    variant: 'ghost',
+                    state: 'default',
+                    icon: button.icon
+                  },
+                  { text: button.text }
+                );
 
-              const copyButton = await buttonHandlers.createInstance({
-                size: 'small',
-                type: 'secondary',
-                variant: 'ghost',
-                state: 'default'
-              }, {
-                text: "Copy",
-              });
-
-
-              const shareButton = await buttonHandlers.createInstance({
-                size: 'small',
-                type: 'secondary',
-                variant: 'ghost',
-                state: 'default'
-              }, {
-                text: "Share",
-              });
-
-              container.appendChild(editButton!);
-              container.appendChild(copyButton!);
-              container.appendChild(shareButton!);
+                if (instance) container.appendChild(instance);
+              }
 
               return container;
             })()
@@ -486,34 +464,22 @@ export const buttonHandlers = {
             title: "Dangerous Actions",
             description: "Use danger buttons for destructive actions that need user attention.",
             component: await (async () => {
-              const container = figma.createFrame();
-              container.name = "Dangerous Actions Example";
-              container.layoutMode = "HORIZONTAL";
-              container.itemSpacing = 16;
-              container.fills = [];
-              container.counterAxisAlignItems = "CENTER";
+              const container = await createExampleContainer("Dangerous Actions Example");
+              container.resize(400, 40);
 
-              const deleteButton = await buttonHandlers.createInstance({
-                size: 'medium',
-                type: 'danger',
-                variant: 'filled',
-                state: 'default'
-              }, {
-                text: "Delete",
-              });
+              const deleteButton = await buttonHandlers.createInstance(
+                { size: 'medium', type: 'danger', variant: 'filled', state: 'default' },
+                { text: "Delete" }
+              );
 
+              if (deleteButton) container.appendChild(deleteButton);
 
-              const cancelButton = await buttonHandlers.createInstance({
-                size: 'medium',
-                type: 'secondary',
-                variant: 'ghost',
-                state: 'default'
-              }, {
-                text: "Cancel",
-              });
+              const cancelButton = await buttonHandlers.createInstance(
+                { size: 'medium', type: 'secondary', variant: 'ghost', state: 'default' },
+                { text: "Cancel" }
+              );
 
-              container.appendChild(deleteButton!);
-              container.appendChild(cancelButton!);
+              if (cancelButton) container.appendChild(cancelButton);
 
               return container;
             })()
@@ -552,16 +518,17 @@ async function setupButtonLayout(button: ComponentNode, size: typeof BUTTON_SIZE
   button.counterAxisSizingMode = "AUTO";
 }
 
-async function applyButtonStyle(button: ComponentNode, variant: ButtonVariant) {
-  const styleKey = `${variant.type || 'primary'}-${variant.variant || 'filled'}-${variant.state || 'default'}` as keyof typeof BUTTON_STYLES;
+async function applyButtonStyle(button: ComponentNode, variant: ButtonVariantProps) {
+  const styleKey = `${variant.type || 'default'}-${variant.variant || 'filled'}` as keyof typeof BUTTON_STYLES;
   const style = BUTTON_STYLES[styleKey];
+  const state = variant.state || 'default';
 
   // Set background
-  button.fills = [variables.bindVariable(style.background)];
+  button.fills = [variables.bindVariable(style.background[state])];
   
   // Set border
   if (variant.variant === 'outlined') {
-    button.strokes = [variables.bindVariable(style.border)];
+    button.strokes = [variables.bindVariable(style.border[state])];
     variables.setBindVariable(button, 'strokeWeight', 'border/width/default');
     button.strokeAlign = 'INSIDE';
   } else if (variant.variant === 'ghost') {
@@ -571,20 +538,37 @@ async function applyButtonStyle(button: ComponentNode, variant: ButtonVariant) {
   }
 }
 
-async function addButtonText(button: ComponentNode, size: typeof BUTTON_SIZES[keyof typeof BUTTON_SIZES], variant: ButtonVariant) {
-  const styleKey = `${variant.type || 'primary'}-${variant.variant || 'filled'}-${variant.state || 'default'}` as keyof typeof BUTTON_STYLES;
+async function addButtonText(button: ComponentNode, size: typeof BUTTON_SIZES[keyof typeof BUTTON_SIZES], variant: ButtonVariantProps) {
+  const styleKey = `${variant.type || 'default'}-${variant.variant || 'filled'}` as keyof typeof BUTTON_STYLES;
   const style = BUTTON_STYLES[styleKey];
+  const state = variant.state || 'default';
 
   const text = await createHandlers.text({
-    text: variant.text || "Button",
-    fills: [variables.bindVariable(style.text)],
+    text: variant.label || "Button",
+    fills: [variables.bindVariable(style.text[state])],
     textAlignHorizontal: "CENTER"
   });
 
   variables.setBindVariable(text, 'fontSize', size.fontSize);
 
   button.appendChild(text);
-  text.layoutSizingHorizontal = "FILL";
+}
+
+async function addButtonIcon(button: ComponentNode, size: typeof BUTTON_SIZES[keyof typeof BUTTON_SIZES], variant: ButtonVariantProps) {
+  if (!variant.icon) return;
+
+  const styleKey = `${variant.type || 'default'}-${variant.variant || 'filled'}` as keyof typeof BUTTON_STYLES;
+  const style = BUTTON_STYLES[styleKey];
+  const state = variant.state || 'default';
+
+  const icon = figma.createFrame();
+  icon.name = "Icon";
+  variables.setBindVariable(icon, 'width', size.iconSize);
+  variables.setBindVariable(icon, 'height', size.iconSize);
+  icon.fills = [variables.bindVariable(style.text[state])];
+
+  // Insert icon before text
+  button.appendChild(icon);
 }
 
 async function createButtonVariants() {

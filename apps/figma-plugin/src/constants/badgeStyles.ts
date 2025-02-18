@@ -1,124 +1,180 @@
-import { BadgeSize, BadgeStyles } from '../types/badge';
+import { BadgeSize, BadgeSizeConfig, BadgeStyles, BadgeVariant, BadgeVariantProps } from '../types/badge';
 
-export const BADGE_SIZES: BadgeSize = {
-  small: { 
-    height: 16, 
-    fontSize: 12, 
-    padding: 4,
-    dotSize: 6
+export const BADGE_SIZES: BadgeSizeConfig = {
+  small: {
+    height: 'badge/height/small',
+    fontSize: 'badge/typography/small/size',
+    lineHeight: 'badge/typography/small/lineHeight',
+    paddingHorizontal: 'badge/spacing/small/horizontal',
+    paddingVertical: 'badge/spacing/small/vertical',
+    iconSize: 'badge/icon/small',
+    spacing: 'badge/spacing/small/gap',
+    borderRadius: {
+      rounded: 'badge/radius/small/rounded',
+      pill: 'badge/radius/small/pill',
+      square: 'badge/radius/small/square'
+    }
   },
-  medium: { 
-    height: 20, 
-    fontSize: 14, 
-    padding: 6,
-    dotSize: 8
+  medium: {
+    height: 'badge/height/medium',
+    fontSize: 'badge/typography/medium/size',
+    lineHeight: 'badge/typography/medium/lineHeight',
+    paddingHorizontal: 'badge/spacing/medium/horizontal',
+    paddingVertical: 'badge/spacing/medium/vertical',
+    iconSize: 'badge/icon/medium',
+    spacing: 'badge/spacing/medium/gap',
+    borderRadius: {
+      rounded: 'badge/radius/medium/rounded',
+      pill: 'badge/radius/medium/pill',
+      square: 'badge/radius/medium/square'
+    }
+  },
+  large: {
+    height: 'badge/height/large',
+    fontSize: 'badge/typography/large/size',
+    lineHeight: 'badge/typography/large/lineHeight',
+    paddingHorizontal: 'badge/spacing/large/horizontal',
+    paddingVertical: 'badge/spacing/large/vertical',
+    iconSize: 'badge/icon/large',
+    spacing: 'badge/spacing/large/gap',
+    borderRadius: {
+      rounded: 'badge/radius/large/rounded',
+      pill: 'badge/radius/large/pill',
+      square: 'badge/radius/large/square'
+    }
   }
-};
+} as const;
 
 export const BADGE_STYLES: BadgeStyles = {
-  'default-filled-default': {
-    background: 'semantic/bg/muted',
-    text: 'semantic/text/default',
-    border: 'semantic/border/default'
+  'default-filled': {
+    background: 'surface/color/default',
+    text: 'text/color/default',
+    border: 'surface/color/default'
   },
-  'default-filled-hover': {
-    background: 'semantic/bg/emphasized',
-    text: 'semantic/text/default',
-    border: 'semantic/border/default'
+  'neutral-filled': {
+    background: 'status/neutral/default',
+    text: 'text/color/inverse',
+    border: 'status/neutral/default'
   },
-  'default-filled-pressed': {
-    background: 'semantic/bg/subtle',
-    text: 'semantic/text/default',
-    border: 'semantic/border/default'
+  'secondary-filled': {
+    background: 'status/secondary/default',
+    text: 'text/color/default',
+    border: 'status/secondary/default'
   },
-  'primary-filled-default': {
-    background: 'semantic/action/primary/default',
-    text: 'semantic/text/onAccent',
-    border: 'semantic/action/primary/default'
+  'info-filled': {
+    background: 'status/info/default',
+    text: 'text/color/inverse',
+    border: 'status/info/default'
   },
-  'primary-filled-hover': {
-    background: 'semantic/action/primary/hover',
-    text: 'semantic/text/onAccent',
-    border: 'semantic/action/primary/hover'
+  'success-filled': {
+    background: 'status/success/default',
+    text: 'text/color/inverse',
+    border: 'status/success/default'
   },
-  'primary-filled-pressed': {
-    background: 'semantic/action/primary/pressed',
-    text: 'semantic/text/onAccent',
-    border: 'semantic/action/primary/pressed'
+  'warning-filled': {
+    background: 'status/warning/default',
+    text: 'text/color/inverse',
+    border: 'status/warning/default'
   },
-  'success-filled-default': {
-    background: 'semantic/status/success/default',
-    text: 'semantic/text/onAccent',
-    border: 'semantic/status/success/default'
+  'error-filled': {
+    background: 'status/error/default',
+    text: 'text/color/inverse',
+    border: 'status/error/default'
   },
-  'success-filled-hover': {
-    background: 'semantic/status/success/hover',
-    text: 'semantic/text/onAccent',
-    border: 'semantic/status/success/hover'
+  'default-outlined': {
+    background: 'surface/color/transparent',
+    text: 'text/color/default',
+    border: 'surface/color/default'
   },
-  'success-filled-pressed': {
-    background: 'semantic/status/success/pressed',
-    text: 'semantic/text/onAccent',
-    border: 'semantic/status/success/pressed'
+  'neutral-outlined': {
+    background: 'surface/color/transparent',
+    text: 'status/neutral/default',
+    border: 'status/neutral/default'
   },
-  'warning-filled-default': {
-    background: 'semantic/status/warning/default',
-    text: 'semantic/text/onAccent',
-    border: 'semantic/status/warning/default'
+  'secondary-outlined': {
+    background: 'surface/color/transparent',
+    text: 'text/color/default',
+    border: 'status/secondary/default'
   },
-  'warning-filled-hover': {
-    background: 'semantic/status/warning/hover',
-    text: 'semantic/text/onAccent',
-    border: 'semantic/status/warning/hover'
+  'info-outlined': {
+    background: 'surface/color/transparent',
+    text: 'status/info/default',
+    border: 'status/info/default'
   },
-  'warning-filled-pressed': {
-    background: 'semantic/status/warning/pressed',
-    text: 'semantic/text/onAccent',
-    border: 'semantic/status/warning/pressed'
+  'success-outlined': {
+    background: 'surface/color/transparent',
+    text: 'status/success/default',
+    border: 'status/success/default'
   },
-  'danger-filled-default': {
-    background: 'semantic/status/error/default',
-    text: 'semantic/text/onAccent',
-    border: 'semantic/status/error/default'
+  'warning-outlined': {
+    background: 'surface/color/transparent',
+    text: 'status/warning/default',
+    border: 'status/warning/default'
   },
-  'danger-filled-hover': {
-    background: 'semantic/status/error/hover',
-    text: 'semantic/text/onAccent',
-    border: 'semantic/status/error/hover'
-  },
-  'danger-filled-pressed': {
-    background: 'semantic/status/error/pressed',
-    text: 'semantic/text/onAccent',
-    border: 'semantic/status/error/pressed'
+  'error-outlined': {
+    background: 'surface/color/transparent',
+    text: 'status/error/default',
+    border: 'status/error/default'
   }
-};
+} as const;
 
-export const BADGE_VARIANTS = [
-  // Text variants - Small
-  { size: 'small', type: 'default', variant: 'filled', shape: 'text', state: 'default' },
-  { size: 'small', type: 'primary', variant: 'filled', shape: 'text', state: 'default' },
-  { size: 'small', type: 'success', variant: 'filled', shape: 'text', state: 'default' },
-  { size: 'small', type: 'warning', variant: 'filled', shape: 'text', state: 'default' },
-  { size: 'small', type: 'danger', variant: 'filled', shape: 'text', state: 'default' },
+export const BADGE_VARIANTS: BadgeVariantProps[] = [
+  // Default variants with different shapes
+  { size: 'medium', variant: 'filled', status: 'default', shape: 'rounded' },
+  { size: 'medium', variant: 'filled', status: 'default', shape: 'pill' },
+  { size: 'medium', variant: 'filled', status: 'default', shape: 'square' },
+  { size: 'medium', variant: 'outlined', status: 'default', shape: 'rounded' },
+  { size: 'medium', variant: 'outlined', status: 'default', shape: 'pill' },
+  { size: 'medium', variant: 'outlined', status: 'default', shape: 'square' },
 
-  // Dot variants - Small
-  { size: 'small', type: 'default', variant: 'filled', shape: 'dot', state: 'default' },
-  { size: 'small', type: 'primary', variant: 'filled', shape: 'dot', state: 'default' },
-  { size: 'small', type: 'success', variant: 'filled', shape: 'dot', state: 'default' },
-  { size: 'small', type: 'warning', variant: 'filled', shape: 'dot', state: 'default' },
-  { size: 'small', type: 'danger', variant: 'filled', shape: 'dot', state: 'default' },
+  // Neutral variants
+  { size: 'medium', variant: 'filled', status: 'neutral', shape: 'rounded' },
+  { size: 'medium', variant: 'filled', status: 'neutral', shape: 'pill' },
+  { size: 'medium', variant: 'filled', status: 'neutral', shape: 'square' },
+  { size: 'medium', variant: 'outlined', status: 'neutral', shape: 'rounded' },
+  { size: 'medium', variant: 'outlined', status: 'neutral', shape: 'pill' },
+  { size: 'medium', variant: 'outlined', status: 'neutral', shape: 'square' },
 
-  // Text variants - Medium
-  { size: 'medium', type: 'default', variant: 'filled', shape: 'text', state: 'default' },
-  { size: 'medium', type: 'primary', variant: 'filled', shape: 'text', state: 'default' },
-  { size: 'medium', type: 'success', variant: 'filled', shape: 'text', state: 'default' },
-  { size: 'medium', type: 'warning', variant: 'filled', shape: 'text', state: 'default' },
-  { size: 'medium', type: 'danger', variant: 'filled', shape: 'text', state: 'default' },
+  // Secondary variants
+  { size: 'medium', variant: 'filled', status: 'secondary', shape: 'rounded' },
+  { size: 'medium', variant: 'filled', status: 'secondary', shape: 'pill' },
+  { size: 'medium', variant: 'filled', status: 'secondary', shape: 'square' },
+  { size: 'medium', variant: 'outlined', status: 'secondary', shape: 'rounded' },
+  { size: 'medium', variant: 'outlined', status: 'secondary', shape: 'pill' },
+  { size: 'medium', variant: 'outlined', status: 'secondary', shape: 'square' },
 
-  // Dot variants - Medium
-  { size: 'medium', type: 'default', variant: 'filled', shape: 'dot', state: 'default' },
-  { size: 'medium', type: 'primary', variant: 'filled', shape: 'dot', state: 'default' },
-  { size: 'medium', type: 'success', variant: 'filled', shape: 'dot', state: 'default' },
-  { size: 'medium', type: 'warning', variant: 'filled', shape: 'dot', state: 'default' },
-  { size: 'medium', type: 'danger', variant: 'filled', shape: 'dot', state: 'default' }
+  // Status variants with different shapes
+  { size: 'medium', variant: 'filled', status: 'info', shape: 'rounded' },
+  { size: 'medium', variant: 'filled', status: 'info', shape: 'pill' },
+  { size: 'medium', variant: 'filled', status: 'info', shape: 'square' },
+  { size: 'medium', variant: 'outlined', status: 'info', shape: 'rounded' },
+  { size: 'medium', variant: 'outlined', status: 'info', shape: 'pill' },
+  { size: 'medium', variant: 'outlined', status: 'info', shape: 'square' },
+
+  { size: 'medium', variant: 'filled', status: 'success', shape: 'rounded' },
+  { size: 'medium', variant: 'filled', status: 'success', shape: 'pill' },
+  { size: 'medium', variant: 'filled', status: 'success', shape: 'square' },
+  { size: 'medium', variant: 'outlined', status: 'success', shape: 'rounded' },
+  { size: 'medium', variant: 'outlined', status: 'success', shape: 'pill' },
+  { size: 'medium', variant: 'outlined', status: 'success', shape: 'square' },
+
+  { size: 'medium', variant: 'filled', status: 'warning', shape: 'rounded' },
+  { size: 'medium', variant: 'filled', status: 'warning', shape: 'pill' },
+  { size: 'medium', variant: 'filled', status: 'warning', shape: 'square' },
+  { size: 'medium', variant: 'outlined', status: 'warning', shape: 'rounded' },
+  { size: 'medium', variant: 'outlined', status: 'warning', shape: 'pill' },
+  { size: 'medium', variant: 'outlined', status: 'warning', shape: 'square' },
+
+  { size: 'medium', variant: 'filled', status: 'error', shape: 'rounded' },
+  { size: 'medium', variant: 'filled', status: 'error', shape: 'pill' },
+  { size: 'medium', variant: 'filled', status: 'error', shape: 'square' },
+  { size: 'medium', variant: 'outlined', status: 'error', shape: 'rounded' },
+  { size: 'medium', variant: 'outlined', status: 'error', shape: 'pill' },
+  { size: 'medium', variant: 'outlined', status: 'error', shape: 'square' },
+
+  // With icons
+  { size: 'small', variant: 'filled', status: 'info', shape: 'rounded', icon: 'info' },
+  { size: 'medium', variant: 'filled', status: 'success', shape: 'pill', icon: 'check' },
+  { size: 'large', variant: 'filled', status: 'warning', shape: 'square', icon: 'warning' },
+  { size: 'small', variant: 'outlined', status: 'error', shape: 'rounded', icon: 'error' }
 ] as const; 

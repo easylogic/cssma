@@ -174,6 +174,7 @@ class VariablesManager {
     }
 
     const variable = this.variables[value];
+    console.log(`  🔍 Variable: ${variable}`, variable, this.variables);
     if (!variable) {
 
       if (typeof value === 'string') {
