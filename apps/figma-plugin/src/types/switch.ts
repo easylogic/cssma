@@ -1,73 +1,65 @@
 export type SwitchSize = 'small' | 'medium' | 'large';
-export type SwitchState = 'default' | 'hover' | 'pressed' | 'disabled';
-export type SwitchStatus = 'default' | 'success' | 'error';
+export type SwitchVariant = 'filled' | 'outlined';
+export type SwitchStatus = 'default' | 'error' | 'success' | 'warning';
+
+export type SwitchSizeConfig = {
+  [key in SwitchSize]: {
+    width: string;
+    height: string;
+    thumbSize: string;
+    fontSize: string;
+    borderRadius: string;
+    borderWidth: string;
+    spacing: string;
+  };
+};
+
+export interface SwitchStyle {
+  background: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+    checked: string;
+  };
+  thumb: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+    checked: string;
+  };
+  text: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+  };
+}
+
+export type SwitchStyles = {
+  [key: string]: SwitchStyle;
+};
 
 export interface SwitchVariantProps {
   size?: SwitchSize;
-  state?: SwitchState;
+  variant?: SwitchVariant;
   status?: SwitchStatus;
   checked?: boolean;
-  label?: string;
-  labelPosition?: 'left' | 'right';
-  description?: string;
-  required?: boolean;
   loading?: boolean;
+  disabled?: boolean;
+  checkedChildren?: string;
+  unCheckedChildren?: string;
   ariaLabel?: string;
   role?: string;
 }
 
-export type SwitchSizeConfig = {
-  [key in SwitchSize]: {
-    height: number;
-    width: number;
-    thumbSize: number;
-    thumbOffset: number;
-    fontSize: number;
-    lineHeight: number;
-    spacing: number;
-    labelSpacing: number;
-    descriptionFontSize: number;
-    descriptionLineHeight: number;
-  };
-};
+export interface SwitchInstance {
+  checked: boolean;
+  checkedChildren?: string;
+  unCheckedChildren?: string;
+}
 
-export type SwitchStyleConfig = {
-  [key in SwitchStatus]: {
-    track: {
-      unchecked: {
-        default: string;
-        hover: string;
-        pressed: string;
-        disabled: string;
-      };
-      checked: {
-        default: string;
-        hover: string;
-        pressed: string;
-        disabled: string;
-      };
-    };
-    thumb: {
-      unchecked: {
-        default: string;
-        hover: string;
-        pressed: string;
-        disabled: string;
-      };
-      checked: {
-        default: string;
-        hover: string;
-        pressed: string;
-        disabled: string;
-      };
-    };
-    text: {
-      default: string;
-      disabled: string;
-    };
-    description: {
-      default: string;
-      disabled: string;
-    };
-  };
-}; 
+export interface CreateSwitchOptions {
+  variants?: SwitchVariant[];
+} 

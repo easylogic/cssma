@@ -1,36 +1,73 @@
-export interface InputSize {
-  small: { 
-    height: number; 
-    fontSize: number; 
-    padding: number;
-    iconSize: number;
-    helperTextSize: number;
+export type InputSize = 'small' | 'medium' | 'large';
+export type InputVariant = 'filled' | 'outlined';
+export type InputStatus = 'default' | 'error' | 'success' | 'warning';
+
+export type InputSizeConfig = {
+  [key in InputSize]: {
+    height: string;
+    fontSize: string;
+    borderRadius: string;
+    borderWidth: string;
+    iconSize: string;
+    spacing: string;
+    padding: string;
   };
-  medium: { 
-    height: number; 
-    fontSize: number; 
-    padding: number;
-    iconSize: number;
-    helperTextSize: number;
-  };
-}
+};
 
 export interface InputStyle {
-  background: string;
-  text: string;
-  border: string;
-  placeholder: string;
-  helper: string;
+  background: {
+    default: string;
+    hover: string;
+    focused: string;
+    disabled: string;
+  };
+  border: {
+    default: string;
+    hover: string;
+    focused: string;
+    disabled: string;
+  };
+  text: {
+    default: string;
+    placeholder: string;
+    disabled: string;
+  };
+  icon: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+  };
 }
 
-export interface InputStyles {
+export type InputStyles = {
   [key: string]: InputStyle;
+};
+
+export interface InputVariantProps {
+  size?: InputSize;
+  variant?: InputVariant;
+  status?: InputStatus;
+  placeholder?: string;
+  prefix?: string;
+  suffix?: string;
+  leftIcon?: string;
+  rightIcon?: string;
+  clearable?: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
+  required?: boolean;
+  ariaLabel?: string;
+  role?: string;
 }
 
-export interface InputVariant {
-  size?: 'small' | 'medium';
-  state?: 'default' | 'hover' | 'focused' | 'disabled' | 'error';
-  hasIcon?: boolean;
-  iconPosition?: 'left' | 'right';
-  hasHelper?: boolean;
+export interface InputInstance {
+  value?: string;
+  placeholder?: string;
+  prefix?: string;
+  suffix?: string;
+}
+
+export interface CreateInputOptions {
+  variants?: InputVariant[];
 } 

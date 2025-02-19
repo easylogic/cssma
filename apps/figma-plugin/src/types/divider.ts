@@ -1,49 +1,50 @@
-export type DividerOrientation = 'horizontal' | 'vertical';
-export type DividerVariant = 'solid' | 'dashed' | 'dotted';
 export type DividerSize = 'small' | 'medium' | 'large';
-export type DividerTheme = 'default' | 'primary' | 'subtle';
+export type DividerVariant = 'solid' | 'dashed' | 'dotted';
+export type DividerOrientation = 'horizontal' | 'vertical';
+
+export type DividerSizeConfig = {
+  [key in DividerSize]: {
+    thickness: string;
+    spacing: string;
+    length: string;
+    labelSpacing: string;
+    fontSize: string;
+  };
+};
+
+export interface DividerStyle {
+  line: {
+    default: string;
+    subtle: string;
+    disabled: string;
+  };
+  text: {
+    default: string;
+    subtle: string;
+    disabled: string;
+  };
+}
+
+export type DividerStyles = {
+  [key: string]: DividerStyle;
+};
 
 export interface DividerVariantProps {
-  orientation?: DividerOrientation;
-  variant?: DividerVariant;
   size?: DividerSize;
-  theme?: DividerTheme;
-  hasLabel?: boolean;
+  variant?: DividerVariant;
+  orientation?: DividerOrientation;
   label?: string;
   labelPosition?: 'start' | 'center' | 'end';
-  labelAlignment?: 'start' | 'center' | 'end';
+  disabled?: boolean;
   ariaLabel?: string;
   role?: string;
 }
 
-// Value can be either a number or a reference to a variable
-export type SizeValue = number | `{${string}}`;
+export interface DividerInstance {
+  label?: string;
+  labelPosition?: 'start' | 'center' | 'end';
+}
 
-export type DividerSizeConfig = {
-  [key in DividerSize]: {
-    thickness: SizeValue;
-    spacing: SizeValue;
-    labelSpacing: SizeValue;
-    fontSize: SizeValue;
-    lineHeight: SizeValue;
-    dashLength?: SizeValue;
-    dashGap?: SizeValue;
-    dotSize?: SizeValue;
-    dotGap?: SizeValue;
-  };
-};
-
-export type DividerStyleConfig = {
-  [key in DividerTheme]: {
-    line: {
-      [key in DividerVariant]: {
-        default: string;
-        subtle: string;
-      };
-    };
-    text: {
-      default: string;
-      muted: string;
-    };
-  };
-}; 
+export interface CreateDividerOptions {
+  variants?: DividerVariant[];
+} 

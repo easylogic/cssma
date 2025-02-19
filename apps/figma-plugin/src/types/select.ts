@@ -1,112 +1,103 @@
 export type SelectSize = 'small' | 'medium' | 'large';
-export type SelectVariant = 'outlined' | 'filled';
-export type SelectState = 'default' | 'hover' | 'focused' | 'disabled' | 'error';
-
-export interface SelectOption {
-  value: string;
-  label: string;
-  description?: string;
-  icon?: string;
-  disabled?: boolean;
-}
-
-export interface SelectVariantProps {
-  size?: SelectSize;
-  variant?: SelectVariant;
-  state?: SelectState;
-  placeholder?: string;
-  label?: string;
-  helperText?: string;
-  errorText?: string;
-  required?: boolean;
-  disabled?: boolean;
-  multiple?: boolean;
-  clearable?: boolean;
-  searchable?: boolean;
-  loading?: boolean;
-  options?: SelectOption[];
-  ariaLabel?: string;
-  role?: string;
-}
+export type SelectVariant = 'filled' | 'outlined';
+export type SelectStatus = 'default' | 'error' | 'success' | 'warning';
 
 export type SelectSizeConfig = {
   [key in SelectSize]: {
-    height: number;
-    fontSize: number;
-    lineHeight: number;
-    padding: number;
-    borderRadius: number;
-    iconSize: number;
-    spacing: number;
-    labelSpacing: number;
-    optionHeight: number;
-    optionPadding: number;
-    menuMaxHeight: number;
+    height: string;
+    fontSize: string;
+    borderRadius: string;
+    borderWidth: string;
+    iconSize: string;
+    spacing: string;
+    padding: string;
+    menuItemHeight: string;
+    menuMaxHeight: string;
   };
 };
 
-export type SelectStyleConfig = {
-  [key in SelectVariant]: {
-    background: {
-      default: string;
-      hover: string;
-      focused: string;
-      disabled: string;
-      error: string;
-    };
-    border: {
-      default: string;
-      hover: string;
-      focused: string;
-      disabled: string;
-      error: string;
-    };
-    text: {
-      default: string;
-      hover: string;
-      focused: string;
-      placeholder: string;
-      disabled: string;
-      error: string;
-    };
-    icon: {
-      default: string;
-      hover: string;
-      focused: string;
-      disabled: string;
-      error: string;
-    };
-    label: {
-      default: string;
-      hover: string;
-      focused: string;
-      disabled: string;
-      error: string;
-    };
-    helper: {
-      default: string;
-      error: string;
-    };
-    menu: {
-      background: string;
-      border: string;
-      shadow: string;
-      optionBackground: {
+export interface SelectStyle {
+  background: {
+    default: string;
+    hover: string;
+    focused: string;
+    disabled: string;
+  };
+  border: {
+    default: string;
+    hover: string;
+    focused: string;
+    disabled: string;
+  };
+  text: {
+    default: string;
+    placeholder: string;
+    disabled: string;
+  };
+  icon: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+  };
+  menu: {
+    background: string;
+    border: string;
+    shadow: string;
+    item: {
+      background: {
         default: string;
         hover: string;
         selected: string;
         disabled: string;
       };
-      optionText: {
+      text: {
         default: string;
-        selected: string;
-        disabled: string;
-      };
-      optionIcon: {
-        default: string;
+        hover: string;
         selected: string;
         disabled: string;
       };
     };
   };
-}; 
+}
+
+export type SelectStyles = {
+  [key: string]: SelectStyle;
+};
+
+export interface SelectOption {
+  label: string;
+  value: string | number;
+  disabled?: boolean;
+  icon?: string;
+  group?: string;
+}
+
+export interface SelectVariantProps {
+  size?: SelectSize;
+  variant?: SelectVariant;
+  status?: SelectStatus;
+  placeholder?: string;
+  clearable?: boolean;
+  searchable?: boolean;
+  multiple?: boolean;
+  loading?: boolean;
+  disabled?: boolean;
+  required?: boolean;
+  maxTagCount?: number;
+  showArrow?: boolean;
+  showSearch?: boolean;
+  virtual?: boolean;
+  ariaLabel?: string;
+  role?: string;
+}
+
+export interface SelectInstance {
+  value?: string | string[];
+  placeholder?: string;
+  options: SelectOption[];
+}
+
+export interface CreateSelectOptions {
+  variants?: SelectVariant[];
+} 

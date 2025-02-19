@@ -102,6 +102,41 @@ export const SEMANTIC: Collection = {
     "surface/color/hover": { Value: "{gray/300/light}" },
     "surface/color/pressed": { Value: "{gray/400/light}" },
     "surface/color/disabled": { Value: "{gray/100/light}" },
-    "surface/color/transparent": { Value: "{color/transparent}" }
+    "surface/color/transparent": { Value: "{color/transparent}" },
+
+    // Common Component Patterns
+    "component/base/height/xs": { Value: 24 },
+    "component/base/height/sm": { Value: 32 },
+    "component/base/height/md": { Value: 40 },
+    "component/base/height/lg": { Value: 48 },
+    "component/base/height/xl": { Value: 56 },
+
+    "component/base/gap/xs": { Value: 4 },
+    "component/base/gap/sm": { Value: 8 },
+    "component/base/gap/md": { Value: 12 },
+    "component/base/gap/lg": { Value: 16 },
+    "component/base/gap/xl": { Value: 20 },
+
+    "component/base/padding/xs": { Value: 8 },
+    "component/base/padding/sm": { Value: 12 },
+    "component/base/padding/md": { Value: 16 },
+    "component/base/padding/lg": { Value: 20 },
+    "component/base/padding/xl": { Value: 24 },
+
+    "component/base/icon/xs": { Value: 12 },
+    "component/base/icon/sm": { Value: 16 },
+    "component/base/icon/md": { Value: 20 },
+    "component/base/icon/lg": { Value: 24 },
+    "component/base/icon/xl": { Value: 32 },
+
+    "component/base/radius/none": { Value: 0 },
+    "component/base/radius/sm": { Value: 6 },
+    "component/base/radius/md": { Value: 8 },
+    "component/base/radius/lg": { Value: 12 },
+    "component/base/radius/pill": { Value: 999 },
+
+    "component/base/border/width/thin": { Value: 1 },
+    "component/base/border/width/thick": { Value: 2 },
+    "component/base/border/width/thicker": { Value: 3 }
   }
 } as const; 

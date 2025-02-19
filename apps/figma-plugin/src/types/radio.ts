@@ -1,33 +1,70 @@
-export interface RadioSize {
-  small: { 
-    size: number;
-    fontSize: number;
-    spacing: number;
-    dotSize: number;
+export type RadioSize = 'small' | 'medium' | 'large';
+export type RadioVariant = 'filled' | 'outlined';
+export type RadioStatus = 'default' | 'error';
+
+export type RadioSizeConfig = {
+  [key in RadioSize]: {
+    size: string;
+    fontSize: string;
+    borderRadius: string;
+    borderWidth: string;
+    dotSize: string;
+    spacing: string;
   };
-  medium: { 
-    size: number;
-    fontSize: number;
-    spacing: number;
-    dotSize: number;
-  };
-}
+};
 
 export interface RadioStyle {
-  circle: {
-    background: string;
-    border: string;
-    dot: string;
+  background: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+    checked: string;
   };
-  text: string;
+  border: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+    checked: string;
+  };
+  dot: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+  };
+  text: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+  };
 }
 
-export interface RadioStyles {
+export type RadioStyles = {
   [key: string]: RadioStyle;
+};
+
+export interface RadioVariantProps {
+  size?: RadioSize;
+  variant?: RadioVariant;
+  status?: RadioStatus;
+  checked?: boolean;
+  disabled?: boolean;
+  label?: string;
+  name?: string;
+  value?: string;
+  ariaLabel?: string;
+  role?: string;
 }
 
-export interface RadioVariant {
-  size?: 'small' | 'medium';
-  state?: 'default' | 'hover' | 'pressed' | 'disabled';
-  checked?: boolean;
+export interface RadioInstance {
+  checked: boolean;
+  label?: string;
+  value?: string;
+}
+
+export interface CreateRadioOptions {
+  variants?: RadioVariant[];
 } 

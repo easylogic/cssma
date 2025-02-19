@@ -1,22 +1,63 @@
-export interface BreadcrumbSize {
-  small: { height: number; fontSize: number; spacing: number };
-  medium: { height: number; fontSize: number; spacing: number };
-}
+export type BreadcrumbSize = 'small' | 'medium' | 'large';
+export type BreadcrumbVariant = 'filled' | 'outlined';
+export type BreadcrumbStatus = 'default' | 'error';
+
+export type BreadcrumbSizeConfig = {
+  [key in BreadcrumbSize]: {
+    height: string;
+    fontSize: string;
+    iconSize: string;
+    spacing: string;
+    padding: string;
+  };
+};
 
 export interface BreadcrumbStyle {
-  text: string;
-  separator: string;
-  hover: string;
-  active: string;
+  background: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+  };
+  text: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+  };
+  separator: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+  };
 }
 
-export interface BreadcrumbStyles {
+export type BreadcrumbStyles = {
   [key: string]: BreadcrumbStyle;
+};
+
+export interface BreadcrumbItem {
+  text: string;
+  icon?: string;
+  href?: string;
+  disabled?: boolean;
 }
 
-export interface BreadcrumbVariant {
-  size?: 'small' | 'medium';
-  state?: 'default' | 'hover' | 'pressed' | 'disabled';
+export interface BreadcrumbVariantProps {
+  size?: BreadcrumbSize;
+  variant?: BreadcrumbVariant;
+  status?: BreadcrumbStatus;
+  items: BreadcrumbItem[];
+  separator?: string;
+  maxItems?: number;
+  ariaLabel?: string;
+  role?: string;
+}
+
+export interface BreadcrumbInstance {
+  items: BreadcrumbItem[];
+  separator: string;
 }
 
 export interface CreateBreadcrumbOptions {

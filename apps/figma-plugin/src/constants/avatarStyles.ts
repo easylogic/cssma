@@ -2,28 +2,28 @@ import { AvatarSizeConfig, AvatarStyles, AvatarVariantProps } from '../types/ava
 
 export const AVATAR_SIZES: AvatarSizeConfig = {
   'small': {
-    size: 'avatar/size/small',
-    fontSize: 'avatar/typography/small/size',
-    borderRadius: 'avatar/radius/small',
-    borderWidth: 'avatar/border/width/small',
-    badgeSize: 'avatar/badge/size/small',
-    badgeOffset: 4
+    size: 'component/base/height/xs',
+    fontSize: 'text/body/xs',
+    borderRadius: 'component/base/radius/pill',
+    borderWidth: 'component/base/border/width/thin',
+    iconSize: 'component/base/icon/xs',
+    spacing: 'component/base/gap/xs'
   },
   'medium': {
-    size: 'avatar/size/medium',
-    fontSize: 'avatar/typography/medium/size',
-    borderRadius: 'avatar/radius/medium',
-    borderWidth: 'avatar/border/width/medium',
-    badgeSize: 'avatar/badge/size/medium',
-    badgeOffset: 4
+    size: 'component/base/height/sm',
+    fontSize: 'text/body/sm',
+    borderRadius: 'component/base/radius/pill',
+    borderWidth: 'component/base/border/width/thin',
+    iconSize: 'component/base/icon/sm',
+    spacing: 'component/base/gap/sm'
   },
   'large': {
-    size: 'avatar/size/large',
-    fontSize: 'avatar/typography/large/size',
-    borderRadius: 'avatar/radius/large',
-    borderWidth: 'avatar/border/width/large',
-    badgeSize: 'avatar/badge/size/large',
-    badgeOffset: 4
+    size: 'component/base/height/md',
+    fontSize: 'text/body/md',
+    borderRadius: 'component/base/radius/pill',
+    borderWidth: 'component/base/border/width/thin',
+    iconSize: 'component/base/icon/md',
+    spacing: 'component/base/gap/md'
   }
 } as const;
 
@@ -46,28 +46,28 @@ export const AVATAR_STYLES: AvatarStyles = {
 
 export const AVATAR_VARIANTS: AvatarVariantProps[] = [
   // Size variants
-  { size: 'small', type: 'image', state: 'default', shape: 'circle' },
-  { size: 'medium', type: 'image', state: 'default', shape: 'circle' },
-  { size: 'large', type: 'image', state: 'default', shape: 'circle' },
+  { size: 'small', type: 'image', status: 'default', shape: 'circle' },
+  { size: 'medium', type: 'image', status: 'default', shape: 'circle' },
+  { size: 'large', type: 'image', status: 'default', shape: 'circle' },
 
   // Type variants
-  { size: 'medium', type: 'image', state: 'default', shape: 'circle' },
-  { size: 'medium', type: 'initial', state: 'default', shape: 'circle', initials: 'JD' },
-  { size: 'medium', type: 'icon', state: 'default', shape: 'circle', icon: 'user' },
+  { size: 'medium', type: 'image', status: 'default', shape: 'circle' },
+  { size: 'medium', type: 'initial', status: 'default', shape: 'circle', initials: 'JD' },
+  { size: 'medium', type: 'icon', status: 'default', shape: 'circle', icon: 'user' },
 
   // Shape variants
-  { size: 'medium', type: 'image', state: 'default', shape: 'circle' },
-  { size: 'medium', type: 'image', state: 'default', shape: 'square' },
+  { size: 'medium', type: 'image', status: 'default', shape: 'circle' },
+  { size: 'medium', type: 'image', status: 'default', shape: 'square' },
 
-  // State variants
-  { size: 'medium', type: 'image', state: 'default', shape: 'circle' },
-  { size: 'medium', type: 'image', state: 'error', shape: 'circle' },
+  // Status variants
+  { size: 'medium', type: 'image', status: 'default', shape: 'circle' },
+  { size: 'medium', type: 'image', status: 'error', shape: 'circle' },
 
   // With badge
   { 
     size: 'medium', 
     type: 'image', 
-    state: 'default', 
+    status: 'default', 
     shape: 'circle', 
     badge: { status: 'online' }, 
     badgeContent: '3' 
@@ -75,7 +75,7 @@ export const AVATAR_VARIANTS: AvatarVariantProps[] = [
   { 
     size: 'medium', 
     type: 'initial', 
-    state: 'default', 
+    status: 'default', 
     shape: 'circle', 
     initials: 'JD', 
     badge: { status: 'online' } 
@@ -83,7 +83,7 @@ export const AVATAR_VARIANTS: AvatarVariantProps[] = [
   { 
     size: 'medium', 
     type: 'icon', 
-    state: 'default', 
+    status: 'default', 
     shape: 'circle', 
     icon: 'user', 
     badge: { status: 'online' } 

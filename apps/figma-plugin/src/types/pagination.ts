@@ -1,73 +1,75 @@
 export type PaginationSize = 'small' | 'medium' | 'large';
 export type PaginationVariant = 'filled' | 'outlined' | 'ghost';
-export type PaginationShape = 'rounded' | 'circular';
+export type PaginationStatus = 'default' | 'error';
+
+export type PaginationSizeConfig = {
+  [key in PaginationSize]: {
+    height: string;
+    fontSize: string;
+    borderRadius: string;
+    borderWidth: string;
+    iconSize: string;
+    spacing: string;
+    padding: string;
+  };
+};
+
+export interface PaginationStyle {
+  background: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+    active: string;
+  };
+  border: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+    active: string;
+  };
+  text: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+    active: string;
+  };
+  icon: {
+    default: string;
+    hover: string;
+    pressed: string;
+    disabled: string;
+  };
+}
+
+export type PaginationStyles = {
+  [key: string]: PaginationStyle;
+};
 
 export interface PaginationVariantProps {
   size?: PaginationSize;
   variant?: PaginationVariant;
-  shape?: PaginationShape;
-  currentPage?: number;
-  totalPages?: number;
-  siblingCount?: number;
-  boundaryCount?: number;
-  showFirstButton?: boolean;
-  showLastButton?: boolean;
-  showPrevButton?: boolean;
-  showNextButton?: boolean;
+  status?: PaginationStatus;
+  total?: number;
+  current?: number;
+  pageSize?: number;
+  showSizeChanger?: boolean;
+  showQuickJumper?: boolean;
+  showTotal?: boolean;
+  simple?: boolean;
   disabled?: boolean;
   ariaLabel?: string;
   role?: string;
 }
 
-export type PaginationSizeConfig = {
-  [key in PaginationSize]: {
-    height: number;
-    minWidth: number;
-    fontSize: number;
-    lineHeight: number;
-    spacing: number;
-    iconSize: number;
-    borderRadius: {
-      rounded: number;
-      circular: number;
-    };
-  };
-};
+export interface PaginationInstance {
+  current: number;
+  pageSize: number;
+  total: number;
+}
 
-export type PaginationStyleConfig = {
-  [key in PaginationVariant]: {
-    item: {
-      background: {
-        default: string;
-        hover: string;
-        pressed: string;
-        selected: string;
-        disabled: string;
-      };
-      border: {
-        default: string;
-        hover: string;
-        pressed: string;
-        selected: string;
-        disabled: string;
-      };
-      text: {
-        default: string;
-        hover: string;
-        pressed: string;
-        selected: string;
-        disabled: string;
-      };
-      icon: {
-        default: string;
-        hover: string;
-        pressed: string;
-        selected: string;
-        disabled: string;
-      };
-    };
-    ellipsis: {
-      text: string;
-    };
-  };
-}; 
+export interface CreatePaginationOptions {
+  variants?: PaginationVariant[];
+} 

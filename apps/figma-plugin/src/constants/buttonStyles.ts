@@ -440,12 +440,12 @@ export const BUTTON_VARIANTS: ButtonVariantProps[] = [
   { size: 'medium', variant: 'filled', type: 'primary', state: 'hover', icon: 'add' },
   { size: 'medium', variant: 'filled', type: 'primary', state: 'pressed', icon: 'add' },
   { size: 'medium', variant: 'filled', type: 'primary', state: 'disabled', icon: 'add' },
-  
+
   { size: 'medium', variant: 'outlined', type: 'secondary', state: 'default', icon: 'edit' },
   { size: 'medium', variant: 'outlined', type: 'secondary', state: 'hover', icon: 'edit' },
   { size: 'medium', variant: 'outlined', type: 'secondary', state: 'pressed', icon: 'edit' },
   { size: 'medium', variant: 'outlined', type: 'secondary', state: 'disabled', icon: 'edit' },
-  
+
   { size: 'medium', variant: 'ghost', type: 'danger', state: 'default', icon: 'delete' },
   { size: 'medium', variant: 'ghost', type: 'danger', state: 'hover', icon: 'delete' },
   { size: 'medium', variant: 'ghost', type: 'danger', state: 'pressed', icon: 'delete' },

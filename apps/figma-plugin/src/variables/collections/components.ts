@@ -35,49 +35,21 @@ export const COMPONENTS: Collection = {
     "button/radius/medium": { Value: "{shape/rounded/md}" },
     "button/radius/large": { Value: "{shape/rounded/lg}" },
 
-    // Avatar Component
-    "avatar/size/small": { Value: "{component/height/compact}" },
-    "avatar/size/medium": { Value: "{component/height/default}" },
-    "avatar/size/large": { Value: "{component/height/large}" },
-
-    "avatar/typography/small/size": { Value: "{text/body/sm}" },
-    "avatar/typography/small/lineHeight": { Value: "{text/body/sm}" },
-    "avatar/typography/medium/size": { Value: "{text/body/md}" },
-    "avatar/typography/medium/lineHeight": { Value: "{text/body/md}" },
-    "avatar/typography/large/size": { Value: "{text/body/lg}" },
-    "avatar/typography/large/lineHeight": { Value: "{text/body/lg}" },
-
-    "avatar/radius/small": { Value: "{shape/rounded/pill}" },
-    "avatar/radius/medium": { Value: "{shape/rounded/pill}" },
-    "avatar/radius/large": { Value: "{shape/rounded/pill}" },
-
-    "avatar/border/width/small": { Value: "{border/width/default}" },
-    "avatar/border/width/medium": { Value: "{border/width/default}" },
-    "avatar/border/width/large": { Value: "{border/width/default}" },
-
-    "avatar/badge/size/small": { Value: "{size/icon/xs}" },
-    "avatar/badge/size/medium": { Value: "{size/icon/sm}" },
-    "avatar/badge/size/large": { Value: "{size/icon/md}" },
-
-    "avatar/badge/offset/small": { Value: "{spacing/2}" },
-    "avatar/badge/offset/medium": { Value: "{spacing/4}" },
-    "avatar/badge/offset/large": { Value: "{spacing/4}" },
-
     // Tag Component
-    "tag/height/small": { Value: "{component/height/compact}" },
-    "tag/height/medium": { Value: "{component/height/default}" },
-    "tag/height/large": { Value: "{component/height/large}" },
+    "tag/height/small": { Value: "{component/base/height/xs}" },
+    "tag/height/medium": { Value: "{component/base/height/sm}" },
+    "tag/height/large": { Value: "{component/base/height/md}" },
 
-    "tag/spacing/small/horizontal": { Value: "{space/inline/sm}" },
-    "tag/spacing/small/vertical": { Value: "{space/inline/xs}" },
-    "tag/spacing/medium/horizontal": { Value: "{space/inline/md}" },
-    "tag/spacing/medium/vertical": { Value: "{space/inline/sm}" },
-    "tag/spacing/large/horizontal": { Value: "{space/inline/lg}" },
-    "tag/spacing/large/vertical": { Value: "{space/inline/md}" },
+    "tag/spacing/small/horizontal": { Value: "{component/base/padding/xs}" },
+    "tag/spacing/small/vertical": { Value: "{component/base/padding/xs}" },
+    "tag/spacing/medium/horizontal": { Value: "{component/base/padding/sm}" },
+    "tag/spacing/medium/vertical": { Value: "{component/base/padding/sm}" },
+    "tag/spacing/large/horizontal": { Value: "{component/base/padding/md}" },
+    "tag/spacing/large/vertical": { Value: "{component/base/padding/md}" },
 
-    "tag/spacing/small/gap": { Value: "{space/inline/xs}" },
-    "tag/spacing/medium/gap": { Value: "{space/inline/sm}" },
-    "tag/spacing/large/gap": { Value: "{space/inline/md}" },
+    "tag/spacing/small/gap": { Value: "{component/base/gap/xs}" },
+    "tag/spacing/medium/gap": { Value: "{component/base/gap/sm}" },
+    "tag/spacing/large/gap": { Value: "{component/base/gap/md}" },
 
     "tag/typography/small/size": { Value: "{text/body/xs}" },
     "tag/typography/small/lineHeight": { Value: "{text/body/xs}" },
@@ -86,13 +58,18 @@ export const COMPONENTS: Collection = {
     "tag/typography/large/size": { Value: "{text/body/md}" },
     "tag/typography/large/lineHeight": { Value: "{text/body/md}" },
 
-    "tag/icon/small": { Value: "{icon/size/inline}" },
-    "tag/icon/medium": { Value: "{icon/size/default}" },
-    "tag/icon/large": { Value: "{icon/size/large}" },
+    "tag/icon/small": { Value: "{component/base/icon/xs}" },
+    "tag/icon/medium": { Value: "{component/base/icon/sm}" },
+    "tag/icon/large": { Value: "{component/base/icon/md}" },
 
-    "tag/radius/small": { Value: "{shape/rounded/sm}" },
-    "tag/radius/medium": { Value: "{shape/rounded/md}" },
-    "tag/radius/large": { Value: "{shape/rounded/lg}" },
+    "tag/radius/small/rounded": { Value: "{component/base/radius/sm}" },
+    "tag/radius/small/circular": { Value: "{component/base/radius/pill}" },
+    "tag/radius/medium/rounded": { Value: "{component/base/radius/md}" },
+    "tag/radius/medium/circular": { Value: "{component/base/radius/pill}" },
+    "tag/radius/large/rounded": { Value: "{component/base/radius/lg}" },
+    "tag/radius/large/circular": { Value: "{component/base/radius/pill}" },
+
+    "tag/border/width/thin": { Value: "{component/base/border/width/thin}" },
 
     // Badge Component
     "badge/height/small": { Value: "{component/height/compact}" },
@@ -132,6 +109,20 @@ export const COMPONENTS: Collection = {
 
     "badge/radius/large/rounded": { Value: "{shape/rounded/lg}" },
     "badge/radius/large/pill": { Value: "{shape/rounded/pill}" },
-    "badge/radius/large/square": { Value: "{shape/rounded/none}" }
+    "badge/radius/large/square": { Value: "{shape/rounded/none}" },
+
+    // Menu Component
+    // Menu specific dimensions (직접 값만 유지)
+    "menu/container/small/minWidth": { Value: 160 },
+    "menu/container/small/maxWidth": { Value: 280 },
+    "menu/container/medium/minWidth": { Value: 200 },
+    "menu/container/medium/maxWidth": { Value: 320 },
+    "menu/container/large/minWidth": { Value: 240 },
+    "menu/container/large/maxWidth": { Value: 360 },
+
+    // Menu specific spacing (직접 값만 유지)
+    "menu/item/indent": { Value: 16 },      // 서브메뉴 들여쓰기
+    "menu/item/shortcut/gap": { Value: 40 }, // 단축키와 텍스트 사이 간격
+    "menu/group/header/gap": { Value: 12 },  // 그룹 헤더와 아이템 사이 간격
   }
 } as const; 

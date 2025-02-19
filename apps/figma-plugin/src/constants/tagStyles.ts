@@ -2,42 +2,45 @@ import { TagSizeConfig, TagStyleConfig, TagVariantProps } from '../types/tag';
 
 export const TAG_SIZES: TagSizeConfig = {
   small: {
-    height: 'tag/height/small',
-    fontSize: 'tag/typography/small/size',
-    lineHeight: 'tag/typography/small/lineHeight',
-    paddingHorizontal: 'tag/spacing/small/horizontal',
-    paddingVertical: 'tag/spacing/small/vertical',
-    iconSize: 'tag/icon/small',
-    spacing: 'tag/spacing/small/gap',
+    height: 'component/base/height/xs',
+    fontSize: 'text/body/xs',
+    lineHeight: 'text/body/xs',
+    paddingHorizontal: 'component/base/padding/xs',
+    paddingVertical: 'component/base/padding/xs',
+    iconSize: 'component/base/icon/xs',
+    spacing: 'component/base/gap/xs',
+    borderWidth: 'component/base/border/width/thin',
     borderRadius: {
-      rounded: 'tag/radius/small/rounded',
-      circular: 'tag/radius/small/circular'
+      rounded: 'component/base/radius/sm',
+      circular: 'component/base/radius/pill'
     }
   },
   medium: {
-    height: 'tag/height/medium',
-    fontSize: 'tag/typography/medium/size',
-    lineHeight: 'tag/typography/medium/lineHeight',
-    paddingHorizontal: 'tag/spacing/medium/horizontal',
-    paddingVertical: 'tag/spacing/medium/vertical',
-    iconSize: 'tag/icon/medium',
-    spacing: 'tag/spacing/medium/gap',
+    height: 'component/base/height/sm',
+    fontSize: 'text/body/sm',
+    lineHeight: 'text/body/sm',
+    paddingHorizontal: 'component/base/padding/sm',
+    paddingVertical: 'component/base/padding/sm',
+    iconSize: 'component/base/icon/sm',
+    spacing: 'component/base/gap/sm',
+    borderWidth: 'component/base/border/width/thin',
     borderRadius: {
-      rounded: 'tag/radius/medium/rounded',
-      circular: 'tag/radius/medium/circular'
+      rounded: 'component/base/radius/md',
+      circular: 'component/base/radius/pill'
     }
   },
   large: {
-    height: 'tag/height/large',
-    fontSize: 'tag/typography/large/size',
-    lineHeight: 'tag/typography/large/lineHeight',
-    paddingHorizontal: 'tag/spacing/large/horizontal',
-    paddingVertical: 'tag/spacing/large/vertical',
-    iconSize: 'tag/icon/large',
-    spacing: 'tag/spacing/large/gap',
+    height: 'component/base/height/md',
+    fontSize: 'text/body/md',
+    lineHeight: 'text/body/md',
+    paddingHorizontal: 'component/base/padding/md',
+    paddingVertical: 'component/base/padding/md',
+    iconSize: 'component/base/icon/md',
+    spacing: 'component/base/gap/md',
+    borderWidth: 'component/base/border/width/thin',
     borderRadius: {
-      rounded: 'tag/radius/large/rounded',
-      circular: 'tag/radius/large/circular'
+      rounded: 'component/base/radius/lg',
+      circular: 'component/base/radius/pill'
     }
   }
 } as const;
