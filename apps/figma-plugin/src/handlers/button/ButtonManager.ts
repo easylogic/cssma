@@ -230,12 +230,8 @@ export class ButtonCreator {
       button.strokes = [variables.bindVariable(style.border[state])];
       variables.setBindVariable(button, 'strokeWeight', 'border/width/default');
       button.strokeAlign = 'INSIDE';
-    } else if (variant.variant === 'ghost') {
-      // ghost 변형일 경우 테두리 제거
-      button.strokes = [];
-      button.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0}, opacity: 0 }];
     } else {
-      // filled 변형일 경우 테두리 제거
+      // filled와 ghost 변형일 경우 테두리 제거
       button.strokes = [];
     }
   }

@@ -56,27 +56,27 @@ export const SEMANTIC: Collection = {
     // Colors - Text
     "text/color/default": { Value: "{gray/900/light}" },
     "text/color/secondary": { Value: "{gray/500/light}" },
-    "text/color/disabled": { Value: "{gray/300/light}" },
+    "text/color/disabled": { Value: "{gray/400/light}" },
     "text/color/inverse": { Value: "{gray/50/light}" },
 
     // Colors - Status
     "status/neutral/default": { Value: "{gray/400/light}" },
     "status/neutral/hover": { Value: "{gray/500/light}" },
     "status/neutral/pressed": { Value: "{gray/600/light}" },
-    "status/neutral/ghost/hover": { Value: "{grayalpha/50/light/16}" },
-    "status/neutral/ghost/pressed": { Value: "{grayalpha/50/light/32}" },
+    "status/neutral/ghost/hover": { Value: "{grayalpha/50/light/24}" },
+    "status/neutral/ghost/pressed": { Value: "{grayalpha/50/light/40}" },
 
     "status/secondary/default": { Value: "{blue/200/light}" },
     "status/secondary/hover": { Value: "{blue/300/light}" },
     "status/secondary/pressed": { Value: "{blue/400/light}" },
-    "status/secondary/ghost/hover": { Value: "{bluealpha/500/light/16}" },
-    "status/secondary/ghost/pressed": { Value: "{bluealpha/500/light/32}" },
+    "status/secondary/ghost/hover": { Value: "{bluealpha/500/light/24}" },
+    "status/secondary/ghost/pressed": { Value: "{bluealpha/500/light/40}" },
 
     "status/info/default": { Value: "{blue/500/light}" },
     "status/info/hover": { Value: "{blue/600/light}" },
     "status/info/pressed": { Value: "{blue/700/light}" },
-    "status/info/ghost/hover": { Value: "{bluealpha/500/light/16}" },
-    "status/info/ghost/pressed": { Value: "{bluealpha/500/light/32}" },
+    "status/info/ghost/hover": { Value: "{bluealpha/500/light/24}" },
+    "status/info/ghost/pressed": { Value: "{bluealpha/500/light/40}" },
 
     "status/success/default": { Value: "{green/500/light}" },
     "status/success/hover": { Value: "{green/600/light}" },

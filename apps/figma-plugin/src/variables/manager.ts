@@ -3,6 +3,7 @@ import { PRIMITIVE } from './collections/primitive';
 import { COLOR } from './collections/color';
 import { SEMANTIC } from './collections/semantic';
 import { COMPONENTS } from './collections/components';
+import { hexToRGBA } from '@/utils/color';
 
 class VariablesManager {
   private static instance: VariablesManager;
@@ -49,7 +50,12 @@ class VariablesManager {
         value = firstValue;
         // console.log(`    💡 Resolved as FLOAT: ${value}`);
       } else if (typeof firstValue === 'string') {
-        if (firstValue.includes('{')) {
+        if (firstValue.includes('#')) {
+          // console.log(`    💡 Resolved as COLOR: ${firstValue}`);
+          resolveType = 'COLOR';
+          value = hexToRGBA(firstValue);
+          // console.log(`    💡 Resolved as COLOR: `,value);
+        } else if (firstValue.includes('{')) {
           const realKey = firstValue.replace('{', '').replace('}', '');
           // console.log(`    🔍 Found reference to: ${realKey}`);
           const variable = this.variables[realKey];
@@ -81,7 +87,7 @@ class VariablesManager {
       }
 
       try {
-        // console.log(`    🎯 Creating variable with type: ${resolveType}`);
+        // console.log(`    🎯 Creating variable with type: ${resolveType}`, value);
         const variable = figma.variables.createVariable(name, figmaCollection, resolveType);
         
         // Set values for each mode
@@ -89,7 +95,9 @@ class VariablesManager {
           let value: VariableValue = modeValues[modeName];
 
           if (typeof value === 'string') {
-            if (value.includes('{')) {
+            if (value.includes('#')) {
+              value = hexToRGBA(value);
+            } else if (value.includes('{')) {
               const realKey = value.replace('{', '').replace('}', '');
               value = {
                 type: 'VARIABLE_ALIAS',
@@ -192,9 +200,9 @@ class VariablesManager {
       console.log(`  ✅ Bound variable successfully`);
     } catch (error) {
       console.error(`  ❌ Failed to bind variable`);
-      console.error(`  Error: ${error.message}`);
+        console.error(`  Error: ${error.message}`);
+      }
     }
-  }
 
   bindVariable(name: string): Paint {
     console.log(`🎨 Binding paint variable: ${name}`);
@@ -214,7 +222,7 @@ class VariablesManager {
       return paint;
     } catch (error) {
       console.error(`  ❌ Failed to bind paint variable`);
-      console.error(`  Error: ${error.message}`);
+        console.error(`  Error: ${error.message}`);
       return { type: 'SOLID', color: { r: 0, g: 0, b: 0 } };
     }
   }
