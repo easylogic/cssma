@@ -1,4 +1,4 @@
-import { ButtonVariant, ButtonVariantProps } from '../types/button';
+import { ButtonVariant, ButtonVariantProps, ButtonIconProps } from '../types/button';
 import { BUTTON_SIZES, BUTTON_STYLES, BUTTON_VARIANTS } from '../constants/buttonStyles';
 import { ComponentPageData, createComponentPage, createHandlers } from './createBase';
 import { variables } from '@/variables';
@@ -75,7 +75,7 @@ export const buttonHandlers = {
 
   createInstance: async (variant: ButtonVariantProps, props: { 
     text?: string;
-    icon?: string;
+    icon?: ButtonIconProps;
   } = {}) => {
     const component = ComponentCache.getInstance().getButtonSet()?.defaultVariant.createInstance();
     if (!component) return null;
@@ -96,12 +96,19 @@ export const buttonHandlers = {
     if (props.icon || variant.icon) {
       const iconNode = component.findOne(node => node.name === "Icon") as FrameNode;
       if (iconNode) {
-        // Here you would update the icon's content based on the icon name
-        // For now, we'll just ensure it's visible and has the correct color
         const styleKey = `${variant.type || 'default'}-${variant.variant || 'filled'}` as keyof typeof BUTTON_STYLES;
         const style = BUTTON_STYLES[styleKey];
         const state = variant.state || 'default';
         iconNode.fills = [variables.bindVariable(style.text[state])];
+        
+        // Set icon position if specified
+        const iconPosition = props.icon?.position || variant.icon?.position || 'left';
+        if (iconPosition === 'right') {
+          const parent = iconNode.parent;
+          if (parent) {
+            parent.insertChild(parent.children.length - 1, iconNode);
+          }
+        }
       }
     }
 
@@ -550,6 +557,7 @@ async function addButtonText(button: ComponentNode, size: typeof BUTTON_SIZES[ke
   });
 
   variables.setBindVariable(text, 'fontSize', size.fontSize);
+  variables.setBindVariable(text, 'lineHeight', size.lineHeight);
 
   button.appendChild(text);
 }

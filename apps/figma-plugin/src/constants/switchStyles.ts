@@ -1,217 +1,484 @@
-import { SwitchSizeConfig, SwitchStyleConfig, SwitchVariantProps } from '../types/switch';
+import { SwitchSizeConfig, SwitchStyle, SwitchStyles, SwitchVariantProps } from '../types/switch';
 
 export const SWITCH_SIZES: SwitchSizeConfig = {
   small: {
-    height: 16,
-    width: 28,
-    thumbSize: 12,
-    thumbOffset: 2,
-    fontSize: 14,
-    lineHeight: 20,
-    spacing: 8,
-    labelSpacing: 8,
-    descriptionFontSize: 12,
-    descriptionLineHeight: 16
+    track: {
+      width: 'component/base/height/lg',
+      height: 'component/base/height/xs',
+      borderRadius: 'component/base/radius/pill',
+      borderWidth: 'component/base/border/width/thin'
+    },
+    thumb: {
+      size: 'component/base/height/xs',
+      borderRadius: 'component/base/radius/pill',
+      borderWidth: 'component/base/border/width/thin',
+      offset: 'component/base/gap/2xs'
+    },
+    icon: {
+      size: 'component/base/icon/xs',
+      spacing: 'component/base/gap/2xs'
+    },
+    label: {
+      fontSize: 'text/body/sm',
+      lineHeight: 'text/body/sm',
+      spacing: 'component/base/gap/xs'
+    },
+    spacing: {
+      content: 'component/base/gap/xs',
+      group: 'component/base/gap/sm'
+    }
   },
   medium: {
-    height: 20,
-    width: 36,
-    thumbSize: 16,
-    thumbOffset: 2,
-    fontSize: 16,
-    lineHeight: 24,
-    spacing: 12,
-    labelSpacing: 12,
-    descriptionFontSize: 14,
-    descriptionLineHeight: 20
+    track: {
+      width: 'component/base/height/xl',
+      height: 'component/base/height/sm',
+      borderRadius: 'component/base/radius/pill',
+      borderWidth: 'component/base/border/width/thin'
+    },
+    thumb: {
+      size: 'component/base/height/sm',
+      borderRadius: 'component/base/radius/pill',
+      borderWidth: 'component/base/border/width/thin',
+      offset: 'component/base/gap/xs'
+    },
+    icon: {
+      size: 'component/base/icon/sm',
+      spacing: 'component/base/gap/xs'
+    },
+    label: {
+      fontSize: 'text/body/md',
+      lineHeight: 'text/body/md',
+      spacing: 'component/base/gap/sm'
+    },
+    spacing: {
+      content: 'component/base/gap/sm',
+      group: 'component/base/gap/md'
+    }
   },
   large: {
-    height: 24,
-    width: 44,
-    thumbSize: 20,
-    thumbOffset: 2,
-    fontSize: 18,
-    lineHeight: 28,
-    spacing: 16,
-    labelSpacing: 16,
-    descriptionFontSize: 16,
-    descriptionLineHeight: 24
+    track: {
+      width: 'component/base/height/2xl',
+      height: 'component/base/height/md',
+      borderRadius: 'component/base/radius/pill',
+      borderWidth: 'component/base/border/width/thin'
+    },
+    thumb: {
+      size: 'component/base/height/md',
+      borderRadius: 'component/base/radius/pill',
+      borderWidth: 'component/base/border/width/thin',
+      offset: 'component/base/gap/sm'
+    },
+    icon: {
+      size: 'component/base/icon/md',
+      spacing: 'component/base/gap/sm'
+    },
+    label: {
+      fontSize: 'text/body/lg',
+      lineHeight: 'text/body/lg',
+      spacing: 'component/base/gap/md'
+    },
+    spacing: {
+      content: 'component/base/gap/md',
+      group: 'component/base/gap/lg'
+    }
   }
 } as const;
 
-export const SWITCH_STYLES: SwitchStyleConfig = {
-  default: {
-    track: {
-      unchecked: {
-        default: 'semantic/bg/muted',
-        hover: 'semantic/bg/muted/hover',
-        pressed: 'semantic/bg/muted/pressed',
-        disabled: 'semantic/bg/disabled'
-      },
+const baseStateStyle = {
+  default: 'surface/color/default',
+  hover: 'surface/color/hover',
+  pressed: 'surface/color/pressed',
+  disabled: 'surface/color/disabled'
+};
+
+const baseStyle: SwitchStyle = {
+  track: {
+    background: {
+      unchecked: baseStateStyle,
       checked: {
-        default: 'semantic/action/primary/default',
-        hover: 'semantic/action/primary/hover',
-        pressed: 'semantic/action/primary/pressed',
-        disabled: 'semantic/action/primary/disabled'
+        default: 'status/info/default',
+        hover: 'status/info/hover',
+        pressed: 'status/info/pressed',
+        disabled: 'surface/color/disabled'
       }
     },
-    thumb: {
+    border: {
       unchecked: {
-        default: 'semantic/bg/default',
-        hover: 'semantic/bg/default',
-        pressed: 'semantic/bg/default',
-        disabled: 'semantic/bg/disabled'
+        default: 'surface/color/default',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
       },
       checked: {
-        default: 'semantic/bg/default',
-        hover: 'semantic/bg/default',
-        pressed: 'semantic/bg/default',
-        disabled: 'semantic/bg/disabled'
+        default: 'status/info/default',
+        hover: 'status/info/hover',
+        pressed: 'status/info/pressed',
+        disabled: 'surface/color/disabled'
       }
-    },
-    text: {
-      default: 'semantic/text/default',
-      disabled: 'semantic/text/disabled'
-    },
-    description: {
-      default: 'semantic/text/muted',
-      disabled: 'semantic/text/disabled'
     }
   },
-  success: {
-    track: {
+  thumb: {
+    background: {
       unchecked: {
-        default: 'semantic/bg/muted',
-        hover: 'semantic/bg/muted/hover',
-        pressed: 'semantic/bg/muted/pressed',
-        disabled: 'semantic/bg/disabled'
+        default: 'surface/color/white',
+        hover: 'surface/color/white',
+        pressed: 'surface/color/white',
+        disabled: 'surface/color/disabled'
       },
       checked: {
-        default: 'semantic/status/success/default',
-        hover: 'semantic/status/success/hover',
-        pressed: 'semantic/status/success/pressed',
-        disabled: 'semantic/status/success/disabled'
+        default: 'surface/color/white',
+        hover: 'surface/color/white',
+        pressed: 'surface/color/white',
+        disabled: 'surface/color/disabled'
       }
     },
-    thumb: {
+    border: {
       unchecked: {
-        default: 'semantic/bg/default',
-        hover: 'semantic/bg/default',
-        pressed: 'semantic/bg/default',
-        disabled: 'semantic/bg/disabled'
+        default: 'surface/color/default',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
       },
       checked: {
-        default: 'semantic/bg/default',
-        hover: 'semantic/bg/default',
-        pressed: 'semantic/bg/default',
-        disabled: 'semantic/bg/disabled'
+        default: 'status/info/default',
+        hover: 'status/info/hover',
+        pressed: 'status/info/pressed',
+        disabled: 'surface/color/disabled'
       }
     },
-    text: {
-      default: 'semantic/text/default',
-      disabled: 'semantic/text/disabled'
+    shadow: {
+      unchecked: {
+        default: 'component/base/shadow/sm',
+        hover: 'component/base/shadow/md',
+        pressed: 'component/base/shadow/sm',
+        disabled: 'component/base/shadow/none'
+      },
+      checked: {
+        default: 'component/base/shadow/sm',
+        hover: 'component/base/shadow/md',
+        pressed: 'component/base/shadow/sm',
+        disabled: 'component/base/shadow/none'
+      }
     },
-    description: {
-      default: 'semantic/text/muted',
-      disabled: 'semantic/text/disabled'
+    transform: {
+      unchecked: 'translateX(0)',
+      checked: 'translateX(100%)'
     }
   },
-  error: {
-    track: {
+  icon: {
+    color: {
       unchecked: {
-        default: 'semantic/bg/muted',
-        hover: 'semantic/bg/muted/hover',
-        pressed: 'semantic/bg/muted/pressed',
-        disabled: 'semantic/bg/disabled'
+        default: 'text/color/secondary',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
       },
       checked: {
-        default: 'semantic/status/error/default',
-        hover: 'semantic/status/error/hover',
-        pressed: 'semantic/status/error/pressed',
-        disabled: 'semantic/status/error/disabled'
+        default: 'text/color/inverse',
+        hover: 'text/color/inverse',
+        pressed: 'text/color/inverse',
+        disabled: 'text/color/disabled'
       }
     },
-    thumb: {
-      unchecked: {
-        default: 'semantic/bg/default',
-        hover: 'semantic/bg/default',
-        pressed: 'semantic/bg/default',
-        disabled: 'semantic/bg/disabled'
-      },
-      checked: {
-        default: 'semantic/bg/default',
-        hover: 'semantic/bg/default',
-        pressed: 'semantic/bg/default',
-        disabled: 'semantic/bg/disabled'
+    opacity: {
+      unchecked: '0',
+      checked: '1'
+    },
+    transform: {
+      unchecked: 'scale(0.8)',
+      checked: 'scale(1)'
+    }
+  },
+  label: {
+    color: {
+      default: 'text/color/default',
+      hover: 'text/color/default',
+      pressed: 'text/color/default',
+      disabled: 'text/color/disabled'
+    },
+    opacity: {
+      unchecked: '0.8',
+      checked: '1'
+    }
+  },
+  loading: {
+    spinner: {
+      default: 'text/color/secondary',
+      hover: 'text/color/secondary',
+      pressed: 'text/color/secondary',
+      disabled: 'text/color/disabled'
+    },
+    overlay: {
+      default: 'surface/color/overlay',
+      hover: 'surface/color/overlay',
+      pressed: 'surface/color/overlay',
+      disabled: 'surface/color/overlay'
+    }
+  },
+  transition: {
+    duration: '200ms',
+    timing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    properties: ['transform', 'background', 'border', 'opacity', 'box-shadow']
+  }
+};
+
+export const SWITCH_STYLES: SwitchStyles = {
+  filled: {
+    default: baseStyle,
+    success: {
+      ...baseStyle,
+      track: {
+        ...baseStyle.track,
+        background: {
+          ...baseStyle.track.background,
+          checked: {
+            default: 'status/success/default',
+            hover: 'status/success/hover',
+            pressed: 'status/success/pressed',
+            disabled: 'surface/color/disabled'
+          }
+        },
+        border: {
+          ...baseStyle.track.border,
+          checked: {
+            default: 'status/success/default',
+            hover: 'status/success/hover',
+            pressed: 'status/success/pressed',
+            disabled: 'surface/color/disabled'
+          }
+        }
       }
     },
-    text: {
-      default: 'semantic/text/default',
-      disabled: 'semantic/text/disabled'
+    error: {
+      ...baseStyle,
+      track: {
+        ...baseStyle.track,
+        background: {
+          ...baseStyle.track.background,
+          checked: {
+            default: 'status/error/default',
+            hover: 'status/error/hover',
+            pressed: 'status/error/pressed',
+            disabled: 'surface/color/disabled'
+          }
+        },
+        border: {
+          ...baseStyle.track.border,
+          checked: {
+            default: 'status/error/default',
+            hover: 'status/error/hover',
+            pressed: 'status/error/pressed',
+            disabled: 'surface/color/disabled'
+          }
+        }
+      }
     },
-    description: {
-      default: 'semantic/text/muted',
-      disabled: 'semantic/text/disabled'
+    warning: {
+      ...baseStyle,
+      track: {
+        ...baseStyle.track,
+        background: {
+          ...baseStyle.track.background,
+          checked: {
+            default: 'status/warning/default',
+            hover: 'status/warning/hover',
+            pressed: 'status/warning/pressed',
+            disabled: 'surface/color/disabled'
+          }
+        },
+        border: {
+          ...baseStyle.track.border,
+          checked: {
+            default: 'status/warning/default',
+            hover: 'status/warning/hover',
+            pressed: 'status/warning/pressed',
+            disabled: 'surface/color/disabled'
+          }
+        }
+      }
+    }
+  },
+  outlined: {
+    default: {
+      ...baseStyle,
+      track: {
+        ...baseStyle.track,
+        background: {
+          unchecked: {
+            default: 'surface/color/transparent',
+            hover: 'surface/color/hover',
+            pressed: 'surface/color/pressed',
+            disabled: 'surface/color/disabled'
+          },
+          checked: {
+            default: 'surface/color/transparent',
+            hover: 'surface/color/hover',
+            pressed: 'surface/color/pressed',
+            disabled: 'surface/color/disabled'
+          }
+        }
+      }
+    },
+    success: {
+      ...baseStyle,
+      track: {
+        ...baseStyle.track,
+        background: {
+          unchecked: {
+            default: 'surface/color/transparent',
+            hover: 'surface/color/hover',
+            pressed: 'surface/color/pressed',
+            disabled: 'surface/color/disabled'
+          },
+          checked: {
+            default: 'surface/color/transparent',
+            hover: 'status/success/ghost/hover',
+            pressed: 'status/success/ghost/pressed',
+            disabled: 'surface/color/disabled'
+          }
+        },
+        border: {
+          ...baseStyle.track.border,
+          checked: {
+            default: 'status/success/default',
+            hover: 'status/success/hover',
+            pressed: 'status/success/pressed',
+            disabled: 'surface/color/disabled'
+          }
+        }
+      }
+    },
+    error: {
+      ...baseStyle,
+      track: {
+        ...baseStyle.track,
+        background: {
+          unchecked: {
+            default: 'surface/color/transparent',
+            hover: 'surface/color/hover',
+            pressed: 'surface/color/pressed',
+            disabled: 'surface/color/disabled'
+          },
+          checked: {
+            default: 'surface/color/transparent',
+            hover: 'status/error/ghost/hover',
+            pressed: 'status/error/ghost/pressed',
+            disabled: 'surface/color/disabled'
+          }
+        },
+        border: {
+          ...baseStyle.track.border,
+          checked: {
+            default: 'status/error/default',
+            hover: 'status/error/hover',
+            pressed: 'status/error/pressed',
+            disabled: 'surface/color/disabled'
+          }
+        }
+      }
+    },
+    warning: {
+      ...baseStyle,
+      track: {
+        ...baseStyle.track,
+        background: {
+          unchecked: {
+            default: 'surface/color/transparent',
+            hover: 'surface/color/hover',
+            pressed: 'surface/color/pressed',
+            disabled: 'surface/color/disabled'
+          },
+          checked: {
+            default: 'surface/color/transparent',
+            hover: 'status/warning/ghost/hover',
+            pressed: 'status/warning/ghost/pressed',
+            disabled: 'surface/color/disabled'
+          }
+        },
+        border: {
+          ...baseStyle.track.border,
+          checked: {
+            default: 'status/warning/default',
+            hover: 'status/warning/hover',
+            pressed: 'status/warning/pressed',
+            disabled: 'surface/color/disabled'
+          }
+        }
+      }
     }
   }
 } as const;
 
 export const SWITCH_VARIANTS: SwitchVariantProps[] = [
-  // Basic variants
-  { size: 'small', state: 'default', status: 'default', checked: false },
-  { size: 'small', state: 'default', status: 'default', checked: true },
-  { size: 'medium', state: 'default', status: 'default', checked: false },
-  { size: 'medium', state: 'default', status: 'default', checked: true },
-  { size: 'large', state: 'default', status: 'default', checked: false },
-  { size: 'large', state: 'default', status: 'default', checked: true },
+  // Size variants
+  { size: 'small', variant: 'filled', status: 'default' },
+  { size: 'medium', variant: 'filled', status: 'default' },
+  { size: 'large', variant: 'filled', status: 'default' },
 
-  // States
-  { size: 'medium', state: 'hover', status: 'default', checked: false },
-  { size: 'medium', state: 'hover', status: 'default', checked: true },
-  { size: 'medium', state: 'pressed', status: 'default', checked: false },
-  { size: 'medium', state: 'pressed', status: 'default', checked: true },
-  { size: 'medium', state: 'disabled', status: 'default', checked: false },
-  { size: 'medium', state: 'disabled', status: 'default', checked: true },
+  // Variant styles
+  { size: 'medium', variant: 'filled', status: 'default' },
+  { size: 'medium', variant: 'outlined', status: 'default' },
 
   // Status variants
-  { size: 'medium', state: 'default', status: 'success', checked: true },
-  { size: 'medium', state: 'default', status: 'error', checked: true },
+  { size: 'medium', variant: 'filled', status: 'default' },
+  { size: 'medium', variant: 'filled', status: 'success' },
+  { size: 'medium', variant: 'filled', status: 'error' },
+  { size: 'medium', variant: 'filled', status: 'warning' },
 
-  // With label
-  { size: 'medium', state: 'default', status: 'default', checked: false, label: 'Switch label' },
-  { size: 'medium', state: 'default', status: 'default', checked: true, label: 'Switch label' },
-  { size: 'medium', state: 'default', status: 'default', checked: false, label: 'Switch label', labelPosition: 'left' },
-  { size: 'medium', state: 'default', status: 'default', checked: true, label: 'Switch label', labelPosition: 'left' },
+  // With icons
+  { 
+    size: 'medium', 
+    variant: 'filled', 
+    status: 'default',
+    icon: { name: 'check' }
+  },
 
-  // With description
-  { size: 'medium', state: 'default', status: 'default', checked: false, label: 'Switch label', description: 'Additional description text' },
-  { size: 'medium', state: 'default', status: 'default', checked: true, label: 'Switch label', description: 'Additional description text' },
+  // With labels
+  { 
+    size: 'medium', 
+    variant: 'filled', 
+    status: 'default',
+    label: {
+      checked: 'ON',
+      unchecked: 'OFF',
+      placement: 'end'
+    }
+  },
 
-  // Required
-  { size: 'medium', state: 'default', status: 'default', checked: false, label: 'Required switch', required: true },
-  { size: 'medium', state: 'default', status: 'default', checked: true, label: 'Required switch', required: true },
+  // Loading state
+  { 
+    size: 'medium', 
+    variant: 'filled', 
+    status: 'default',
+    loading: {
+      state: true,
+      indicator: { name: 'spinner' }
+    }
+  },
 
-  // Loading
-  { size: 'medium', state: 'default', status: 'default', checked: false, loading: true },
-  { size: 'medium', state: 'default', status: 'default', checked: true, loading: true },
+  // Disabled state
+  { 
+    size: 'medium', 
+    variant: 'filled', 
+    status: 'default',
+    disabled: true
+  },
 
   // Complex combinations
   { 
-    size: 'medium',
-    state: 'default',
+    size: 'large',
+    variant: 'outlined',
     status: 'success',
-    checked: true,
-    label: 'Feature enabled',
-    description: 'This feature is now active and working correctly',
-    required: true
-  },
-  { 
-    size: 'medium',
-    state: 'default',
-    status: 'error',
-    checked: false,
-    label: 'Feature disabled',
-    description: 'There was an error enabling this feature',
-    required: true
+    icon: { name: 'check' },
+    label: {
+      checked: 'Enabled',
+      unchecked: 'Disabled',
+      placement: 'end'
+    },
+    animation: {
+      duration: 300,
+      timing: 'ease-in-out',
+      properties: ['transform', 'opacity']
+    }
   }
 ] as const; 

@@ -1,221 +1,721 @@
-import { PaginationSizeConfig, PaginationStyleConfig, PaginationVariantProps } from '../types/pagination';
+import { PaginationInputStyle, PaginationItemStyle, PaginationSizeConfig, PaginationStateStyle, PaginationStyle, PaginationStyles, PaginationVariantProps } from '../types/pagination';
 
 export const PAGINATION_SIZES: PaginationSizeConfig = {
   small: {
-    height: 28,
-    minWidth: 28,
-    fontSize: 12,
-    lineHeight: 16,
-    spacing: 4,
-    iconSize: 16,
-    borderRadius: {
-      rounded: 4,
-      circular: 14
+    height: 'component/base/height/xs',
+    fontSize: 'text/body/sm',
+    lineHeight: 'text/body/sm',
+    iconSize: 'component/base/icon/xs',
+    spacing: {
+      item: 'component/base/gap/xs',
+      icon: 'component/base/gap/2xs',
+      section: 'component/base/gap/sm'
+    },
+    padding: {
+      item: {
+        horizontal: 'component/base/padding/xs',
+        vertical: 'component/base/padding/2xs'
+      },
+      input: {
+        horizontal: 'component/base/padding/xs',
+        vertical: 'component/base/padding/2xs'
+      }
+    },
+    borderRadius: 'component/base/radius/sm',
+    borderWidth: 'component/base/border/width/thin',
+    input: {
+      width: '60',
+      height: 'component/base/height/xs'
     }
   },
   medium: {
-    height: 36,
-    minWidth: 36,
-    fontSize: 14,
-    lineHeight: 20,
-    spacing: 6,
-    iconSize: 20,
-    borderRadius: {
-      rounded: 6,
-      circular: 18
+    height: 'component/base/height/sm',
+    fontSize: 'text/body/md',
+    lineHeight: 'text/body/md',
+    iconSize: 'component/base/icon/sm',
+    spacing: {
+      item: 'component/base/gap/sm',
+      icon: 'component/base/gap/xs',
+      section: 'component/base/gap/md'
+    },
+    padding: {
+      item: {
+        horizontal: 'component/base/padding/sm',
+        vertical: 'component/base/padding/xs'
+      },
+      input: {
+        horizontal: 'component/base/padding/sm',
+        vertical: 'component/base/padding/xs'
+      }
+    },
+    borderRadius: 'component/base/radius/md',
+    borderWidth: 'component/base/border/width/thin',
+    input: {
+      width: '70',
+      height: 'component/base/height/sm'
     }
   },
   large: {
-    height: 44,
-    minWidth: 44,
-    fontSize: 16,
-    lineHeight: 24,
-    spacing: 8,
-    iconSize: 24,
-    borderRadius: {
-      rounded: 8,
-      circular: 22
+    height: 'component/base/height/md',
+    fontSize: 'text/body/lg',
+    lineHeight: 'text/body/lg',
+    iconSize: 'component/base/icon/md',
+    spacing: {
+      item: 'component/base/gap/md',
+      icon: 'component/base/gap/sm',
+      section: 'component/base/gap/lg'
+    },
+    padding: {
+      item: {
+        horizontal: 'component/base/padding/md',
+        vertical: 'component/base/padding/sm'
+      },
+      input: {
+        horizontal: 'component/base/padding/md',
+        vertical: 'component/base/padding/sm'
+      }
+    },
+    borderRadius: 'component/base/radius/lg',
+    borderWidth: 'component/base/border/width/thin',
+    input: {
+      width: '80',
+      height: 'component/base/height/md'
     }
   }
 } as const;
 
-export const PAGINATION_STYLES: PaginationStyleConfig = {
+const baseStateStyle: PaginationStateStyle = {
+  default: 'surface/color/default',
+  hover: 'surface/color/hover',
+  pressed: 'surface/color/pressed',
+  disabled: 'surface/color/disabled'
+};
+
+const baseItemStyle: PaginationItemStyle = {
+  background: baseStateStyle,
+  text: {
+    default: 'text/color/default',
+    hover: 'text/color/default',
+    pressed: 'text/color/default',
+    disabled: 'text/color/disabled'
+  },
+  icon: {
+    default: 'text/color/secondary',
+    hover: 'text/color/default',
+    pressed: 'text/color/default',
+    disabled: 'text/color/disabled'
+  },
+  border: {
+    default: 'surface/color/default',
+    hover: 'surface/color/hover',
+    pressed: 'surface/color/pressed',
+    disabled: 'surface/color/disabled'
+  }
+};
+
+const baseInputStyle: PaginationInputStyle = {
+  background: {
+    default: 'surface/color/white',
+    hover: 'surface/color/hover',
+    pressed: 'surface/color/pressed',
+    disabled: 'surface/color/disabled'
+  },
+  text: {
+    default: 'text/color/default',
+    hover: 'text/color/default',
+    pressed: 'text/color/default',
+    disabled: 'text/color/disabled'
+  },
+  placeholder: {
+    default: 'text/color/secondary',
+    hover: 'text/color/secondary',
+    pressed: 'text/color/secondary',
+    disabled: 'text/color/disabled'
+  },
+  border: {
+    default: 'surface/color/default',
+    hover: 'surface/color/hover',
+    pressed: 'surface/color/pressed',
+    disabled: 'surface/color/disabled'
+  }
+};
+
+export const PAGINATION_STYLES: PaginationStyles = {
   filled: {
-    item: {
+    root: {
       background: {
-        default: 'semantic/bg/default',
-        hover: 'semantic/bg/hover',
-        pressed: 'semantic/bg/pressed',
-        selected: 'semantic/action/primary/default',
-        disabled: 'semantic/bg/disabled'
+        default: 'surface/color/white',
+        hover: 'surface/color/white',
+        pressed: 'surface/color/white',
+        disabled: 'surface/color/disabled'
       },
       border: {
-        default: 'semantic/border/default',
-        hover: 'semantic/border/hover',
-        pressed: 'semantic/border/pressed',
-        selected: 'semantic/action/primary/default',
-        disabled: 'semantic/border/disabled'
-      },
-      text: {
-        default: 'semantic/text/default',
-        hover: 'semantic/text/default',
-        pressed: 'semantic/text/default',
-        selected: 'semantic/text/inverse',
-        disabled: 'semantic/text/disabled'
-      },
-      icon: {
-        default: 'semantic/text/muted',
-        hover: 'semantic/text/default',
-        pressed: 'semantic/text/default',
-        selected: 'semantic/text/inverse',
-        disabled: 'semantic/text/disabled'
+        default: 'surface/color/transparent',
+        hover: 'surface/color/transparent',
+        pressed: 'surface/color/transparent',
+        disabled: 'surface/color/transparent'
       }
     },
-    ellipsis: {
-      text: 'semantic/text/muted'
+    item: {
+      default: baseItemStyle,
+      active: {
+        background: {
+          default: 'status/info/default',
+          hover: 'status/info/hover',
+          pressed: 'status/info/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'text/color/inverse',
+          hover: 'text/color/inverse',
+          pressed: 'text/color/inverse',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'text/color/inverse',
+          hover: 'text/color/inverse',
+          pressed: 'text/color/inverse',
+          disabled: 'text/color/disabled'
+        },
+        border: {
+          default: 'status/info/default',
+          hover: 'status/info/hover',
+          pressed: 'status/info/pressed',
+          disabled: 'surface/color/disabled'
+        }
+      },
+      control: baseItemStyle,
+      ellipsis: {
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        },
+        border: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/transparent',
+          pressed: 'surface/color/transparent',
+          disabled: 'surface/color/transparent'
+        }
+      }
+    },
+    input: baseInputStyle,
+    total: {
+      text: {
+        default: 'text/color/default',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      label: {
+        default: 'text/color/secondary',
+        hover: 'text/color/secondary',
+        pressed: 'text/color/secondary',
+        disabled: 'text/color/disabled'
+      }
+    },
+    sizeChanger: {
+      trigger: baseItemStyle,
+      menu: {
+        background: {
+          default: 'surface/color/white',
+          hover: 'surface/color/white',
+          pressed: 'surface/color/white',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'surface/color/default',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        shadow: {
+          default: 'component/base/shadow/sm',
+          hover: 'component/base/shadow/sm',
+          pressed: 'component/base/shadow/sm',
+          disabled: 'component/base/shadow/none'
+        },
+        item: baseItemStyle
+      }
     }
   },
   outlined: {
-    item: {
+    root: {
       background: {
-        default: 'semantic/bg/default',
-        hover: 'semantic/bg/hover',
-        pressed: 'semantic/bg/pressed',
-        selected: 'semantic/bg/default',
-        disabled: 'semantic/bg/disabled'
+        default: 'surface/color/transparent',
+        hover: 'surface/color/transparent',
+        pressed: 'surface/color/transparent',
+        disabled: 'surface/color/transparent'
       },
       border: {
-        default: 'semantic/border/default',
-        hover: 'semantic/border/hover',
-        pressed: 'semantic/border/pressed',
-        selected: 'semantic/action/primary/default',
-        disabled: 'semantic/border/disabled'
-      },
-      text: {
-        default: 'semantic/text/default',
-        hover: 'semantic/text/default',
-        pressed: 'semantic/text/default',
-        selected: 'semantic/action/primary/default',
-        disabled: 'semantic/text/disabled'
-      },
-      icon: {
-        default: 'semantic/text/muted',
-        hover: 'semantic/text/default',
-        pressed: 'semantic/text/default',
-        selected: 'semantic/action/primary/default',
-        disabled: 'semantic/text/disabled'
+        default: 'surface/color/default',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
       }
     },
-    ellipsis: {
-      text: 'semantic/text/muted'
+    item: {
+      default: {
+        ...baseItemStyle,
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        }
+      },
+      active: {
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'status/info/default',
+          hover: 'status/info/hover',
+          pressed: 'status/info/pressed',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'status/info/default',
+          hover: 'status/info/hover',
+          pressed: 'status/info/pressed',
+          disabled: 'text/color/disabled'
+        },
+        border: {
+          default: 'status/info/default',
+          hover: 'status/info/hover',
+          pressed: 'status/info/pressed',
+          disabled: 'surface/color/disabled'
+        }
+      },
+      control: {
+        ...baseItemStyle,
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        }
+      },
+      ellipsis: {
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        },
+        border: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/transparent',
+          pressed: 'surface/color/transparent',
+          disabled: 'surface/color/transparent'
+        }
+      }
+    },
+    input: {
+      ...baseInputStyle,
+      background: {
+        default: 'surface/color/transparent',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      }
+    },
+    total: {
+      text: {
+        default: 'text/color/default',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      label: {
+        default: 'text/color/secondary',
+        hover: 'text/color/secondary',
+        pressed: 'text/color/secondary',
+        disabled: 'text/color/disabled'
+      }
+    },
+    sizeChanger: {
+      trigger: {
+        ...baseItemStyle,
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        }
+      },
+      menu: {
+        background: {
+          default: 'surface/color/white',
+          hover: 'surface/color/white',
+          pressed: 'surface/color/white',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'surface/color/default',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        shadow: {
+          default: 'component/base/shadow/sm',
+          hover: 'component/base/shadow/sm',
+          pressed: 'component/base/shadow/sm',
+          disabled: 'component/base/shadow/none'
+        },
+        item: {
+          ...baseItemStyle,
+          background: {
+            default: 'surface/color/transparent',
+            hover: 'surface/color/hover',
+            pressed: 'surface/color/pressed',
+            disabled: 'surface/color/disabled'
+          },
+          border: {
+            default: 'surface/color/transparent',
+            hover: 'surface/color/transparent',
+            pressed: 'surface/color/transparent',
+            disabled: 'surface/color/transparent'
+          }
+        }
+      }
     }
   },
   ghost: {
-    item: {
+    root: {
       background: {
-        default: 'transparent',
-        hover: 'semantic/bg/hover',
-        pressed: 'semantic/bg/pressed',
-        selected: 'semantic/bg/selected',
-        disabled: 'transparent'
+        default: 'surface/color/transparent',
+        hover: 'surface/color/transparent',
+        pressed: 'surface/color/transparent',
+        disabled: 'surface/color/transparent'
       },
       border: {
-        default: 'transparent',
-        hover: 'transparent',
-        pressed: 'transparent',
-        selected: 'transparent',
-        disabled: 'transparent'
-      },
-      text: {
-        default: 'semantic/text/default',
-        hover: 'semantic/text/default',
-        pressed: 'semantic/text/default',
-        selected: 'semantic/action/primary/default',
-        disabled: 'semantic/text/disabled'
-      },
-      icon: {
-        default: 'semantic/text/muted',
-        hover: 'semantic/text/default',
-        pressed: 'semantic/text/default',
-        selected: 'semantic/action/primary/default',
-        disabled: 'semantic/text/disabled'
+        default: 'surface/color/transparent',
+        hover: 'surface/color/transparent',
+        pressed: 'surface/color/transparent',
+        disabled: 'surface/color/transparent'
       }
     },
-    ellipsis: {
-      text: 'semantic/text/muted'
+    item: {
+      default: {
+        ...baseItemStyle,
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/transparent',
+          pressed: 'surface/color/transparent',
+          disabled: 'surface/color/transparent'
+        }
+      },
+      active: {
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'status/info/default',
+          hover: 'status/info/hover',
+          pressed: 'status/info/pressed',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'status/info/default',
+          hover: 'status/info/hover',
+          pressed: 'status/info/pressed',
+          disabled: 'text/color/disabled'
+        },
+        border: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/transparent',
+          pressed: 'surface/color/transparent',
+          disabled: 'surface/color/transparent'
+        }
+      },
+      control: {
+        ...baseItemStyle,
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/transparent',
+          pressed: 'surface/color/transparent',
+          disabled: 'surface/color/transparent'
+        }
+      },
+      ellipsis: {
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        },
+        border: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/transparent',
+          pressed: 'surface/color/transparent',
+          disabled: 'surface/color/transparent'
+        }
+      }
+    },
+    input: {
+      ...baseInputStyle,
+      background: {
+        default: 'surface/color/transparent',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'surface/color/transparent',
+        hover: 'surface/color/transparent',
+        pressed: 'surface/color/transparent',
+        disabled: 'surface/color/transparent'
+      }
+    },
+    total: {
+      text: {
+        default: 'text/color/default',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      label: {
+        default: 'text/color/secondary',
+        hover: 'text/color/secondary',
+        pressed: 'text/color/secondary',
+        disabled: 'text/color/disabled'
+      }
+    },
+    sizeChanger: {
+      trigger: {
+        ...baseItemStyle,
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/transparent',
+          pressed: 'surface/color/transparent',
+          disabled: 'surface/color/transparent'
+        }
+      },
+      menu: {
+        background: {
+          default: 'surface/color/white',
+          hover: 'surface/color/white',
+          pressed: 'surface/color/white',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'surface/color/default',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        shadow: {
+          default: 'component/base/shadow/sm',
+          hover: 'component/base/shadow/sm',
+          pressed: 'component/base/shadow/sm',
+          disabled: 'component/base/shadow/none'
+        },
+        item: {
+          ...baseItemStyle,
+          background: {
+            default: 'surface/color/transparent',
+            hover: 'surface/color/hover',
+            pressed: 'surface/color/pressed',
+            disabled: 'surface/color/disabled'
+          },
+          border: {
+            default: 'surface/color/transparent',
+            hover: 'surface/color/transparent',
+            pressed: 'surface/color/transparent',
+            disabled: 'surface/color/transparent'
+          }
+        }
+      }
     }
   }
 } as const;
 
 export const PAGINATION_VARIANTS: PaginationVariantProps[] = [
-  // Basic variants
-  { size: 'small', variant: 'filled', shape: 'rounded', currentPage: 1, totalPages: 5 },
-  { size: 'small', variant: 'outlined', shape: 'rounded', currentPage: 1, totalPages: 5 },
-  { size: 'small', variant: 'ghost', shape: 'rounded', currentPage: 1, totalPages: 5 },
-  { size: 'medium', variant: 'filled', shape: 'rounded', currentPage: 1, totalPages: 5 },
-  { size: 'medium', variant: 'outlined', shape: 'rounded', currentPage: 1, totalPages: 5 },
-  { size: 'medium', variant: 'ghost', shape: 'rounded', currentPage: 1, totalPages: 5 },
-  { size: 'large', variant: 'filled', shape: 'rounded', currentPage: 1, totalPages: 5 },
-  { size: 'large', variant: 'outlined', shape: 'rounded', currentPage: 1, totalPages: 5 },
-  { size: 'large', variant: 'ghost', shape: 'rounded', currentPage: 1, totalPages: 5 },
+  // Size variants
+  { 
+    size: 'small',
+    variant: 'filled',
+    total: 50,
+    current: 1
+  },
+  { 
+    size: 'medium',
+    variant: 'filled',
+    total: 50,
+    current: 1
+  },
+  { 
+    size: 'large',
+    variant: 'filled',
+    total: 50,
+    current: 1
+  },
 
-  // Shape variants
-  { size: 'medium', variant: 'filled', shape: 'rounded', currentPage: 1, totalPages: 5 },
-  { size: 'medium', variant: 'filled', shape: 'circular', currentPage: 1, totalPages: 5 },
+  // Variant styles
+  { 
+    size: 'medium',
+    variant: 'filled',
+    total: 50,
+    current: 1
+  },
+  { 
+    size: 'medium',
+    variant: 'outlined',
+    total: 50,
+    current: 1
+  },
+  { 
+    size: 'medium',
+    variant: 'ghost',
+    total: 50,
+    current: 1
+  },
 
-  // With different page counts
-  { size: 'medium', variant: 'filled', shape: 'rounded', currentPage: 1, totalPages: 3 },
-  { size: 'medium', variant: 'filled', shape: 'rounded', currentPage: 1, totalPages: 5 },
-  { size: 'medium', variant: 'filled', shape: 'rounded', currentPage: 1, totalPages: 10 },
+  // With size changer
+  { 
+    size: 'medium',
+    variant: 'filled',
+    total: 50,
+    current: 1,
+    showSizeChanger: true,
+    sizeChanger: {
+      options: [10, 20, 50, 100],
+      value: 10
+    }
+  },
 
-  // With different current pages
-  { size: 'medium', variant: 'filled', shape: 'rounded', currentPage: 1, totalPages: 5 },
-  { size: 'medium', variant: 'filled', shape: 'rounded', currentPage: 3, totalPages: 5 },
-  { size: 'medium', variant: 'filled', shape: 'rounded', currentPage: 5, totalPages: 5 },
+  // With quick jumper
+  { 
+    size: 'medium',
+    variant: 'filled',
+    total: 50,
+    current: 1,
+    showQuickJumper: true,
+    quickJumper: {
+      placeholder: 'Go to'
+    }
+  },
 
-  // With different sibling counts
-  { size: 'medium', variant: 'filled', shape: 'rounded', currentPage: 5, totalPages: 10, siblingCount: 0 },
-  { size: 'medium', variant: 'filled', shape: 'rounded', currentPage: 5, totalPages: 10, siblingCount: 1 },
-  { size: 'medium', variant: 'filled', shape: 'rounded', currentPage: 5, totalPages: 10, siblingCount: 2 },
+  // With total
+  { 
+    size: 'medium',
+    variant: 'filled',
+    total: 50,
+    current: 1,
+    showTotal: true,
+    totalFormatter: {
+      template: 'Total {total} items',
+      formatter: (total, range) => `${range[0]}-${range[1]} of ${total} items`
+    }
+  },
 
-  // With different boundary counts
-  { size: 'medium', variant: 'filled', shape: 'rounded', currentPage: 5, totalPages: 10, boundaryCount: 0 },
-  { size: 'medium', variant: 'filled', shape: 'rounded', currentPage: 5, totalPages: 10, boundaryCount: 1 },
-  { size: 'medium', variant: 'filled', shape: 'rounded', currentPage: 5, totalPages: 10, boundaryCount: 2 },
-
-  // With/without navigation buttons
-  { size: 'medium', variant: 'filled', shape: 'rounded', currentPage: 1, totalPages: 5, showFirstButton: false, showLastButton: false },
-  { size: 'medium', variant: 'filled', shape: 'rounded', currentPage: 1, totalPages: 5, showPrevButton: false, showNextButton: false },
-  { size: 'medium', variant: 'filled', shape: 'rounded', currentPage: 1, totalPages: 5, showFirstButton: true, showLastButton: true, showPrevButton: true, showNextButton: true },
+  // Simple mode
+  { 
+    size: 'medium',
+    variant: 'filled',
+    total: 50,
+    current: 1,
+    simple: true
+  },
 
   // Disabled state
-  { size: 'medium', variant: 'filled', shape: 'rounded', currentPage: 1, totalPages: 5, disabled: true },
+  { 
+    size: 'medium',
+    variant: 'filled',
+    total: 50,
+    current: 1,
+    disabled: true
+  },
 
   // Complex combinations
   { 
     size: 'medium',
-    variant: 'filled',
-    shape: 'circular',
-    currentPage: 5,
-    totalPages: 10,
-    siblingCount: 1,
-    boundaryCount: 1,
-    showFirstButton: true,
-    showLastButton: true,
-    showPrevButton: true,
-    showNextButton: true
-  },
-  { 
-    size: 'large',
     variant: 'outlined',
-    shape: 'rounded',
-    currentPage: 5,
-    totalPages: 20,
-    siblingCount: 2,
-    boundaryCount: 2,
-    showFirstButton: true,
-    showLastButton: true,
-    showPrevButton: true,
-    showNextButton: true
+    total: 100,
+    current: 5,
+    showSizeChanger: true,
+    sizeChanger: {
+      options: [10, 20, 50, 100],
+      value: 20
+    },
+    showQuickJumper: true,
+    quickJumper: {
+      placeholder: 'Jump to'
+    },
+    showTotal: true,
+    totalFormatter: {
+      template: '{range[0]}-{range[1]} of {total} items',
+      formatter: (total, range) => `${range[0]}-${range[1]} of ${total} items`
+    },
+    align: 'center',
+    responsive: true,
+    showLessItems: true,
+    locale: {
+      items_per_page: 'items / page',
+      jump_to: 'Go to',
+      page: 'Page'
+    }
   }
 ] as const; 

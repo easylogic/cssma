@@ -25,6 +25,7 @@ export interface CreateShapeOptions {
 export interface CreateTextOptions extends CreateShapeOptions {
   text: string;
   fontSize?: number;
+  fontWeight?: number;
   fontName?: FontName;
   fills?: Paint[];
   textAlignHorizontal?: "LEFT" | "CENTER" | "RIGHT" | "JUSTIFIED";

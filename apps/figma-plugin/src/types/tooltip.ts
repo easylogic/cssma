@@ -6,25 +6,7 @@ export type TooltipPlacement = 'top' | 'right' | 'bottom' | 'left' |
   'leftTop' | 'leftBottom' | 'rightTop' | 'rightBottom';
 
 export type TooltipTheme = 'light' | 'dark' | 'custom';
-export type TooltipDimension = 'small' | 'medium' | 'large';
 export type TooltipTrigger = 'hover' | 'focus' | 'click' | 'manual';
-
-export interface TooltipVariantProps {
-  size?: TooltipSize;
-  variant?: TooltipVariant;
-  status?: TooltipStatus;
-  placement?: TooltipPlacement;
-  title?: string;
-  content?: string;
-  arrow?: boolean;
-  trigger?: 'hover' | 'click' | 'focus' | 'contextMenu';
-  open?: boolean;
-  defaultOpen?: boolean;
-  mouseEnterDelay?: number;
-  mouseLeaveDelay?: number;
-  ariaLabel?: string;
-  role?: string;
-}
 
 export type TooltipSizeConfig = {
   [key in TooltipSize]: {
@@ -66,8 +48,25 @@ export interface TooltipStyle {
 }
 
 export type TooltipStyles = {
-  [key: string]: TooltipStyle;
+  [key in TooltipTheme]: TooltipStyle;
 };
+
+export interface TooltipVariantProps {
+  size?: TooltipSize;
+  variant?: TooltipVariant;
+  status?: TooltipStatus;
+  placement?: TooltipPlacement;
+  title?: string;
+  content?: string;
+  arrow?: boolean;
+  trigger?: TooltipTrigger;
+  open?: boolean;
+  defaultOpen?: boolean;
+  mouseEnterDelay?: number;
+  mouseLeaveDelay?: number;
+  ariaLabel?: string;
+  role?: string;
+}
 
 export interface TooltipInstance {
   title: string;

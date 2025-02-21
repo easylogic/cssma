@@ -1,202 +1,693 @@
-import { ProgressSizeConfig, ProgressStyleConfig, ProgressVariantProps } from '../types/progress';
+import { ProgressSizeConfig, ProgressStyle, ProgressStyles, ProgressVariantProps } from '../types/progress';
 
 export const PROGRESS_SIZES: ProgressSizeConfig = {
   small: {
-    fontSize: 12,
-    lineHeight: 16,
-    spacing: 8,
-    labelSpacing: 4,
-    descriptionFontSize: 11,
-    descriptionLineHeight: 14,
+    fontSize: 'text/body/sm',
+    lineHeight: 'text/body/sm',
+    spacing: {
+      label: 'component/base/gap/xs',
+      icon: 'component/base/gap/2xs',
+      extra: 'component/base/gap/xs'
+    },
     linear: {
-      height: 4,
-      borderRadius: 2
+      height: 'component/base/height/xs',
+      borderRadius: 'component/base/radius/sm',
+      steps: {
+        size: 'component/base/gap/xs',
+        gap: 'component/base/gap/2xs'
+      }
     },
     circular: {
-      size: 16,
-      thickness: 2,
-      gap: 2
+      size: 'component/base/height/lg',
+      thickness: 'component/base/border/width/thin',
+      gap: 'component/base/gap/xs'
+    },
+    label: {
+      fontSize: 'text/body/xs',
+      lineHeight: 'text/body/xs'
+    },
+    description: {
+      fontSize: 'text/body/2xs',
+      lineHeight: 'text/body/2xs'
     }
   },
   medium: {
-    fontSize: 14,
-    lineHeight: 20,
-    spacing: 12,
-    labelSpacing: 6,
-    descriptionFontSize: 12,
-    descriptionLineHeight: 16,
+    fontSize: 'text/body/md',
+    lineHeight: 'text/body/md',
+    spacing: {
+      label: 'component/base/gap/sm',
+      icon: 'component/base/gap/xs',
+      extra: 'component/base/gap/sm'
+    },
     linear: {
-      height: 6,
-      borderRadius: 3
+      height: 'component/base/height/sm',
+      borderRadius: 'component/base/radius/md',
+      steps: {
+        size: 'component/base/gap/sm',
+        gap: 'component/base/gap/xs'
+      }
     },
     circular: {
-      size: 24,
-      thickness: 3,
-      gap: 3
+      size: 'component/base/height/xl',
+      thickness: 'component/base/border/width/thick',
+      gap: 'component/base/gap/sm'
+    },
+    label: {
+      fontSize: 'text/body/sm',
+      lineHeight: 'text/body/sm'
+    },
+    description: {
+      fontSize: 'text/body/xs',
+      lineHeight: 'text/body/xs'
     }
   },
   large: {
-    fontSize: 16,
-    lineHeight: 24,
-    spacing: 16,
-    labelSpacing: 8,
-    descriptionFontSize: 14,
-    descriptionLineHeight: 20,
+    fontSize: 'text/body/lg',
+    lineHeight: 'text/body/lg',
+    spacing: {
+      label: 'component/base/gap/md',
+      icon: 'component/base/gap/sm',
+      extra: 'component/base/gap/md'
+    },
     linear: {
-      height: 8,
-      borderRadius: 4
+      height: 'component/base/height/md',
+      borderRadius: 'component/base/radius/lg',
+      steps: {
+        size: 'component/base/gap/md',
+        gap: 'component/base/gap/sm'
+      }
     },
     circular: {
-      size: 32,
-      thickness: 4,
-      gap: 4
+      size: 'component/base/height/2xl',
+      thickness: 'component/base/border/width/thicker',
+      gap: 'component/base/gap/md'
+    },
+    label: {
+      fontSize: 'text/body/md',
+      lineHeight: 'text/body/md'
+    },
+    description: {
+      fontSize: 'text/body/sm',
+      lineHeight: 'text/body/sm'
     }
   }
 } as const;
 
-export const PROGRESS_STYLES: ProgressStyleConfig = {
-  default: {
+const baseStateStyle: ProgressStateStyle = {
+  default: 'surface/color/default',
+  active: 'surface/color/hover',
+  disabled: 'surface/color/disabled'
+};
+
+const baseTrackStyle: ProgressTrackStyle = {
+  background: baseStateStyle,
+  border: {
+    default: 'surface/color/default',
+    active: 'surface/color/hover',
+    disabled: 'surface/color/disabled'
+  }
+};
+
+const baseIndicatorStyle: ProgressIndicatorStyle = {
+  background: {
+    default: 'status/info/default',
+    active: 'status/info/hover',
+    disabled: 'surface/color/disabled'
+  },
+  border: {
+    default: 'status/info/default',
+    active: 'status/info/hover',
+    disabled: 'surface/color/disabled'
+  }
+};
+
+const baseTextStyle: ProgressTextStyle = {
+  color: {
+    default: 'text/color/default',
+    active: 'text/color/default',
+    disabled: 'text/color/disabled'
+  }
+};
+
+export const PROGRESS_STYLES: ProgressStyles = {
+  line: {
+    root: {
+      background: {
+        default: 'surface/color/white',
+        active: 'surface/color/white',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'surface/color/transparent',
+        active: 'surface/color/transparent',
+        disabled: 'surface/color/transparent'
+      }
+    },
     track: {
-      default: 'semantic/bg/muted',
-      disabled: 'semantic/bg/disabled'
+      default: baseTrackStyle,
+      success: {
+        background: {
+          default: 'surface/color/default',
+          active: 'surface/color/hover',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'status/success/default',
+          active: 'status/success/hover',
+          disabled: 'surface/color/disabled'
+        }
+      },
+      error: {
+        background: {
+          default: 'surface/color/default',
+          active: 'surface/color/hover',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'status/error/default',
+          active: 'status/error/hover',
+          disabled: 'surface/color/disabled'
+        }
+      },
+      warning: {
+        background: {
+          default: 'surface/color/default',
+          active: 'surface/color/hover',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'status/warning/default',
+          active: 'status/warning/hover',
+          disabled: 'surface/color/disabled'
+        }
+      }
     },
     indicator: {
-      default: 'semantic/action/primary/default',
-      disabled: 'semantic/action/primary/disabled'
+      default: baseIndicatorStyle,
+      success: {
+        background: {
+          default: 'status/success/default',
+          active: 'status/success/hover',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'status/success/default',
+          active: 'status/success/hover',
+          disabled: 'surface/color/disabled'
+        }
+      },
+      error: {
+        background: {
+          default: 'status/error/default',
+          active: 'status/error/hover',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'status/error/default',
+          active: 'status/error/hover',
+          disabled: 'surface/color/disabled'
+        }
+      },
+      warning: {
+        background: {
+          default: 'status/warning/default',
+          active: 'status/warning/hover',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'status/warning/default',
+          active: 'status/warning/hover',
+          disabled: 'surface/color/disabled'
+        }
+      }
     },
     text: {
-      default: 'semantic/text/default',
-      disabled: 'semantic/text/disabled'
+      value: baseTextStyle,
+      label: baseTextStyle,
+      description: {
+        color: {
+          default: 'text/color/secondary',
+          active: 'text/color/secondary',
+          disabled: 'text/color/disabled'
+        }
+      }
     },
-    description: {
-      default: 'semantic/text/muted',
-      disabled: 'semantic/text/disabled'
+    steps: {
+      active: {
+        default: 'status/info/default',
+        active: 'status/info/hover',
+        disabled: 'surface/color/disabled'
+      },
+      completed: {
+        default: 'status/success/default',
+        active: 'status/success/hover',
+        disabled: 'surface/color/disabled'
+      },
+      remaining: {
+        default: 'surface/color/default',
+        active: 'surface/color/hover',
+        disabled: 'surface/color/disabled'
+      }
     }
   },
-  success: {
+  circle: {
+    root: {
+      background: {
+        default: 'surface/color/white',
+        active: 'surface/color/white',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'surface/color/transparent',
+        active: 'surface/color/transparent',
+        disabled: 'surface/color/transparent'
+      }
+    },
     track: {
-      default: 'semantic/bg/muted',
-      disabled: 'semantic/bg/disabled'
+      default: baseTrackStyle,
+      success: {
+        background: {
+          default: 'surface/color/default',
+          active: 'surface/color/hover',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'status/success/default',
+          active: 'status/success/hover',
+          disabled: 'surface/color/disabled'
+        }
+      },
+      error: {
+        background: {
+          default: 'surface/color/default',
+          active: 'surface/color/hover',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'status/error/default',
+          active: 'status/error/hover',
+          disabled: 'surface/color/disabled'
+        }
+      },
+      warning: {
+        background: {
+          default: 'surface/color/default',
+          active: 'surface/color/hover',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'status/warning/default',
+          active: 'status/warning/hover',
+          disabled: 'surface/color/disabled'
+        }
+      }
     },
     indicator: {
-      default: 'semantic/status/success/default',
-      disabled: 'semantic/status/success/disabled'
+      default: {
+        ...baseIndicatorStyle,
+        gradient: {
+          from: 'status/info/default',
+          to: 'status/info/hover',
+          angle: 90
+        }
+      },
+      success: {
+        background: {
+          default: 'status/success/default',
+          active: 'status/success/hover',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'status/success/default',
+          active: 'status/success/hover',
+          disabled: 'surface/color/disabled'
+        },
+        gradient: {
+          from: 'status/success/default',
+          to: 'status/success/hover',
+          angle: 90
+        }
+      },
+      error: {
+        background: {
+          default: 'status/error/default',
+          active: 'status/error/hover',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'status/error/default',
+          active: 'status/error/hover',
+          disabled: 'surface/color/disabled'
+        },
+        gradient: {
+          from: 'status/error/default',
+          to: 'status/error/hover',
+          angle: 90
+        }
+      },
+      warning: {
+        background: {
+          default: 'status/warning/default',
+          active: 'status/warning/hover',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'status/warning/default',
+          active: 'status/warning/hover',
+          disabled: 'surface/color/disabled'
+        },
+        gradient: {
+          from: 'status/warning/default',
+          to: 'status/warning/hover',
+          angle: 90
+        }
+      }
     },
     text: {
-      default: 'semantic/text/default',
-      disabled: 'semantic/text/disabled'
-    },
-    description: {
-      default: 'semantic/text/muted',
-      disabled: 'semantic/text/disabled'
+      value: {
+        color: {
+          default: 'text/color/default',
+          active: 'text/color/default',
+          disabled: 'text/color/disabled'
+        },
+        background: {
+          default: 'surface/color/white',
+          active: 'surface/color/white',
+          disabled: 'surface/color/disabled'
+        }
+      },
+      label: baseTextStyle,
+      description: {
+        color: {
+          default: 'text/color/secondary',
+          active: 'text/color/secondary',
+          disabled: 'text/color/disabled'
+        }
+      }
     }
   },
-  warning: {
+  dashboard: {
+    root: {
+      background: {
+        default: 'surface/color/white',
+        active: 'surface/color/white',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'surface/color/transparent',
+        active: 'surface/color/transparent',
+        disabled: 'surface/color/transparent'
+      }
+    },
     track: {
-      default: 'semantic/bg/muted',
-      disabled: 'semantic/bg/disabled'
+      default: baseTrackStyle,
+      success: {
+        background: {
+          default: 'surface/color/default',
+          active: 'surface/color/hover',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'status/success/default',
+          active: 'status/success/hover',
+          disabled: 'surface/color/disabled'
+        }
+      },
+      error: {
+        background: {
+          default: 'surface/color/default',
+          active: 'surface/color/hover',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'status/error/default',
+          active: 'status/error/hover',
+          disabled: 'surface/color/disabled'
+        }
+      },
+      warning: {
+        background: {
+          default: 'surface/color/default',
+          active: 'surface/color/hover',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'status/warning/default',
+          active: 'status/warning/hover',
+          disabled: 'surface/color/disabled'
+        }
+      }
     },
     indicator: {
-      default: 'semantic/status/warning/default',
-      disabled: 'semantic/status/warning/disabled'
+      default: {
+        ...baseIndicatorStyle,
+        gradient: {
+          from: 'status/info/default',
+          to: 'status/info/hover',
+          angle: -90
+        }
+      },
+      success: {
+        background: {
+          default: 'status/success/default',
+          active: 'status/success/hover',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'status/success/default',
+          active: 'status/success/hover',
+          disabled: 'surface/color/disabled'
+        },
+        gradient: {
+          from: 'status/success/default',
+          to: 'status/success/hover',
+          angle: -90
+        }
+      },
+      error: {
+        background: {
+          default: 'status/error/default',
+          active: 'status/error/hover',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'status/error/default',
+          active: 'status/error/hover',
+          disabled: 'surface/color/disabled'
+        },
+        gradient: {
+          from: 'status/error/default',
+          to: 'status/error/hover',
+          angle: -90
+        }
+      },
+      warning: {
+        background: {
+          default: 'status/warning/default',
+          active: 'status/warning/hover',
+          disabled: 'surface/color/disabled'
+        },
+        border: {
+          default: 'status/warning/default',
+          active: 'status/warning/hover',
+          disabled: 'surface/color/disabled'
+        },
+        gradient: {
+          from: 'status/warning/default',
+          to: 'status/warning/hover',
+          angle: -90
+        }
+      }
     },
     text: {
-      default: 'semantic/text/default',
-      disabled: 'semantic/text/disabled'
-    },
-    description: {
-      default: 'semantic/text/muted',
-      disabled: 'semantic/text/disabled'
-    }
-  },
-  error: {
-    track: {
-      default: 'semantic/bg/muted',
-      disabled: 'semantic/bg/disabled'
-    },
-    indicator: {
-      default: 'semantic/status/error/default',
-      disabled: 'semantic/status/error/disabled'
-    },
-    text: {
-      default: 'semantic/text/default',
-      disabled: 'semantic/text/disabled'
-    },
-    description: {
-      default: 'semantic/text/muted',
-      disabled: 'semantic/text/disabled'
+      value: {
+        color: {
+          default: 'text/color/default',
+          active: 'text/color/default',
+          disabled: 'text/color/disabled'
+        },
+        background: {
+          default: 'surface/color/white',
+          active: 'surface/color/white',
+          disabled: 'surface/color/disabled'
+        }
+      },
+      label: baseTextStyle,
+      description: {
+        color: {
+          default: 'text/color/secondary',
+          active: 'text/color/secondary',
+          disabled: 'text/color/disabled'
+        }
+      }
     }
   }
 } as const;
 
 export const PROGRESS_VARIANTS: ProgressVariantProps[] = [
-  // Linear variants - Basic
-  { variant: 'linear', size: 'small', value: 50 },
-  { variant: 'linear', size: 'medium', value: 50 },
-  { variant: 'linear', size: 'large', value: 50 },
-
-  // Circular variants - Basic
-  { variant: 'circular', size: 'small', value: 50 },
-  { variant: 'circular', size: 'medium', value: 50 },
-  { variant: 'circular', size: 'large', value: 50 },
-
-  // Status variants - Linear
-  { variant: 'linear', size: 'medium', status: 'default', value: 50 },
-  { variant: 'linear', size: 'medium', status: 'success', value: 100 },
-  { variant: 'linear', size: 'medium', status: 'warning', value: 70 },
-  { variant: 'linear', size: 'medium', status: 'error', value: 30 },
-
-  // Status variants - Circular
-  { variant: 'circular', size: 'medium', status: 'default', value: 50 },
-  { variant: 'circular', size: 'medium', status: 'success', value: 100 },
-  { variant: 'circular', size: 'medium', status: 'warning', value: 70 },
-  { variant: 'circular', size: 'medium', status: 'error', value: 30 },
-
-  // Indeterminate variants
-  { variant: 'linear', size: 'medium', indeterminate: true },
-  { variant: 'circular', size: 'medium', indeterminate: true },
-
-  // With label
-  { variant: 'linear', size: 'medium', value: 50, label: 'Loading...' },
-  { variant: 'circular', size: 'medium', value: 50, label: 'Loading...' },
-
-  // With description
+  // Size variants
   { 
-    variant: 'linear',
-    size: 'medium',
+    size: 'small',
+    variant: 'line',
     value: 50,
-    label: 'Uploading files',
-    description: '3 of 6 files uploaded'
+    showValue: true
   },
   { 
-    variant: 'circular',
     size: 'medium',
+    variant: 'line',
     value: 50,
-    label: 'Processing data',
-    description: 'This may take a few minutes'
+    showValue: true
+  },
+  { 
+    size: 'large',
+    variant: 'line',
+    value: 50,
+    showValue: true
   },
 
-  // With value display
-  { variant: 'linear', size: 'medium', value: 50, showValue: true },
-  { variant: 'circular', size: 'medium', value: 50, showValue: true },
+  // Variant styles
+  { 
+    size: 'medium',
+    variant: 'line',
+    value: 50,
+    showValue: true
+  },
+  { 
+    size: 'medium',
+    variant: 'circle',
+    value: 50,
+    showValue: true
+  },
+  { 
+    size: 'medium',
+    variant: 'dashboard',
+    value: 50,
+    showValue: true,
+    gapDegree: 75,
+    gapPosition: 'bottom'
+  },
+
+  // Status variants
+  { 
+    size: 'medium',
+    variant: 'line',
+    status: 'default',
+    value: 50,
+    showValue: true
+  },
+  { 
+    size: 'medium',
+    variant: 'line',
+    status: 'success',
+    value: 100,
+    showValue: true
+  },
+  { 
+    size: 'medium',
+    variant: 'line',
+    status: 'error',
+    value: 30,
+    showValue: true
+  },
+  { 
+    size: 'medium',
+    variant: 'line',
+    status: 'warning',
+    value: 70,
+    showValue: true
+  },
+
+  // With steps
+  { 
+    size: 'medium',
+    variant: 'line',
+    value: 60,
+    showValue: true,
+    steps: {
+      count: 5,
+      current: 3,
+      size: 20,
+      gap: 4,
+      clickable: true
+    }
+  },
+
+  // With format
+  { 
+    size: 'medium',
+    variant: 'circle',
+    value: 75.5,
+    showValue: true,
+    format: {
+      type: 'custom',
+      formatter: (value) => `${value.toFixed(1)}%`,
+      prefix: '↑',
+      suffix: '/'
+    }
+  },
+
+  // With gradient
+  { 
+    size: 'medium',
+    variant: 'circle',
+    value: 50,
+    showValue: true,
+    gradient: {
+      from: 'status/info/default',
+      to: 'status/success/default',
+      angle: 90,
+      stops: [
+        { offset: 0, color: 'status/info/default' },
+        { offset: 100, color: 'status/success/default' }
+      ]
+    }
+  },
+
+  // With success segment
+  { 
+    size: 'medium',
+    variant: 'line',
+    value: 70,
+    showValue: true,
+    success: {
+      value: 30,
+      icon: { name: 'check' },
+      color: 'status/success/default'
+    }
+  },
+
+  // Indeterminate state
+  { 
+    size: 'medium',
+    variant: 'line',
+    indeterminate: true,
+    animated: true
+  },
 
   // Complex combinations
   { 
-    variant: 'linear',
     size: 'large',
+    variant: 'dashboard',
+    value: 85,
+    total: 100,
+    showValue: true,
     status: 'success',
-    value: 100,
-    label: 'Upload complete',
-    description: 'All files have been successfully uploaded',
-    showValue: true
-  },
-  { 
-    variant: 'circular',
-    size: 'large',
-    status: 'error',
-    value: 30,
-    label: 'Upload failed',
-    description: 'Please check your connection and try again',
-    showValue: true
+    label: 'Progress',
+    description: 'Detailed description',
+    icon: { name: 'chart' },
+    strokeLinecap: 'round',
+    gapDegree: 75,
+    gapPosition: 'bottom',
+    format: {
+      type: 'custom',
+      formatter: (value, total) => `${value}/${total}`,
+      prefix: '↑'
+    },
+    gradient: {
+      from: 'status/success/default',
+      to: 'status/success/hover',
+      angle: -90
+    },
+    animated: true
   }
 ] as const; 

@@ -176,6 +176,7 @@ export const PRIMITIVE: Collection = {
     "radius/full": { Value: 9999 },
 
     // Spacing
+    "spacing/none": { Value: 0 },
     "spacing/2": { Value: 2 },
     "spacing/4": { Value: 4 },
     "spacing/8": { Value: 8 },

@@ -9,6 +9,8 @@
  * - Variant combinations for all possible states
  */
 
+import { IconSize, IconVariant } from "./icon";
+
 // --------------------------------------------------------
 // Core Types
 // --------------------------------------------------------
@@ -17,54 +19,42 @@ export type ButtonSize = 'small' | 'medium' | 'large';
 export type ButtonVariant = 'filled' | 'outlined' | 'ghost';
 export type ButtonType = 'default' | 'primary' | 'neutral' | 'secondary' | 'danger';
 export type ButtonState = 'default' | 'hover' | 'pressed' | 'disabled';
+export type ButtonShape = 'rounded' | 'square' | 'pill';
 
 // --------------------------------------------------------
 // Size Configuration
 // --------------------------------------------------------
 
+export type ButtonSizeOption = {
+  height: string;
+  fontSize: string;
+  lineHeight: string;
+  iconSize: string;
+  spacing: string;
+  paddingHorizontal: string;
+  paddingVertical: string;
+  borderRadius: string;
+}
+
 export type ButtonSizeConfig = {
-  [key in ButtonSize]: {
-    // 기본 크기
-    height: string;
-    fontSize: string;
-    lineHeight: string;
-
-    // 아이콘
-    iconSize: string;
-
-    // 간격
-    padding: string;
-    gap: string;
-
-    // 테두리
-    borderWidth: string;
-    borderRadius: string;
-  };
+  [key in ButtonSize]: ButtonSizeOption
 };
 
 // --------------------------------------------------------
 // Style Configuration
 // --------------------------------------------------------
 
+export interface ButtonStateStyle {
+  default: string;
+  hover: string;
+  pressed: string;
+  disabled: string;
+}
+
 export interface ButtonStyle {
-  background: {
-    default: string;
-    hover: string;
-    pressed: string;
-    disabled: string;
-  };
-  text: {
-    default: string;
-    hover: string;
-    pressed: string;
-    disabled: string;
-  };
-  border: {
-    default: string;
-    hover: string;
-    pressed: string;
-    disabled: string;
-  };
+  background: ButtonStateStyle;
+  text: ButtonStateStyle;
+  border: ButtonStateStyle;
 }
 
 export type ButtonStyles = {
@@ -75,15 +65,29 @@ export type ButtonStyles = {
 // Component Properties
 // --------------------------------------------------------
 
+export interface ButtonIconProps {
+  size?: IconSize;
+  variant?: IconVariant;
+  name?: string;
+  position?: 'left' | 'right';
+}
+
+export interface ButtonLoadingProps {
+  state?: boolean;
+  text?: string;
+  position?: 'left' | 'right' | 'center';
+}
+
 export interface ButtonVariantProps {
   size?: ButtonSize;
   variant?: ButtonVariant;
   type?: ButtonType;
   state?: ButtonState;
-  icon?: string;
+  shape?: ButtonShape;
+  icon?: ButtonIconProps;
   label?: string;
   disabled?: boolean;
-  loading?: boolean;
+  loading?: ButtonLoadingProps;
   fullWidth?: boolean;
   ariaLabel?: string;
   role?: string;
@@ -91,7 +95,8 @@ export interface ButtonVariantProps {
 
 export interface ButtonInstance {
   text?: string;
-  icon?: string;
+  icon?: ButtonIconProps;
+  loading?: ButtonLoadingProps;
 }
 
 // --------------------------------------------------------

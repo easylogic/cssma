@@ -1,5 +1,5 @@
 import { createHandlers } from './createBase';
-import { buttonHandlers } from './createButton';
+// import { buttonHandlers } from './createButton';
 import { cardHandlers } from './createCard';
 import { selectHandlers } from './createSelect';
 import { progressHandlers } from './createProgress';
@@ -19,6 +19,8 @@ import { formHandlers } from './createForm';
 import { textHandlers } from './createText';
 import { AlertVariant, BadgeVariant, ButtonVariant, InputVariant } from '../types';
 import { variables } from '@/variables/manager';
+import { buttonHandlers } from './button';
+import { iconHandlers } from './icon';
 
 // 기존 함수를 async로 변경하고 모든 컴포넌트 세트를 생성
 export async function handleCreateDesignSystem() {
@@ -59,8 +61,9 @@ export async function handleCreateDesignSystem() {
     figma.currentPage = componentsPage;
 
     const list = [
-      // buttonHandlers,
-      avatarHandlers,
+      iconHandlers,
+      buttonHandlers,
+      // avatarHandlers,
       // badgeHandlers,
       // breadcrumbHandlers,
       // alertHandlers,

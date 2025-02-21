@@ -1,125 +1,181 @@
-import { TooltipSizeConfig, TooltipStyleConfig, TooltipVariantProps } from '../types/tooltip';
+import { TooltipSizeConfig, TooltipStyle, TooltipStyles, TooltipVariantProps } from '../types/tooltip';
 
 export const TOOLTIP_SIZES: TooltipSizeConfig = {
   small: {
-    padding: 8,
-    borderRadius: 4,
-    fontSize: 12,
-    lineHeight: 16,
-    maxWidth: 200,
-    arrowSize: 6,
-    distance: 4,
-    offset: 4
+    padding: 'component/base/padding/xs',
+    borderRadius: 'component/base/radius/sm',
+    borderWidth: 'component/base/border/width/thin',
+    fontSize: 'text/body/sm',
+    maxWidth: '200',
+    arrowSize: 'component/base/gap/xs',
+    spacing: 'component/base/gap/xs'
   },
   medium: {
-    padding: 12,
-    borderRadius: 6,
-    fontSize: 14,
-    lineHeight: 20,
-    maxWidth: 300,
-    arrowSize: 8,
-    distance: 6,
-    offset: 6
+    padding: 'component/base/padding/sm',
+    borderRadius: 'component/base/radius/md',
+    borderWidth: 'component/base/border/width/thin',
+    fontSize: 'text/body/md',
+    maxWidth: '300',
+    arrowSize: 'component/base/gap/sm',
+    spacing: 'component/base/gap/sm'
   },
   large: {
-    padding: 16,
-    borderRadius: 8,
-    fontSize: 16,
-    lineHeight: 24,
-    maxWidth: 400,
-    arrowSize: 10,
-    distance: 8,
-    offset: 8
+    padding: 'component/base/padding/md',
+    borderRadius: 'component/base/radius/lg',
+    borderWidth: 'component/base/border/width/thin',
+    fontSize: 'text/body/lg',
+    maxWidth: '400',
+    arrowSize: 'component/base/gap/md',
+    spacing: 'component/base/gap/md'
   }
 } as const;
 
-export const TOOLTIP_STYLES: TooltipStyleConfig = {
+export const TOOLTIP_STYLES: TooltipStyles = {
   light: {
     background: {
-      default: 'semantic/bg/default',
-      hover: 'semantic/bg/hover'
-    },
-    text: {
-      default: 'semantic/text/default',
-      muted: 'semantic/text/muted'
+      default: 'surface/color/default',
+      error: 'status/error/default',
+      success: 'status/success/default',
+      warning: 'status/warning/default'
     },
     border: {
-      default: 'semantic/border/default'
+      default: 'surface/color/default',
+      error: 'status/error/default',
+      success: 'status/success/default',
+      warning: 'status/warning/default'
     },
-    shadow: {
-      default: 'semantic/shadow/sm'
+    text: {
+      default: 'text/color/default',
+      error: 'text/color/inverse',
+      success: 'text/color/inverse',
+      warning: 'text/color/inverse'
+    },
+    arrow: {
+      default: 'surface/color/default',
+      error: 'status/error/default',
+      success: 'status/success/default',
+      warning: 'status/warning/default'
     }
   },
   dark: {
     background: {
-      default: 'semantic/bg/inverse',
-      hover: 'semantic/bg/inverse/hover'
-    },
-    text: {
-      default: 'semantic/text/inverse',
-      muted: 'semantic/text/inverse/muted'
+      default: 'surface/color/default',
+      error: 'status/error/default',
+      success: 'status/success/default',
+      warning: 'status/warning/default'
     },
     border: {
-      default: 'semantic/border/inverse'
+      default: 'surface/color/default',
+      error: 'status/error/default',
+      success: 'status/success/default',
+      warning: 'status/warning/default'
     },
-    shadow: {
-      default: 'semantic/shadow/lg'
+    text: {
+      default: 'text/color/inverse',
+      error: 'text/color/inverse',
+      success: 'text/color/inverse',
+      warning: 'text/color/inverse'
+    },
+    arrow: {
+      default: 'surface/color/default',
+      error: 'status/error/default',
+      success: 'status/success/default',
+      warning: 'status/warning/default'
     }
   },
   custom: {
     background: {
-      default: 'semantic/bg/muted',
-      hover: 'semantic/bg/muted/hover'
-    },
-    text: {
-      default: 'semantic/text/default',
-      muted: 'semantic/text/muted'
+      default: 'surface/color/default',
+      error: 'status/error/default',
+      success: 'status/success/default',
+      warning: 'status/warning/default'
     },
     border: {
-      default: 'semantic/border/muted'
+      default: 'surface/color/default',
+      error: 'status/error/default',
+      success: 'status/success/default',
+      warning: 'status/warning/default'
     },
-    shadow: {
-      default: 'semantic/shadow/md'
+    text: {
+      default: 'text/color/default',
+      error: 'text/color/inverse',
+      success: 'text/color/inverse',
+      warning: 'text/color/inverse'
+    },
+    arrow: {
+      default: 'surface/color/default',
+      error: 'status/error/default',
+      success: 'status/success/default',
+      warning: 'status/warning/default'
     }
   }
 } as const;
 
 export const TOOLTIP_VARIANTS: TooltipVariantProps[] = [
-  // Basic placements
-  { placement: 'top', theme: 'light', size: 'medium', hasArrow: true },
-  { placement: 'right', theme: 'light', size: 'medium', hasArrow: true },
-  { placement: 'bottom', theme: 'light', size: 'medium', hasArrow: true },
-  { placement: 'left', theme: 'light', size: 'medium', hasArrow: true },
+  // Size variants
+  { size: 'small', variant: 'filled', placement: 'top', title: 'Small tooltip' },
+  { size: 'medium', variant: 'filled', placement: 'top', title: 'Medium tooltip' },
+  { size: 'large', variant: 'filled', placement: 'top', title: 'Large tooltip' },
 
-  // Start/End placements
-  { placement: 'top-start', theme: 'light', size: 'medium', hasArrow: true },
-  { placement: 'top-end', theme: 'light', size: 'medium', hasArrow: true },
-  { placement: 'right-start', theme: 'light', size: 'medium', hasArrow: true },
-  { placement: 'right-end', theme: 'light', size: 'medium', hasArrow: true },
-  { placement: 'bottom-start', theme: 'light', size: 'medium', hasArrow: true },
-  { placement: 'bottom-end', theme: 'light', size: 'medium', hasArrow: true },
-  { placement: 'left-start', theme: 'light', size: 'medium', hasArrow: true },
-  { placement: 'left-end', theme: 'light', size: 'medium', hasArrow: true },
+  // Variant styles
+  { size: 'medium', variant: 'filled', placement: 'top', title: 'Filled tooltip' },
+  { size: 'medium', variant: 'outlined', placement: 'top', title: 'Outlined tooltip' },
 
-  // Sizes
-  { placement: 'top', theme: 'light', size: 'small', hasArrow: true },
-  { placement: 'top', theme: 'light', size: 'medium', hasArrow: true },
-  { placement: 'top', theme: 'light', size: 'large', hasArrow: true },
+  // Status variants
+  { size: 'medium', variant: 'filled', status: 'default', placement: 'top', title: 'Default tooltip' },
+  { size: 'medium', variant: 'filled', status: 'error', placement: 'top', title: 'Error tooltip' },
+  { size: 'medium', variant: 'filled', status: 'success', placement: 'top', title: 'Success tooltip' },
+  { size: 'medium', variant: 'filled', status: 'warning', placement: 'top', title: 'Warning tooltip' },
 
-  // Themes
-  { placement: 'top', theme: 'light', size: 'medium', hasArrow: true },
-  { placement: 'top', theme: 'dark', size: 'medium', hasArrow: true },
-  { placement: 'top', theme: 'custom', size: 'medium', hasArrow: true },
+  // Placement variants
+  { size: 'medium', variant: 'filled', placement: 'top', title: 'Top tooltip' },
+  { size: 'medium', variant: 'filled', placement: 'right', title: 'Right tooltip' },
+  { size: 'medium', variant: 'filled', placement: 'bottom', title: 'Bottom tooltip' },
+  { size: 'medium', variant: 'filled', placement: 'left', title: 'Left tooltip' },
+  { size: 'medium', variant: 'filled', placement: 'topLeft', title: 'Top Left tooltip' },
+  { size: 'medium', variant: 'filled', placement: 'topRight', title: 'Top Right tooltip' },
+  { size: 'medium', variant: 'filled', placement: 'bottomLeft', title: 'Bottom Left tooltip' },
+  { size: 'medium', variant: 'filled', placement: 'bottomRight', title: 'Bottom Right tooltip' },
+  { size: 'medium', variant: 'filled', placement: 'leftTop', title: 'Left Top tooltip' },
+  { size: 'medium', variant: 'filled', placement: 'leftBottom', title: 'Left Bottom tooltip' },
+  { size: 'medium', variant: 'filled', placement: 'rightTop', title: 'Right Top tooltip' },
+  { size: 'medium', variant: 'filled', placement: 'rightBottom', title: 'Right Bottom tooltip' },
 
-  // Without arrow
-  { placement: 'top', theme: 'light', size: 'medium', hasArrow: false },
-  { placement: 'right', theme: 'light', size: 'medium', hasArrow: false },
-  { placement: 'bottom', theme: 'light', size: 'medium', hasArrow: false },
-  { placement: 'left', theme: 'light', size: 'medium', hasArrow: false },
+  // With arrow
+  { size: 'medium', variant: 'filled', placement: 'top', title: 'Tooltip with arrow', arrow: true },
 
-  // Different triggers
-  { placement: 'top', theme: 'light', size: 'medium', hasArrow: true, trigger: 'hover' },
-  { placement: 'top', theme: 'light', size: 'medium', hasArrow: true, trigger: 'focus' },
-  { placement: 'top', theme: 'light', size: 'medium', hasArrow: true, trigger: 'click' },
-  { placement: 'top', theme: 'light', size: 'medium', hasArrow: true, trigger: 'manual' }
+  // With content
+  { 
+    size: 'medium', 
+    variant: 'filled', 
+    placement: 'top', 
+    title: 'Tooltip with content',
+    content: 'This is additional content for the tooltip'
+  },
+
+  // With trigger
+  { 
+    size: 'medium', 
+    variant: 'filled', 
+    placement: 'top', 
+    title: 'Hover tooltip',
+    trigger: 'hover'
+  },
+  { 
+    size: 'medium', 
+    variant: 'filled', 
+    placement: 'top', 
+    title: 'Click tooltip',
+    trigger: 'click'
+  },
+
+  // With delay
+  { 
+    size: 'medium', 
+    variant: 'filled', 
+    placement: 'top', 
+    title: 'Delayed tooltip',
+    mouseEnterDelay: 0.5,
+    mouseLeaveDelay: 0.1
+  }
 ] as const; 

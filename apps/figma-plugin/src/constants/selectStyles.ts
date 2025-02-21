@@ -1,254 +1,398 @@
-import { SelectSizeConfig, SelectStyleConfig, SelectVariantProps } from '../types/select';
+import { SelectSizeConfig, SelectStyle, SelectStyles, SelectVariantProps } from '../types/select';
 
 export const SELECT_SIZES: SelectSizeConfig = {
   small: {
-    height: 32,
-    fontSize: 14,
-    lineHeight: 20,
-    padding: 8,
-    borderRadius: 6,
-    iconSize: 16,
-    spacing: 8,
-    labelSpacing: 4,
-    optionHeight: 32,
-    optionPadding: 8,
-    menuMaxHeight: 200
-  },
-  medium: {
-    height: 40,
-    fontSize: 16,
-    lineHeight: 24,
-    padding: 12,
-    borderRadius: 8,
-    iconSize: 20,
-    spacing: 12,
-    labelSpacing: 6,
-    optionHeight: 40,
-    optionPadding: 12,
-    menuMaxHeight: 280
-  },
-  large: {
-    height: 48,
-    fontSize: 18,
-    lineHeight: 28,
-    padding: 16,
-    borderRadius: 10,
-    iconSize: 24,
-    spacing: 16,
-    labelSpacing: 8,
-    optionHeight: 48,
-    optionPadding: 16,
-    menuMaxHeight: 320
-  }
-} as const;
-
-export const SELECT_STYLES: SelectStyleConfig = {
-  outlined: {
-    background: {
-      default: 'semantic/bg/default',
-      hover: 'semantic/bg/hover',
-      focused: 'semantic/bg/default',
-      disabled: 'semantic/bg/disabled',
-      error: 'semantic/bg/error/subtle'
+    height: 'component/base/height/xs',
+    fontSize: 'text/body/sm',
+    lineHeight: 'text/body/sm',
+    iconSize: 'component/base/icon/xs',
+    spacing: {
+      item: 'component/base/gap/xs',
+      icon: 'component/base/gap/2xs',
+      tag: 'component/base/gap/2xs'
     },
-    border: {
-      default: 'semantic/border/default',
-      hover: 'semantic/border/hover',
-      focused: 'semantic/border/focused',
-      disabled: 'semantic/border/disabled',
-      error: 'semantic/border/error'
+    padding: {
+      horizontal: 'component/base/padding/xs',
+      vertical: 'component/base/padding/xs'
     },
-    text: {
-      default: 'semantic/text/default',
-      hover: 'semantic/text/default',
-      focused: 'semantic/text/default',
-      placeholder: 'semantic/text/muted',
-      disabled: 'semantic/text/disabled',
-      error: 'semantic/text/error'
-    },
-    icon: {
-      default: 'semantic/text/muted',
-      hover: 'semantic/text/muted',
-      focused: 'semantic/text/default',
-      disabled: 'semantic/text/disabled',
-      error: 'semantic/text/error'
-    },
-    label: {
-      default: 'semantic/text/muted',
-      hover: 'semantic/text/muted',
-      focused: 'semantic/text/default',
-      disabled: 'semantic/text/disabled',
-      error: 'semantic/text/error'
-    },
-    helper: {
-      default: 'semantic/text/muted',
-      error: 'semantic/text/error'
-    },
+    borderRadius: 'component/base/radius/sm',
+    borderWidth: 'component/base/border/width/thin',
     menu: {
-      background: 'semantic/bg/default',
-      border: 'semantic/border/default',
-      shadow: 'semantic/shadow/md',
-      optionBackground: {
-        default: 'semantic/bg/default',
-        hover: 'semantic/bg/hover',
-        selected: 'semantic/bg/selected',
-        disabled: 'semantic/bg/disabled'
-      },
-      optionText: {
-        default: 'semantic/text/default',
-        selected: 'semantic/text/selected',
-        disabled: 'semantic/text/disabled'
-      },
-      optionIcon: {
-        default: 'semantic/text/muted',
-        selected: 'semantic/text/selected',
-        disabled: 'semantic/text/disabled'
+      maxHeight: '200',
+      itemHeight: 'component/base/height/xs',
+      padding: {
+        horizontal: 'component/base/padding/xs',
+        vertical: 'component/base/padding/xs'
       }
     }
   },
-  filled: {
-    background: {
-      default: 'semantic/bg/muted',
-      hover: 'semantic/bg/muted/hover',
-      focused: 'semantic/bg/default',
-      disabled: 'semantic/bg/disabled',
-      error: 'semantic/bg/error/subtle'
+  medium: {
+    height: 'component/base/height/sm',
+    fontSize: 'text/body/md',
+    lineHeight: 'text/body/md',
+    iconSize: 'component/base/icon/sm',
+    spacing: {
+      item: 'component/base/gap/sm',
+      icon: 'component/base/gap/xs',
+      tag: 'component/base/gap/xs'
     },
-    border: {
-      default: 'semantic/border/subtle',
-      hover: 'semantic/border/hover',
-      focused: 'semantic/border/focused',
-      disabled: 'semantic/border/disabled',
-      error: 'semantic/border/error'
+    padding: {
+      horizontal: 'component/base/padding/sm',
+      vertical: 'component/base/padding/sm'
     },
-    text: {
-      default: 'semantic/text/default',
-      hover: 'semantic/text/default',
-      focused: 'semantic/text/default',
-      placeholder: 'semantic/text/muted',
-      disabled: 'semantic/text/disabled',
-      error: 'semantic/text/error'
+    borderRadius: 'component/base/radius/md',
+    borderWidth: 'component/base/border/width/thin',
+    menu: {
+      maxHeight: '280',
+      itemHeight: 'component/base/height/sm',
+      padding: {
+        horizontal: 'component/base/padding/sm',
+        vertical: 'component/base/padding/sm'
+      }
+    }
+  },
+  large: {
+    height: 'component/base/height/md',
+    fontSize: 'text/body/lg',
+    lineHeight: 'text/body/lg',
+    iconSize: 'component/base/icon/md',
+    spacing: {
+      item: 'component/base/gap/md',
+      icon: 'component/base/gap/sm',
+      tag: 'component/base/gap/sm'
     },
-    icon: {
-      default: 'semantic/text/muted',
-      hover: 'semantic/text/muted',
-      focused: 'semantic/text/default',
-      disabled: 'semantic/text/disabled',
-      error: 'semantic/text/error'
+    padding: {
+      horizontal: 'component/base/padding/md',
+      vertical: 'component/base/padding/md'
     },
-    label: {
-      default: 'semantic/text/muted',
-      hover: 'semantic/text/muted',
-      focused: 'semantic/text/default',
-      disabled: 'semantic/text/disabled',
-      error: 'semantic/text/error'
+    borderRadius: 'component/base/radius/lg',
+    borderWidth: 'component/base/border/width/thin',
+    menu: {
+      maxHeight: '360',
+      itemHeight: 'component/base/height/md',
+      padding: {
+        horizontal: 'component/base/padding/md',
+        vertical: 'component/base/padding/md'
+      }
+    }
+  }
+} as const;
+
+export const SELECT_STYLES: SelectStyles = {
+  'default': {
+    root: {
+      background: {
+        default: 'surface/color/white',
+        hover: 'surface/color/hover',
+        focused: 'surface/color/white',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'surface/color/default',
+        hover: 'surface/color/hover',
+        focused: 'status/info/default',
+        disabled: 'surface/color/disabled'
+      },
+      text: {
+        default: 'text/color/default',
+        hover: 'text/color/default',
+        focused: 'text/color/default',
+        disabled: 'text/color/disabled'
+      }
     },
-    helper: {
-      default: 'semantic/text/muted',
-      error: 'semantic/text/error'
+    trigger: {
+      icon: {
+        default: 'text/color/secondary',
+        hover: 'text/color/default',
+        focused: 'status/info/default',
+        disabled: 'text/color/disabled'
+      },
+      placeholder: {
+        default: 'text/color/secondary',
+        hover: 'text/color/secondary',
+        focused: 'text/color/secondary',
+        disabled: 'text/color/disabled'
+      },
+      clearButton: {
+        default: 'text/color/secondary',
+        hover: 'text/color/default',
+        focused: 'text/color/default',
+        disabled: 'text/color/disabled'
+      }
     },
     menu: {
-      background: 'semantic/bg/default',
-      border: 'semantic/border/default',
-      shadow: 'semantic/shadow/md',
-      optionBackground: {
-        default: 'semantic/bg/default',
-        hover: 'semantic/bg/hover',
-        selected: 'semantic/bg/selected',
-        disabled: 'semantic/bg/disabled'
+      background: 'surface/color/white',
+      border: 'surface/color/default',
+      shadow: 'component/base/shadow/md',
+      item: {
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/hover',
+          selected: 'status/info/ghost/hover',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'text/color/default',
+          hover: 'text/color/default',
+          selected: 'status/info/default',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          selected: 'status/info/default',
+          disabled: 'text/color/disabled'
+        },
+        checkbox: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          selected: 'status/info/default',
+          disabled: 'text/color/disabled'
+        }
       },
-      optionText: {
-        default: 'semantic/text/default',
-        selected: 'semantic/text/selected',
-        disabled: 'semantic/text/disabled'
+      group: {
+        header: {
+          text: 'text/color/secondary',
+          background: 'surface/color/subtle'
+        },
+        divider: 'surface/color/default'
+      }
+    },
+    tag: {
+      background: {
+        default: 'surface/color/default',
+        hover: 'surface/color/hover',
+        focused: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
       },
-      optionIcon: {
-        default: 'semantic/text/muted',
-        selected: 'semantic/text/selected',
-        disabled: 'semantic/text/disabled'
+      text: {
+        default: 'text/color/default',
+        hover: 'text/color/default',
+        focused: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      removeButton: {
+        default: 'text/color/secondary',
+        hover: 'text/color/default',
+        focused: 'text/color/default',
+        disabled: 'text/color/disabled'
+      }
+    },
+    loading: {
+      spinner: {
+        default: 'text/color/secondary',
+        hover: 'text/color/secondary',
+        focused: 'text/color/secondary',
+        disabled: 'text/color/disabled'
+      },
+      overlay: {
+        default: 'surface/color/overlay',
+        hover: 'surface/color/overlay',
+        focused: 'surface/color/overlay',
+        disabled: 'surface/color/overlay'
+      }
+    }
+  },
+  'error': {
+    background: {
+      default: 'surface/color/white',
+      hover: 'surface/color/hover',
+      focused: 'surface/color/white',
+      disabled: 'surface/color/disabled'
+    },
+    border: {
+      default: 'status/error/default',
+      hover: 'status/error/hover',
+      focused: 'status/error/default',
+      disabled: 'surface/color/disabled'
+    },
+    text: {
+      default: 'text/color/default',
+      placeholder: 'text/color/secondary',
+      disabled: 'text/color/disabled'
+    },
+    icon: {
+      default: 'text/color/secondary',
+      hover: 'text/color/default',
+      pressed: 'text/color/default',
+      disabled: 'text/color/disabled'
+    },
+    menu: {
+      background: 'surface/color/white',
+      border: 'surface/color/default',
+      shadow: 'component/base/shadow/md',
+      item: {
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/hover',
+          selected: 'status/error/ghost/hover',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'text/color/default',
+          hover: 'text/color/default',
+          selected: 'status/error/default',
+          disabled: 'text/color/disabled'
+        }
       }
     }
   }
 } as const;
 
 export const SELECT_VARIANTS: SelectVariantProps[] = [
-  // Basic variants
-  { size: 'small', variant: 'outlined', state: 'default' },
-  { size: 'small', variant: 'filled', state: 'default' },
-  { size: 'medium', variant: 'outlined', state: 'default' },
-  { size: 'medium', variant: 'filled', state: 'default' },
-  { size: 'large', variant: 'outlined', state: 'default' },
-  { size: 'large', variant: 'filled', state: 'default' },
-
-  // States
-  { size: 'medium', variant: 'outlined', state: 'hover' },
-  { size: 'medium', variant: 'outlined', state: 'focused' },
-  { size: 'medium', variant: 'outlined', state: 'disabled' },
-  { size: 'medium', variant: 'outlined', state: 'error' },
-  { size: 'medium', variant: 'filled', state: 'hover' },
-  { size: 'medium', variant: 'filled', state: 'focused' },
-  { size: 'medium', variant: 'filled', state: 'disabled' },
-  { size: 'medium', variant: 'filled', state: 'error' },
-
-  // With label
-  { size: 'medium', variant: 'outlined', state: 'default', label: 'Label' },
-  { size: 'medium', variant: 'filled', state: 'default', label: 'Label' },
-  { size: 'medium', variant: 'outlined', state: 'focused', label: 'Label' },
-  { size: 'medium', variant: 'filled', state: 'focused', label: 'Label' },
-
-  // With helper text
-  { size: 'medium', variant: 'outlined', state: 'default', helperText: 'Helper text' },
-  { size: 'medium', variant: 'filled', state: 'default', helperText: 'Helper text' },
-  { size: 'medium', variant: 'outlined', state: 'error', errorText: 'Error message' },
-  { size: 'medium', variant: 'filled', state: 'error', errorText: 'Error message' },
-
-  // With placeholder
-  { size: 'medium', variant: 'outlined', state: 'default', placeholder: 'Select an option' },
-  { size: 'medium', variant: 'filled', state: 'default', placeholder: 'Select an option' },
-
-  // Multiple selection
-  { size: 'medium', variant: 'outlined', state: 'default', multiple: true },
-  { size: 'medium', variant: 'filled', state: 'default', multiple: true },
-
-  // Searchable
-  { size: 'medium', variant: 'outlined', state: 'default', searchable: true },
-  { size: 'medium', variant: 'filled', state: 'default', searchable: true },
-
-  // Loading state
-  { size: 'medium', variant: 'outlined', state: 'default', loading: true },
-  { size: 'medium', variant: 'filled', state: 'default', loading: true },
-
-  // Required
-  { size: 'medium', variant: 'outlined', state: 'default', required: true, label: 'Required field' },
-  { size: 'medium', variant: 'filled', state: 'default', required: true, label: 'Required field' },
-
-  // Clearable
-  { size: 'medium', variant: 'outlined', state: 'default', clearable: true },
-  { size: 'medium', variant: 'filled', state: 'default', clearable: true },
-
-  // Complex combinations
+  // Size variants
   { 
-    size: 'medium', 
-    variant: 'outlined', 
-    state: 'default',
-    label: 'Complex Select',
-    helperText: 'With all features enabled',
-    placeholder: 'Select options',
-    multiple: true,
-    searchable: true,
-    clearable: true,
-    required: true
+    size: 'small', 
+    variant: 'filled', 
+    status: 'default',
+    placeholder: 'Select option',
+    options: [
+      { label: 'Option 1', value: '1' },
+      { label: 'Option 2', value: '2' }
+    ]
   },
   { 
     size: 'medium', 
     variant: 'filled', 
-    state: 'default',
-    label: 'Complex Select',
-    helperText: 'With all features enabled',
-    placeholder: 'Select options',
+    status: 'default',
+    placeholder: 'Select option',
+    options: [
+      { label: 'Option 1', value: '1' },
+      { label: 'Option 2', value: '2' }
+    ]
+  },
+  { 
+    size: 'large', 
+    variant: 'filled', 
+    status: 'default',
+    placeholder: 'Select option',
+    options: [
+      { label: 'Option 1', value: '1' },
+      { label: 'Option 2', value: '2' }
+    ]
+  },
+
+  // With icons
+  { 
+    size: 'medium', 
+    variant: 'filled', 
+    status: 'default',
+    placeholder: 'Select country',
+    options: [
+      { label: 'United States', value: 'us', icon: { name: 'flag-us' } },
+      { label: 'United Kingdom', value: 'uk', icon: { name: 'flag-uk' } },
+      { label: 'South Korea', value: 'kr', icon: { name: 'flag-kr' } }
+    ]
+  },
+
+  // With groups
+  { 
+    size: 'medium', 
+    variant: 'filled', 
+    status: 'default',
+    placeholder: 'Select fruit',
+    groups: [
+      {
+        label: 'Citrus',
+        options: [
+          { label: 'Orange', value: 'orange' },
+          { label: 'Lemon', value: 'lemon' }
+        ]
+      },
+      {
+        label: 'Berries',
+        options: [
+          { label: 'Strawberry', value: 'strawberry' },
+          { label: 'Blueberry', value: 'blueberry' }
+        ]
+      }
+    ]
+  },
+
+  // Multiple selection
+  { 
+    size: 'medium', 
+    variant: 'filled', 
+    status: 'default',
+    placeholder: 'Select multiple',
     multiple: true,
-    searchable: true,
+    options: [
+      { label: 'Option 1', value: '1' },
+      { label: 'Option 2', value: '2' },
+      { label: 'Option 3', value: '3' }
+    ],
+    tag: {
+      maxCount: 2,
+      showCount: true,
+      closable: true
+    }
+  },
+
+  // With search
+  { 
+    size: 'medium', 
+    variant: 'filled', 
+    status: 'default',
+    placeholder: 'Search options',
+    options: [
+      { label: 'Option 1', value: '1' },
+      { label: 'Option 2', value: '2' },
+      { label: 'Option 3', value: '3' }
+    ],
+    search: {
+      enabled: true,
+      placeholder: 'Type to search'
+    }
+  },
+
+  // Loading state
+  { 
+    size: 'medium', 
+    variant: 'filled', 
+    status: 'default',
+    placeholder: 'Loading options',
+    loading: {
+      state: true,
+      text: 'Loading...',
+      indicator: { name: 'spinner' }
+    }
+  },
+
+  // Complex combinations
+  { 
+    size: 'medium',
+    variant: 'filled',
+    status: 'default',
+    placeholder: 'Select technologies',
+    multiple: true,
+    search: {
+      enabled: true,
+      placeholder: 'Search technologies'
+    },
+    groups: [
+      {
+        label: 'Frontend',
+        options: [
+          { label: 'React', value: 'react', icon: { name: 'react' } },
+          { label: 'Vue', value: 'vue', icon: { name: 'vue' } },
+          { label: 'Angular', value: 'angular', icon: { name: 'angular' } }
+        ]
+      },
+      {
+        label: 'Backend',
+        options: [
+          { label: 'Node.js', value: 'nodejs', icon: { name: 'nodejs' } },
+          { label: 'Python', value: 'python', icon: { name: 'python' } },
+          { label: 'Java', value: 'java', icon: { name: 'java' } }
+        ]
+      }
+    ],
+    tag: {
+      maxCount: 3,
+      showCount: true,
+      closable: true
+    },
     clearable: true,
-    required: true
+    virtual: true
   }
 ] as const; 

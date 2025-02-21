@@ -1,154 +1,416 @@
-import { DividerSizeConfig, DividerStyleConfig, DividerVariantProps } from '../types/divider';
+import { DividerSizeConfig, DividerStyle, DividerStyles, DividerVariantProps } from '../types/divider';
 
 export const DIVIDER_SIZES: DividerSizeConfig = {
   small: {
-    thickness: "{token/size/height/xs}",
-    spacing: "{semantic/spacing/element}",
-    labelSpacing: "{semantic/spacing/element}",
-    fontSize: "{semantic/typography/size/caption}",
-    lineHeight: "{semantic/typography/lineHeight/caption}",
-    dashLength: "{token/spacing/4}",
-    dashGap: "{token/spacing/4}",
-    dotSize: "{token/spacing/2}",
-    dotGap: "{token/spacing/2}"
+    line: {
+      thickness: 'component/base/border/width/thin',
+      spacing: 'component/base/gap/xs'
+    },
+    pattern: {
+      dashLength: 'component/base/gap/xs',
+      dashGap: 'component/base/gap/xs',
+      dotSize: 'component/base/gap/2xs',
+      dotGap: 'component/base/gap/2xs'
+    },
+    label: {
+      fontSize: 'text/body/sm',
+      lineHeight: 'text/body/sm',
+      spacing: 'component/base/gap/sm'
+    },
+    icon: {
+      size: 'component/base/icon/xs',
+      spacing: 'component/base/gap/xs'
+    },
+    spacing: {
+      content: 'component/base/gap/xs',
+      section: 'component/base/gap/sm'
+    }
   },
   medium: {
-    thickness: "{token/size/height/sm}",
-    spacing: "{semantic/spacing/content}",
-    labelSpacing: "{semantic/spacing/element}",
-    fontSize: "{semantic/typography/size/body}",
-    lineHeight: "{semantic/typography/lineHeight/body}",
-    dashLength: "{token/spacing/6}",
-    dashGap: "{token/spacing/6}",
-    dotSize: "{token/spacing/3}",
-    dotGap: "{token/spacing/3}"
+    line: {
+      thickness: 'component/base/border/width/thick',
+      spacing: 'component/base/gap/sm'
+    },
+    pattern: {
+      dashLength: 'component/base/gap/sm',
+      dashGap: 'component/base/gap/sm',
+      dotSize: 'component/base/gap/xs',
+      dotGap: 'component/base/gap/xs'
+    },
+    label: {
+      fontSize: 'text/body/md',
+      lineHeight: 'text/body/md',
+      spacing: 'component/base/gap/md'
+    },
+    icon: {
+      size: 'component/base/icon/sm',
+      spacing: 'component/base/gap/sm'
+    },
+    spacing: {
+      content: 'component/base/gap/sm',
+      section: 'component/base/gap/md'
+    }
   },
   large: {
-    thickness: "{token/size/height/md}",
-    spacing: "{semantic/spacing/section}",
-    labelSpacing: "{semantic/spacing/content}",
-    fontSize: "{semantic/typography/size/title}",
-    lineHeight: "{semantic/typography/lineHeight/title}",
-    dashLength: "{token/spacing/8}",
-    dashGap: "{token/spacing/8}",
-    dotSize: "{token/spacing/4}",
-    dotGap: "{token/spacing/4}"
+    line: {
+      thickness: 'component/base/border/width/thicker',
+      spacing: 'component/base/gap/md'
+    },
+    pattern: {
+      dashLength: 'component/base/gap/md',
+      dashGap: 'component/base/gap/md',
+      dotSize: 'component/base/gap/sm',
+      dotGap: 'component/base/gap/sm'
+    },
+    label: {
+      fontSize: 'text/body/lg',
+      lineHeight: 'text/body/lg',
+      spacing: 'component/base/gap/lg'
+    },
+    icon: {
+      size: 'component/base/icon/md',
+      spacing: 'component/base/gap/md'
+    },
+    spacing: {
+      content: 'component/base/gap/md',
+      section: 'component/base/gap/lg'
+    }
   }
 } as const;
 
-export const DIVIDER_STYLES: DividerStyleConfig = {
-  default: {
-    line: {
-      solid: {
-        default: 'semantic/border/default',
-        subtle: 'semantic/border/subtle'
-      },
-      dashed: {
-        default: 'semantic/border/default',
-        subtle: 'semantic/border/subtle'
-      },
-      dotted: {
-        default: 'semantic/border/default',
-        subtle: 'semantic/border/subtle'
+const baseStateStyle = {
+  default: 'surface/color/default',
+  hover: 'surface/color/hover',
+  pressed: 'surface/color/pressed',
+  disabled: 'surface/color/disabled'
+};
+
+const baseStyle: DividerStyle = {
+  line: {
+    solid: {
+      color: baseStateStyle,
+      opacity: {
+        default: '1',
+        subtle: '0.5'
       }
     },
-    text: {
-      default: 'semantic/text/default',
-      muted: 'semantic/text/muted'
+    dashed: {
+      color: baseStateStyle,
+      opacity: {
+        default: '1',
+        subtle: '0.5'
+      }
+    },
+    dotted: {
+      color: baseStateStyle,
+      opacity: {
+        default: '1',
+        subtle: '0.5'
+      }
+    }
+  },
+  label: {
+    color: {
+      default: 'text/color/default',
+      hover: 'text/color/default',
+      pressed: 'text/color/default',
+      disabled: 'text/color/disabled'
+    },
+    background: {
+      default: 'surface/color/white',
+      hover: 'surface/color/white',
+      pressed: 'surface/color/white',
+      disabled: 'surface/color/disabled'
+    },
+    opacity: {
+      default: '1',
+      subtle: '0.7'
+    }
+  },
+  icon: {
+    color: {
+      default: 'text/color/default',
+      hover: 'text/color/hover',
+      pressed: 'text/color/pressed',
+      disabled: 'text/color/disabled'
+    },
+    opacity: {
+      default: '1',
+      subtle: '0.7'
+    },
+    transform: {
+      default: 'rotate(0deg)',
+      rotated: 'rotate(90deg)'
+    }
+  },
+  transition: {
+    duration: '200ms',
+    timing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    properties: ['opacity', 'transform', 'background']
+  }
+};
+
+export const DIVIDER_STYLES: DividerStyles = {
+  default: {
+    ...baseStyle,
+    line: {
+      solid: {
+        color: {
+          default: 'surface/color/default',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        opacity: {
+          default: '1',
+          subtle: '0.5'
+        }
+      },
+      dashed: {
+        color: {
+          default: 'surface/color/default',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        opacity: {
+          default: '1',
+          subtle: '0.5'
+        }
+      },
+      dotted: {
+        color: {
+          default: 'surface/color/default',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        opacity: {
+          default: '1',
+          subtle: '0.5'
+        }
+      }
     }
   },
   primary: {
+    ...baseStyle,
     line: {
       solid: {
-        default: 'semantic/action/primary/default',
-        subtle: 'semantic/action/primary/subtle'
+        color: {
+          default: 'status/info/default',
+          hover: 'status/info/hover',
+          pressed: 'status/info/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        opacity: {
+          default: '1',
+          subtle: '0.5'
+        }
       },
       dashed: {
-        default: 'semantic/action/primary/default',
-        subtle: 'semantic/action/primary/subtle'
+        color: {
+          default: 'status/info/default',
+          hover: 'status/info/hover',
+          pressed: 'status/info/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        opacity: {
+          default: '1',
+          subtle: '0.5'
+        }
       },
       dotted: {
-        default: 'semantic/action/primary/default',
-        subtle: 'semantic/action/primary/subtle'
+        color: {
+          default: 'status/info/default',
+          hover: 'status/info/hover',
+          pressed: 'status/info/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        opacity: {
+          default: '1',
+          subtle: '0.5'
+        }
       }
     },
-    text: {
-      default: 'semantic/action/primary/default',
-      muted: 'semantic/action/primary/subtle'
+    label: {
+      ...baseStyle.label,
+      color: {
+        default: 'status/info/default',
+        hover: 'status/info/hover',
+        pressed: 'status/info/pressed',
+        disabled: 'text/color/disabled'
+      }
+    },
+    icon: {
+      ...baseStyle.icon,
+      color: {
+        default: 'status/info/default',
+        hover: 'status/info/hover',
+        pressed: 'status/info/pressed',
+        disabled: 'text/color/disabled'
+      }
     }
   },
   subtle: {
+    ...baseStyle,
     line: {
       solid: {
-        default: 'semantic/border/subtle',
-        subtle: 'semantic/border/muted'
+        color: {
+          default: 'surface/color/subtle',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        opacity: {
+          default: '0.5',
+          subtle: '0.3'
+        }
       },
       dashed: {
-        default: 'semantic/border/subtle',
-        subtle: 'semantic/border/muted'
+        color: {
+          default: 'surface/color/subtle',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        opacity: {
+          default: '0.5',
+          subtle: '0.3'
+        }
       },
       dotted: {
-        default: 'semantic/border/subtle',
-        subtle: 'semantic/border/muted'
+        color: {
+          default: 'surface/color/subtle',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        opacity: {
+          default: '0.5',
+          subtle: '0.3'
+        }
       }
     },
-    text: {
-      default: 'semantic/text/muted',
-      muted: 'semantic/text/disabled'
+    label: {
+      ...baseStyle.label,
+      color: {
+        default: 'text/color/secondary',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      opacity: {
+        default: '0.7',
+        subtle: '0.5'
+      }
+    },
+    icon: {
+      ...baseStyle.icon,
+      color: {
+        default: 'text/color/secondary',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      opacity: {
+        default: '0.7',
+        subtle: '0.5'
+      }
     }
   }
 } as const;
 
 export const DIVIDER_VARIANTS: DividerVariantProps[] = [
-  // Basic variants - Horizontal
-  { orientation: 'horizontal', variant: 'solid', size: 'small', theme: 'default' },
-  { orientation: 'horizontal', variant: 'solid', size: 'medium', theme: 'default' },
-  { orientation: 'horizontal', variant: 'solid', size: 'large', theme: 'default' },
+  // Size variants
+  { size: 'small', variant: 'solid', theme: 'default' },
+  { size: 'medium', variant: 'solid', theme: 'default' },
+  { size: 'large', variant: 'solid', theme: 'default' },
 
-  // Basic variants - Vertical
-  { orientation: 'vertical', variant: 'solid', size: 'small', theme: 'default' },
-  { orientation: 'vertical', variant: 'solid', size: 'medium', theme: 'default' },
-  { orientation: 'vertical', variant: 'solid', size: 'large', theme: 'default' },
-
-  // Line style variants
-  { orientation: 'horizontal', variant: 'solid', size: 'medium', theme: 'default' },
-  { orientation: 'horizontal', variant: 'dashed', size: 'medium', theme: 'default' },
-  { orientation: 'horizontal', variant: 'dotted', size: 'medium', theme: 'default' },
+  // Variant styles
+  { size: 'medium', variant: 'solid', theme: 'default' },
+  { size: 'medium', variant: 'dashed', theme: 'default' },
+  { size: 'medium', variant: 'dotted', theme: 'default' },
 
   // Theme variants
-  { orientation: 'horizontal', variant: 'solid', size: 'medium', theme: 'default' },
-  { orientation: 'horizontal', variant: 'solid', size: 'medium', theme: 'primary' },
-  { orientation: 'horizontal', variant: 'solid', size: 'medium', theme: 'subtle' },
+  { size: 'medium', variant: 'solid', theme: 'default' },
+  { size: 'medium', variant: 'solid', theme: 'primary' },
+  { size: 'medium', variant: 'solid', theme: 'subtle' },
 
-  // Label position variants
-  { orientation: 'horizontal', variant: 'solid', size: 'medium', theme: 'default', hasLabel: true, label: 'Start', labelPosition: 'start' },
-  { orientation: 'horizontal', variant: 'solid', size: 'medium', theme: 'default', hasLabel: true, label: 'Center', labelPosition: 'center' },
-  { orientation: 'horizontal', variant: 'solid', size: 'medium', theme: 'default', hasLabel: true, label: 'End', labelPosition: 'end' },
+  // Orientation variants
+  { size: 'medium', variant: 'solid', theme: 'default', orientation: 'horizontal' },
+  { size: 'medium', variant: 'solid', theme: 'default', orientation: 'vertical' },
 
-  // Label alignment variants
-  { orientation: 'horizontal', variant: 'solid', size: 'medium', theme: 'default', hasLabel: true, label: 'Left', labelAlignment: 'start' },
-  { orientation: 'horizontal', variant: 'solid', size: 'medium', theme: 'default', hasLabel: true, label: 'Center', labelAlignment: 'center' },
-  { orientation: 'horizontal', variant: 'solid', size: 'medium', theme: 'default', hasLabel: true, label: 'Right', labelAlignment: 'end' },
+  // With icons
+  { 
+    size: 'medium', 
+    variant: 'solid', 
+    theme: 'default',
+    icon: { 
+      name: 'minus',
+      rotate: 90
+    }
+  },
+
+  // With labels
+  { 
+    size: 'medium', 
+    variant: 'solid', 
+    theme: 'default',
+    label: {
+      text: 'Section Title',
+      position: 'center',
+      alignment: 'center',
+      background: true
+    }
+  },
+
+  // With content spacing
+  { 
+    size: 'medium', 
+    variant: 'solid', 
+    theme: 'default',
+    content: {
+      spacing: 'loose',
+      reverse: true
+    }
+  },
+
+  // With animation
+  { 
+    size: 'medium', 
+    variant: 'solid', 
+    theme: 'default',
+    animation: {
+      duration: 300,
+      timing: 'ease-in-out',
+      properties: ['opacity', 'transform']
+    }
+  },
 
   // Complex combinations
   { 
-    orientation: 'horizontal',
-    variant: 'dashed',
     size: 'large',
+    variant: 'dashed',
     theme: 'primary',
-    hasLabel: true,
-    label: 'Section Divider',
-    labelPosition: 'center',
-    labelAlignment: 'center'
-  },
-  { 
     orientation: 'horizontal',
-    variant: 'dotted',
-    size: 'medium',
-    theme: 'subtle',
-    hasLabel: true,
-    label: 'OR',
-    labelPosition: 'center',
-    labelAlignment: 'center'
+    icon: { 
+      name: 'arrow-right',
+      rotate: 0
+    },
+    label: {
+      text: 'Next Section',
+      position: 'end',
+      alignment: 'center',
+      background: true
+    },
+    content: {
+      spacing: 'loose',
+      reverse: false
+    },
+    animation: {
+      duration: 300,
+      timing: 'ease-in-out',
+      properties: ['opacity', 'transform']
+    }
   }
 ] as const; 

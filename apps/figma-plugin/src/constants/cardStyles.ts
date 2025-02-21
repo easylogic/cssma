@@ -1,134 +1,455 @@
-import { CardSizeConfig, CardStyleConfig, CardVariantProps } from '../types/card';
+import { CardSizeConfig, CardStyle, CardStyles, CardVariantProps } from '../types/card';
 
 export const CARD_SIZES: CardSizeConfig = {
   small: {
-    padding: 16,
-    spacing: 12,
-    borderRadius: 8,
-    mediaHeight: 160,
-    headerSpacing: 12,
-    footerSpacing: 12,
-    actionSpacing: 8,
+    padding: 'component/base/padding/xs',
+    borderRadius: 'component/base/radius/sm',
+    borderWidth: 'component/base/border/width/thin',
+    elevation: 'component/base/shadow/sm',
+    spacing: 'component/base/gap/xs'
   },
   medium: {
-    padding: 24,
-    spacing: 16,
-    borderRadius: 12,
-    mediaHeight: 200,
-    headerSpacing: 16,
-    footerSpacing: 16,
-    actionSpacing: 12,
+    padding: 'component/base/padding/sm',
+    borderRadius: 'component/base/radius/md',
+    borderWidth: 'component/base/border/width/thin',
+    elevation: 'component/base/shadow/md',
+    spacing: 'component/base/gap/sm'
   },
   large: {
-    padding: 32,
-    spacing: 24,
-    borderRadius: 16,
-    mediaHeight: 240,
-    headerSpacing: 20,
-    footerSpacing: 20,
-    actionSpacing: 16,
-  },
+    padding: 'component/base/padding/md',
+    borderRadius: 'component/base/radius/lg',
+    borderWidth: 'component/base/border/width/thin',
+    elevation: 'component/base/shadow/lg',
+    spacing: 'component/base/gap/md'
+  }
 } as const;
 
-export const CARD_STYLES: CardStyleConfig = {
-  elevated: {
-    background: {
-      default: 'semantic/bg/default',
-      hover: 'semantic/bg/hover',
-      pressed: 'semantic/bg/pressed',
+export const CARD_STYLES: CardStyles = {
+  'filled': {
+    root: {
+      background: {
+        default: 'surface/color/white',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'surface/color/white',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      shadow: {
+        default: 'component/base/shadow/md',
+        hover: 'component/base/shadow/lg',
+        pressed: 'component/base/shadow/sm',
+        disabled: 'component/base/shadow/none'
+      }
     },
-    border: {
-      default: 'semantic/border/default',
-      hover: 'semantic/border/hover',
-      pressed: 'semantic/border/pressed',
+    header: {
+      background: {
+        default: 'surface/color/white',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'surface/color/default',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      text: {
+        default: 'text/color/default',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      padding: 'component/base/padding/md'
     },
-    shadow: {
-      default: 'semantic/shadow/sm',
-      hover: 'semantic/shadow/md',
-      pressed: 'semantic/shadow/lg',
+    content: {
+      background: {
+        default: 'surface/color/white',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'surface/color/transparent',
+        hover: 'surface/color/transparent',
+        pressed: 'surface/color/transparent',
+        disabled: 'surface/color/transparent'
+      },
+      text: {
+        default: 'text/color/default',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      padding: 'component/base/padding/md'
     },
+    footer: {
+      background: {
+        default: 'surface/color/subtle',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'surface/color/default',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      text: {
+        default: 'text/color/default',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      padding: 'component/base/padding/sm'
+    },
+    media: {
+      aspectRatio: '16/9',
+      overlay: {
+        default: 'surface/color/overlay',
+        hover: 'surface/color/overlay/hover',
+        pressed: 'surface/color/overlay/pressed',
+        disabled: 'surface/color/overlay/disabled'
+      }
+    }
   },
-  outlined: {
-    background: {
-      default: 'semantic/bg/default',
-      hover: 'semantic/bg/hover',
-      pressed: 'semantic/bg/pressed',
+  'outlined': {
+    root: {
+      background: {
+        default: 'surface/color/white',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'surface/color/default',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      shadow: {
+        default: 'component/base/shadow/none',
+        hover: 'component/base/shadow/sm',
+        pressed: 'component/base/shadow/none',
+        disabled: 'component/base/shadow/none'
+      }
     },
-    border: {
-      default: 'semantic/border/default',
-      hover: 'semantic/border/hover',
-      pressed: 'semantic/border/pressed',
+    header: {
+      background: {
+        default: 'surface/color/white',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'surface/color/default',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      text: {
+        default: 'text/color/default',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      padding: 'component/base/padding/md'
     },
-    shadow: {
-      default: 'none',
-      hover: 'none',
-      pressed: 'none',
+    content: {
+      background: {
+        default: 'surface/color/white',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'surface/color/transparent',
+        hover: 'surface/color/transparent',
+        pressed: 'surface/color/transparent',
+        disabled: 'surface/color/transparent'
+      },
+      text: {
+        default: 'text/color/default',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      padding: 'component/base/padding/md'
     },
+    footer: {
+      background: {
+        default: 'surface/color/subtle',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'surface/color/default',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      text: {
+        default: 'text/color/default',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      padding: 'component/base/padding/sm'
+    },
+    media: {
+      aspectRatio: '16/9',
+      overlay: {
+        default: 'surface/color/overlay',
+        hover: 'surface/color/overlay/hover',
+        pressed: 'surface/color/overlay/pressed',
+        disabled: 'surface/color/overlay/disabled'
+      }
+    }
   },
-  filled: {
-    background: {
-      default: 'semantic/bg/muted',
-      hover: 'semantic/bg/hover',
-      pressed: 'semantic/bg/pressed',
+  'elevated': {
+    root: {
+      background: {
+        default: 'surface/color/white',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'surface/color/transparent',
+        hover: 'surface/color/transparent',
+        pressed: 'surface/color/transparent',
+        disabled: 'surface/color/transparent'
+      },
+      shadow: {
+        default: 'component/base/shadow/lg',
+        hover: 'component/base/shadow/xl',
+        pressed: 'component/base/shadow/md',
+        disabled: 'component/base/shadow/none'
+      }
     },
-    border: {
-      default: 'semantic/border/subtle',
-      hover: 'semantic/border/hover',
-      pressed: 'semantic/border/pressed',
+    header: {
+      background: {
+        default: 'surface/color/white',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'surface/color/default',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      text: {
+        default: 'text/color/default',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      padding: 'component/base/padding/md'
     },
-    shadow: {
-      default: 'none',
-      hover: 'none',
-      pressed: 'none',
+    content: {
+      background: {
+        default: 'surface/color/white',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'surface/color/transparent',
+        hover: 'surface/color/transparent',
+        pressed: 'surface/color/transparent',
+        disabled: 'surface/color/transparent'
+      },
+      text: {
+        default: 'text/color/default',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      padding: 'component/base/padding/md'
     },
-  },
+    footer: {
+      background: {
+        default: 'surface/color/subtle',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'surface/color/default',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      text: {
+        default: 'text/color/default',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      padding: 'component/base/padding/sm'
+    },
+    media: {
+      aspectRatio: '16/9',
+      overlay: {
+        default: 'surface/color/overlay',
+        hover: 'surface/color/overlay/hover',
+        pressed: 'surface/color/overlay/pressed',
+        disabled: 'surface/color/overlay/disabled'
+      }
+    }
+  }
 } as const;
 
 export const CARD_VARIANTS: CardVariantProps[] = [
-  // Basic variants without interaction
-  { size: 'small', variant: 'elevated', interaction: 'none', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: false },
-  { size: 'small', variant: 'outlined', interaction: 'none', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: false },
-  { size: 'small', variant: 'filled', interaction: 'none', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: false },
-  { size: 'medium', variant: 'elevated', interaction: 'none', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: false },
-  { size: 'medium', variant: 'outlined', interaction: 'none', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: false },
-  { size: 'medium', variant: 'filled', interaction: 'none', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: false },
-  { size: 'large', variant: 'elevated', interaction: 'none', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: false },
-  { size: 'large', variant: 'outlined', interaction: 'none', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: false },
-  { size: 'large', variant: 'filled', interaction: 'none', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: false },
+  // Size variants
+  { 
+    size: 'small', 
+    variant: 'filled',
+    content: {
+      title: 'Small Card',
+      description: 'This is a small card'
+    }
+  },
+  { 
+    size: 'medium', 
+    variant: 'filled',
+    content: {
+      title: 'Medium Card',
+      description: 'This is a medium card'
+    }
+  },
+  { 
+    size: 'large', 
+    variant: 'filled',
+    content: {
+      title: 'Large Card',
+      description: 'This is a large card'
+    }
+  },
 
-  // Interactive variants
-  { size: 'small', variant: 'elevated', interaction: 'clickable', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: false },
-  { size: 'small', variant: 'outlined', interaction: 'clickable', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: false },
-  { size: 'small', variant: 'filled', interaction: 'clickable', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: false },
-  { size: 'medium', variant: 'elevated', interaction: 'clickable', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: false },
-  { size: 'medium', variant: 'outlined', interaction: 'clickable', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: false },
-  { size: 'medium', variant: 'filled', interaction: 'clickable', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: false },
-  { size: 'large', variant: 'elevated', interaction: 'clickable', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: false },
-  { size: 'large', variant: 'outlined', interaction: 'clickable', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: false },
-  { size: 'large', variant: 'filled', interaction: 'clickable', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: false },
+  // Variant styles
+  { 
+    size: 'medium', 
+    variant: 'filled',
+    content: {
+      title: 'Filled Card',
+      description: 'This is a filled card'
+    }
+  },
+  { 
+    size: 'medium', 
+    variant: 'outlined',
+    content: {
+      title: 'Outlined Card',
+      description: 'This is an outlined card'
+    }
+  },
+  { 
+    size: 'medium', 
+    variant: 'elevated',
+    content: {
+      title: 'Elevated Card',
+      description: 'This is an elevated card'
+    }
+  },
 
   // With header
-  { size: 'medium', variant: 'elevated', interaction: 'none', hasHeader: true, hasMedia: false, hasFooter: false, hasActions: false },
-  { size: 'medium', variant: 'outlined', interaction: 'none', hasHeader: true, hasMedia: false, hasFooter: false, hasActions: false },
-  { size: 'medium', variant: 'filled', interaction: 'none', hasHeader: true, hasMedia: false, hasFooter: false, hasActions: false },
-
-  // With media
-  { size: 'medium', variant: 'elevated', interaction: 'none', hasHeader: false, hasMedia: true, hasFooter: false, hasActions: false },
-  { size: 'medium', variant: 'outlined', interaction: 'none', hasHeader: false, hasMedia: true, hasFooter: false, hasActions: false },
-  { size: 'medium', variant: 'filled', interaction: 'none', hasHeader: false, hasMedia: true, hasFooter: false, hasActions: false },
+  { 
+    size: 'medium', 
+    variant: 'filled',
+    header: {
+      title: 'Card Title',
+      subtitle: 'Card Subtitle',
+      avatar: 'user-avatar',
+      extra: 'More'
+    },
+    content: {
+      description: 'Card with header'
+    }
+  },
 
   // With footer
-  { size: 'medium', variant: 'elevated', interaction: 'none', hasHeader: false, hasMedia: false, hasFooter: true, hasActions: false },
-  { size: 'medium', variant: 'outlined', interaction: 'none', hasHeader: false, hasMedia: false, hasFooter: true, hasActions: false },
-  { size: 'medium', variant: 'filled', interaction: 'none', hasHeader: false, hasMedia: false, hasFooter: true, hasActions: false },
+  { 
+    size: 'medium', 
+    variant: 'filled',
+    content: {
+      description: 'Card with footer'
+    },
+    footer: {
+      actions: ['Action 1', 'Action 2'],
+      extra: 'Footer extra'
+    }
+  },
 
-  // With actions
-  { size: 'medium', variant: 'elevated', interaction: 'none', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: true },
-  { size: 'medium', variant: 'outlined', interaction: 'none', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: true },
-  { size: 'medium', variant: 'filled', interaction: 'none', hasHeader: false, hasMedia: false, hasFooter: false, hasActions: true },
+  // With media
+  { 
+    size: 'medium', 
+    variant: 'filled',
+    media: {
+      image: 'card-image.jpg',
+      aspectRatio: '16/9',
+      overlay: true
+    },
+    content: {
+      description: 'Card with media'
+    }
+  },
+
+  // Interactive
+  { 
+    size: 'medium', 
+    variant: 'filled',
+    interactive: true,
+    content: {
+      title: 'Interactive Card',
+      description: 'Click me!'
+    }
+  },
+
+  // Loading
+  { 
+    size: 'medium', 
+    variant: 'filled',
+    loading: true,
+    content: {
+      title: 'Loading Card',
+      description: 'Please wait...'
+    }
+  },
 
   // Complex combinations
-  { size: 'medium', variant: 'elevated', interaction: 'clickable', hasHeader: true, hasMedia: true, hasFooter: true, hasActions: true },
-  { size: 'medium', variant: 'outlined', interaction: 'clickable', hasHeader: true, hasMedia: true, hasFooter: true, hasActions: true },
-  { size: 'medium', variant: 'filled', interaction: 'clickable', hasHeader: true, hasMedia: true, hasFooter: true, hasActions: true },
+  { 
+    size: 'medium',
+    variant: 'elevated',
+    header: {
+      title: 'Featured Article',
+      subtitle: 'By John Doe',
+      avatar: 'author-avatar',
+      extra: 'Share'
+    },
+    media: {
+      image: 'article-image.jpg',
+      aspectRatio: '16/9',
+      overlay: true
+    },
+    content: {
+      title: 'Amazing Discovery',
+      description: 'Scientists have made an incredible breakthrough...',
+      children: 'Full article content goes here'
+    },
+    footer: {
+      actions: ['Like', 'Comment', 'Save'],
+      extra: '5 min read'
+    },
+    interactive: true
+  }
 ] as const; 

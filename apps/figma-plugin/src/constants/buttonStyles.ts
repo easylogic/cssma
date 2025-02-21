@@ -2,34 +2,34 @@ import { ButtonSizeConfig, ButtonStyles, ButtonVariantProps } from '../types/but
 
 export const BUTTON_SIZES: ButtonSizeConfig = {
   small: {
-    height: 'button/height/small',
-    fontSize: 'button/typography/small/size',
-    lineHeight: 'button/typography/small/lineHeight',
-    paddingHorizontal: 'button/spacing/small/horizontal',
-    paddingVertical: 'button/spacing/small/vertical',
-    iconSize: 'button/icon/small',
-    spacing: 'button/spacing/small/gap',
-    borderRadius: 'button/radius/small'
+    height: 'component/base/height/xs',
+    fontSize: 'text/body/sm',
+    lineHeight: 'text/body/sm',
+    paddingHorizontal: 'component/base/padding/md',
+    paddingVertical: 'component/base/padding/sm',
+    iconSize: 'component/base/icon/xs',
+    spacing: 'component/base/gap/xs',
+    borderRadius: 'component/base/radius/sm'
   },
   medium: {
-    height: 'button/height/medium',
-    fontSize: 'button/typography/medium/size',
-    lineHeight: 'button/typography/medium/lineHeight',
-    paddingHorizontal: 'button/spacing/medium/horizontal',
-    paddingVertical: 'button/spacing/medium/vertical',
-    iconSize: 'button/icon/medium',
-    spacing: 'button/spacing/medium/gap',
-    borderRadius: 'button/radius/medium'
+    height: 'component/base/height/sm',
+    fontSize: 'text/body/md',
+    lineHeight: 'text/body/md',
+    paddingHorizontal: 'component/base/padding/lg',
+    paddingVertical: 'component/base/padding/md',
+    iconSize: 'component/base/icon/sm',
+    spacing: 'component/base/gap/sm',
+    borderRadius: 'component/base/radius/md'
   },
   large: {
-    height: 'button/height/large',
-    fontSize: 'button/typography/large/size',
-    lineHeight: 'button/typography/large/lineHeight',
-    paddingHorizontal: 'button/spacing/large/horizontal',
-    paddingVertical: 'button/spacing/large/vertical',
-    iconSize: 'button/icon/large',
-    spacing: 'button/spacing/large/gap',
-    borderRadius: 'button/radius/large'
+    height: 'component/base/height/md',
+    fontSize: 'text/body/lg',
+    lineHeight: 'text/body/lg',
+    paddingHorizontal: 'component/base/padding/xl',
+    paddingVertical: 'component/base/padding/lg',
+    iconSize: 'component/base/icon/md',
+    spacing: 'component/base/gap/md',
+    borderRadius: 'component/base/radius/lg'
   }
 } as const;
 
@@ -148,9 +148,9 @@ export const BUTTON_STYLES: ButtonStyles = {
       disabled: 'text/color/disabled'
     },
     border: {
-      default: 'surface/color/default',
-      hover: 'surface/color/hover',
-      pressed: 'surface/color/pressed',
+      default: 'text/color/default',
+      hover: 'text/color/default',
+      pressed: 'text/color/default',
       disabled: 'surface/color/disabled'
     }
   },
@@ -202,9 +202,9 @@ export const BUTTON_STYLES: ButtonStyles = {
       disabled: 'surface/color/disabled'
     },
     text: {
-      default: 'text/color/default',
-      hover: 'text/color/default',
-      pressed: 'text/color/default',
+      default: 'status/secondary/default',
+      hover: 'status/secondary/hover',
+      pressed: 'status/secondary/pressed',
       disabled: 'text/color/disabled'
     },
     border: {
@@ -336,6 +336,24 @@ export const BUTTON_STYLES: ButtonStyles = {
   }
 } as const;
 
+export const BUTTON_SHAPES = {
+  'square': {
+    small: 'component/base/radius/none',
+    medium: 'component/base/radius/none',
+    large: 'component/base/radius/none'
+  },
+  'rounded': {
+    small: 'component/base/radius/sm',
+    medium: 'component/base/radius/md',
+    large: 'component/base/radius/lg'
+  },
+  'pill': {
+    small: 'component/base/radius/pill',
+    medium: 'component/base/radius/pill',
+    large: 'component/base/radius/pill'
+  }
+} as const;
+
 export const BUTTON_VARIANTS: ButtonVariantProps[] = [
   // Default variants with all states
   { size: 'small', variant: 'filled', type: 'default', state: 'default' },
@@ -435,19 +453,28 @@ export const BUTTON_VARIANTS: ButtonVariantProps[] = [
   { size: 'medium', variant: 'ghost', type: 'danger', state: 'pressed' },
   { size: 'medium', variant: 'ghost', type: 'danger', state: 'disabled' },
 
+ // Shape variants
+ { size: 'medium', variant: 'filled', type: 'primary', state: 'default', shape: 'square' },
+ { size: 'medium', variant: 'filled', type: 'primary', state: 'default', shape: 'rounded' },
+ { size: 'medium', variant: 'filled', type: 'primary', state: 'default', shape: 'pill' },
+
+ // Shape + Icon combinations
+ { size: 'medium', variant: 'filled', type: 'primary', state: 'default', shape: 'pill', icon: { name: 'add' } },
+ { size: 'medium', variant: 'filled', type: 'primary', state: 'default', shape: 'rounded', icon: { name: 'add' } },  
+
   // With icons in different states
-  { size: 'medium', variant: 'filled', type: 'primary', state: 'default', icon: 'add' },
-  { size: 'medium', variant: 'filled', type: 'primary', state: 'hover', icon: 'add' },
-  { size: 'medium', variant: 'filled', type: 'primary', state: 'pressed', icon: 'add' },
-  { size: 'medium', variant: 'filled', type: 'primary', state: 'disabled', icon: 'add' },
+  { size: 'medium', variant: 'filled', type: 'primary', state: 'default', icon: { name: 'add' } },
+  { size: 'medium', variant: 'filled', type: 'primary', state: 'hover', icon: { name: 'add' } },
+  { size: 'medium', variant: 'filled', type: 'primary', state: 'pressed', icon: { name: 'add' } },
+  { size: 'medium', variant: 'filled', type: 'primary', state: 'disabled', icon: { name: 'add' } },
 
-  { size: 'medium', variant: 'outlined', type: 'secondary', state: 'default', icon: 'edit' },
-  { size: 'medium', variant: 'outlined', type: 'secondary', state: 'hover', icon: 'edit' },
-  { size: 'medium', variant: 'outlined', type: 'secondary', state: 'pressed', icon: 'edit' },
-  { size: 'medium', variant: 'outlined', type: 'secondary', state: 'disabled', icon: 'edit' },
+  { size: 'medium', variant: 'outlined', type: 'secondary', state: 'default', icon: { name: 'edit' } },
+  { size: 'medium', variant: 'outlined', type: 'secondary', state: 'hover', icon: { name: 'edit' } },
+  { size: 'medium', variant: 'outlined', type: 'secondary', state: 'pressed', icon: { name: 'edit' } },
+  { size: 'medium', variant: 'outlined', type: 'secondary', state: 'disabled', icon: { name: 'edit' } },
 
-  { size: 'medium', variant: 'ghost', type: 'danger', state: 'default', icon: 'delete' },
-  { size: 'medium', variant: 'ghost', type: 'danger', state: 'hover', icon: 'delete' },
-  { size: 'medium', variant: 'ghost', type: 'danger', state: 'pressed', icon: 'delete' },
-  { size: 'medium', variant: 'ghost', type: 'danger', state: 'disabled', icon: 'delete' }
+  { size: 'medium', variant: 'ghost', type: 'danger', state: 'default', icon: { name: 'delete' } },
+  { size: 'medium', variant: 'ghost', type: 'danger', state: 'hover', icon: { name: 'delete' } },
+  { size: 'medium', variant: 'ghost', type: 'danger', state: 'pressed', icon: { name: 'delete' } },
+  { size: 'medium', variant: 'ghost', type: 'danger', state: 'disabled', icon: { name: 'delete' } }
 ] as const; 

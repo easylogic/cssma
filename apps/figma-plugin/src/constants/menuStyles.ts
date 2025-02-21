@@ -6,72 +6,73 @@ import { MenuSizeConfig, MenuStyle, MenuStyles, MenuVariantProps } from '../type
  */
 export const MENU_SIZES: MenuSizeConfig = {
   small: {
-    // Container dimensions
-    minWidth: 'menu/container/small/minWidth',
-    maxWidth: 'menu/container/small/maxWidth',
-    indent: 'menu/item/indent',
-    shortcutGap: 'menu/item/shortcut/gap',
-    groupHeaderGap: 'menu/group/header/gap',
-    
-    // Item dimensions
     height: 'component/base/height/xs',
     fontSize: 'text/body/sm',
     lineHeight: 'text/body/sm',
-    
-    // Icons and indicators
-    iconSize: 'component/base/icon/sm',
-    indicatorSize: 'component/base/icon/sm',
-    arrowSize: 'component/base/icon/sm',
-    
-    // Spacing
-    padding: 'component/base/padding/sm',
-    itemGap: 'component/base/gap/xs',
-    groupGap: 'component/base/gap/sm',
-    iconGap: 'component/base/gap/sm',
-    
-    // Borders and radius
+    iconSize: 'component/base/icon/xs',
+    spacing: {
+      item: 'component/base/gap/xs',
+      icon: 'component/base/gap/2xs',
+      indent: 'menu/item/indent',
+      shortcut: 'menu/item/shortcut/gap',
+      group: 'menu/group/header/gap'
+    },
+    padding: {
+      horizontal: 'component/base/padding/xs',
+      vertical: 'component/base/padding/xs'
+    },
+    borderRadius: 'component/base/radius/sm',
     borderWidth: 'component/base/border/width/thin',
-    borderRadius: 'component/base/radius/sm'
+    container: {
+      minWidth: 'menu/container/small/minWidth',
+      maxWidth: 'menu/container/small/maxWidth'
+    }
   },
   medium: {
-    minWidth: 'menu/container/medium/minWidth',
-    maxWidth: 'menu/container/medium/maxWidth',
-    indent: 'menu/item/indent',
-    shortcutGap: 'menu/item/shortcut/gap',
-    groupHeaderGap: 'menu/group/header/gap',
-
     height: 'component/base/height/sm',
     fontSize: 'text/body/md',
     lineHeight: 'text/body/md',
-    iconSize: 'component/base/icon/md',
-    indicatorSize: 'component/base/icon/md',
-    arrowSize: 'component/base/icon/md',
-    padding: 'component/base/padding/md',
-    itemGap: 'component/base/gap/sm',
-    groupGap: 'component/base/gap/md',
-    iconGap: 'component/base/gap/md',
+    iconSize: 'component/base/icon/sm',
+    spacing: {
+      item: 'component/base/gap/sm',
+      icon: 'component/base/gap/xs',
+      indent: 'menu/item/indent',
+      shortcut: 'menu/item/shortcut/gap',
+      group: 'menu/group/header/gap'
+    },
+    padding: {
+      horizontal: 'component/base/padding/sm',
+      vertical: 'component/base/padding/sm'
+    },
+    borderRadius: 'component/base/radius/md',
     borderWidth: 'component/base/border/width/thin',
-    borderRadius: 'component/base/radius/md'
+    container: {
+      minWidth: 'menu/container/medium/minWidth',
+      maxWidth: 'menu/container/medium/maxWidth'
+    }
   },
   large: {
-    minWidth: 'menu/container/large/minWidth',
-    maxWidth: 'menu/container/large/maxWidth',
-    indent: 'menu/item/indent',
-    shortcutGap: 'menu/item/shortcut/gap',
-    groupHeaderGap: 'menu/group/header/gap',
-
     height: 'component/base/height/md',
     fontSize: 'text/body/lg',
     lineHeight: 'text/body/lg',
-    iconSize: 'component/base/icon/lg',
-    indicatorSize: 'component/base/icon/lg',
-    arrowSize: 'component/base/icon/lg',
-    padding: 'component/base/padding/lg',
-    itemGap: 'component/base/gap/md',
-    groupGap: 'component/base/gap/lg',
-    iconGap: 'component/base/gap/lg',
+    iconSize: 'component/base/icon/md',
+    spacing: {
+      item: 'component/base/gap/md',
+      icon: 'component/base/gap/sm',
+      indent: 'menu/item/indent',
+      shortcut: 'menu/item/shortcut/gap',
+      group: 'menu/group/header/gap'
+    },
+    padding: {
+      horizontal: 'component/base/padding/md',
+      vertical: 'component/base/padding/md'
+    },
+    borderRadius: 'component/base/radius/lg',
     borderWidth: 'component/base/border/width/thin',
-    borderRadius: 'component/base/radius/lg'
+    container: {
+      minWidth: 'menu/container/large/minWidth',
+      maxWidth: 'menu/container/large/maxWidth'
+    }
   }
 } as const;
 
@@ -80,89 +81,869 @@ export const MENU_SIZES: MenuSizeConfig = {
  * All values reference semantic color tokens.
  */
 export const MENU_STYLES: MenuStyles = {
-  'default-filled': {
-    container: {
-      fill: 'surface/color/default',
-      stroke: 'surface/color/default',
-      shadow: 'component/base/shadow/sm'
-    },
-    item: {
+  default: {
+    root: {
       background: {
-        default: 'surface/color/transparent',
+        default: 'surface/color/white',
         hover: 'surface/color/hover',
         pressed: 'surface/color/pressed',
-        disabled: 'surface/color/disabled',
-        active: 'surface/color/selected'
+        disabled: 'surface/color/disabled'
       },
-      text: {
-        default: 'text/color/default',
-        hover: 'text/color/default',
-        pressed: 'text/color/default',
-        disabled: 'text/color/disabled',
-        active: 'text/color/default'
+      border: {
+        default: 'surface/color/default',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
       },
-      icon: {
-        default: 'text/color/secondary',
-        hover: 'text/color/secondary',
-        pressed: 'text/color/secondary',
-        disabled: 'text/color/disabled',
-        active: 'text/color/default'
+      shadow: {
+        default: 'component/base/shadow/md',
+        hover: 'component/base/shadow/lg',
+        pressed: 'component/base/shadow/sm',
+        disabled: 'component/base/shadow/none'
+      }
+    },
+    item: {
+      default: {
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'text/color/default',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        },
+        shortcut: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        },
+        prefix: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        },
+        suffix: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        },
+        indicator: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        }
       },
-      indicator: {
-        default: 'text/color/secondary',
-        hover: 'text/color/secondary',
-        pressed: 'text/color/secondary',
-        disabled: 'text/color/disabled',
-        active: 'status/success/default'
+      active: {
+        background: {
+          default: 'status/info/ghost/hover',
+          hover: 'status/info/ghost/hover',
+          pressed: 'status/info/ghost/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'status/info/default',
+          hover: 'status/info/hover',
+          pressed: 'status/info/pressed',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'status/info/default',
+          hover: 'status/info/hover',
+          pressed: 'status/info/pressed',
+          disabled: 'text/color/disabled'
+        },
+        shortcut: {
+          default: 'status/info/default',
+          hover: 'status/info/hover',
+          pressed: 'status/info/pressed',
+          disabled: 'text/color/disabled'
+        },
+        prefix: {
+          default: 'status/info/default',
+          hover: 'status/info/hover',
+          pressed: 'status/info/pressed',
+          disabled: 'text/color/disabled'
+        },
+        suffix: {
+          default: 'status/info/default',
+          hover: 'status/info/hover',
+          pressed: 'status/info/pressed',
+          disabled: 'text/color/disabled'
+        },
+        indicator: {
+          default: 'status/info/default',
+          hover: 'status/info/hover',
+          pressed: 'status/info/pressed',
+          disabled: 'text/color/disabled'
+        }
+      },
+      danger: {
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'status/error/ghost/hover',
+          pressed: 'status/error/ghost/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        shortcut: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        prefix: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        suffix: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        indicator: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        }
+      },
+      disabled: {
+        background: {
+          default: 'surface/color/disabled',
+          hover: 'surface/color/disabled',
+          pressed: 'surface/color/disabled',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'text/color/disabled',
+          hover: 'text/color/disabled',
+          pressed: 'text/color/disabled',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'text/color/disabled',
+          hover: 'text/color/disabled',
+          pressed: 'text/color/disabled',
+          disabled: 'text/color/disabled'
+        },
+        shortcut: {
+          default: 'text/color/disabled',
+          hover: 'text/color/disabled',
+          pressed: 'text/color/disabled',
+          disabled: 'text/color/disabled'
+        },
+        prefix: {
+          default: 'text/color/disabled',
+          hover: 'text/color/disabled',
+          pressed: 'text/color/disabled',
+          disabled: 'text/color/disabled'
+        },
+        suffix: {
+          default: 'text/color/disabled',
+          hover: 'text/color/disabled',
+          pressed: 'text/color/disabled',
+          disabled: 'text/color/disabled'
+        },
+        indicator: {
+          default: 'text/color/disabled',
+          hover: 'text/color/disabled',
+          pressed: 'text/color/disabled',
+          disabled: 'text/color/disabled'
+        }
       }
     },
     group: {
-      title: 'text/color/secondary',
-      background: 'surface/color/subtle'
+      header: {
+        background: {
+          default: 'surface/color/subtle',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        }
+      },
+      divider: {
+        line: {
+          default: 'surface/color/default',
+          hover: 'surface/color/default',
+          pressed: 'surface/color/default',
+          disabled: 'surface/color/disabled'
+        },
+        spacing: {
+          default: 'component/base/gap/sm',
+          compact: 'component/base/gap/xs',
+          loose: 'component/base/gap/md'
+        }
+      }
     },
-    divider: 'surface/color/divider'
+    submenu: {
+      arrow: {
+        default: 'text/color/secondary',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      overlay: {
+        default: 'surface/color/overlay',
+        hover: 'surface/color/overlay',
+        pressed: 'surface/color/overlay',
+        disabled: 'surface/color/overlay'
+      }
+    }
   },
-  'default-outlined': {
-    container: {
-      fill: 'surface/color/white',
-      stroke: 'surface/color/default',
-      shadow: 'component/base/shadow/none'
-    },
-    item: {
+  error: {
+    root: {
       background: {
-        default: 'surface/color/transparent',
+        default: 'surface/color/white',
         hover: 'surface/color/hover',
         pressed: 'surface/color/pressed',
-        disabled: 'surface/color/disabled',
-        active: 'surface/color/selected'
+        disabled: 'surface/color/disabled'
       },
-      text: {
-        default: 'text/color/default',
-        hover: 'text/color/default',
-        pressed: 'text/color/default',
-        disabled: 'text/color/disabled',
-        active: 'text/color/default'
+      border: {
+        default: 'status/error/default',
+        hover: 'status/error/hover',
+        pressed: 'status/error/pressed',
+        disabled: 'surface/color/disabled'
       },
-      icon: {
-        default: 'text/color/secondary',
-        hover: 'text/color/secondary',
-        pressed: 'text/color/secondary',
-        disabled: 'text/color/disabled',
-        active: 'text/color/default'
+      shadow: {
+        default: 'component/base/shadow/md',
+        hover: 'component/base/shadow/lg',
+        pressed: 'component/base/shadow/sm',
+        disabled: 'component/base/shadow/none'
+      }
+    },
+    item: {
+      default: {
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        shortcut: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        prefix: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        suffix: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        indicator: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        }
       },
-      indicator: {
-        default: 'text/color/secondary',
-        hover: 'text/color/secondary',
-        pressed: 'text/color/secondary',
-        disabled: 'text/color/disabled',
-        active: 'status/success/default'
+      active: {
+        background: {
+          default: 'status/error/ghost/hover',
+          hover: 'status/error/ghost/hover',
+          pressed: 'status/error/ghost/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        shortcut: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        prefix: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        suffix: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        indicator: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        }
+      },
+      danger: {
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'status/error/ghost/hover',
+          pressed: 'status/error/ghost/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        shortcut: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        prefix: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        suffix: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        indicator: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        }
       }
     },
     group: {
-      title: 'text/color/secondary',
-      background: 'surface/color/subtle'
+      header: {
+        background: {
+          default: 'surface/color/subtle',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        }
+      },
+      divider: {
+        line: {
+          default: 'surface/color/default',
+          hover: 'surface/color/default',
+          pressed: 'surface/color/default',
+          disabled: 'surface/color/disabled'
+        },
+        spacing: {
+          default: 'component/base/gap/sm',
+          compact: 'component/base/gap/xs',
+          loose: 'component/base/gap/md'
+        }
+      }
     },
-    divider: 'surface/color/divider'
+    submenu: {
+      arrow: {
+        default: 'text/color/secondary',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      overlay: {
+        default: 'surface/color/overlay',
+        hover: 'surface/color/overlay',
+        pressed: 'surface/color/overlay',
+        disabled: 'surface/color/overlay'
+      }
+    }
+  },
+  success: {
+    root: {
+      background: {
+        default: 'surface/color/white',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'status/success/default',
+        hover: 'status/success/hover',
+        pressed: 'status/success/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      shadow: {
+        default: 'component/base/shadow/md',
+        hover: 'component/base/shadow/lg',
+        pressed: 'component/base/shadow/sm',
+        disabled: 'component/base/shadow/none'
+      }
+    },
+    item: {
+      default: {
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'status/success/default',
+          hover: 'status/success/hover',
+          pressed: 'status/success/pressed',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'status/success/default',
+          hover: 'status/success/hover',
+          pressed: 'status/success/pressed',
+          disabled: 'text/color/disabled'
+        },
+        shortcut: {
+          default: 'status/success/default',
+          hover: 'status/success/hover',
+          pressed: 'status/success/pressed',
+          disabled: 'text/color/disabled'
+        },
+        prefix: {
+          default: 'status/success/default',
+          hover: 'status/success/hover',
+          pressed: 'status/success/pressed',
+          disabled: 'text/color/disabled'
+        },
+        suffix: {
+          default: 'status/success/default',
+          hover: 'status/success/hover',
+          pressed: 'status/success/pressed',
+          disabled: 'text/color/disabled'
+        },
+        indicator: {
+          default: 'status/success/default',
+          hover: 'status/success/hover',
+          pressed: 'status/success/pressed',
+          disabled: 'text/color/disabled'
+        }
+      },
+      active: {
+        background: {
+          default: 'status/success/ghost/hover',
+          hover: 'status/success/ghost/hover',
+          pressed: 'status/success/ghost/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'status/success/default',
+          hover: 'status/success/hover',
+          pressed: 'status/success/pressed',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'status/success/default',
+          hover: 'status/success/hover',
+          pressed: 'status/success/pressed',
+          disabled: 'text/color/disabled'
+        },
+        shortcut: {
+          default: 'status/success/default',
+          hover: 'status/success/hover',
+          pressed: 'status/success/pressed',
+          disabled: 'text/color/disabled'
+        },
+        prefix: {
+          default: 'status/success/default',
+          hover: 'status/success/hover',
+          pressed: 'status/success/pressed',
+          disabled: 'text/color/disabled'
+        },
+        suffix: {
+          default: 'status/success/default',
+          hover: 'status/success/hover',
+          pressed: 'status/success/pressed',
+          disabled: 'text/color/disabled'
+        },
+        indicator: {
+          default: 'status/success/default',
+          hover: 'status/success/hover',
+          pressed: 'status/success/pressed',
+          disabled: 'text/color/disabled'
+        }
+      },
+      danger: {
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'status/error/ghost/hover',
+          pressed: 'status/error/ghost/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        shortcut: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        prefix: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        suffix: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        indicator: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        }
+      }
+    },
+    group: {
+      header: {
+        background: {
+          default: 'surface/color/subtle',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        }
+      },
+      divider: {
+        line: {
+          default: 'surface/color/default',
+          hover: 'surface/color/default',
+          pressed: 'surface/color/default',
+          disabled: 'surface/color/disabled'
+        },
+        spacing: {
+          default: 'component/base/gap/sm',
+          compact: 'component/base/gap/xs',
+          loose: 'component/base/gap/md'
+        }
+      }
+    },
+    submenu: {
+      arrow: {
+        default: 'text/color/secondary',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      overlay: {
+        default: 'surface/color/overlay',
+        hover: 'surface/color/overlay',
+        pressed: 'surface/color/overlay',
+        disabled: 'surface/color/overlay'
+      }
+    }
+  },
+  warning: {
+    root: {
+      background: {
+        default: 'surface/color/white',
+        hover: 'surface/color/hover',
+        pressed: 'surface/color/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      border: {
+        default: 'status/warning/default',
+        hover: 'status/warning/hover',
+        pressed: 'status/warning/pressed',
+        disabled: 'surface/color/disabled'
+      },
+      shadow: {
+        default: 'component/base/shadow/md',
+        hover: 'component/base/shadow/lg',
+        pressed: 'component/base/shadow/sm',
+        disabled: 'component/base/shadow/none'
+      }
+    },
+    item: {
+      default: {
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'status/warning/default',
+          hover: 'status/warning/hover',
+          pressed: 'status/warning/pressed',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'status/warning/default',
+          hover: 'status/warning/hover',
+          pressed: 'status/warning/pressed',
+          disabled: 'text/color/disabled'
+        },
+        shortcut: {
+          default: 'status/warning/default',
+          hover: 'status/warning/hover',
+          pressed: 'status/warning/pressed',
+          disabled: 'text/color/disabled'
+        },
+        prefix: {
+          default: 'status/warning/default',
+          hover: 'status/warning/hover',
+          pressed: 'status/warning/pressed',
+          disabled: 'text/color/disabled'
+        },
+        suffix: {
+          default: 'status/warning/default',
+          hover: 'status/warning/hover',
+          pressed: 'status/warning/pressed',
+          disabled: 'text/color/disabled'
+        },
+        indicator: {
+          default: 'status/warning/default',
+          hover: 'status/warning/hover',
+          pressed: 'status/warning/pressed',
+          disabled: 'text/color/disabled'
+        }
+      },
+      active: {
+        background: {
+          default: 'status/warning/ghost/hover',
+          hover: 'status/warning/ghost/hover',
+          pressed: 'status/warning/ghost/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'status/warning/default',
+          hover: 'status/warning/hover',
+          pressed: 'status/warning/pressed',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'status/warning/default',
+          hover: 'status/warning/hover',
+          pressed: 'status/warning/pressed',
+          disabled: 'text/color/disabled'
+        },
+        shortcut: {
+          default: 'status/warning/default',
+          hover: 'status/warning/hover',
+          pressed: 'status/warning/pressed',
+          disabled: 'text/color/disabled'
+        },
+        prefix: {
+          default: 'status/warning/default',
+          hover: 'status/warning/hover',
+          pressed: 'status/warning/pressed',
+          disabled: 'text/color/disabled'
+        },
+        suffix: {
+          default: 'status/warning/default',
+          hover: 'status/warning/hover',
+          pressed: 'status/warning/pressed',
+          disabled: 'text/color/disabled'
+        },
+        indicator: {
+          default: 'status/warning/default',
+          hover: 'status/warning/hover',
+          pressed: 'status/warning/pressed',
+          disabled: 'text/color/disabled'
+        }
+      },
+      danger: {
+        background: {
+          default: 'surface/color/transparent',
+          hover: 'status/error/ghost/hover',
+          pressed: 'status/error/ghost/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        shortcut: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        prefix: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        suffix: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        },
+        indicator: {
+          default: 'status/error/default',
+          hover: 'status/error/hover',
+          pressed: 'status/error/pressed',
+          disabled: 'text/color/disabled'
+        }
+      }
+    },
+    group: {
+      header: {
+        background: {
+          default: 'surface/color/subtle',
+          hover: 'surface/color/hover',
+          pressed: 'surface/color/pressed',
+          disabled: 'surface/color/disabled'
+        },
+        text: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        },
+        icon: {
+          default: 'text/color/secondary',
+          hover: 'text/color/default',
+          pressed: 'text/color/default',
+          disabled: 'text/color/disabled'
+        }
+      },
+      divider: {
+        line: {
+          default: 'surface/color/default',
+          hover: 'surface/color/default',
+          pressed: 'surface/color/default',
+          disabled: 'surface/color/disabled'
+        },
+        spacing: {
+          default: 'component/base/gap/sm',
+          compact: 'component/base/gap/xs',
+          loose: 'component/base/gap/md'
+        }
+      }
+    },
+    submenu: {
+      arrow: {
+        default: 'text/color/secondary',
+        hover: 'text/color/default',
+        pressed: 'text/color/default',
+        disabled: 'text/color/disabled'
+      },
+      overlay: {
+        default: 'surface/color/overlay',
+        hover: 'surface/color/overlay',
+        pressed: 'surface/color/overlay',
+        disabled: 'surface/color/overlay'
+      }
+    }
   }
 } as const;
 
@@ -175,117 +956,199 @@ export const MENU_VARIANTS: MenuVariantProps[] = [
   { 
     size: 'small',
     variant: 'filled',
-    status: 'default',
-    shape: 'rounded',
-    item: { type: 'default', state: 'default' }
+    items: [
+      { key: '1', label: 'Menu item 1' },
+      { key: '2', label: 'Menu item 2' }
+    ]
   },
   { 
     size: 'medium',
     variant: 'filled',
-    status: 'default',
-    shape: 'rounded',
-    item: { type: 'default', state: 'default' }
+    items: [
+      { key: '1', label: 'Menu item 1' },
+      { key: '2', label: 'Menu item 2' }
+    ]
   },
   { 
     size: 'large',
     variant: 'filled',
-    status: 'default',
-    shape: 'rounded',
-    item: { type: 'default', state: 'default' }
+    items: [
+      { key: '1', label: 'Menu item 1' },
+      { key: '2', label: 'Menu item 2' }
+    ]
   },
 
-  // States for default items
+  // With icons
   { 
     size: 'medium',
     variant: 'filled',
-    status: 'default',
-    shape: 'rounded',
-    item: { type: 'default', state: 'hover' }
-  },
-  { 
-    size: 'medium',
-    variant: 'filled',
-    status: 'default',
-    shape: 'rounded',
-    item: { type: 'default', state: 'pressed' }
-  },
-  { 
-    size: 'medium',
-    variant: 'filled',
-    status: 'default',
-    shape: 'rounded',
-    item: { type: 'default', state: 'disabled' }
+    items: [
+      { 
+        key: '1', 
+        label: 'Settings',
+        icon: { name: 'settings' }
+      },
+      { 
+        key: '2', 
+        label: 'Profile',
+        icon: { name: 'user' }
+      }
+    ]
   },
 
-  // Active items
+  // With shortcuts
   { 
     size: 'medium',
     variant: 'filled',
-    status: 'default',
-    shape: 'rounded',
-    item: { type: 'active', state: 'default', indicator: true }
+    items: [
+      { 
+        key: '1', 
+        label: 'Cut',
+        shortcut: { text: '⌘X' }
+      },
+      { 
+        key: '2', 
+        label: 'Copy',
+        shortcut: { text: '⌘C' }
+      }
+    ]
   },
 
-  // Items with icons
+  // With groups
   { 
     size: 'medium',
     variant: 'filled',
-    status: 'default',
-    shape: 'rounded',
-    item: { type: 'default', state: 'default', icon: true }
+    items: [
+      {
+        key: 'g1',
+        type: 'divider',
+        divider: { spacing: 'default' }
+      },
+      {
+        key: 'g2',
+        label: 'File',
+        items: [
+          { key: '1', label: 'New', icon: { name: 'file' } },
+          { key: '2', label: 'Open', icon: { name: 'folder' } }
+        ]
+      },
+      {
+        key: 'g3',
+        type: 'divider',
+        divider: { spacing: 'default' }
+      },
+      {
+        key: 'g4',
+        label: 'Edit',
+        items: [
+          { key: '3', label: 'Cut', shortcut: { text: '⌘X' } },
+          { key: '4', label: 'Copy', shortcut: { text: '⌘C' } }
+        ]
+      }
+    ]
   },
 
-  // Items with shortcuts
+  // With states
   { 
     size: 'medium',
     variant: 'filled',
-    status: 'default',
-    shape: 'rounded',
-    item: { type: 'default', state: 'default', shortcut: true }
+    items: [
+      { 
+        key: '1', 
+        label: 'Default item',
+        state: 'default'
+      },
+      { 
+        key: '2', 
+        label: 'Active item',
+        state: 'active'
+      },
+      { 
+        key: '3', 
+        label: 'Disabled item',
+        state: 'disabled'
+      }
+    ]
   },
 
-  // Submenu items
+  // With types
   { 
     size: 'medium',
     variant: 'filled',
-    status: 'default',
-    shape: 'rounded',
-    item: { type: 'default', state: 'default', submenu: true }
+    items: [
+      { 
+        key: '1', 
+        label: 'Default action',
+        type: 'default'
+      },
+      { 
+        key: '2', 
+        label: 'Delete',
+        type: 'danger',
+        icon: { name: 'trash' }
+      }
+    ]
   },
 
-  // Group variants
+  // Complex combination
   { 
     size: 'medium',
     variant: 'filled',
-    status: 'default',
-    shape: 'rounded',
-    item: { type: 'default', state: 'default' },
-    group: { title: true }
-  },
-  { 
-    size: 'medium',
-    variant: 'filled',
-    status: 'default',
-    shape: 'rounded',
-    item: { type: 'default', state: 'default' },
-    group: { title: true, collapsed: true }
-  },
-
-  // Divider variants
-  { 
-    size: 'medium',
-    variant: 'filled',
-    status: 'default',
-    shape: 'rounded',
-    item: { type: 'default', state: 'default' },
-    divider: { spacing: 'default' }
-  },
-  { 
-    size: 'medium',
-    variant: 'filled',
-    status: 'default',
-    shape: 'rounded',
-    item: { type: 'default', state: 'default' },
-    divider: { spacing: 'compact' }
+    items: [
+      {
+        key: 'g1',
+        label: 'File',
+        items: [
+          { 
+            key: '1', 
+            label: 'New', 
+            icon: { name: 'file' },
+            shortcut: { text: '⌘N' }
+          },
+          { 
+            key: '2', 
+            label: 'Open', 
+            icon: { name: 'folder' },
+            shortcut: { text: '⌘O' }
+          },
+          {
+            key: 'd1',
+            type: 'divider',
+            divider: { spacing: 'default' }
+          },
+          { 
+            key: '3', 
+            label: 'Delete', 
+            type: 'danger',
+            icon: { name: 'trash' },
+            state: 'disabled'
+          }
+        ]
+      },
+      {
+        key: 'g2',
+        type: 'divider',
+        divider: { spacing: 'default' }
+      },
+      {
+        key: 'g3',
+        label: 'Edit',
+        items: [
+          { 
+            key: '4', 
+            label: 'Cut',
+            icon: { name: 'scissors' },
+            shortcut: { text: '⌘X' }
+          },
+          { 
+            key: '5', 
+            label: 'Copy',
+            icon: { name: 'copy' },
+            shortcut: { text: '⌘C' },
+            state: 'active'
+          }
+        ]
+      }
+    ]
   }
 ] as const; 
