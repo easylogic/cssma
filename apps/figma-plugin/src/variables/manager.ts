@@ -200,9 +200,9 @@ class VariablesManager {
       console.log(`  ✅ Bound variable successfully`);
     } catch (error) {
       console.error(`  ❌ Failed to bind variable`);
-        console.error(`  Error: ${error.message}`);
-      }
+      console.error(`  Error: ${error.message}`, node, field, variable, value);
     }
+  }
 
   bindVariable(name: string): Paint {
     console.log(`🎨 Binding paint variable: ${name}`);

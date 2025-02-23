@@ -1,6 +1,7 @@
+
 import { createHandlers } from './createBase';
 // import { buttonHandlers } from './createButton';
-import { cardHandlers } from './createCard';
+// import { cardHandlers } from './createCard';
 import { selectHandlers } from './createSelect';
 import { progressHandlers } from './createProgress';
 import { tooltipHandlers } from './createTooltip';
@@ -21,6 +22,7 @@ import { AlertVariant, BadgeVariant, ButtonVariant, InputVariant } from '../type
 import { variables } from '@/variables/manager';
 import { buttonHandlers } from './button';
 import { iconHandlers } from './icon';
+import { cardHandlers } from './card';
 
 // 기존 함수를 async로 변경하고 모든 컴포넌트 세트를 생성
 export async function handleCreateDesignSystem() {
@@ -61,8 +63,9 @@ export async function handleCreateDesignSystem() {
     figma.currentPage = componentsPage;
 
     const list = [
-      iconHandlers,
-      buttonHandlers,
+      // iconHandlers,
+      // buttonHandlers,
+      cardHandlers,
       // avatarHandlers,
       // badgeHandlers,
       // breadcrumbHandlers,
@@ -80,12 +83,17 @@ export async function handleCreateDesignSystem() {
     let x = 0;
     for await (const handler of list) {
       try {
-        const componentSet = await handler.createComponentSet();
-        if (componentSet) {
-          componentsPage.appendChild(componentSet);
-          componentSet.x = x;
-          x += componentSet.width + 40;
+        let componentSet: ComponentSetNode | ComponentSetNode[] = await handler.createComponentSet() as ComponentSetNode | ComponentSetNode[];
+
+        if (!Array.isArray(componentSet)) {
+          componentSet = [componentSet];
         }
+
+        componentSet.forEach(set => {
+          componentsPage.appendChild(set);
+          set.x = x;
+          x += set.width + 40;
+        });
       } catch (error) {
         console.error('Error creating component set:', error);
       }

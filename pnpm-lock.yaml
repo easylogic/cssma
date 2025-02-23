@@ -160,8 +160,8 @@ importers:
         version: 3.24.2
     devDependencies:
       '@figma/plugin-typings':
-        specifier: 1.107.0-beta.2
-        version: 1.107.0-beta.2
+        specifier: 1.107.0
+        version: 1.107.0
       '@types/node':
         specifier: ^20.0.0
         version: 20.17.19
@@ -405,8 +405,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@figma/plugin-typings@1.107.0-beta.2':
-    resolution: {integrity: sha512-EFTasm6l3p4QtmnUgCGb0Neeczizk62CqTSNcVh9vYybpctY65kO1w/Da0yuT/WfrdrxD9QZjO8i/ePcZIrqzw==}
+  '@figma/plugin-typings@1.107.0':
+    resolution: {integrity: sha512-wC+Wwnk5H22W71xoq4ZQBHuXJL8Q7eMMBP+ubHZjAVybrJRysj/A9gJTIguVEcV+x2zpRsVunyVyWxg56qZr8g==}
 
   '@floating-ui/core@1.6.9':
     resolution: {integrity: sha512-uMXCuQ3BItDUbAMhIXw7UPXRfAlOAvZzdK9BWpE60MCn+Svt3aLn9jsPTi/WNGlRUu2uI0v5S7JiIUsbsvh3fw==}
@@ -2640,7 +2640,7 @@ snapshots:
   '@esbuild/win32-x64@0.24.2':
     optional: true
 
-  '@figma/plugin-typings@1.107.0-beta.2': {}
+  '@figma/plugin-typings@1.107.0': {}
 
   '@floating-ui/core@1.6.9':
     dependencies:

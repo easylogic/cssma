@@ -135,6 +135,7 @@ export const SEMANTIC: Collection = {
     "component/base/radius/md": { Value: "{radius/sm}" },
     "component/base/radius/lg": { Value: "{radius/md}" },
     "component/base/radius/pill": { Value: "{radius/full}" },
+    "component/base/radius/full": { Value: "{radius/full}" },
 
     "component/base/border/width/thin": { Value: "{borderWidth/thin}" },
     "component/base/border/width/thick": { Value: "{borderWidth/thick}" },
