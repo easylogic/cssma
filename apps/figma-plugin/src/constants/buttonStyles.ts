@@ -102,9 +102,9 @@ export const BUTTON_STYLES: ButtonStyles = {
       disabled: 'surface/color/disabled'
     },
     text: {
-      default: 'text/color/default',
-      hover: 'text/color/default',
-      pressed: 'text/color/default',
+      default: 'text/color/inverse',
+      hover: 'text/color/inverse',
+      pressed: 'text/color/inverse',
       disabled: 'text/color/disabled'
     },
     border: {
@@ -177,8 +177,8 @@ export const BUTTON_STYLES: ButtonStyles = {
   'neutral-outlined': {
     background: {
       default: 'surface/color/transparent',
-      hover: 'status/neutral/ghost/hover',
-      pressed: 'status/neutral/ghost/pressed',
+      hover: 'surface/color/hover',
+      pressed: 'surface/color/pressed',
       disabled: 'surface/color/disabled'
     },
     text: {
@@ -277,8 +277,8 @@ export const BUTTON_STYLES: ButtonStyles = {
   'neutral-ghost': {
     background: {
       default: 'surface/color/transparent',
-      hover: 'status/neutral/ghost/hover',
-      pressed: 'status/neutral/ghost/pressed',
+      hover: 'surface/color/hover',
+      pressed: 'surface/color/pressed',
       disabled: 'surface/color/transparent'
     },
     text: {
@@ -355,33 +355,6 @@ export const BUTTON_SHAPES = {
 } as const;
 
 export const BUTTON_VARIANTS: ButtonVariantProps[] = [
-  // Default variants with all states
-  { size: 'small', variant: 'filled', type: 'default', state: 'default' },
-  { size: 'small', variant: 'filled', type: 'default', state: 'hover' },
-  { size: 'small', variant: 'filled', type: 'default', state: 'pressed' },
-  { size: 'small', variant: 'filled', type: 'default', state: 'disabled' },
-  { size: 'small', variant: 'outlined', type: 'default', state: 'default' },
-  { size: 'small', variant: 'outlined', type: 'default', state: 'hover' },
-  { size: 'small', variant: 'outlined', type: 'default', state: 'pressed' },
-  { size: 'small', variant: 'outlined', type: 'default', state: 'disabled' },
-  { size: 'small', variant: 'ghost', type: 'default', state: 'default' },
-  { size: 'small', variant: 'ghost', type: 'default', state: 'hover' },
-  { size: 'small', variant: 'ghost', type: 'default', state: 'pressed' },
-  { size: 'small', variant: 'ghost', type: 'default', state: 'disabled' },
-
-  // Medium size variants with all states
-  { size: 'medium', variant: 'filled', type: 'default', state: 'default' },
-  { size: 'medium', variant: 'filled', type: 'default', state: 'hover' },
-  { size: 'medium', variant: 'filled', type: 'default', state: 'pressed' },
-  { size: 'medium', variant: 'filled', type: 'default', state: 'disabled' },
-  { size: 'medium', variant: 'outlined', type: 'default', state: 'default' },
-  { size: 'medium', variant: 'outlined', type: 'default', state: 'hover' },
-  { size: 'medium', variant: 'outlined', type: 'default', state: 'pressed' },
-  { size: 'medium', variant: 'outlined', type: 'default', state: 'disabled' },
-  { size: 'medium', variant: 'ghost', type: 'default', state: 'default' },
-  { size: 'medium', variant: 'ghost', type: 'default', state: 'hover' },
-  { size: 'medium', variant: 'ghost', type: 'default', state: 'pressed' },
-  { size: 'medium', variant: 'ghost', type: 'default', state: 'disabled' },
 
   // Large size variants with all states
   { size: 'large', variant: 'filled', type: 'default', state: 'default' },
@@ -397,6 +370,79 @@ export const BUTTON_VARIANTS: ButtonVariantProps[] = [
   { size: 'large', variant: 'ghost', type: 'default', state: 'pressed' },
   { size: 'large', variant: 'ghost', type: 'default', state: 'disabled' },
 
+  // Large size Primary variants with all states
+  { size: 'large', variant: 'filled', type: 'primary', state: 'default' },
+  { size: 'large', variant: 'filled', type: 'primary', state: 'hover' },
+  { size: 'large', variant: 'filled', type: 'primary', state: 'pressed' },
+  { size: 'large', variant: 'filled', type: 'primary', state: 'disabled' },
+  { size: 'large', variant: 'outlined', type: 'primary', state: 'default' },
+  { size: 'large', variant: 'outlined', type: 'primary', state: 'hover' },
+  { size: 'large', variant: 'outlined', type: 'primary', state: 'pressed' },
+  { size: 'large', variant: 'outlined', type: 'primary', state: 'disabled' },
+  { size: 'large', variant: 'ghost', type: 'primary', state: 'default' },
+  { size: 'large', variant: 'ghost', type: 'primary', state: 'hover' },
+  { size: 'large', variant: 'ghost', type: 'primary', state: 'pressed' },
+  { size: 'large', variant: 'ghost', type: 'primary', state: 'disabled' },
+
+  // Large size Neutral variants with all states
+  { size: 'large', variant: 'filled', type: 'neutral', state: 'default' },
+  { size: 'large', variant: 'filled', type: 'neutral', state: 'hover' },
+  { size: 'large', variant: 'filled', type: 'neutral', state: 'pressed' },
+  { size: 'large', variant: 'filled', type: 'neutral', state: 'disabled' },
+  { size: 'large', variant: 'outlined', type: 'neutral', state: 'default' },
+  { size: 'large', variant: 'outlined', type: 'neutral', state: 'hover' },
+  { size: 'large', variant: 'outlined', type: 'neutral', state: 'pressed' },
+  { size: 'large', variant: 'outlined', type: 'neutral', state: 'disabled' },
+  { size: 'large', variant: 'ghost', type: 'neutral', state: 'default' },
+  { size: 'large', variant: 'ghost', type: 'neutral', state: 'hover' },
+  { size: 'large', variant: 'ghost', type: 'neutral', state: 'pressed' },
+  { size: 'large', variant: 'ghost', type: 'neutral', state: 'disabled' },
+  
+
+  // Large size Secondary variants with all states
+  { size: 'large', variant: 'filled', type: 'secondary', state: 'default' },
+  { size: 'large', variant: 'filled', type: 'secondary', state: 'hover' },
+  { size: 'large', variant: 'filled', type: 'secondary', state: 'pressed' },
+  { size: 'large', variant: 'filled', type: 'secondary', state: 'disabled' },
+  { size: 'large', variant: 'outlined', type: 'secondary', state: 'default' },
+  { size: 'large', variant: 'outlined', type: 'secondary', state: 'hover' },
+  { size: 'large', variant: 'outlined', type: 'secondary', state: 'pressed' },
+  { size: 'large', variant: 'outlined', type: 'secondary', state: 'disabled' },
+  { size: 'large', variant: 'ghost', type: 'secondary', state: 'default' },
+  { size: 'large', variant: 'ghost', type: 'secondary', state: 'hover' },
+  { size: 'large', variant: 'ghost', type: 'secondary', state: 'pressed' },
+  { size: 'large', variant: 'ghost', type: 'secondary', state: 'disabled' },
+    
+  // Large size Danger variants with all states
+  { size: 'large', variant: 'filled', type: 'danger', state: 'default' },
+  { size: 'large', variant: 'filled', type: 'danger', state: 'hover' },
+  { size: 'large', variant: 'filled', type: 'danger', state: 'pressed' },
+  { size: 'large', variant: 'filled', type: 'danger', state: 'disabled' },
+  { size: 'large', variant: 'outlined', type: 'danger', state: 'default' },
+  { size: 'large', variant: 'outlined', type: 'danger', state: 'hover' },
+  { size: 'large', variant: 'outlined', type: 'danger', state: 'pressed' },
+  { size: 'large', variant: 'outlined', type: 'danger', state: 'disabled' },
+  { size: 'large', variant: 'ghost', type: 'danger', state: 'default' },
+  { size: 'large', variant: 'ghost', type: 'danger', state: 'hover' },
+  { size: 'large', variant: 'ghost', type: 'danger', state: 'pressed' },
+  { size: 'large', variant: 'ghost', type: 'danger', state: 'disabled' },
+
+  // Medium size variants with all states
+  { size: 'medium', variant: 'filled', type: 'default', state: 'default' },
+  { size: 'medium', variant: 'filled', type: 'default', state: 'hover' },
+  { size: 'medium', variant: 'filled', type: 'default', state: 'pressed' },
+  { size: 'medium', variant: 'filled', type: 'default', state: 'disabled' },
+  { size: 'medium', variant: 'outlined', type: 'default', state: 'default' },
+  { size: 'medium', variant: 'outlined', type: 'default', state: 'hover' },
+  { size: 'medium', variant: 'outlined', type: 'default', state: 'pressed' },
+  { size: 'medium', variant: 'outlined', type: 'default', state: 'disabled' },
+  { size: 'medium', variant: 'ghost', type: 'default', state: 'default' },
+  { size: 'medium', variant: 'ghost', type: 'default', state: 'hover' },
+  { size: 'medium', variant: 'ghost', type: 'default', state: 'pressed' },
+  { size: 'medium', variant: 'ghost', type: 'default', state: 'disabled' },
+
+
+
   // Primary variants with all states
   { size: 'medium', variant: 'filled', type: 'primary', state: 'default' },
   { size: 'medium', variant: 'filled', type: 'primary', state: 'hover' },
@@ -411,7 +457,7 @@ export const BUTTON_VARIANTS: ButtonVariantProps[] = [
   { size: 'medium', variant: 'ghost', type: 'primary', state: 'pressed' },
   { size: 'medium', variant: 'ghost', type: 'primary', state: 'disabled' },
 
-  // Neutral variants with all states
+  // Secondary variants with all states
   { size: 'medium', variant: 'filled', type: 'neutral', state: 'default' },
   { size: 'medium', variant: 'filled', type: 'neutral', state: 'hover' },
   { size: 'medium', variant: 'filled', type: 'neutral', state: 'pressed' },
@@ -454,27 +500,103 @@ export const BUTTON_VARIANTS: ButtonVariantProps[] = [
   { size: 'medium', variant: 'ghost', type: 'danger', state: 'disabled' },
 
  // Shape variants
- { size: 'medium', variant: 'filled', type: 'primary', state: 'default', shape: 'square' },
- { size: 'medium', variant: 'filled', type: 'primary', state: 'default', shape: 'rounded' },
- { size: 'medium', variant: 'filled', type: 'primary', state: 'default', shape: 'pill' },
+ { size: 'large', variant: 'filled', type: 'primary', state: 'default', shape: 'square' },
+ { size: 'large', variant: 'filled', type: 'primary', state: 'default', shape: 'rounded' },
+ { size: 'large', variant: 'filled', type: 'primary', state: 'default', shape: 'pill' },
 
  // Shape + Icon combinations
- { size: 'medium', variant: 'filled', type: 'primary', state: 'default', shape: 'pill', icon: { name: 'add' } },
- { size: 'medium', variant: 'filled', type: 'primary', state: 'default', shape: 'rounded', icon: { name: 'add' } },  
+ { size: 'large', variant: 'filled', type: 'primary', state: 'default', shape: 'pill', icon: { name: 'add' } },
+ { size: 'large', variant: 'filled', type: 'primary', state: 'default', shape: 'rounded', icon: { name: 'add' } },  
 
   // With icons in different states
-  { size: 'medium', variant: 'filled', type: 'primary', state: 'default', icon: { name: 'add' } },
-  { size: 'medium', variant: 'filled', type: 'primary', state: 'hover', icon: { name: 'add' } },
-  { size: 'medium', variant: 'filled', type: 'primary', state: 'pressed', icon: { name: 'add' } },
-  { size: 'medium', variant: 'filled', type: 'primary', state: 'disabled', icon: { name: 'add' } },
+  { size: 'large', variant: 'filled', type: 'primary', state: 'default', icon: { name: 'add' } },
+  { size: 'large', variant: 'filled', type: 'primary', state: 'hover', icon: { name: 'add' } },
+  { size: 'large', variant: 'filled', type: 'primary', state: 'pressed', icon: { name: 'add' } },
+  { size: 'large', variant: 'filled', type: 'primary', state: 'disabled', icon: { name: 'add' } },
 
-  { size: 'medium', variant: 'outlined', type: 'secondary', state: 'default', icon: { name: 'edit' } },
-  { size: 'medium', variant: 'outlined', type: 'secondary', state: 'hover', icon: { name: 'edit' } },
-  { size: 'medium', variant: 'outlined', type: 'secondary', state: 'pressed', icon: { name: 'edit' } },
-  { size: 'medium', variant: 'outlined', type: 'secondary', state: 'disabled', icon: { name: 'edit' } },
+  { size: 'large', variant: 'outlined', type: 'secondary', state: 'default', icon: { name: 'edit' } },
+  { size: 'large', variant: 'outlined', type: 'secondary', state: 'hover', icon: { name: 'edit' } },
+  { size: 'large', variant: 'outlined', type: 'secondary', state: 'pressed', icon: { name: 'edit' } },
+  { size: 'large', variant: 'outlined', type: 'secondary', state: 'disabled', icon: { name: 'edit' } },
 
-  { size: 'medium', variant: 'ghost', type: 'danger', state: 'default', icon: { name: 'delete' } },
-  { size: 'medium', variant: 'ghost', type: 'danger', state: 'hover', icon: { name: 'delete' } },
-  { size: 'medium', variant: 'ghost', type: 'danger', state: 'pressed', icon: { name: 'delete' } },
-  { size: 'medium', variant: 'ghost', type: 'danger', state: 'disabled', icon: { name: 'delete' } }
+  { size: 'large', variant: 'ghost', type: 'danger', state: 'default', icon: { name: 'delete' } },
+  { size: 'large', variant: 'ghost', type: 'danger', state: 'hover', icon: { name: 'delete' } },
+  { size: 'large', variant: 'ghost', type: 'danger', state: 'pressed', icon: { name: 'delete' } },
+  { size: 'large', variant: 'ghost', type: 'danger', state: 'disabled', icon: { name: 'delete' } },
+
+
+  // Default variants with all states
+  { size: 'small', variant: 'filled', type: 'default', state: 'default' },
+  { size: 'small', variant: 'filled', type: 'default', state: 'hover' },
+  { size: 'small', variant: 'filled', type: 'default', state: 'pressed' },
+  { size: 'small', variant: 'filled', type: 'default', state: 'disabled' },
+  { size: 'small', variant: 'outlined', type: 'default', state: 'default' },
+  { size: 'small', variant: 'outlined', type: 'default', state: 'hover' },
+  { size: 'small', variant: 'outlined', type: 'default', state: 'pressed' },
+  { size: 'small', variant: 'outlined', type: 'default', state: 'disabled' },
+  { size: 'small', variant: 'ghost', type: 'default', state: 'default' },
+  { size: 'small', variant: 'ghost', type: 'default', state: 'hover' },
+  { size: 'small', variant: 'ghost', type: 'default', state: 'pressed' },
+  { size: 'small', variant: 'ghost', type: 'default', state: 'disabled' },
+
+  // Primary variants with all states
+  { size: 'small', variant: 'filled', type: 'primary', state: 'default' },
+  { size: 'small', variant: 'filled', type: 'primary', state: 'hover' },
+  { size: 'small', variant: 'filled', type: 'primary', state: 'pressed' },
+  { size: 'small', variant: 'filled', type: 'primary', state: 'disabled' },
+  { size: 'small', variant: 'outlined', type: 'primary', state: 'default' },
+  { size: 'small', variant: 'outlined', type: 'primary', state: 'hover' },
+  { size: 'small', variant: 'outlined', type: 'primary', state: 'pressed' },
+  { size: 'small', variant: 'outlined', type: 'primary', state: 'disabled' },
+  { size: 'small', variant: 'ghost', type: 'primary', state: 'default' },
+  { size: 'small', variant: 'ghost', type: 'primary', state: 'hover' },
+  { size: 'small', variant: 'ghost', type: 'primary', state: 'pressed' },
+  { size: 'small', variant: 'ghost', type: 'primary', state: 'disabled' },
+
+  // Neutral variants with all states
+  { size: 'small', variant: 'filled', type: 'neutral', state: 'default' },
+  { size: 'small', variant: 'filled', type: 'neutral', state: 'hover' },
+  { size: 'small', variant: 'filled', type: 'neutral', state: 'pressed' },
+  { size: 'small', variant: 'filled', type: 'neutral', state: 'disabled' },
+  { size: 'small', variant: 'outlined', type: 'neutral', state: 'default' },
+  { size: 'small', variant: 'outlined', type: 'neutral', state: 'hover' },
+  { size: 'small', variant: 'outlined', type: 'neutral', state: 'pressed' },
+  { size: 'small', variant: 'outlined', type: 'neutral', state: 'disabled' },
+  { size: 'small', variant: 'ghost', type: 'neutral', state: 'default' },
+  { size: 'small', variant: 'ghost', type: 'neutral', state: 'hover' },
+  { size: 'small', variant: 'ghost', type: 'neutral', state: 'pressed' },
+  { size: 'small', variant: 'ghost', type: 'neutral', state: 'disabled' },
+
+  // Secondary variants with all states
+  { size: 'small', variant: 'filled', type: 'secondary', state: 'default' },
+  { size: 'small', variant: 'filled', type: 'secondary', state: 'hover' },
+  { size: 'small', variant: 'filled', type: 'secondary', state: 'pressed' },
+  { size: 'small', variant: 'filled', type: 'secondary', state: 'disabled' },
+  { size: 'small', variant: 'outlined', type: 'secondary', state: 'default' },
+  { size: 'small', variant: 'outlined', type: 'secondary', state: 'hover' },
+  { size: 'small', variant: 'outlined', type: 'secondary', state: 'pressed' },
+  { size: 'small', variant: 'outlined', type: 'secondary', state: 'disabled' },
+  { size: 'small', variant: 'ghost', type: 'secondary', state: 'default' },
+  { size: 'small', variant: 'ghost', type: 'secondary', state: 'hover' },
+  { size: 'small', variant: 'ghost', type: 'secondary', state: 'pressed' },
+  { size: 'small', variant: 'ghost', type: 'secondary', state: 'disabled' },
+
+  // Danger variants with all states
+  { size: 'small', variant: 'filled', type: 'danger', state: 'default' },
+  { size: 'small', variant: 'filled', type: 'danger', state: 'hover' },
+  { size: 'small', variant: 'filled', type: 'danger', state: 'pressed' },
+  { size: 'small', variant: 'filled', type: 'danger', state: 'disabled' },
+  { size: 'small', variant: 'outlined', type: 'danger', state: 'default' },
+  { size: 'small', variant: 'outlined', type: 'danger', state: 'hover' },
+  { size: 'small', variant: 'outlined', type: 'danger', state: 'pressed' },
+  { size: 'small', variant: 'outlined', type: 'danger', state: 'disabled' },
+  { size: 'small', variant: 'ghost', type: 'danger', state: 'default' },
+  { size: 'small', variant: 'ghost', type: 'danger', state: 'hover' },
+  { size: 'small', variant: 'ghost', type: 'danger', state: 'pressed' },
+  { size: 'small', variant: 'ghost', type: 'danger', state: 'disabled' },
+
+  
+  
+
+
 ] as const; 

@@ -122,7 +122,7 @@ export class ButtonCreator {
 
     if (!targetVariant) {
       console.error('[ButtonManager] Could not find matching variant');
-      console.log('[ButtonManager] Available variants:', componentSet.children.map(child => child.name));
+      console.log('[ButtonManager] Available variants:', componentSet.children.length);
       return componentSet.defaultVariant.createInstance();
     }
 
@@ -171,7 +171,7 @@ export class ButtonCreator {
     componentSet.paddingLeft = componentSet.paddingRight = 40;
     componentSet.paddingTop = componentSet.paddingBottom = 40;
     componentSet.fills = [{ type: "SOLID", color: { r: 1, g: 1, b: 1 } }];
-    componentSet.resize(1200, componentSet.height);
+    componentSet.resize(580, componentSet.height);
 
     componentSet.primaryAxisSizingMode = "FIXED";
     componentSet.counterAxisSizingMode = "AUTO";

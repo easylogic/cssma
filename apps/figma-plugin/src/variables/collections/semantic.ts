@@ -53,56 +53,84 @@ export const SEMANTIC: Collection = {
     "border/width/default": { Value: "{borderWidth/thin}" },
     "border/width/heavy": { Value: "{borderWidth/thick}" },
 
-    // Colors - Text
-    "text/color/default": { Value: "{gray/900/light}" },
-    "text/color/secondary": { Value: "{gray/500/light}" },
-    "text/color/disabled": { Value: "{gray/400/light}" },
-    "text/color/inverse": { Value: "{gray/50/light}" },
+    // Text Colors
+    "text/color/default": { Value: "{color/text/default}" },
+    "text/color/secondary": { Value: "{color/text/subtle}" },
+    "text/color/subtle": { Value: "{color/text/subtle}" },
+    "text/color/muted": { Value: "{color/text/muted}" },
+    "text/color/disabled": { Value: "{color/text/disabled}" },
+    "text/color/inverse": { Value: "{color/text/onAccent}" },
 
-    // Colors - Status
-    "status/neutral/default": { Value: "{gray/400/light}" },
-    "status/neutral/hover": { Value: "{gray/500/light}" },
-    "status/neutral/pressed": { Value: "{gray/600/light}" },
-    "status/neutral/ghost/hover": { Value: "{grayalpha/50/light/24}" },
-    "status/neutral/ghost/pressed": { Value: "{grayalpha/50/light/40}" },
-
-    "status/secondary/default": { Value: "{blue/200/light}" },
-    "status/secondary/hover": { Value: "{blue/300/light}" },
-    "status/secondary/pressed": { Value: "{blue/400/light}" },
-    "status/secondary/ghost/hover": { Value: "{bluealpha/500/light/24}" },
-    "status/secondary/ghost/pressed": { Value: "{bluealpha/500/light/40}" },
-
-    "status/info/default": { Value: "{blue/500/light}" },
-    "status/info/hover": { Value: "{blue/600/light}" },
-    "status/info/pressed": { Value: "{blue/700/light}" },
-    "status/info/ghost/hover": { Value: "{bluealpha/500/light/24}" },
-    "status/info/ghost/pressed": { Value: "{bluealpha/500/light/40}" },
-
-    "status/success/default": { Value: "{green/500/light}" },
-    "status/success/hover": { Value: "{green/600/light}" },
-    "status/success/pressed": { Value: "{green/700/light}" },
-    "status/success/ghost/hover": { Value: "{color/success/ghost/hover/light}" },
-    "status/success/ghost/pressed": { Value: "{color/success/ghost/pressed/light}" },
-
-    "status/warning/default": { Value: "{yellow/500/light}" },
-    "status/warning/hover": { Value: "{yellow/600/light}" },
-    "status/warning/pressed": { Value: "{yellow/700/light}" },
-    "status/warning/ghost/hover": { Value: "{color/warning/ghost/hover/light}" },
-    "status/warning/ghost/pressed": { Value: "{color/warning/ghost/pressed/light}" },
-
-    "status/error/default": { Value: "{red/500/light}" },
-    "status/error/hover": { Value: "{red/600/light}" },
-    "status/error/pressed": { Value: "{red/700/light}" },
-    "status/error/ghost/hover": { Value: "{color/error/ghost/hover/light}" },
-    "status/error/ghost/pressed": { Value: "{color/error/ghost/pressed/light}" },
-
-    // Colors - Surface
-    "surface/color/white": { Value: "{color/white}" },
-    "surface/color/default": { Value: "{gray/200/light}" },
-    "surface/color/hover": { Value: "{gray/300/light}" },
-    "surface/color/pressed": { Value: "{gray/400/light}" },
-    "surface/color/disabled": { Value: "{gray/100/light}" },
+    // Surface Colors
+    "surface/color/default": { Value: "{color/background/default}" },
+    "surface/color/hover": { Value: "{color/background/subtle}" },
+    "surface/color/pressed": { Value: "{color/background/muted}" },
+    "surface/color/disabled": { Value: "{color/background/emphasized}" },
     "surface/color/transparent": { Value: "{color/transparent}" },
+    "surface/color/border": { Value: "{color/border/default}" },
+    "surface/color/border/hover": { Value: "{color/border/emphasized}" },
+    "surface/color/border/pressed": { Value: "{color/border/emphasized}" },
+    "surface/color/border/disabled": { Value: "{color/border/subtle}" },
+
+    // Border Colors
+    "border/color/default": { Value: "{color/border/default}" },
+    "border/color/hover": { Value: "{color/border/emphasized}" },
+    "border/color/pressed": { Value: "{color/border/emphasized}" },
+    "border/color/disabled": { Value: "{color/border/subtle}" },
+
+    // Component Border Colors
+    "component/base/border/color/default": { Value: "{color/border/default}" },
+    "component/base/border/color/hover": { Value: "{color/border/emphasized}" },
+    "component/base/border/color/pressed": { Value: "{color/border/emphasized}" },
+    "component/base/border/color/disabled": { Value: "{color/border/subtle}" },
+
+    // Status Colors - Neutral
+    "status/neutral/default": { Value: "{color/action/secondary/default}" },
+    "status/neutral/hover": { Value: "{color/action/secondary/hover}" },
+    "status/neutral/pressed": { Value: "{color/action/secondary/pressed}" },
+    "status/neutral/disabled": { Value: "{color/action/secondary/disabled}" },
+    "status/neutral/ghost/hover": { Value: "{color/action/secondary/ghost/hover}" },
+    "status/neutral/ghost/pressed": { Value: "{color/action/secondary/ghost/pressed}" },
+
+    // Status Colors - Info
+    "status/info/default": { Value: "{color/action/primary/default}" },
+    "status/info/hover": { Value: "{color/action/primary/hover}" },
+    "status/info/pressed": { Value: "{color/action/primary/pressed}" },
+    "status/info/disabled": { Value: "{color/action/primary/disabled}" },
+    "status/info/ghost/hover": { Value: "{color/action/primary/ghost/hover}" },
+    "status/info/ghost/pressed": { Value: "{color/action/primary/ghost/pressed}" },
+
+    // Status Colors - Success
+    "status/success/default": { Value: "{color/status/success/default}" },
+    "status/success/hover": { Value: "{color/status/success/hover}" },
+    "status/success/pressed": { Value: "{color/status/success/pressed}" },
+    "status/success/disabled": { Value: "{color/action/secondary/disabled}" },
+    "status/success/ghost/hover": { Value: "{color/status/success/ghost/hover}" },
+    "status/success/ghost/pressed": { Value: "{color/status/success/ghost/pressed}" },
+
+    // Status Colors - Warning
+    "status/warning/default": { Value: "{color/status/warning/default}" },
+    "status/warning/hover": { Value: "{color/status/warning/hover}" },
+    "status/warning/pressed": { Value: "{color/status/warning/pressed}" },
+    "status/warning/disabled": { Value: "{color/action/secondary/disabled}" },
+    "status/warning/ghost/hover": { Value: "{color/status/warning/ghost/hover}" },
+    "status/warning/ghost/pressed": { Value: "{color/status/warning/ghost/pressed}" },
+
+    // Status Colors - Error
+    "status/error/default": { Value: "{color/status/error/default}" },
+    "status/error/hover": { Value: "{color/status/error/hover}" },
+    "status/error/pressed": { Value: "{color/status/error/pressed}" },
+    "status/error/disabled": { Value: "{color/action/secondary/disabled}" },
+    "status/error/ghost/hover": { Value: "{color/status/error/ghost/hover}" },
+    "status/error/ghost/pressed": { Value: "{color/status/error/ghost/pressed}" },
+
+    // Status Colors - Secondary
+    "status/secondary/default": { Value: "{color/action/secondary/default}" },
+    "status/secondary/hover": { Value: "{color/action/secondary/hover}" },
+    "status/secondary/pressed": { Value: "{color/action/secondary/pressed}" },
+    "status/secondary/disabled": { Value: "{color/action/secondary/disabled}" },
+    "status/secondary/ghost/hover": { Value: "{color/action/secondary/ghost/hover}" },
+    "status/secondary/ghost/pressed": { Value: "{color/action/secondary/ghost/pressed}" },
 
     // Common Component Patterns
     "component/base/height/xs": { Value: "{size/height/xs}" },

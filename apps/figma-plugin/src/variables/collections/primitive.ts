@@ -118,8 +118,15 @@ export const PRIMITIVE: Collection = {
     // Alpha variants
     "grayalpha/50/light/8": { Value: "#FAFAFA14" },   // #FAFAFA14
     "grayalpha/50/light/16": { Value: "#FAFAFA29" },  // #FAFAFA29
+    "grayalpha/50/light/24": { Value: "#FAFAFA3D" },  // #FAFAFA3D
+    "grayalpha/50/light/32": { Value: "#FAFAFA52" },  // #FAFAFA52
+    "grayalpha/50/light/40": { Value: "#FAFAFA66" },  // #FAFAFA66
+
     "grayalpha/50/dark/8": { Value: "#1F1F1F14" },    // #1F1F1F14
     "grayalpha/50/dark/16": { Value: "#1F1F1F29" },   // #1F1F1F29
+    "grayalpha/50/dark/24": { Value: "#1F1F1F3D" },   // #1F1F1F3D
+    "grayalpha/50/dark/32": { Value: "#1F1F1F52" },   // #1F1F1F52
+    "grayalpha/50/dark/40": { Value: "#1F1F1F66" },   // #1F1F1F66
 
     "bluealpha/500/light/16": { Value: "#0077FF29" }, // #0077FF29
     "bluealpha/500/light/24": { Value: "#0077FF3D" }, // #0077FF3D
@@ -130,132 +137,132 @@ export const PRIMITIVE: Collection = {
     "bluealpha/500/dark/32": { Value: "#52A3FF52" },  // #52A3FF52
     "bluealpha/500/dark/40": { Value: "#52A3FF66" },  // #52A3FF66
 
-    "redalpha/500/light/16": { Value: "#ED3B3B29" },  // #ED3B3B29
-    "redalpha/500/light/32": { Value: "#ED3B3B52" },  // #ED3B3B52
-    "redalpha/500/dark/16": { Value: "#FF525229" },   // #FF525229
-    "redalpha/500/dark/32": { Value: "#FF525252" },   // #FF525252
+    "redalpha/500/light/16": { Value: "#ED3B3B29", scopes: ['ALL_FILLS'] },  // #ED3B3B29
+    "redalpha/500/light/32": { Value: "#ED3B3B52", scopes: ['ALL_FILLS'] },  // #ED3B3B52
+    "redalpha/500/dark/16": { Value: "#FF525229", scopes: ['ALL_FILLS'] },   // #FF525229
+    "redalpha/500/dark/32": { Value: "#FF525252", scopes: ['ALL_FILLS'] },   // #FF525252
 
 
     // Colors - Transparent
-    "color/transparent": { Value: "#00000000" },
+    "color/transparent": { Value: "#00000000", scopes: ['ALL_FILLS'] },
 
     // Colors - Base
-    "color/white": { Value: "#FFFFFF" },               // #FFFFFF
+    "color/white": { Value: "#FFFFFF", scopes: ['ALL_FILLS'] },               // #FFFFFF
 
     // Colors - Text
-    "color/text/light": { Value: "#1F1F1F" },         // #1F1F1F
-    "color/text/dark": { Value: "#F5F5F5" },          // #F5F5F5
-    "color/text/disabled/light": { Value: "#A3A3A3" }, // #A3A3A3
-    "color/text/disabled/dark": { Value: "#7A7A7A" },  // #7A7A7A
+    "color/text/light": { Value: "#1F1F1F", scopes: ['TEXT_FILL'] },         // #1F1F1F
+    "color/text/dark": { Value: "#F5F5F5", scopes: ['TEXT_FILL'] },          // #F5F5F5
+    "color/text/disabled/light": { Value: "#A3A3A3", scopes: ['TEXT_FILL'] }, // #A3A3A3
+    "color/text/disabled/dark": { Value: "#7A7A7A", scopes: ['TEXT_FILL'] },  // #7A7A7A
 
     // Colors - Status
-    "color/info/ghost/hover/light": { Value: "#E1F0FF14" },
-    "color/info/ghost/hover/dark": { Value: "#14295214" },
-    "color/info/ghost/pressed/light": { Value: "#C7E2FF32" },
-    "color/info/ghost/pressed/dark": { Value: "#1F3D7A32" },
+    "color/info/ghost/hover/light": { Value: "#E1F0FF14", scopes: ['ALL_FILLS'] },
+    "color/info/ghost/hover/dark": { Value: "#14295214", scopes: ['ALL_FILLS']  },
+    "color/info/ghost/pressed/light": { Value: "#C7E2FF32", scopes: ['ALL_FILLS'] },
+    "color/info/ghost/pressed/dark": { Value: "#1F3D7A32", scopes: ['ALL_FILLS'] },
 
-    "color/success/ghost/hover/light": { Value: "#B3E6B314" },
-    "color/success/ghost/hover/dark": { Value: "#14521414" },
-    "color/success/ghost/pressed/light": { Value: "#94DB9432" },
-    "color/success/ghost/pressed/dark": { Value: "#1F7A1F32" },
+    "color/success/ghost/hover/light": { Value: "#B3E6B314", scopes: ['ALL_FILLS'] },
+    "color/success/ghost/hover/dark": { Value: "#14521414", scopes: ['ALL_FILLS'] },
+    "color/success/ghost/pressed/light": { Value: "#94DB9432", scopes: ['ALL_FILLS'] },
+    "color/success/ghost/pressed/dark": { Value: "#1F7A1F32", scopes: ['ALL_FILLS'] },
 
-    "color/warning/ghost/hover/light": { Value: "#FFEAD114" },
-    "color/warning/ghost/hover/dark": { Value: "#52521414" },
-    "color/warning/ghost/pressed/light": { Value: "#FFD9D932" },
-    "color/warning/ghost/pressed/dark": { Value: "#7A7A1F32" },
+    "color/warning/ghost/hover/light": { Value: "#FFEAD114", scopes: ['ALL_FILLS'] },
+    "color/warning/ghost/hover/dark": { Value: "#52521414", scopes: ['ALL_FILLS'] },
+    "color/warning/ghost/pressed/light": { Value: "#FFD9D932", scopes: ['ALL_FILLS'] },
+    "color/warning/ghost/pressed/dark": { Value: "#7A7A1F32", scopes: ['ALL_FILLS'] },
 
-    "color/error/ghost/hover/light": { Value: "#FFE6E614" },
-    "color/error/ghost/hover/dark": { Value: "#52141414" },
-    "color/error/ghost/pressed/light": { Value: "#FFD9D932" },
-    "color/error/ghost/pressed/dark": { Value: "#7A1F1F32" },
+    "color/error/ghost/hover/light": { Value: "#FFE6E614", scopes: ['ALL_FILLS'] },
+    "color/error/ghost/hover/dark": { Value: "#52141414", scopes: ['ALL_FILLS'] },
+    "color/error/ghost/pressed/light": { Value: "#FFD9D932", scopes: ['ALL_FILLS'] },
+    "color/error/ghost/pressed/dark": { Value: "#7A1F1F32", scopes: ['ALL_FILLS'] },
 
     // Colors - Background
-    "color/bg/default/light": { Value: "#FFFFFF" },            // #FFFFFF
-    "color/bg/default/dark": { Value: "#1F1F1F" },    // #1F1F1F
-    "color/bg/hover/light": { Value: "#FAFAFA" },     // #FAFAFA
-    "color/bg/hover/dark": { Value: "#292929" },      // #292929
-    "color/bg/pressed/light": { Value: "#F5F5F5" },   // #F5F5F5
-    "color/bg/pressed/dark": { Value: "#333333" },    // #333333
-    "color/bg/disabled/light": { Value: "#F5F5F5" },  // #F5F5F5
-    "color/bg/disabled/dark": { Value: "#292929" },   // #292929
+    "color/bg/default/light": { Value: "#FFFFFF", scopes: ['ALL_FILLS'] },            // #FFFFFF
+    "color/bg/default/dark": { Value: "#1F1F1F", scopes: ['ALL_FILLS'] },    // #1F1F1F
+    "color/bg/hover/light": { Value: "#FAFAFA", scopes: ['ALL_FILLS'] },     // #FAFAFA
+    "color/bg/hover/dark": { Value: "#292929", scopes: ['ALL_FILLS'] },      // #292929
+    "color/bg/pressed/light": { Value: "#F5F5F5", scopes: ['ALL_FILLS'] },   // #F5F5F5
+    "color/bg/pressed/dark": { Value: "#333333", scopes: ['ALL_FILLS'] },    // #333333
+    "color/bg/disabled/light": { Value: "#F5F5F5", scopes: ['ALL_FILLS'] },  // #F5F5F5
+    "color/bg/disabled/dark": { Value: "#292929", scopes: ['ALL_FILLS'] },   // #292929
 
     // Typography - Font Sizes
-    "typography/size/2xs": { Value: 10 },
-    "typography/size/xs": { Value: 12 },
-    "typography/size/sm": { Value: 14 },
-    "typography/size/md": { Value: 16 },
-    "typography/size/lg": { Value: 18 },
-    "typography/size/xl": { Value: 20 },
-    "typography/size/2xl": { Value: 24 },
-    "typography/size/3xl": { Value: 30 },
-    "typography/size/4xl": { Value: 36 },
+    "typography/size/2xs": { Value: 10, scopes: ['FONT_SIZE'] },
+    "typography/size/xs": { Value: 12, scopes: ['FONT_SIZE'] },
+    "typography/size/sm": { Value: 14, scopes: ['FONT_SIZE'] },
+    "typography/size/md": { Value: 16, scopes: ['FONT_SIZE'] },
+    "typography/size/lg": { Value: 18, scopes: ['FONT_SIZE'] },
+    "typography/size/xl": { Value: 20, scopes: ['FONT_SIZE'] },
+    "typography/size/2xl": { Value: 24, scopes: ['FONT_SIZE'] },
+    "typography/size/3xl": { Value: 30, scopes: ['FONT_SIZE'] },
+    "typography/size/4xl": { Value: 36, scopes: ['FONT_SIZE'] },
 
     // Typography - Line Heights
-    "typography/lineHeight/2xs": { Value: 14 },
-    "typography/lineHeight/xs": { Value: 16 },
-    "typography/lineHeight/sm": { Value: 20 },
-    "typography/lineHeight/md": { Value: 24 },
-    "typography/lineHeight/lg": { Value: 28 },
-    "typography/lineHeight/xl": { Value: 28 },
-    "typography/lineHeight/2xl": { Value: 32 },
-    "typography/lineHeight/3xl": { Value: 36 },
-    "typography/lineHeight/4xl": { Value: 40 },
+    "typography/lineHeight/2xs": { Value: 14, scopes: ['LINE_HEIGHT'] },
+    "typography/lineHeight/xs": { Value: 16, scopes: ['LINE_HEIGHT'] },
+    "typography/lineHeight/sm": { Value: 20, scopes: ['LINE_HEIGHT'] },
+    "typography/lineHeight/md": { Value: 24, scopes: ['LINE_HEIGHT'] },
+    "typography/lineHeight/lg": { Value: 28, scopes: ['LINE_HEIGHT'] },
+    "typography/lineHeight/xl": { Value: 28, scopes: ['LINE_HEIGHT'] },
+    "typography/lineHeight/2xl": { Value: 32, scopes: ['LINE_HEIGHT'] },
+    "typography/lineHeight/3xl": { Value: 36, scopes: ['LINE_HEIGHT'] },
+    "typography/lineHeight/4xl": { Value: 40, scopes: ['LINE_HEIGHT'] },
 
     // Sizes - Component Heights
-    "size/height/xs": { Value: 24 },
-    "size/height/sm": { Value: 32 },
-    "size/height/md": { Value: 40 },
-    "size/height/lg": { Value: 48 },
-    "size/height/xl": { Value: 56 },
+    "size/height/xs": { Value: 24, scopes: ['WIDTH_HEIGHT'] },
+    "size/height/sm": { Value: 32, scopes: ['WIDTH_HEIGHT'] },
+    "size/height/md": { Value: 40, scopes: ['WIDTH_HEIGHT'] },
+    "size/height/lg": { Value: 48, scopes: ['WIDTH_HEIGHT'] },
+    "size/height/xl": { Value: 56, scopes: ['WIDTH_HEIGHT'] },
 
     // Sizes - Icon Sizes
-    "size/icon/xs": { Value: 12 },
-    "size/icon/sm": { Value: 16 },
-    "size/icon/md": { Value: 20 },
-    "size/icon/lg": { Value: 24 },
-    "size/icon/xl": { Value: 32 },
+    "size/icon/xs": { Value: 12, scopes: ['WIDTH_HEIGHT'] },
+    "size/icon/sm": { Value: 16, scopes: ['WIDTH_HEIGHT'] },
+    "size/icon/md": { Value: 20, scopes: ['WIDTH_HEIGHT'] },
+    "size/icon/lg": { Value: 24, scopes: ['WIDTH_HEIGHT'] },
+    "size/icon/xl": { Value: 32, scopes: ['WIDTH_HEIGHT'] },
 
     // Radii
-    "radius/none": { Value: 0 },
-    "radius/xs": { Value: 4 },
-    "radius/sm": { Value: 6 },
-    "radius/md": { Value: 8 },
-    "radius/lg": { Value: 12 },
-    "radius/xl": { Value: 16 },
-    "radius/full": { Value: 9999 },
+    "radius/none": { Value: 0, scopes: ['CORNER_RADIUS'] },
+    "radius/xs": { Value: 4, scopes: ['CORNER_RADIUS'] },
+    "radius/sm": { Value: 6, scopes: ['CORNER_RADIUS'] },
+    "radius/md": { Value: 8, scopes: ['CORNER_RADIUS'] },
+    "radius/lg": { Value: 12, scopes: ['CORNER_RADIUS'] },
+    "radius/xl": { Value: 16, scopes: ['CORNER_RADIUS'] },
+    "radius/full": { Value: 9999, scopes: ['CORNER_RADIUS'] },
 
     // Spacing
-    "spacing/none": { Value: 0 },
-    "spacing/2": { Value: 2 },
-    "spacing/4": { Value: 4 },
-    "spacing/8": { Value: 8 },
-    "spacing/12": { Value: 12 },
-    "spacing/16": { Value: 16 },
-    "spacing/20": { Value: 20 },
-    "spacing/24": { Value: 24 },
-    "spacing/32": { Value: 32 },
-    "spacing/40": { Value: 40 },
-    "spacing/48": { Value: 48 },
+    "spacing/none": { Value: 0, scopes: ['GAP'] },
+    "spacing/2": { Value: 2, scopes: ['GAP'] },
+    "spacing/4": { Value: 4, scopes: ['GAP'] },
+    "spacing/8": { Value: 8, scopes: ['GAP'] },
+    "spacing/12": { Value: 12, scopes: ['GAP'] },
+    "spacing/16": { Value: 16, scopes: ['GAP'] },
+    "spacing/20": { Value: 20, scopes: ['GAP'] },
+    "spacing/24": { Value: 24, scopes: ['GAP'] },
+    "spacing/32": { Value: 32, scopes: ['GAP'] },
+    "spacing/40": { Value: 40, scopes: ['GAP'] },
+    "spacing/48": { Value: 48, scopes: ['GAP'] },
 
     // Border Widths
-    "borderWidth/none": { Value: 0 },
-    "borderWidth/thin": { Value: 1 },
-    "borderWidth/thick": { Value: 2 },
-    "borderWidth/thicker": { Value: 3 },
+    "borderWidth/none": { Value: 0, scopes: ['STROKE_FLOAT'] },
+    "borderWidth/thin": { Value: 1, scopes: ['STROKE_FLOAT'] },
+    "borderWidth/thick": { Value: 2, scopes: ['STROKE_FLOAT'] },
+    "borderWidth/thicker": { Value: 3, scopes: ['STROKE_FLOAT'] },
 
     // Opacity
-    "opacity/0": { Value: 0 },
-    "opacity/5": { Value: 0.05 },
-    "opacity/10": { Value: 0.1 },
-    "opacity/20": { Value: 0.2 },
-    "opacity/30": { Value: 0.3 },
-    "opacity/40": { Value: 0.4 },
-    "opacity/50": { Value: 0.5 },
-    "opacity/60": { Value: 0.6 },
-    "opacity/70": { Value: 0.7 },
-    "opacity/80": { Value: 0.8 },
-    "opacity/90": { Value: 0.9 },
-    "opacity/100": { Value: 1 },
+    "opacity/0": { Value: 0, scopes: ['OPACITY'] },
+    "opacity/5": { Value: 0.05, scopes: ['OPACITY'] },
+    "opacity/10": { Value: 0.1, scopes: ['OPACITY'] },
+    "opacity/20": { Value: 0.2, scopes: ['OPACITY'] },
+    "opacity/30": { Value: 0.3, scopes: ['OPACITY'] },
+    "opacity/40": { Value: 0.4, scopes: ['OPACITY'] },
+    "opacity/50": { Value: 0.5, scopes: ['OPACITY'] },
+    "opacity/60": { Value: 0.6, scopes: ['OPACITY'] },
+    "opacity/70": { Value: 0.7, scopes: ['OPACITY'] },
+    "opacity/80": { Value: 0.8, scopes: ['OPACITY'] },
+    "opacity/90": { Value: 0.9, scopes: ['OPACITY'] },
+    "opacity/100": { Value: 1, scopes: ['OPACITY'] },
 
   }
 } as const; 

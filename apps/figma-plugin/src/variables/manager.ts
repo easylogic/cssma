@@ -208,8 +208,13 @@ class VariablesManager {
     console.log(`🎨 Binding paint variable: ${name}`);
     const variable = this.variables[name];
     if (!variable) {
-      console.warn(`  ⚠️ Variable not found, using default paint`);
-      return { type: 'SOLID', color: { r: 0, g: 0, b: 0 } };
+      console.warn(`  ⚠️ Variable not found: ${name}`);
+      // 디버깅을 위한 빨간색 반환
+      return { 
+        type: 'SOLID', 
+        color: { r: 1, g: 0, b: 0 },
+        opacity: 0.3 // 반투명하게 설정하여 에러임을 시각적으로 표시
+      };
     }
 
     try {
@@ -218,12 +223,17 @@ class VariablesManager {
         'color',
         variable
       );
-      console.log(`  ✅ Paint bound successfully`);
+      console.log(`  ✅ Paint bound successfully for: ${name}`);
       return paint;
     } catch (error) {
-      console.error(`  ❌ Failed to bind paint variable`);
-        console.error(`  Error: ${error.message}`);
-      return { type: 'SOLID', color: { r: 0, g: 0, b: 0 } };
+      console.error(`  ❌ Failed to bind paint variable: ${name}`);
+      console.error(`  Error: ${error.message}`);
+      // 바인딩 실패 시 노란색 반환
+      return { 
+        type: 'SOLID', 
+        color: { r: 1, g: 1, b: 0 },
+        opacity: 0.3 // 반투명하게 설정하여 에러임을 시각적으로 표시
+      };
     }
   }
 }

@@ -63,8 +63,8 @@ export async function handleCreateDesignSystem() {
     figma.currentPage = componentsPage;
 
     const list = [
-      // iconHandlers,
-      // buttonHandlers,
+      iconHandlers,
+      buttonHandlers,
       cardHandlers,
       // avatarHandlers,
       // badgeHandlers,

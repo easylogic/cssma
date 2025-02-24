@@ -1,11 +1,20 @@
-import { CardFooterProps, CardFooterVariantProps, FOOTER_SIZES, FOOTER_VARIANTS } from '@/types/card';
+import { CardFooterProps, CardFooterVariantProps } from '@/types/card';
 import { variables } from '@/variables';
 import { buttonHandlers } from '../../button';
+import { FOOTER_SIZES, FOOTER_VARIANTS } from '@/constants/cardStyles';
+import { CARD_FOOTER_STYLES } from '@/constants/card/styles';
+
 
 export class CardFooterManager {
   private static instance: CardFooterManager;
   private componentSet: ComponentSetNode | null = null;
   private variantMap = new Map<string, ComponentNode>();
+
+  private readonly ROLES = {
+    ACTION_CONTAINER: 'footer-action-container',
+    PRIMARY_ACTION: 'footer-primary-action',
+    SECONDARY_ACTION: 'footer-secondary-action'
+  } as const;
 
   private constructor() {}
 
@@ -29,8 +38,6 @@ export class CardFooterManager {
     node.layoutMode = "HORIZONTAL";
     node.primaryAxisAlignItems = "MIN";
     node.counterAxisAlignItems = "CENTER";
-    node.layoutSizingHorizontal = "FILL";
-    node.layoutSizingVertical = "HUG";
 
     if (size) {
       variables.setBindVariable(node, 'height', size.height);
@@ -42,18 +49,46 @@ export class CardFooterManager {
     }
   }
 
-  private async createActionButton(text: string, size: typeof FOOTER_SIZES[keyof typeof FOOTER_SIZES]) {
+  private async createActionButton(
+    text: string, 
+    size: typeof FOOTER_SIZES[keyof typeof FOOTER_SIZES], 
+    role: string,
+    options: {
+      variant?: 'filled' | 'outlined' | 'ghost';
+      type?: 'primary' | 'secondary' | 'neutral' | 'danger';
+    } = {}
+  ) {
+    const isSecondary = role === this.ROLES.SECONDARY_ACTION;
+    
     const button = await buttonHandlers.createInstance({
       size: size.buttonSize,
-      variant: 'filled',
-      type: 'primary'
+      variant: options.variant || (isSecondary ? 'outlined' : 'filled'),
+      type: options.type || (isSecondary ? 'secondary' : 'primary')
     }, { text });
+    
+    if (button) {
+      button.setPluginData('role', role);
+    }
     return button;
   }
 
-  private async createActionContainer(size: typeof FOOTER_SIZES[keyof typeof FOOTER_SIZES], alignment: string) {
+  private async createActionContainer(
+    size: typeof FOOTER_SIZES[keyof typeof FOOTER_SIZES], 
+    alignment: string,
+    options: {
+      primaryAction?: {
+        variant?: 'filled' | 'outlined' | 'ghost';
+        type?: 'primary' | 'secondary' | 'neutral' | 'danger';
+      };
+      secondaryAction?: {
+        variant?: 'filled' | 'outlined' | 'ghost';
+        type?: 'primary' | 'secondary' | 'neutral' | 'danger';
+      };
+    } = {}
+  ) {
     const container = figma.createFrame();
     container.name = "Action Container";
+    container.setPluginData('role', this.ROLES.ACTION_CONTAINER);
     container.layoutMode = "HORIZONTAL";
     variables.setBindVariable(container, 'itemSpacing', size.spacing);
     container.fills = [];
@@ -72,12 +107,20 @@ export class CardFooterManager {
         container.primaryAxisAlignItems = "MIN";
     }
 
-    container.layoutSizingHorizontal = "FILL";
-    container.layoutSizingVertical = "HUG";
-
     // 기본 액션 버튼 추가
-    const primaryAction = await this.createActionButton("Primary", size);
-    const secondaryAction = await this.createActionButton("Secondary", size);
+    const primaryAction = await this.createActionButton(
+      "Primary", 
+      size, 
+      this.ROLES.PRIMARY_ACTION,
+      options.primaryAction
+    );
+    const secondaryAction = await this.createActionButton(
+      "Secondary", 
+      size, 
+      this.ROLES.SECONDARY_ACTION,
+      options.secondaryAction
+    );
+
     if (primaryAction && secondaryAction) {
       container.appendChild(primaryAction);
       container.appendChild(secondaryAction);
@@ -86,8 +129,11 @@ export class CardFooterManager {
     return container;
   }
 
+  private findNodeByRole(component: ComponentNode | InstanceNode, role: string): SceneNode | null {
+    return component.findOne(node => node.getPluginData('role') === role);
+  }
+
   async createComponent(variant: CardFooterVariantProps): Promise<ComponentNode> {
-    console.log('👣 CardFooterManager.createComponent:', { variant });
     const footer = figma.createComponent();
     const size = FOOTER_SIZES[variant.size || 'medium'];
     footer.name = this.getVariantKey(variant);
@@ -100,32 +146,15 @@ export class CardFooterManager {
       const actionContainer = await this.createActionContainer(size, variant.alignment || 'right');
       if (actionContainer) {
         footer.appendChild(actionContainer);
+
+        actionContainer.layoutSizingHorizontal = "FILL";
+        actionContainer.layoutSizingVertical = "HUG";
       }
     }
     
-    // 스타일 적용
     await this.applyStyle(footer, variant);
     
     return footer;
-  }
-
-  private async applyStyle(footer: ComponentNode, variant: CardFooterVariantProps) {
-    // variant에 따른 스타일 적용
-    if (variant.variant === 'outlined') {
-      footer.strokes = [variables.bindVariable('surface/color/border')];
-      variables.setBindVariable(footer, 'strokeWeight', 'border/width/default');
-    } else if (variant.variant === 'elevated') {
-      const shadow: Effect = {
-        type: 'DROP_SHADOW',
-        color: { r: 0, g: 0, b: 0, a: 0.1 },
-        offset: { x: 0, y: 2 },
-        radius: 4,
-        spread: 0,
-        visible: true,
-        blendMode: 'NORMAL'
-      };
-      footer.effects = [shadow];
-    }
   }
 
   private async createVariantComponents(): Promise<ComponentNode[]> {
@@ -139,8 +168,11 @@ export class CardFooterManager {
     this.componentSet = figma.combineAsVariants(components, figma.currentPage);
     this.setupComponentSetLayout(this.componentSet);
 
+
     components.forEach(component => {
       this.variantMap.set(component.name, component);
+      component.layoutSizingHorizontal = "FILL";
+      component.layoutSizingVertical = "HUG";
     });
 
     return this.componentSet;
@@ -148,8 +180,7 @@ export class CardFooterManager {
 
   private setupComponentSetLayout(componentSet: ComponentSetNode) {
     componentSet.name = "Card Footer";
-    componentSet.layoutMode = "HORIZONTAL";
-    componentSet.layoutWrap = "WRAP";
+    componentSet.layoutMode = "VERTICAL";
     componentSet.itemSpacing = 40;
     componentSet.counterAxisSpacing = 40;
     componentSet.paddingLeft = componentSet.paddingRight = 40;
@@ -157,6 +188,41 @@ export class CardFooterManager {
     componentSet.fills = [{ type: "SOLID", color: { r: 1, g: 1, b: 1 } }];
     componentSet.primaryAxisSizingMode = "AUTO";
     componentSet.counterAxisSizingMode = "AUTO";
+    componentSet.resize(400, componentSet.height);
+
+    componentSet.descriptionMarkdown = `
+# Card Footer Component
+
+Contains action buttons and additional information.
+
+## Properties
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| withActions | \`boolean\` | \`false\` | Shows action buttons |
+| alignment | \`string\` | \`right\` | Button alignment |
+| actions | \`string[]\` | \`[]\` | Action button texts |
+
+## Alignment Options
+- \`left\`: Left-aligned actions
+- \`center\`: Center-aligned actions
+- \`right\`: Right-aligned actions
+- \`space-between\`: Distributed actions
+
+## Button Properties
+- Size adapts to footer size
+- Consistent spacing between buttons
+- Proper hierarchy (primary/secondary)
+
+## Variants
+- **Size**: \`small\` \`medium\` \`large\`
+- **Style**: \`filled\` \`outlined\` \`elevated\`
+
+## Best Practices
+- Limit number of actions (2-3 max)
+- Use clear action labels
+- Maintain consistent button styles
+- Consider mobile responsiveness
+    `.trim();
   }
 
   private getVariantFromProps(props: CardFooterProps): CardFooterVariantProps {
@@ -169,7 +235,6 @@ export class CardFooterManager {
   }
 
   async createInstance(props: CardFooterProps = {}) {
-    console.log('👣 CardFooterManager.createInstance:', { props });
     const componentSet = await this.getComponentSet();
     if (!componentSet) return null;
 
@@ -186,21 +251,55 @@ export class CardFooterManager {
   }
 
   async updateInstance(instance: InstanceNode, props: CardFooterProps = {}) {
-    // 액션 버튼 업데이트
     if (props.actions?.length) {
-      const actionContainer = instance.findOne(node => node.name === "Action Container") as FrameNode;
+      const actionContainer = this.findNodeByRole(instance, this.ROLES.ACTION_CONTAINER) as FrameNode;
       if (actionContainer) {
         // 기존 버튼 제거
         actionContainer.children.forEach(child => child.remove());
         
         // 새 버튼 추가
         for (const action of props.actions) {
-          const button = await this.createActionButton(action, FOOTER_SIZES[props.size || 'medium']);
+          const button = await this.createActionButton(action, FOOTER_SIZES[props.size || 'medium'], this.ROLES.PRIMARY_ACTION);
           if (button) {
             actionContainer.appendChild(button);
           }
         }
       }
+    }
+  }
+
+  private async applyStyle(footer: ComponentNode, variant: CardFooterVariantProps) {
+    const variantStyle = CARD_FOOTER_STYLES[variant.variant || 'filled'];
+    const state = variant.disabled ? 'disabled' : 'default';
+
+    // 배경색 설정
+    footer.fills = [variables.bindVariable(variantStyle.background[state])];
+    
+    // 테두리 설정
+    if (variant.variant === 'outlined') {
+      footer.strokes = [variables.bindVariable(variantStyle.border[state])];
+      variables.setBindVariable(footer, 'strokeWeight', 'border/width/default');
+      footer.strokeAlign = 'INSIDE';
+    }
+
+    // // 텍스트 색상 설정
+    // const textNodes = footer.findAll(node => node.type === "TEXT") as TextNode[];
+    // textNodes.forEach(textNode => {
+    //   textNode.fills = [variables.bindVariable(variantStyle.text[state])];
+    // });
+
+    // 그림자 효과 설정 (elevated 변형일 경우)
+    if (variant.variant === 'elevated') {
+      const shadow: Effect = {
+        type: 'DROP_SHADOW',
+        color: { r: 0, g: 0, b: 0, a: 0.1 },
+        offset: { x: 0, y: 2 },
+        radius: 4,
+        spread: 0,
+        visible: true,
+        blendMode: 'NORMAL'
+      };
+      footer.effects = [shadow];
     }
   }
 } 

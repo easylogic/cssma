@@ -1,36 +1,10 @@
-import { CardVariantProps, CardInstance, CardSize, HEADER_SIZES, MEDIA_SIZES, CONTENT_SIZES, FOOTER_SIZES } from '@/types/card';
+import { CardVariantProps, CardInstance } from '@/types/card';
 import { variables } from '@/variables';
 import { CardHeaderManager } from './sections/CardHeaderManager';
 import { CardMediaManager } from './sections/CardMediaManager';
 import { CardContentManager } from './sections/CardContentManager';
 import { CardFooterManager } from './sections/CardFooterManager';
-
-// 카드 크기별 설정
-const CARD_SIZES: Record<CardSize, {
-  width: number;
-  padding: string;
-  spacing: string;
-  borderRadius: string;
-}> = {
-  small: {
-    width: 280,
-    padding: 'component/base/padding/sm',
-    spacing: 'component/base/gap/sm',
-    borderRadius: 'component/base/radius/sm'
-  },
-  medium: {
-    width: 320,
-    padding: 'component/base/padding/md',
-    spacing: 'component/base/gap/md',
-    borderRadius: 'component/base/radius/md'
-  },
-  large: {
-    width: 400,
-    padding: 'component/base/padding/lg',
-    spacing: 'component/base/gap/lg',
-    borderRadius: 'component/base/radius/lg'
-  }
-};
+import { CARD_SIZES } from '@/constants/cardStyles';
 
 export class CardCreator {
   private static instance: CardCreator;
@@ -42,6 +16,12 @@ export class CardCreator {
   private mediaManager = CardMediaManager.getInstance();
   private contentManager = CardContentManager.getInstance();
   private footerManager = CardFooterManager.getInstance();
+
+  private readonly ROLES = {
+    SECTIONS_CONTAINER: 'card-sections-container',
+    LOADING_OVERLAY: 'card-loading-overlay',
+    LOADING_INDICATOR: 'card-loading-indicator'
+  } as const;
 
   private constructor() {}
 
@@ -71,20 +51,22 @@ export class CardCreator {
   }
 
   private setupBaseLayout(node: FrameNode | ComponentNode, size: typeof CARD_SIZES[keyof typeof CARD_SIZES]) {
-    // 기본 레이아웃 설정
+    // 먼저 레이아웃 모드 설정
     node.layoutMode = "VERTICAL";
     node.primaryAxisAlignItems = "MIN";
     node.counterAxisAlignItems = "MIN";
-    node.layoutSizingHorizontal = "FIXED";
-    node.layoutSizingVertical = "HUG";
-    node.resize(size.width, 0); // 높이는 자동 계산
+    node.primaryAxisSizingMode = "AUTO";
+    node.counterAxisSizingMode = "AUTO";
+    
+    // 크기 설정
+    node.resize(size.width, node.height);
 
     // 스타일 변수 설정
     variables.setBindVariable(node, 'itemSpacing', size.spacing);
-    variables.setBindVariable(node, 'paddingLeft', size.padding);
-    variables.setBindVariable(node, 'paddingRight', size.padding);
-    variables.setBindVariable(node, 'paddingTop', size.padding);
-    variables.setBindVariable(node, 'paddingBottom', size.padding);
+    // variables.setBindVariable(node, 'paddingLeft', size.padding);
+    // variables.setBindVariable(node, 'paddingRight', size.padding);
+    // variables.setBindVariable(node, 'paddingTop', size.padding);
+    // variables.setBindVariable(node, 'paddingBottom', size.padding);
     variables.setBindVariable(node, 'topLeftRadius', size.borderRadius);
     variables.setBindVariable(node, 'topRightRadius', size.borderRadius);
     variables.setBindVariable(node, 'bottomLeftRadius', size.borderRadius);
@@ -94,35 +76,56 @@ export class CardCreator {
   private async createSectionsContainer(size: typeof CARD_SIZES[keyof typeof CARD_SIZES]) {
     const container = figma.createFrame();
     container.name = "Sections";
+    container.setPluginData('role', this.ROLES.SECTIONS_CONTAINER);
+    variables.setBindVariable(container, 'topLeftRadius', size.borderRadius);
+    variables.setBindVariable(container, 'topRightRadius', size.borderRadius);
+    variables.setBindVariable(container, 'bottomLeftRadius', size.borderRadius);
+    variables.setBindVariable(container, 'bottomRightRadius', size.borderRadius);
+    
+    // 레이아웃 설정
     container.layoutMode = "VERTICAL";
+    container.primaryAxisSizingMode = "AUTO";
+    container.counterAxisSizingMode = "AUTO";
     variables.setBindVariable(container, 'itemSpacing', size.spacing);
+    
+    // 스타일 설정
     container.fills = [];
-    container.layoutSizingHorizontal = "FILL";
-    container.layoutSizingVertical = "HUG";
+    
     return container;
   }
 
   private async createLoadingOverlay(width: number, height: number) {
     const overlay = figma.createFrame();
     overlay.name = "Loading Overlay";
+    overlay.setPluginData('role', this.ROLES.LOADING_OVERLAY);
+    
+    // 레이아웃 설정
+    overlay.layoutMode = "HORIZONTAL";
+    overlay.primaryAxisAlignItems = "CENTER";
+    overlay.counterAxisAlignItems = "CENTER";
     overlay.resize(width, height);
+    
+    // 스타일 설정
     overlay.fills = [{ 
       type: 'SOLID', 
       color: { r: 1, g: 1, b: 1 },
       opacity: 0.7 
     }];
-    overlay.layoutMode = "HORIZONTAL";
-    overlay.primaryAxisAlignItems = "CENTER";
-    overlay.counterAxisAlignItems = "CENTER";
     
+    // 로딩 인디케이터 추가
     const indicator = figma.createFrame();
     indicator.name = "Loading Indicator";
+    indicator.setPluginData('role', this.ROLES.LOADING_INDICATOR);
     indicator.resize(32, 32);
     indicator.cornerRadius = 16;
     indicator.fills = [variables.bindVariable('surface/color/secondary')];
     
     overlay.appendChild(indicator);
     return overlay;
+  }
+
+  private findNodeByRole(component: ComponentNode | InstanceNode, role: string): SceneNode | null {
+    return component.findOne(node => node.getPluginData('role') === role);
   }
 
   async createComponent(variant: CardVariantProps): Promise<ComponentNode> {
@@ -137,6 +140,9 @@ export class CardCreator {
     
     // 섹션 컨테이너 생성
     const sectionsContainer = await this.createSectionsContainer(size);
+    card.appendChild(sectionsContainer);
+    sectionsContainer.layoutSizingHorizontal = "FILL";
+    sectionsContainer.layoutSizingVertical = "HUG";
     
     // 섹션 추가
     if (variant.header) {
@@ -147,8 +153,9 @@ export class CardCreator {
         ...variant.header
       });
       if (headerInstance) {
-        headerInstance.layoutSizingHorizontal = "FILL";
         sectionsContainer.appendChild(headerInstance);
+        headerInstance.layoutSizingHorizontal = "FILL";
+        headerInstance.layoutSizingVertical = "HUG";
       }
     }
     
@@ -161,22 +168,26 @@ export class CardCreator {
         withOverlay: variant.interactive
       });
       if (mediaInstance) {
-        mediaInstance.layoutSizingHorizontal = "FILL";
         sectionsContainer.appendChild(mediaInstance);
+        mediaInstance.layoutSizingHorizontal = "FILL";
+        mediaInstance.layoutSizingVertical = "HUG";
       }
     }
     
-    // 컨텐츠는 항상 추가
-    console.log('📝 Creating content:', variant.content);
-    const contentInstance = await this.contentManager.createInstance({
-      size: variant.size,
-      variant: variant.variant,
-      withTitle: variant.content?.withTitle,
-      withDescription: variant.content?.withDescription
-    });
-    if (contentInstance) {
-      contentInstance.layoutSizingHorizontal = "FILL";
-      sectionsContainer.appendChild(contentInstance);
+    if (variant.content) {
+      // 컨텐츠는 항상 추가
+      console.log('📝 Creating content:', variant.content);
+      const contentInstance = await this.contentManager.createInstance({
+        size: variant.size,
+        variant: variant.variant,
+        withDescription: variant.content?.withDescription,
+        description: variant.content?.description
+      });
+      if (contentInstance) {
+        sectionsContainer.appendChild(contentInstance);
+        contentInstance.layoutSizingHorizontal = "FILL";
+        contentInstance.layoutSizingVertical = "HUG";
+      }
     }
     
     if (variant.footer) {
@@ -188,12 +199,10 @@ export class CardCreator {
         alignment: variant.footer.alignment
       });
       if (footerInstance) {
-        footerInstance.layoutSizingHorizontal = "FILL";
         sectionsContainer.appendChild(footerInstance);
+        footerInstance.layoutSizingHorizontal = "FILL";
       }
     }
-
-    card.appendChild(sectionsContainer);
     
     // 스타일 적용
     await this.applyStyle(card, variant);
@@ -208,11 +217,9 @@ export class CardCreator {
     card.fills = [variables.bindVariable(`surface/color/${state}`)];
     
     // 테두리 설정
-    if (variant.variant === 'outlined') {
-      card.strokes = [variables.bindVariable(`surface/color/border`)];
-      variables.setBindVariable(card, 'strokeWeight', 'border/width/default');
-      card.strokeAlign = 'INSIDE';
-    }
+    card.strokes = [variables.bindVariable(`surface/color/border`)];
+    variables.setBindVariable(card, 'strokeWeight', 'border/width/default');
+    card.strokeAlign = 'CENTER';
     
     // 그림자 설정
     if (variant.variant === 'elevated') {
@@ -246,7 +253,7 @@ export class CardCreator {
   private async createVariantComponents(): Promise<ComponentNode[]> {
     const variants: CardVariantProps[] = [
       // 기본 레이아웃 변형
-      { size: 'medium', variant: 'filled' },
+      { size: 'medium', variant: 'filled', content: { withDescription: true } },
       { size: 'medium', variant: 'filled', header: {} },
       { size: 'medium', variant: 'filled', media: { aspectRatio: '16/9' } },
       { size: 'medium', variant: 'filled', footer: { withActions: true } },
@@ -312,7 +319,7 @@ export class CardCreator {
         variant: 'outlined', 
         status: 'error',
         header: { withExtra: true },
-        content: { withTitle: true, withDescription: true },
+        content: { withDescription: true },
         footer: { withActions: true, alignment: 'right' }
       }
     ];
@@ -324,11 +331,27 @@ export class CardCreator {
     if (this.componentSet) return this.componentSet;
 
     const components = await this.createVariantComponents();
+    
+    // 1. 먼저 컴포넌트 세트 생성
     this.componentSet = figma.combineAsVariants(components, figma.currentPage);
+    
+    // 2. 컴포넌트 세트의 레이아웃 설정
     this.setupComponentSetLayout(this.componentSet);
 
+    // 3. 각 컴포넌트의 레이아웃 설정
     components.forEach(component => {
       this.variantMap.set(component.name, component);
+      
+      component.layoutSizingHorizontal = "FIXED";
+      component.layoutSizingVertical = "HUG";
+      
+      // // 그 다음 자식 요소들의 레이아웃 설정
+      // component.children.forEach(child => {
+      //   if (child.type === "FRAME" || child.type === "INSTANCE") {
+      //     child.layoutSizingHorizontal = "FILL";
+      //     child.layoutSizingVertical = "HUG";
+      //   }
+      // });
     });
 
     return this.componentSet;
@@ -336,36 +359,43 @@ export class CardCreator {
 
   private setupComponentSetLayout(componentSet: ComponentSetNode) {
     componentSet.name = "Card";
+    
+    // 먼저 레이아웃 모드 설정
     componentSet.layoutMode = "HORIZONTAL";
     componentSet.layoutWrap = "WRAP";
+    componentSet.primaryAxisSizingMode = "FIXED";
+    componentSet.counterAxisSizingMode = "AUTO";
+    
+    // 그 다음 나머지 속성 설정
     componentSet.itemSpacing = 40;
     componentSet.counterAxisSpacing = 40;
     componentSet.paddingLeft = componentSet.paddingRight = 40;
     componentSet.paddingTop = componentSet.paddingBottom = 40;
     componentSet.fills = [{ type: "SOLID", color: { r: 1, g: 1, b: 1 } }];
     componentSet.resize(1800, componentSet.height);
-    componentSet.primaryAxisSizingMode = "FIXED";
-    componentSet.counterAxisSizingMode = "AUTO";
 
     // 컴포넌트 세트 설명 추가
-    componentSet.description = `
-Card Component
--------------
+    componentSet.descriptionMarkdown = `
+# Card Component
+
 A versatile container for displaying content and actions.
 
-Sections:
+## Sections
 - Header (optional): Title, subtitle, avatar, or actions
 - Media (optional): Images or videos with optional overlay
 - Content (required): Main content area
 - Footer (optional): Actions and additional information
 
-Variants:
-- Size: small, medium, large
-- Style: filled, outlined, elevated
-- Status: default, error
-- States: interactive, loading
+## Properties
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| size | \`small\` \`medium\` \`large\` | \`medium\` | Controls the overall size |
+| variant | \`filled\` \`outlined\` \`elevated\` | \`filled\` | Visual style |
+| status | \`default\` \`error\` | \`default\` | Current status |
+| interactive | \`boolean\` | \`false\` | Makes card clickable |
+| loading | \`boolean\` | \`false\` | Shows loading state |
 
-Usage:
+## Best Practices
 - Use cards to group related information
 - Combine different sections based on content needs
 - Consider interactive state for clickable cards
@@ -392,7 +422,7 @@ Usage:
   }
 
   async updateInstance(instance: InstanceNode, props: CardInstance = {}) {
-    const sectionsContainer = instance.findOne(node => node.name === "Sections") as FrameNode;
+    const sectionsContainer = this.findNodeByRole(instance, this.ROLES.SECTIONS_CONTAINER) as FrameNode;
     if (!sectionsContainer) return;
 
     // 헤더 업데이트

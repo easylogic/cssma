@@ -1,10 +1,19 @@
-import { CardMediaProps, CardMediaVariantProps, MEDIA_SIZES, MEDIA_VARIANTS } from '@/types/card';
+import { CardMediaProps, CardMediaVariantProps } from '@/types/card';
 import { variables } from '@/variables';
+import { MEDIA_SIZES, MEDIA_VARIANTS } from '@/constants/cardStyles';
+import { CARD_MEDIA_STYLES } from '@/constants/card/styles';
 
 export class CardMediaManager {
   private static instance: CardMediaManager;
   private componentSet: ComponentSetNode | null = null;
   private variantMap = new Map<string, ComponentNode>();
+  private imageUrlId: string | null = null;
+
+  private readonly ROLES = {
+    PLACEHOLDER: 'media-placeholder',
+    IMAGE: 'media-image',
+    CONTAINER: 'media-container'
+  } as const;
 
   private constructor() {}
 
@@ -19,20 +28,19 @@ export class CardMediaManager {
     return [
       'size=' + (variant.size || 'medium'),
       'variant=' + (variant.variant || 'filled'),
-      'aspectRatio=' + variant.aspectRatio,
-      'withOverlay=' + (variant.withOverlay || false)
+      'aspectRatio=' + variant.aspectRatio
     ].join(',');
   }
 
   private setupBaseLayout(node: FrameNode | ComponentNode, size?: typeof MEDIA_SIZES[keyof typeof MEDIA_SIZES]) {
-    node.layoutMode = "VERTICAL";
+    node.layoutMode = "HORIZONTAL";
     node.primaryAxisAlignItems = "CENTER";
     node.counterAxisAlignItems = "CENTER";
     node.layoutSizingVertical = "FIXED";
     node.layoutSizingHorizontal = "FIXED";
+    node.fills = [variables.bindVariable('surface/color/default')];
 
     if (size) {
-      node.resize(Number(size.width), 0); // 높이는 aspectRatio에 따라 계산됨
       variables.setBindVariable(node, 'topLeftRadius', size.borderRadius);
       variables.setBindVariable(node, 'topRightRadius', size.borderRadius);
       variables.setBindVariable(node, 'bottomLeftRadius', size.borderRadius);
@@ -48,32 +56,24 @@ export class CardMediaManager {
   private async createPlaceholder(width: number, height: number) {
     const placeholder = figma.createFrame();
     placeholder.name = "Placeholder";
+    placeholder.setPluginData('role', this.ROLES.PLACEHOLDER);
     placeholder.resize(width, height);
     placeholder.fills = [variables.bindVariable('surface/color/default')];
-    placeholder.strokes = [variables.bindVariable('surface/color/border')];
+    placeholder.strokes = [variables.bindVariable('component/base/border/color/default')];
     placeholder.strokeWeight = 1;
-    placeholder.lockAspectRatio();
+    placeholder.constrainProportions = true;
     return placeholder;
   }
 
-  private async createOverlay(width: number, height: number) {
-    const overlay = figma.createRectangle();
-    overlay.name = "Overlay";
-    overlay.resize(width, height);
-    overlay.fills = [{
-      type: 'SOLID',
-      color: { r: 0, g: 0, b: 0 },
-      opacity: 0.4
-    }];
-    overlay.lockAspectRatio();
-    return overlay;
+  private findNodeByRole(component: ComponentNode | InstanceNode, role: string): SceneNode | null {
+    return component.findOne(node => node.getPluginData('role') === role);
   }
 
   async createComponent(variant: CardMediaVariantProps): Promise<ComponentNode> {
-    console.log('🖼️ CardMediaManager.createComponent:', { variant });
     const media = figma.createComponent();
     const size = MEDIA_SIZES[variant.size || 'medium'];
     media.name = this.getVariantKey(variant);
+    media.setPluginData('role', this.ROLES.CONTAINER);
     
     // 기본 레이아웃 설정
     this.setupBaseLayout(media, size);
@@ -82,39 +82,54 @@ export class CardMediaManager {
     const width = Number(size.width);
     const height = this.calculateHeight(width, variant.aspectRatio);
     media.resize(width, height);
+
+    media.lockAspectRatio();
     
     // 플레이스홀더 생성
     const placeholder = await this.createPlaceholder(width, height);
     media.appendChild(placeholder);
+    placeholder.layoutPositioning = "ABSOLUTE";
+    placeholder.constraints = { horizontal: "STRETCH", vertical: "STRETCH" };
+    placeholder.x = 0;
+    placeholder.y = 0;
     
-    // 오버레이 (옵션)
-    if (variant.withOverlay) {
-      const overlay = await this.createOverlay(width, height);
-      media.appendChild(overlay);
-    }
-    
-    // 스타일 적용
     await this.applyStyle(media, variant);
     
     return media;
   }
 
   private async applyStyle(media: ComponentNode, variant: CardMediaVariantProps) {
-    // variant에 따른 스타일 적용
-    if (variant.variant === 'outlined') {
-      media.strokes = [variables.bindVariable('surface/color/border')];
-      variables.setBindVariable(media, 'strokeWeight', 'border/width/default');
-    } else if (variant.variant === 'elevated') {
-      const shadow: Effect = {
-        type: 'DROP_SHADOW',
-        color: { r: 0, g: 0, b: 0, a: 0.1 },
-        offset: { x: 0, y: 2 },
-        radius: 4,
-        spread: 0,
-        visible: true,
-        blendMode: 'NORMAL'
-      };
-      media.effects = [shadow];
+    const variantStyle = CARD_MEDIA_STYLES[variant.variant || 'filled'];
+    const state = variant.disabled ? 'disabled' : 'default';
+
+    // 오버레이 설정
+    if (variant.withOverlay) {
+      const overlay = figma.createFrame();
+      overlay.name = "Overlay";
+      overlay.fills = [variables.bindVariable(variantStyle.overlay[state])];
+      media.appendChild(overlay);
+      
+      overlay.layoutPositioning = "ABSOLUTE";
+      overlay.constraints = { horizontal: "STRETCH", vertical: "STRETCH" };
+      overlay.x = 0;
+      overlay.y = 0;
+      overlay.resize(media.width, media.height);
+    }
+
+    // 미디어 컨테이너 스타일 적용
+    const placeholder = this.findNodeByRole(media, this.ROLES.PLACEHOLDER) as FrameNode;
+    if (placeholder) {
+      // 배경색 설정
+      placeholder.fills = [variables.bindVariable('surface/color/default')];
+      
+      // 테두리 설정
+      if (variant.variant === 'outlined') {
+        placeholder.strokes = [variables.bindVariable('border/color/default')];
+        variables.setBindVariable(placeholder, 'strokeWeight', 'border/width/default');
+        placeholder.strokeAlign = 'INSIDE';
+      } else {
+        placeholder.strokes = [];
+      }
     }
   }
 
@@ -147,19 +162,48 @@ export class CardMediaManager {
     componentSet.fills = [{ type: "SOLID", color: { r: 1, g: 1, b: 1 } }];
     componentSet.primaryAxisSizingMode = "AUTO";
     componentSet.counterAxisSizingMode = "AUTO";
+    componentSet.resize(400, componentSet.height);
+
+    // 이미지 URL 프로퍼티만 추가
+    this.imageUrlId = componentSet.addComponentProperty('imageUrl', 'TEXT', '');
+
+    componentSet.descriptionMarkdown = `
+# Card Media Component
+
+Displays images or videos with configurable aspect ratios.
+
+## Properties
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| imageUrl | \`text\` | - | URL of the image to display |
+| aspectRatio | \`string\` | \`16/9\` | Media aspect ratio |
+
+## Aspect Ratios
+- \`16/9\`: Landscape/Video (1.78:1)
+- \`4/3\`: Standard (1.33:1)
+- \`1/1\`: Square (1:1)
+
+## Features
+- Maintains aspect ratio
+- Supports image loading
+- Responsive scaling
+
+## Best Practices
+- Use consistent aspect ratios
+- Optimize image resolution
+- Test with different image types
+    `.trim();
   }
 
   private getVariantFromProps(props: CardMediaProps): CardMediaVariantProps {
     return {
       size: props.size || 'medium',
       variant: props.variant || 'filled',
-      aspectRatio: props.aspectRatio || '16/9',
-      withOverlay: props.overlay
+      aspectRatio: props.aspectRatio || '16/9'
     };
   }
 
   async createInstance(props: CardMediaProps = {}) {
-    console.log('🖼️ CardMediaManager.createInstance:', { props });
     const componentSet = await this.getComponentSet();
     if (!componentSet) return null;
 
@@ -176,12 +220,29 @@ export class CardMediaManager {
   }
 
   async updateInstance(instance: InstanceNode, props: CardMediaProps = {}) {
-    // 이미지 업데이트 (실제로는 이미지 URL을 처리하는 로직이 필요)
+    // 이미지 업데이트
     if (props.image) {
-      const placeholder = instance.findOne(node => node.name === "Placeholder") as FrameNode;
+      const placeholder = this.findNodeByRole(instance, this.ROLES.PLACEHOLDER) as FrameNode;
       if (placeholder) {
-        // TODO: 이미지 로딩 및 적용 로직
-        placeholder.fills = [{ type: 'SOLID', color: { r: 0.9, g: 0.9, b: 0.9 } }];
+        try {
+          const response = await fetch(props.image);
+          const imageData = await response.arrayBuffer();
+          const image = figma.createImage(new Uint8Array(imageData));
+          placeholder.fills = [{
+            type: 'IMAGE',
+            imageHash: image.hash,
+            scaleMode: 'FILL'
+          }];
+        } catch (error) {
+          console.error('Failed to load image:', error);
+          placeholder.fills = [variables.bindVariable('surface/color/default')];
+        }
+      }
+    } else {
+      const placeholder = this.findNodeByRole(instance, this.ROLES.PLACEHOLDER) as FrameNode;
+      if (placeholder) {
+        placeholder.fills = [variables.bindVariable('surface/color/default')];
+        placeholder.strokes = [variables.bindVariable('component/base/border/color/default')];
       }
     }
   }

@@ -4,146 +4,176 @@ export const COLOR: Collection = {
   name: "Color",
   modes: ["Light", "Dark"],
   values: {
-    // Background colors
-    "semantic/bg/default": {
-      Light: "{primitive/gray/50/light}",
-      Dark: "{primitive/gray/900/dark}"
+    // Base Background Colors
+    "color/background/default": {
+      Light: "{color/white}",
+      Dark: "{gray/900/dark}"
     },
-    "semantic/bg/subtle": {
-      Light: "{primitive/gray/100/light}",
-      Dark: "{primitive/gray/800/dark}"
+    "color/background/subtle": {
+      Light: "{gray/100/light}",
+      Dark: "{gray/800/dark}"
     },
-    "semantic/bg/muted": {
-      Light: "{primitive/gray/200/light}",
-      Dark: "{primitive/gray/700/dark}"
+    "color/background/muted": {
+      Light: "{gray/200/light}",
+      Dark: "{gray/700/dark}"
     },
-    "semantic/bg/emphasized": {
-      Light: "{primitive/gray/300/light}",
-      Dark: "{primitive/gray/600/dark}"
-    },
-
-    // Text colors
-    "semantic/text/default": {
-      Light: "{primitive/gray/900/light}",
-      Dark: "{primitive/gray/50/dark}"
-    },
-    "semantic/text/subtle": {
-      Light: "{primitive/gray/700/light}",
-      Dark: "{primitive/gray/300/dark}"
-    },
-    "semantic/text/muted": {
-      Light: "{primitive/gray/500/light}",
-      Dark: "{primitive/gray/500/dark}"
-    },
-    "semantic/text/disabled": {
-      Light: "{primitive/gray/400/light}",
-      Dark: "{primitive/gray/600/dark}"
-    },
-    "semantic/text/onAccent": {
-      Light: "{primitive/gray/50/light}",
-      Dark: "{primitive/gray/900/dark}"
+    "color/background/emphasized": {
+      Light: "{gray/300/light}",
+      Dark: "{gray/600/dark}"
     },
 
-    // Border colors
-    "semantic/border/default": {
-      Light: "{primitive/gray/200/light}",
-      Dark: "{primitive/gray/700/dark}"
+    // Base Text Colors
+    "color/text/default": {
+      Light: "{gray/900/light}",
+      Dark: "{gray/50/dark}"
     },
-    "semantic/border/subtle": {
-      Light: "{primitive/gray/100/light}",
-      Dark: "{primitive/gray/800/dark}"
+    "color/text/subtle": {
+      Light: "{gray/700/light}",
+      Dark: "{gray/300/dark}"
     },
-    "semantic/border/emphasized": {
-      Light: "{primitive/gray/300/light}",
-      Dark: "{primitive/gray/600/dark}"
+    "color/text/muted": {
+      Light: "{gray/500/light}",
+      Dark: "{gray/500/dark}"
     },
-
-    // Action colors - Primary
-    "semantic/action/primary/default": {
-      Light: "{primitive/blue/600/light}",
-      Dark: "{primitive/blue/500/dark}"
+    "color/text/disabled": {
+      Light: "{gray/400/light}",
+      Dark: "{gray/600/dark}"
     },
-    "semantic/action/primary/hover": {
-      Light: "{primitive/blue/700/light}",
-      Dark: "{primitive/blue/400/dark}"
-    },
-    "semantic/action/primary/pressed": {
-      Light: "{primitive/blue/800/light}",
-      Dark: "{primitive/blue/300/dark}"
-    },
-    "semantic/action/primary/disabled": {
-      Light: "{primitive/blue/200/light}",
-      Dark: "{primitive/blue/800/dark}"
-    },
-    "semantic/action/primary/ghost/hover": {
-      Light: "{primitive/bluealpha/500/light/16}",
-      Dark: "{primitive/bluealpha/500/dark/16}"
-    },
-    "semantic/action/primary/ghost/pressed": {
-      Light: "{primitive/bluealpha/500/light/32}",
-      Dark: "{primitive/bluealpha/500/dark/32}"
+    "color/text/onAccent": {
+      Light: "{gray/50/light}",
+      Dark: "{gray/900/dark}"
     },
 
-    // Action colors - Secondary
-    "semantic/action/secondary/default": {
-      Light: "{primitive/gray/600/light}",
-      Dark: "{primitive/gray/400/dark}"
+    // Base Border Colors
+    "color/border/default": {
+      Light: "{gray/200/light}",
+      Dark: "{gray/700/dark}"
     },
-    "semantic/action/secondary/hover": {
-      Light: "{primitive/gray/700/light}",
-      Dark: "{primitive/gray/300/dark}"
+    "color/border/subtle": {
+      Light: "{gray/100/light}",
+      Dark: "{gray/800/dark}"
     },
-    "semantic/action/secondary/pressed": {
-      Light: "{primitive/gray/800/light}",
-      Dark: "{primitive/gray/200/dark}"
-    },
-    "semantic/action/secondary/disabled": {
-      Light: "{primitive/gray/200/light}",
-      Dark: "{primitive/gray/800/dark}"
-    },
-    "semantic/action/secondary/ghost/hover": {
-      Light: "{primitive/grayalpha/50/light/8}",
-      Dark: "{primitive/grayalpha/50/dark/8}"
-    },
-    "semantic/action/secondary/ghost/pressed": {
-      Light: "{primitive/grayalpha/50/light/16}",
-      Dark: "{primitive/grayalpha/50/dark/16}"
+    "color/border/emphasized": {
+      Light: "{gray/300/light}",
+      Dark: "{gray/600/dark}"
     },
 
-    // Status colors - Success
-    "semantic/status/success/default": {
-      Light: "{primitive/green/600/light}",
-      Dark: "{primitive/green/500/dark}"
+    // Action Colors - Primary
+    "color/action/primary/default": {
+      Light: "{blue/500/light}",
+      Dark: "{blue/400/dark}"
     },
-    "semantic/status/success/hover": {
-      Light: "{primitive/green/700/light}",
-      Dark: "{primitive/green/400/dark}"
+    "color/action/primary/hover": {
+      Light: "{blue/600/light}",
+      Dark: "{blue/300/dark}"
     },
-    "semantic/status/success/pressed": {
-      Light: "{primitive/green/800/light}",
-      Dark: "{primitive/green/300/dark}"
+    "color/action/primary/pressed": {
+      Light: "{blue/700/light}",
+      Dark: "{blue/200/dark}"
+    },
+    "color/action/primary/disabled": {
+      Light: "{blue/200/light}",
+      Dark: "{blue/800/dark}"
+    },
+    "color/action/primary/ghost/hover": {
+      Light: "{bluealpha/500/light/16}",
+      Dark: "{bluealpha/500/dark/16}"
+    },
+    "color/action/primary/ghost/pressed": {
+      Light: "{bluealpha/500/light/32}",
+      Dark: "{bluealpha/500/dark/32}"
     },
 
-    // Status colors - Error (Danger)
-    "semantic/status/error/default": {
-      Light: "{primitive/red/600/light}",
-      Dark: "{primitive/red/500/dark}"
+    // Action Colors - Secondary
+    "color/action/secondary/default": {
+      Light: "{gray/700/light}",
+      Dark: "{gray/300/dark}"
     },
-    "semantic/status/error/hover": {
-      Light: "{primitive/red/700/light}",
-      Dark: "{primitive/red/400/dark}"
+    "color/action/secondary/hover": {
+      Light: "{gray/800/light}",
+      Dark: "{gray/200/dark}"
     },
-    "semantic/status/error/pressed": {
-      Light: "{primitive/red/800/light}",
-      Dark: "{primitive/red/300/dark}"
+    "color/action/secondary/pressed": {
+      Light: "{gray/900/light}",
+      Dark: "{gray/100/dark}"
     },
-    "semantic/status/error/ghost/hover": {
-      Light: "{primitive/redalpha/500/light/16}",
-      Dark: "{primitive/redalpha/500/dark/16}"
+    "color/action/secondary/disabled": {
+      Light: "{gray/200/light}",
+      Dark: "{gray/800/dark}"
     },
-    "semantic/status/error/ghost/pressed": {
-      Light: "{primitive/redalpha/500/light/32}",
-      Dark: "{primitive/redalpha/500/dark/32}"
+    "color/action/secondary/ghost/hover": {
+      Light: "{grayalpha/50/light/8}",
+      Dark: "{grayalpha/50/dark/8}"
+    },
+    "color/action/secondary/ghost/pressed": {
+      Light: "{grayalpha/50/light/16}",
+      Dark: "{grayalpha/50/dark/16}"
+    },
+
+    // Status Colors - Success
+    "color/status/success/default": {
+      Light: "{green/500/light}",
+      Dark: "{green/400/dark}"
+    },
+    "color/status/success/hover": {
+      Light: "{green/600/light}",
+      Dark: "{green/300/dark}"
+    },
+    "color/status/success/pressed": {
+      Light: "{green/700/light}",
+      Dark: "{green/200/dark}"
+    },
+    "color/status/success/ghost/hover": {
+      Light: "{greenalpha/500/light/16}",
+      Dark: "{greenalpha/500/dark/16}"
+    },
+    "color/status/success/ghost/pressed": {
+      Light: "{greenalpha/500/light/32}",
+      Dark: "{greenalpha/500/dark/32}"
+    },
+
+    // Status Colors - Warning
+    "color/status/warning/default": {
+      Light: "{yellow/500/light}",
+      Dark: "{yellow/400/dark}"
+    },
+    "color/status/warning/hover": {
+      Light: "{yellow/600/light}",
+      Dark: "{yellow/300/dark}"
+    },
+    "color/status/warning/pressed": {
+      Light: "{yellow/700/light}",
+      Dark: "{yellow/200/dark}"
+    },
+    "color/status/warning/ghost/hover": {
+      Light: "{yellowalpha/500/light/16}",
+      Dark: "{yellowalpha/500/dark/16}"
+    },
+    "color/status/warning/ghost/pressed": {
+      Light: "{yellowalpha/500/light/32}",
+      Dark: "{yellowalpha/500/dark/32}"
+    },
+
+    // Status Colors - Error
+    "color/status/error/default": {
+      Light: "{red/500/light}",
+      Dark: "{red/400/dark}"
+    },
+    "color/status/error/hover": {
+      Light: "{red/600/light}",
+      Dark: "{red/300/dark}"
+    },
+    "color/status/error/pressed": {
+      Light: "{red/700/light}",
+      Dark: "{red/200/dark}"
+    },
+    "color/status/error/ghost/hover": {
+      Light: "{redalpha/500/light/16}",
+      Dark: "{redalpha/500/dark/16}"
+    },
+    "color/status/error/ghost/pressed": {
+      Light: "{redalpha/500/light/32}",
+      Dark: "{redalpha/500/dark/32}"
     }
   }
 }; 

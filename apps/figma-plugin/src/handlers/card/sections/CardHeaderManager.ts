@@ -1,6 +1,8 @@
-import { CardHeaderProps, CardHeaderVariantProps, HEADER_SIZES, HEADER_VARIANTS } from '@/types/card';
+import { CardHeaderProps, CardHeaderVariantProps } from '@/types/card';
 import { variables } from '@/variables';
 import { createHandlers } from '../../createBase';
+import { HEADER_SIZES, HEADER_VARIANTS } from '@/constants/cardStyles';
+import { CARD_HEADER_STYLES } from '@/constants/card/styles';
 
 export class CardHeaderManager {
   private static instance: CardHeaderManager;
@@ -142,8 +144,39 @@ export class CardHeaderManager {
   }
 
   private async applyStyle(header: ComponentNode) {
+    const variant = header.name.split(',').find(part => part.startsWith('variant='))?.split('=')[1] || 'filled';
+    const variantStyle = CARD_HEADER_STYLES[variant];
+    const state = header.name.includes('disabled=true') ? 'disabled' : 'default';
+
     // 배경색 설정
-    header.fills = [variables.bindVariable(`surface/color/default`)];
+    header.fills = [variables.bindVariable(variantStyle.background[state])];
+    
+    // 테두리 설정
+    if (variant === 'outlined') {
+      header.strokes = [variables.bindVariable(variantStyle.border[state])];
+      variables.setBindVariable(header, 'strokeWeight', 'border/width/default');
+      header.strokeAlign = 'INSIDE';
+    }
+
+    // 텍스트 색상 설정
+    const textNodes = header.findAll(node => node.type === "TEXT") as TextNode[];
+    textNodes.forEach(textNode => {
+      textNode.fills = [variables.bindVariable(variantStyle.text[state])];
+    });
+
+    // 그림자 효과 설정 (elevated 변형일 경우)
+    if (variant === 'elevated') {
+      const shadow: Effect = {
+        type: 'DROP_SHADOW',
+        color: { r: 0, g: 0, b: 0, a: 0.1 },
+        offset: { x: 0, y: 2 },
+        radius: 4,
+        spread: 0,
+        visible: true,
+        blendMode: 'NORMAL'
+      };
+      header.effects = [shadow];
+    }
   }
 
   private async createVariantComponents(): Promise<ComponentNode[]> {
@@ -178,6 +211,41 @@ export class CardHeaderManager {
     componentSet.resize(400, componentSet.height);
     componentSet.primaryAxisSizingMode = "AUTO";
     componentSet.counterAxisSizingMode = "FIXED";
+
+    componentSet.descriptionMarkdown = `
+# Card Header Component
+
+Displays title, subtitle, and optional elements like avatar or actions.
+
+## Properties
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| title | \`text\` | \`"Title"\` | Main heading text |
+| subtitle | \`text\` | \`"Subtitle"\` | Supporting text below title |
+| withAvatar | \`boolean\` | \`false\` | Shows avatar image |
+| withExtra | \`boolean\` | \`false\` | Shows extra actions |
+
+## Variants
+- **Size**: \`small\` \`medium\` \`large\`
+- **Style**: \`filled\` \`outlined\` \`elevated\`
+
+## Text Properties
+- Title: \`{title}\`
+- Subtitle: \`{subtitle}\`
+- Extra: \`{extra}\`
+
+## Layout Guidelines
+- Avatar (if present) appears on the left
+- Title and subtitle stack vertically
+- Extra content aligns to the right
+- Maintains consistent spacing based on size variant
+
+## Best Practices
+- Keep title concise and clear
+- Use subtitle for supporting information
+- Limit extra actions to prevent overcrowding
+- Ensure proper contrast for text readability
+    `.trim();
   }
 
   private getVariantFromProps(props: CardHeaderProps): CardHeaderVariantProps {
