@@ -38,7 +38,7 @@ export class CardMediaManager {
     node.counterAxisAlignItems = "CENTER";
     node.layoutSizingVertical = "FIXED";
     node.layoutSizingHorizontal = "FIXED";
-    node.fills = [variables.bindVariable('surface/color/default')];
+    node.clipsContent = true;
 
     if (size) {
       variables.setBindVariable(node, 'topLeftRadius', size.borderRadius);
@@ -58,9 +58,6 @@ export class CardMediaManager {
     placeholder.name = "Placeholder";
     placeholder.setPluginData('role', this.ROLES.PLACEHOLDER);
     placeholder.resize(width, height);
-    placeholder.fills = [variables.bindVariable('surface/color/default')];
-    placeholder.strokes = [variables.bindVariable('component/base/border/color/default')];
-    placeholder.strokeWeight = 1;
     placeholder.constrainProportions = true;
     return placeholder;
   }
@@ -82,7 +79,6 @@ export class CardMediaManager {
     const width = Number(size.width);
     const height = this.calculateHeight(width, variant.aspectRatio);
     media.resize(width, height);
-
     media.lockAspectRatio();
     
     // 플레이스홀더 생성
@@ -102,6 +98,38 @@ export class CardMediaManager {
     const variantStyle = CARD_MEDIA_STYLES[variant.variant || 'filled'];
     const state = variant.disabled ? 'disabled' : 'default';
 
+    // 미디어 컨테이너 스타일 적용
+    const placeholder = this.findNodeByRole(media, this.ROLES.PLACEHOLDER) as FrameNode;
+    if (placeholder) {
+      // 배경색 설정
+      placeholder.fills = [variables.bindVariable(variantStyle.background[state])];
+      
+      // 테두리 설정
+      if (variant.variant === 'outlined') {
+        placeholder.strokes = [variables.bindVariable(variantStyle.border[state])];
+        variables.setBindVariable(placeholder, 'strokeWeight', 'border/width/default');
+        placeholder.strokeAlign = 'INSIDE';
+      } else {
+        placeholder.strokes = [];
+      }
+
+      // 그림자 효과 설정 (elevated 변형일 경우)
+      if (variant.variant === 'elevated') {
+        const shadow: Effect = {
+          type: 'DROP_SHADOW',
+          color: { r: 0, g: 0, b: 0, a: 0.1 },
+          offset: { x: 0, y: 2 },
+          radius: 4,
+          spread: 0,
+          visible: true,
+          blendMode: 'NORMAL'
+        };
+        placeholder.effects = [shadow];
+      } else {
+        placeholder.effects = [];
+      }
+    }
+
     // 오버레이 설정
     if (variant.withOverlay) {
       const overlay = figma.createFrame();
@@ -114,22 +142,6 @@ export class CardMediaManager {
       overlay.x = 0;
       overlay.y = 0;
       overlay.resize(media.width, media.height);
-    }
-
-    // 미디어 컨테이너 스타일 적용
-    const placeholder = this.findNodeByRole(media, this.ROLES.PLACEHOLDER) as FrameNode;
-    if (placeholder) {
-      // 배경색 설정
-      placeholder.fills = [variables.bindVariable('surface/color/default')];
-      
-      // 테두리 설정
-      if (variant.variant === 'outlined') {
-        placeholder.strokes = [variables.bindVariable('border/color/default')];
-        variables.setBindVariable(placeholder, 'strokeWeight', 'border/width/default');
-        placeholder.strokeAlign = 'INSIDE';
-      } else {
-        placeholder.strokes = [];
-      }
     }
   }
 
@@ -235,14 +247,16 @@ Displays images or videos with configurable aspect ratios.
           }];
         } catch (error) {
           console.error('Failed to load image:', error);
-          placeholder.fills = [variables.bindVariable('surface/color/default')];
+          const variantStyle = CARD_MEDIA_STYLES['filled'];
+          placeholder.fills = [variables.bindVariable(variantStyle.background.default)];
         }
       }
     } else {
       const placeholder = this.findNodeByRole(instance, this.ROLES.PLACEHOLDER) as FrameNode;
       if (placeholder) {
-        placeholder.fills = [variables.bindVariable('surface/color/default')];
-        placeholder.strokes = [variables.bindVariable('component/base/border/color/default')];
+        const variantStyle = CARD_MEDIA_STYLES['filled'];
+        placeholder.fills = [variables.bindVariable(variantStyle.background.default)];
+        placeholder.strokes = [variables.bindVariable(variantStyle.border.default)];
       }
     }
   }

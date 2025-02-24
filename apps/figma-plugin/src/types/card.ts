@@ -46,6 +46,8 @@ export interface CardStyle {
   footer: CardSectionStyle;
   media: {
     aspectRatio: string;
+    background: CardStateStyle;
+    border: CardStateStyle;
     overlay: CardStateStyle;
   };
 }
