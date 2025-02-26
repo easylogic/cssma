@@ -6,6 +6,6 @@
   "ui": "index.html",
   "editorType": ["figma"],
   "networkAccess": {
-    "allowedDomains": ["none"]
+    "allowedDomains": ["https://api.anthropic.com"]
   }
 } 

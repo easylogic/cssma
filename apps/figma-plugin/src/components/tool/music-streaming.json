@@ -1,0 +1,706 @@
+{
+  "frame": {
+    "type": "FRAME",
+    "name": "Music Streaming App",
+    "styles": ["bg-[#0F172A]", "flex-col", "w-[390]", "items-center", "gap-[16]", "auto-layout"],
+    "children": [
+      {
+        "type": "FRAME",
+        "name": "Status Bar",
+        "styles": ["w-[390]", "flex-row", "justify-between", "items-center", "p-[16]", "bg-[#0F172A]", "h-auto", "auto-layout"],
+        "children": [
+          {
+            "type": "TEXT",
+            "styles": ["text-md", "font-bold", "text-white", "w-auto"],
+            "text": "9:41"
+          },
+          {
+            "type": "FRAME",
+            "name": "Status Icons",
+            "styles": ["flex-row", "gap-[8]", "items-center", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-white", "w-[16]", "h-[16]", "rounded-sm"]
+              },
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-white", "w-[16]", "h-[16]", "rounded-sm"]
+              },
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-white", "w-[16]", "h-[16]", "rounded-sm"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Header",
+        "styles": ["w-[390]", "flex-row", "justify-between", "items-center", "p-[16]", "bg-[#0F172A]", "h-auto", "auto-layout"],
+        "children": [
+          {
+            "type": "FRAME",
+            "name": "Title",
+            "styles": ["flex-col", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+            "children": [
+              {
+                "type": "TEXT",
+                "styles": ["text-lg", "font-bold", "text-white", "w-auto"],
+                "text": "MusicFlow"
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-sm", "text-[#A5B4FC]", "w-auto"],
+                "text": "당신의 음악 여행"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "User Profile",
+            "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[40]", "bg-[#1E293B]", "rounded-full", "shadow-sm", "auto-layout"],
+            "children": [
+              {
+                "type": "ELLIPSE",
+                "styles": ["bg-[#C4B5FD]", "w-[36]", "h-[36]"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Search Bar",
+        "styles": ["w-[358]", "gap-4", "flex-row", "items-center", "p-[12]", "bg-[#1E293B]", "rounded-lg", "h-auto", "auto-layout"],
+        "children": [
+          {
+            "type": "RECTANGLE",
+            "styles": ["bg-[#A5B4FC]", "w-[20]", "h-[20]", "rounded-sm"]
+          },
+          {
+            "type": "TEXT",
+            "styles": ["text-md", "text-[#94A3B8]", "w-auto", "ml-[8]"],
+            "text": "아티스트, 노래, 앨범 검색..."
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Now Playing",
+        "styles": ["w-[358]", "flex-row", "justify-between", "p-[12]", "bg-[#8B5CF6]", "rounded-lg", "shadow-sm", "items-center", "h-auto", "auto-layout"],
+        "children": [
+          {
+            "type": "FRAME",
+            "name": "Song Info",
+            "styles": ["flex-row", "items-center", "gap-[12]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-[#A78BFA]", "w-[48]", "h-[48]", "rounded-md"]
+              },
+              {
+                "type": "FRAME",
+                "name": "Track Details",
+                "styles": ["flex-col", "gap-[4]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-sm", "font-bold", "text-white", "w-auto"],
+                    "text": "Midnight City"
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-xs", "text-[#E0E7FF]", "w-auto"],
+                    "text": "M83 - Hurry Up, We're Dreaming"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Playback Controls",
+            "styles": ["flex-row", "items-center", "gap-[12]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-white", "w-[16]", "h-[16]", "rounded-sm"]
+              },
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-white", "w-[32]", "h-[32]", "rounded-full"]
+              },
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-white", "w-[16]", "h-[16]", "rounded-sm"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "For You Section",
+        "styles": ["w-[358]", "flex-col", "p-[16]", "bg-[#1E293B]", "rounded-lg", "shadow-sm", "gap-[16]", "h-auto", "pt-[16]", "pb-[16]", "auto-layout"],
+        "children": [
+          {
+            "type": "FRAME",
+            "name": "Section Header",
+            "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "bg-transparent", "auto-layout"],
+            "children": [
+              {
+                "type": "TEXT",
+                "styles": ["text-lg", "font-bold", "text-white", "w-auto"],
+                "text": "나를 위한 추천"
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-sm", "text-[#A5B4FC]", "w-auto"],
+                "text": "모두 보기"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Playlists Carousel",
+            "styles": ["flex-row", "gap-[16]", "w-full", "overflow-x-auto", "h-auto", "bg-transparent", "auto-layout"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Playlist Card",
+                "styles": ["bg-transparent", "flex-col", "w-[150]", "rounded-lg", "overflow-hidden", "h-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#6D28D9]", "w-full", "h-[150]", "rounded-lg"]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Playlist Info",
+                    "styles": ["flex-col", "p-[8]", "gap-[4]", "w-full", "h-auto", "bg-transparent", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-sm", "font-bold", "text-white", "w-auto"],
+                        "text": "차분한 저녁"
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-xs", "text-[#94A3B8]", "w-auto"],
+                        "text": "힐링되는 인디 팝 모음"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Playlist Card",
+                "styles": ["bg-transparent", "flex-col", "w-[150]", "rounded-lg", "overflow-hidden", "h-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#4F46E5]", "w-full", "h-[150]", "rounded-lg"]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Playlist Info",
+                    "styles": ["flex-col", "p-[8]", "gap-[4]", "w-full", "h-auto", "bg-transparent", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-sm", "font-bold", "text-white", "w-auto"],
+                        "text": "모닝 에너지"
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-xs", "text-[#94A3B8]", "w-auto"],
+                        "text": "활기찬 하루를 위한 팝"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Playlist Card",
+                "styles": ["flex-col", "w-[150]", "rounded-lg", "overflow-hidden", "h-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#7E22CE]", "w-full", "h-[150]", "rounded-lg"]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Playlist Info",
+                    "styles": ["flex-col", "p-[8]", "gap-[4]", "w-full", "h-auto", "bg-transparent", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-sm", "font-bold", "text-white", "w-auto"],
+                        "text": "집중 모드"
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-xs", "text-[#94A3B8]", "w-auto"],
+                        "text": "작업에 몰입하는 전자음악"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "New Releases",
+        "styles": ["w-[358]", "flex-col", "p-[16]", "bg-[#1E293B]", "rounded-lg", "shadow-sm", "gap-[16]", "h-auto", "pt-[16]", "pb-[16]", "auto-layout"],
+        "children": [
+          {
+            "type": "TEXT",
+            "styles": ["text-lg", "font-bold", "text-white", "w-auto"],
+            "text": "신규 앨범"
+          },
+          {
+            "type": "FRAME",
+            "name": "Albums Grid",
+            "styles": ["flex-row", "wrap", "justify-between", "gap-[16]", "w-full", "h-auto", "bg-transparent", "auto-layout"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Album Card",
+                "styles": ["flex-col", "w-[100]", "gap-[8]", "h-auto", "bg-transparent", "auto-layout"],
+                "children": [
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#334155]", "w-[100]", "h-[100]", "rounded-md"]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Album Info",
+                    "styles": ["flex-col", "gap-[2]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-xs", "font-bold", "text-white", "w-auto"],
+                        "text": "Euphoria"
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-xs", "text-[#94A3B8]", "w-auto"],
+                        "text": "Dream Canvas"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Album Card",
+                "styles": ["flex-col", "w-[100]", "gap-[8]", "h-auto", "bg-transparent", "auto-layout"],
+                "children": [
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#334155]", "w-[100]", "h-[100]", "rounded-md"]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Album Info",
+                    "styles": ["flex-col", "gap-[2]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-xs", "font-bold", "text-white", "w-auto"],
+                        "text": "Neon Nights"
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-xs", "text-[#94A3B8]", "w-auto"],
+                        "text": "Cyber Wave"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Album Card",
+                "styles": ["flex-col", "w-[100]", "gap-[8]", "h-auto", "bg-transparent", "auto-layout"],
+                "children": [
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#334155]", "w-[100]", "h-[100]", "rounded-md"]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Album Info",
+                    "styles": ["flex-col", "gap-[2]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-xs", "font-bold", "text-white", "w-auto"],
+                        "text": "별빛 아래"
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-xs", "text-[#94A3B8]", "w-auto"],
+                        "text": "별그림자"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Recently Played",
+        "styles": ["w-[358]", "flex-col", "p-[16]", "bg-[#1E293B]", "rounded-lg", "shadow-sm", "gap-[16]", "h-auto", "pt-[16]", "pb-[16]", "auto-layout"],
+        "children": [
+          {
+            "type": "TEXT",
+            "styles": ["text-lg", "font-bold", "text-white", "w-auto"],
+            "text": "최근 재생"
+          },
+          {
+            "type": "FRAME",
+            "name": "Tracks List",
+            "styles": ["flex-col", "gap-[16]", "w-full", "h-auto", "bg-transparent", "auto-layout"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Track Item",
+                "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "bg-transparent", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Track Info",
+                    "styles": ["flex-row", "items-center", "gap-[12]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#334155]", "w-[48]", "h-[48]", "rounded-md"]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Track Details",
+                        "styles": ["flex-col", "gap-[4]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "font-bold", "text-white", "w-auto"],
+                            "text": "Electric Dreams"
+                          },
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-xs", "text-[#94A3B8]", "w-auto"],
+                            "text": "Future Pulse"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Play Button",
+                    "styles": ["flex-row", "items-center", "justify-center", "w-[32]", "h-[32]", "bg-[#A5B4FC]", "rounded-full", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#1E293B]", "w-[12]", "h-[12]", "rounded-sm"]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Track Item",
+                "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "bg-transparent", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Track Info",
+                    "styles": ["flex-row", "items-center", "gap-[12]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#334155]", "w-[48]", "h-[48]", "rounded-md"]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Track Details",
+                        "styles": ["flex-col", "gap-[4]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "font-bold", "text-white", "w-auto"],
+                            "text": "Starry Night"
+                          },
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-xs", "text-[#94A3B8]", "w-auto"],
+                            "text": "Astral Projections"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Play Button",
+                    "styles": ["flex-row", "items-center", "justify-center", "w-[32]", "h-[32]", "bg-[#A5B4FC]", "rounded-full", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#1E293B]", "w-[12]", "h-[12]", "rounded-sm"]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Track Item",
+                "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "bg-transparent", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Track Info",
+                    "styles": ["flex-row", "items-center", "gap-[12]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#334155]", "w-[48]", "h-[48]", "rounded-md"]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Track Details",
+                        "styles": ["flex-col", "gap-[4]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "font-bold", "text-white", "w-auto"],
+                            "text": "Urban Echoes"
+                          },
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-xs", "text-[#94A3B8]", "w-auto"],
+                            "text": "Metro Sounds"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Play Button",
+                    "styles": ["flex-row", "items-center", "justify-center", "w-[32]", "h-[32]", "bg-[#A5B4FC]", "rounded-full", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#1E293B]", "w-[12]", "h-[12]", "rounded-sm"]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Featured Artists",
+        "styles": ["w-[358]", "flex-col", "p-[16]", "bg-[#1E293B]", "rounded-lg", "shadow-sm", "gap-[16]", "h-auto", "pt-[16]", "pb-[16]", "auto-layout"],
+        "children": [
+          {
+            "type": "FRAME",
+            "name": "Section Header",
+            "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "bg-transparent", "auto-layout"],
+            "children": [
+              {
+                "type": "TEXT",
+                "styles": ["text-lg", "font-bold", "text-white", "w-auto"],
+                "text": "추천 아티스트"
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-sm", "text-[#A5B4FC]", "w-auto"],
+                "text": "모두 보기"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Artists Carousel",
+            "styles": ["flex-row", "gap-[16]", "w-full", "overflow-x-auto", "h-auto", "bg-transparent", "auto-layout"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Artist Card",
+                "styles": ["flex-col", "items-center", "gap-[8]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+                "children": [
+                  {
+                    "type": "ELLIPSE",
+                    "styles": ["bg-[#334155]", "w-[80]", "h-[80]"]
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-sm", "font-bold", "text-white", "w-auto", "text-center"],
+                    "text": "Lunar Wave"
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-xs", "text-[#94A3B8]", "w-auto", "text-center"],
+                    "text": "Electronic"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Artist Card",
+                "styles": ["flex-col", "items-center", "gap-[8]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+                "children": [
+                  {
+                    "type": "ELLIPSE",
+                    "styles": ["bg-[#334155]", "w-[80]", "h-[80]"]
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-sm", "font-bold", "text-white", "w-auto", "text-center"],
+                    "text": "Crystal Echo"
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-xs", "text-[#94A3B8]", "w-auto", "text-center"],
+                    "text": "Indie Pop"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Artist Card",
+                "styles": ["flex-col", "items-center", "gap-[8]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+                "children": [
+                  {
+                    "type": "ELLIPSE",
+                    "styles": ["bg-[#334155]", "w-[80]", "h-[80]"]
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-sm", "font-bold", "text-white", "w-auto", "text-center"],
+                    "text": "Neon Dreams"
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-xs", "text-[#94A3B8]", "w-auto", "text-center"],
+                    "text": "Synthwave"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Artist Card",
+                "styles": ["flex-col", "items-center", "gap-[8]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+                "children": [
+                  {
+                    "type": "ELLIPSE",
+                    "styles": ["bg-[#334155]", "w-[80]", "h-[80]"]
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-sm", "font-bold", "text-white", "w-auto", "text-center"],
+                    "text": "Aurora Beats"
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-xs", "text-[#94A3B8]", "w-auto", "text-center"],
+                    "text": "Chillstep"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Bottom Navigation",
+        "styles": ["w-[390]", "flex-row", "justify-between", "items-center", "p-[24]", "bg-[#0F172A]", "shadow-md", "pt-[16]", "pb-[16]", "h-auto", "auto-layout"],
+        "children": [
+          {
+            "type": "FRAME",
+            "name": "Nav Item",
+            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-[#8B5CF6]", "w-[24]", "h-[24]", "rounded-sm"]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-xs", "text-[#8B5CF6]", "w-auto", "text-center"],
+                "text": "홈"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Nav Item",
+            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-[#94A3B8]", "w-[24]", "h-[24]", "rounded-sm"]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-xs", "text-[#94A3B8]", "w-auto", "text-center"],
+                "text": "탐색"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Nav Item",
+            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-[#94A3B8]", "w-[24]", "h-[24]", "rounded-sm"]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-xs", "text-[#94A3B8]", "w-auto", "text-center"],
+                "text": "라이브러리"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Nav Item",
+            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "bg-transparent", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-[#94A3B8]", "w-[24]", "h-[24]", "rounded-sm"]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-xs", "text-[#94A3B8]", "w-auto", "text-center"],
+                "text": "프로필"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+} 

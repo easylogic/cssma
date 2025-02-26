@@ -1,0 +1,604 @@
+{
+  "frame": {
+    "type": "FRAME",
+    "name": "Mobile Finance App",
+    "styles": ["bg-[#F9FAFB]", "flex-col", "w-[390]", "items-center", "gap-[16]", "auto-layout"],
+    "children": [
+      {
+        "type": "FRAME",
+        "name": "Status Bar",
+        "styles": ["w-[390]", "flex-row", "justify-between", "items-center", "p-[16]", "bg-[#F9FAFB]", "h-auto", "auto-layout"],
+        "children": [
+          {
+            "type": "TEXT",
+            "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto"],
+            "text": "9:41"
+          },
+          {
+            "type": "FRAME",
+            "name": "Status Icons",
+            "styles": ["flex-row", "gap-[8]", "items-center", "h-auto", "w-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-[#111827]", "w-[16]", "h-[16]", "rounded-sm"]
+              },
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-[#111827]", "w-[16]", "h-[16]", "rounded-sm"]
+              },
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-[#111827]", "w-[16]", "h-[16]", "rounded-sm"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Header",
+        "styles": ["w-[390]", "flex-row", "justify-between", "items-center", "p-[16]", "bg-[#F9FAFB]", "h-auto", "auto-layout"],
+        "children": [
+          {
+            "type": "FRAME",
+            "name": "User Info",
+            "styles": ["flex-row", "items-center", "gap-[12]", "h-auto", "w-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "ELLIPSE",
+                "styles": ["bg-[#E0E7FF]", "w-[40]", "h-[40]"]
+              },
+              {
+                "type": "FRAME",
+                "name": "User Name",
+                "styles": ["flex-col", "h-auto", "w-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto"],
+                    "text": "Hello, Alex"
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-sm", "text-[#6B7280]", "w-auto"],
+                    "text": "Welcome back"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Notification",
+            "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[40]", "bg-white", "rounded-full", "shadow-sm", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-[#4F46E5]", "w-[20]", "h-[20]", "rounded-sm"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Balance Card",
+        "styles": ["w-[358]", "flex-col", "p-[24]", "bg-[#4F46E5]", "rounded-lg", "shadow-md", "h-auto", "auto-layout"],
+        "children": [
+          {
+            "type": "TEXT",
+            "styles": ["text-sm", "text-[#E0E7FF]", "w-auto"],
+            "text": "Total Balance"
+          },
+          {
+            "type": "TEXT",
+            "styles": ["text-2xl", "font-bold", "text-white", "w-auto"],
+            "text": "$12,456.78"
+          },
+          {
+            "type": "FRAME",
+            "name": "Card Details",
+            "styles": ["flex-row", "justify-between", "items-center", "mt-[16]", "w-full", "h-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "TEXT",
+                "styles": ["text-sm", "text-[#E0E7FF]", "w-auto"],
+                "text": "•••• 4567"
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-sm", "text-[#E0E7FF]", "w-auto"],
+                "text": "Exp: 09/25"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Quick Actions",
+        "styles": ["w-[358]", "flex-row", "justify-between", "p-[16]", "bg-white", "rounded-lg", "shadow-sm", "mt-[16]", "h-auto", "auto-layout"],
+        "children": [
+          {
+            "type": "FRAME",
+            "name": "Action Item",
+            "styles": ["flex-col", "items-center", "gap-[8]", "h-auto", "w-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Icon Container",
+                "styles": ["flex-row", "items-center", "justify-center", "w-[48]", "h-[48]", "bg-[#F3F4F6]", "rounded-full", "auto-layout"],
+                "children": [
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#4F46E5]", "w-[24]", "h-[24]", "rounded-sm"]
+                  }
+                ]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-xs", "text-[#111827]", "w-auto", "text-center"],
+                "text": "Send"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Action Item",
+            "styles": ["flex-col", "items-center", "gap-[8]", "h-auto", "w-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Icon Container",
+                "styles": ["flex-row", "items-center", "justify-center", "w-[48]", "h-[48]", "bg-[#F3F4F6]", "rounded-full", "auto-layout"],
+                "children": [
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#4F46E5]", "w-[24]", "h-[24]", "rounded-sm"]
+                  }
+                ]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-xs", "text-[#111827]", "w-auto", "text-center"],
+                "text": "Request"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Action Item",
+            "styles": ["flex-col", "items-center", "gap-[8]", "h-auto", "w-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Icon Container",
+                "styles": ["flex-row", "items-center", "justify-center", "w-[48]", "h-[48]", "bg-[#F3F4F6]", "rounded-full", "auto-layout"],
+                "children": [
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#4F46E5]", "w-[24]", "h-[24]", "rounded-sm"]
+                  }
+                ]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-xs", "text-[#111827]", "w-auto", "text-center"],
+                "text": "Top Up"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Action Item",
+            "styles": ["flex-col", "items-center", "gap-[8]", "h-auto", "w-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Icon Container",
+                "styles": ["flex-row", "items-center", "justify-center", "w-[48]", "h-[48]", "bg-[#F3F4F6]", "rounded-full", "auto-layout"],
+                "children": [
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#4F46E5]", "w-[24]", "h-[24]", "rounded-sm"]
+                  }
+                ]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-xs", "text-[#111827]", "w-auto", "text-center"],
+                "text": "More"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Spending Overview",
+        "styles": ["w-[358]", "flex-col", "p-[16]", "bg-white", "rounded-lg", "shadow-sm", "mt-[16]", "gap-[16]", "h-auto", "auto-layout"],
+        "children": [
+          {
+            "type": "FRAME",
+            "name": "Section Header",
+            "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "TEXT",
+                "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto"],
+                "text": "Spending Overview"
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-sm", "text-[#4F46E5]", "w-auto"],
+                "text": "See All"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Spending Chart",
+            "styles": ["w-full", "h-[160]", "bg-[#F9FAFB]", "rounded-md", "auto-layout"],
+            "children": []
+          },
+          {
+            "type": "FRAME",
+            "name": "Categories",
+            "styles": ["flex-row", "justify-between", "w-full", "h-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Category",
+                "styles": ["flex-col", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Indicator",
+                    "styles": ["flex-row", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#4F46E5]", "w-[8]", "h-[8]", "rounded-full"]
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
+                        "text": "Shopping"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-sm", "font-bold", "text-[#111827]", "w-auto"],
+                    "text": "35%"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Category",
+                "styles": ["flex-col", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Indicator",
+                    "styles": ["flex-row", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#10B981]", "w-[8]", "h-[8]", "rounded-full"]
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
+                        "text": "Food"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-sm", "font-bold", "text-[#111827]", "w-auto"],
+                    "text": "25%"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Category",
+                "styles": ["flex-col", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Indicator",
+                    "styles": ["flex-row", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#F59E0B]", "w-[8]", "h-[8]", "rounded-full"]
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
+                        "text": "Travel"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-sm", "font-bold", "text-[#111827]", "w-auto"],
+                    "text": "15%"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Category",
+                "styles": ["flex-col", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Indicator",
+                    "styles": ["flex-row", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#6B7280]", "w-[8]", "h-[8]", "rounded-full"]
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
+                        "text": "Other"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-sm", "font-bold", "text-[#111827]", "w-auto"],
+                    "text": "25%"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Recent Transactions",
+        "styles": ["w-[358]", "flex-col", "p-[16]", "bg-white", "rounded-lg", "shadow-sm", "mt-[16]", "gap-[16]", "h-auto", "auto-layout"],
+        "children": [
+          {
+            "type": "FRAME",
+            "name": "Section Header",
+            "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "TEXT",
+                "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto"],
+                "text": "Recent Transactions"
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-sm", "text-[#4F46E5]", "w-auto"],
+                "text": "See All"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Transaction Item",
+            "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Transaction Info",
+                "styles": ["flex-row", "items-center", "gap-[12]", "h-auto", "w-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Icon Container",
+                    "styles": ["flex-row", "items-center", "justify-center", "w-[48]", "h-[48]", "bg-[#F3F4F6]", "rounded-full", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#10B981]", "w-[24]", "h-[24]", "rounded-sm"]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Details",
+                    "styles": ["flex-col", "h-auto", "w-auto", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-md", "text-[#111827]", "w-auto"],
+                        "text": "Starbucks"
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-sm", "text-[#6B7280]", "w-auto"],
+                        "text": "Apr 12, 2023"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto"],
+                "text": "-$4.50"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Transaction Item",
+            "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "pt-[12]", "pb-[8]", "auto-layout"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Transaction Info",
+                "styles": ["flex-row", "items-center", "gap-[12]", "h-auto", "w-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Icon Container",
+                    "styles": ["flex-row", "items-center", "justify-center", "w-[48]", "h-[48]", "bg-[#F3F4F6]", "rounded-full", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#F59E0B]", "w-[24]", "h-[24]", "rounded-sm"]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Details",
+                    "styles": ["flex-col", "h-auto", "w-auto", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-md", "text-[#111827]", "w-auto"],
+                        "text": "Amazon"
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-sm", "text-[#6B7280]", "w-auto"],
+                        "text": "Apr 10, 2023"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto"],
+                "text": "-$24.99"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Transaction Item",
+            "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "pt-[12]", "pb-[8]", "auto-layout"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Transaction Info",
+                "styles": ["flex-row", "items-center", "gap-[12]", "h-auto", "w-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Icon Container",
+                    "styles": ["flex-row", "items-center", "justify-center", "w-[48]", "h-[48]", "bg-[#F3F4F6]", "rounded-full", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#4F46E5]", "w-[24]", "h-[24]", "rounded-sm"]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Details",
+                    "styles": ["flex-col", "h-auto", "w-auto", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-md", "text-[#111827]", "w-auto"],
+                        "text": "Salary"
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-sm", "text-[#6B7280]", "w-auto"],
+                        "text": "Apr 1, 2023"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-md", "font-bold", "text-[#10B981]", "w-auto"],
+                "text": "+$2,750.00"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Bottom Navigation",
+        "styles": ["w-[390]", "flex-row", "justify-between", "items-center", "p-[24]", "bg-white", "shadow-sm", "mt-[16]", "h-auto", "auto-layout"],
+        "children": [
+          {
+            "type": "FRAME",
+            "name": "Nav Item",
+            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-[#4F46E5]", "w-[24]", "h-[24]", "rounded-sm"]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-xs", "text-[#4F46E5]", "w-auto", "text-center"],
+                "text": "Home"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Nav Item",
+            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-[#9CA3AF]", "w-[24]", "h-[24]", "rounded-sm"]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-xs", "text-[#9CA3AF]", "w-auto", "text-center"],
+                "text": "Stats"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Nav Item",
+            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-[#9CA3AF]", "w-[24]", "h-[24]", "rounded-sm"]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-xs", "text-[#9CA3AF]", "w-auto", "text-center"],
+                "text": "Cards"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Nav Item",
+            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-[#9CA3AF]", "w-[24]", "h-[24]", "rounded-sm"]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-xs", "text-[#9CA3AF]", "w-auto", "text-center"],
+                "text": "Profile"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+} 

@@ -1,0 +1,1296 @@
+{
+  "frame": {
+    "type": "FRAME",
+    "name": "Card UI Samples",
+    "styles": ["bg-[#F8FAFC]", "flex-col", "w-[1200]", "h-auto", "items-center", "gap-[32]", "p-[32]"],
+    "children": [
+      {
+        "type": "FRAME",
+        "name": "Basic Cards Section",
+        "styles": ["flex-col", "w-full", "h-auto", "gap-[24]", "bg-transparent"],
+        "children": [
+          {
+            "type": "TEXT",
+            "styles": ["text-2xl", "font-bold", "text-[#111827]", "w-full"],
+            "text": "Basic Cards"
+          },
+          {
+            "type": "FRAME",
+            "name": "Basic Cards Grid",
+            "styles": ["flex-row", "wrap", "w-full", "h-auto", "gap-[24]", "bg-transparent"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Article Card",
+                "styles": ["flex-col", "w-[280]", "h-auto", "bg-white", "rounded-lg", "shadow-sm", "overflow-hidden"],
+                "children": [
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#FEF3C7]", "w-full", "h-[160]"]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Card Content",
+                    "styles": ["flex-col", "w-full", "h-auto", "gap-[8]", "p-[16]", "bg-transparent"],
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "name": "Tag",
+                        "styles": ["flex-row", "w-auto", "h-auto", "items-center", "justify-center", "bg-[#FEF3C7]", "rounded-full", "px-[8]", "py-[2]"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-xs", "text-[#B45309]", "w-auto"],
+                            "text": "Article"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-lg", "font-bold", "text-[#111827]", "w-full"],
+                        "text": "Design Tips"
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Text Wrapper",
+                        "styles": ["flex-col", "w-full", "h-auto", "pt-[8]", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "text-[#6B7280]", "w-full"],
+                            "text": "5 min read • By John Doe"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Interactive Cards Section",
+        "styles": ["flex-col", "w-full", "h-auto", "gap-[24]", "bg-transparent"],
+        "children": [
+          {
+            "type": "TEXT",
+            "styles": ["text-2xl", "font-bold", "text-[#111827]", "w-full"],
+            "text": "Interactive Cards"
+          },
+          {
+            "type": "FRAME",
+            "name": "Interactive Cards Grid",
+            "styles": ["flex-row", "wrap", "w-full", "h-auto", "gap-[24]", "bg-transparent"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Hover Card",
+                "styles": ["flex-col", "w-[280]", "h-auto", "bg-white", "rounded-lg", "shadow-sm", "overflow-hidden"],
+                "children": [
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#818CF8]", "w-full", "h-[160]"]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Card Content",
+                    "styles": ["flex-col", "w-full", "h-auto", "gap-[8]", "p-[16]", "bg-transparent"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-lg", "font-bold", "text-[#111827]", "w-full"],
+                        "text": "Hover Effect"
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Text Wrapper",
+                        "styles": ["flex-col", "w-full", "h-auto", "pt-[8]", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "text-[#6B7280]", "w-full"],
+                            "text": "This card has hover interaction. Try hovering over it."
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Toggle Card",
+                "styles": ["flex-col", "w-[280]", "h-auto", "bg-white", "rounded-lg", "shadow-sm", "p-[24]"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Header",
+                    "styles": ["flex-row", "w-full", "h-auto", "justify-between", "items-center", "bg-transparent"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-lg", "font-bold", "text-[#111827]", "w-auto"],
+                        "text": "Toggle Feature"
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Toggle",
+                        "styles": ["flex-row", "items-center", "w-[48]", "h-[24]", "bg-[#E5E7EB]", "rounded-full", "p-[2]"],
+                        "children": [
+                          {
+                            "type": "ELLIPSE",
+                            "styles": ["bg-white", "w-[20]", "h-[20]"]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Text Wrapper",
+                    "styles": ["flex-col", "w-full", "h-auto", "pt-[8]", "bg-transparent"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-sm", "text-[#6B7280]", "w-full"],
+                        "text": "Toggle this feature on or off"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Media Cards Section",
+        "styles": ["flex-col", "w-full", "h-auto", "gap-[24]", "bg-transparent"],
+        "children": [
+          {
+            "type": "TEXT",
+            "styles": ["text-2xl", "font-bold", "text-[#111827]", "w-full"],
+            "text": "Media Cards"
+          },
+          {
+            "type": "FRAME",
+            "name": "Media Cards Grid",
+            "styles": ["flex-row", "wrap", "w-full", "h-auto", "gap-[24]", "bg-transparent"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Video Card",
+                "styles": ["flex-col", "w-[280]", "h-auto", "bg-white", "rounded-lg", "shadow-sm", "overflow-hidden"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Video Thumbnail",
+                    "styles": ["flex-row", "items-center", "justify-center", "w-full", "h-[160]", "bg-[#1F2937]"],
+                    "children": [
+                      {
+                        "type": "ELLIPSE",
+                        "styles": ["bg-white", "w-[48]", "h-[48]", "opacity-80"]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Card Content",
+                    "styles": ["flex-col", "w-full", "h-auto", "gap-[8]", "p-[16]", "bg-transparent"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-lg", "font-bold", "text-[#111827]", "w-full"],
+                        "text": "Video Title"
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Text Wrapper",
+                        "styles": ["flex-col", "w-full", "h-auto", "pt-[8]", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "text-[#6B7280]", "w-full"],
+                            "text": "3:45 • 1.2K views"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Article Card",
+                "styles": ["flex-col", "w-[280]", "h-auto", "bg-white", "rounded-lg", "shadow-sm", "overflow-hidden"],
+                "children": [
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#FEF3C7]", "w-full", "h-[160]"]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Card Content",
+                    "styles": ["flex-col", "w-full", "h-auto", "gap-[8]", "p-[16]", "bg-transparent"],
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "name": "Tag",
+                        "styles": ["flex-row", "w-auto", "h-auto", "items-center", "justify-center", "bg-[#FEF3C7]", "rounded-full", "px-[8]", "py-[2]"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-xs", "text-[#B45309]", "w-auto"],
+                            "text": "Article"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-lg", "font-bold", "text-[#111827]", "w-full"],
+                        "text": "Design Tips"
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Text Wrapper",
+                        "styles": ["flex-col", "w-full", "h-auto", "pt-[8]", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "text-[#6B7280]", "w-full"],
+                            "text": "5 min read • By John Doe"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "E-commerce Cards Section",
+        "styles": ["flex-col", "w-full", "h-auto", "gap-[24]", "bg-transparent", "auto-layout"],
+        "children": [
+          {
+            "type": "TEXT",
+            "styles": ["text-xl", "font-bold", "text-[#111827]", "w-full"],
+            "text": "E-commerce Cards"
+          },
+          {
+            "type": "FRAME",
+            "name": "E-commerce Cards Grid",
+            "styles": ["flex-row", "wrap", "w-full", "h-auto", "gap-[24]", "bg-transparent", "auto-layout"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Product Card",
+                "styles": ["flex-col", "w-[280]", "h-auto", "bg-white", "rounded-lg", "shadow-sm", "auto-layout"],
+                "children": [
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#F3F4F6]", "w-full", "h-[200]", "rounded-t-lg"]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Card Content",
+                    "styles": ["flex-col", "w-full", "h-auto", "p-[16]", "gap-[16]", "bg-transparent", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "name": "Category",
+                        "styles": ["flex-row", "w-full", "h-auto", "items-center", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "text-[#6B7280]", "w-full"],
+                            "text": "Electronics"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Product Info",
+                        "styles": ["flex-col", "w-full", "h-auto", "gap-[8]", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-lg", "font-bold", "text-[#111827]", "w-full"],
+                            "text": "Wireless Headphones"
+                          },
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-lg", "font-bold", "text-[#059669]", "w-full"],
+                            "text": "$299.99"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Rating",
+                        "styles": ["flex-row", "items-center", "gap-[8]", "w-full", "h-auto", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "RECTANGLE",
+                            "styles": ["bg-[#FBBF24]", "w-[16]", "h-[16]", "rounded-sm"]
+                          },
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "text-[#6B7280]", "w-auto"],
+                            "text": "4.8 (120)"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Sale Card",
+                "styles": ["flex-col", "w-[280]", "h-auto", "bg-white", "rounded-lg", "shadow-sm", "auto-layout", "relative"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Sale Badge",
+                    "styles": ["flex-row", "items-center", "justify-center", "w-[60]", "h-[24]", "bg-[#DC2626]", "rounded-md", "absolute", "top-[12]", "left-[12]", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-xs", "font-bold", "text-white"],
+                        "text": "SALE"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#F3F4F6]", "w-full", "h-[200]", "rounded-t-lg"]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Card Content",
+                    "styles": ["flex-col", "w-full", "h-auto", "p-[16]", "gap-[16]", "bg-transparent", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-lg", "font-bold", "text-[#111827]", "w-full"],
+                        "text": "Summer Collection"
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Price",
+                        "styles": ["flex-row", "items-center", "gap-[12]", "w-full", "h-auto", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-lg", "font-bold", "text-[#DC2626]", "w-auto"],
+                            "text": "$49.99"
+                          },
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "text-[#6B7280]", "line-through", "w-auto"],
+                            "text": "$89.99"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Social Cards Section",
+            "styles": ["flex-col", "w-full", "h-auto", "gap-[24]", "bg-transparent", "mt-[32]"],
+            "children": [
+              {
+                "type": "TEXT",
+                "styles": ["text-2xl", "font-bold", "text-[#111827]", "w-full"],
+                "text": "Social Cards"
+              },
+              {
+                "type": "FRAME",
+                "name": "Social Cards Grid",
+                "styles": ["flex-row", "wrap", "w-full", "h-auto", "gap-[24]", "bg-transparent"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Profile Card",
+                    "styles": ["flex-col", "w-[280]", "h-auto", "bg-white", "rounded-lg", "shadow-sm", "p-[24]"],
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "name": "Profile Header",
+                        "styles": ["flex-row", "w-full", "h-auto", "items-center", "gap-[16]", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "ELLIPSE",
+                            "styles": ["bg-[#E0F2FE]", "w-[64]", "h-[64]"]
+                          },
+                          {
+                            "type": "FRAME",
+                            "name": "Profile Info",
+                            "styles": ["flex-col", "w-full", "h-auto", "gap-[4]", "bg-transparent"],
+                            "children": [
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-lg", "font-bold", "text-[#111827]", "w-full"],
+                                "text": "Sarah Wilson"
+                              },
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-sm", "text-[#6B7280]", "w-full"],
+                                "text": "@sarahwilson"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-sm", "text-[#6B7280]", "w-full", "mt-[16]"],
+                        "text": "UI/UX Designer • Design Systems Expert"
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Stats",
+                        "styles": ["flex-row", "w-full", "h-auto", "justify-between", "mt-[16]", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "FRAME",
+                            "name": "Stat",
+                            "styles": ["flex-col", "items-center", "h-auto", "w-auto", "bg-transparent"],
+                            "children": [
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto"],
+                                "text": "2.5k"
+                              },
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
+                                "text": "Followers"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "FRAME",
+                            "name": "Stat",
+                            "styles": ["flex-col", "items-center", "h-auto", "w-auto", "bg-transparent"],
+                            "children": [
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto"],
+                                "text": "120"
+                              },
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
+                                "text": "Posts"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Post Card",
+                    "styles": ["flex-col", "w-[280]", "h-auto", "bg-white", "rounded-lg", "shadow-sm", "overflow-hidden"],
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "name": "Post Header",
+                        "styles": ["flex-row", "w-full", "h-auto", "items-center", "gap-[12]", "p-[16]", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "ELLIPSE",
+                            "styles": ["bg-[#E0F2FE]", "w-[40]", "h-[40]"]
+                          },
+                          {
+                            "type": "FRAME",
+                            "name": "Post Info",
+                            "styles": ["flex-col", "w-full", "h-auto", "gap-[2]", "bg-transparent"],
+                            "children": [
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-sm", "font-bold", "text-[#111827]", "w-full"],
+                                "text": "Alex Chen"
+                              },
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-xs", "text-[#6B7280]", "w-full"],
+                                "text": "2 hours ago"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Post Actions",
+                        "styles": ["flex-row", "w-full", "h-auto", "justify-between", "p-[16]", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "FRAME",
+                            "name": "Action",
+                            "styles": ["flex-row", "items-center", "gap-[4]", "h-auto", "w-full"],
+                            "children": [
+                              {
+                                "type": "RECTANGLE",
+                                "styles": ["bg-[#6B7280]", "w-[20]", "h-[20]", "rounded-sm"]
+                              },
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-sm", "text-[#6B7280]", "w-full"],
+                                "text": "128"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Comment Card",
+                    "styles": ["flex-col", "w-[280]", "h-auto", "bg-white", "rounded-lg", "shadow-sm", "p-[16]"],
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "name": "Comment Header",
+                        "styles": ["flex-row", "w-full", "h-auto", "items-center", "gap-[12]", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "ELLIPSE",
+                            "styles": ["bg-[#E0F2FE]", "w-[32]", "h-[32]"]
+                          },
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "font-bold", "text-[#111827]", "w-full"],
+                            "text": "Mike Johnson"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-sm", "text-[#6B7280]", "w-full", "mt-[12]"],
+                        "text": "Great insights! This will definitely help with my current project. Thanks for sharing!"
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Comment Footer",
+                        "styles": ["flex-row", "w-full", "h-auto", "justify-between", "items-center", "mt-[12]", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
+                            "text": "5m ago"
+                          },
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-xs", "text-[#3B82F6]", "w-auto"],
+                            "text": "Reply"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Notification Cards Section",
+            "styles": ["flex-col", "w-full", "h-auto", "gap-[24]", "bg-transparent", "mt-[32]"],
+            "children": [
+              {
+                "type": "TEXT",
+                "styles": ["text-xl", "font-bold", "text-[#111827]", "w-full"],
+                "text": "Notification Cards"
+              },
+              {
+                "type": "FRAME",
+                "name": "Notification Cards Grid",
+                "styles": ["flex-row", "wrap", "w-full", "h-auto", "gap-[24]", "bg-transparent"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Error Alert Card",
+                    "styles": ["flex-col", "w-[280]", "h-auto", "bg-[#FEF2F2]", "rounded-lg", "shadow-sm", "p-[16]", "gap-[16]"],
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "name": "Alert Header",
+                        "styles": ["flex-row", "items-start", "gap-[12]", "w-full", "h-auto", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "RECTANGLE",
+                            "styles": ["bg-[#DC2626]", "w-[20]", "h-[20]", "rounded-full"]
+                          },
+                          {
+                            "type": "FRAME",
+                            "name": "Header Content",
+                            "styles": ["flex-col", "gap-[8]", "flex-1", "w-full", "bg-transparent"],
+                            "children": [
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-sm", "font-bold", "text-[#991B1B]", "w-full"],
+                                "text": "오류"
+                              },
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-sm", "text-[#991B1B]", "w-full"],
+                                "text": "서버에 연결할 수 없습니다. 다시 시도해주세요."
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Action Buttons",
+                        "styles": ["flex-row", "w-full", "h-auto", "gap-[8]", "bg-transparent", "justify-end"],
+                        "children": [
+                          {
+                            "type": "FRAME",
+                            "name": "Retry Button",
+                            "styles": ["flex-row", "items-center", "justify-center", "px-[12]", "py-[6]", "bg-[#DC2626]", "rounded-md", "h-auto", "w-full"],
+                            "children": [
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-sm", "text-white", "font-bold", "w-full"],
+                                "text": "다시 시도"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Success Alert Card",
+                    "styles": ["flex-col", "w-[280]", "h-auto", "bg-[#F0FDF4]", "rounded-lg", "shadow-sm", "p-[16]", "gap-[16]"],
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "name": "Alert Header",
+                        "styles": ["flex-row", "items-start", "gap-[12]", "w-full", "h-auto", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "RECTANGLE",
+                            "styles": ["bg-[#16A34A]", "w-[20]", "h-[20]", "rounded-full"]
+                          },
+                          {
+                            "type": "FRAME",
+                            "name": "Header Content",
+                            "styles": ["flex-col", "gap-[8]", "flex-1", "bg-transparent"],
+                            "children": [
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-sm", "font-bold", "text-[#166534]", "w-full"],
+                                "text": "성공"
+                              },
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-sm", "text-[#166534]", "w-full"],
+                                "text": "변경사항이 성공적으로 저장되었습니다."
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Action Buttons",
+                        "styles": ["flex-row", "w-full", "h-auto", "gap-[8]", "bg-transparent", "justify-end"],
+                        "children": [
+                          {
+                            "type": "FRAME",
+                            "name": "Close Button",
+                            "styles": ["flex-row", "items-center", "justify-center", "px-[12]", "py-[6]", "bg-[#16A34A]", "rounded-md", "h-auto", "w-auto"],
+                            "children": [
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-sm", "text-white", "font-bold"],
+                                "text": "확인"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Dashboard Cards Section",
+            "styles": ["flex-col", "w-full", "h-auto", "gap-[24]", "bg-transparent", "mt-[32]"],
+            "children": [
+              {
+                "type": "TEXT",
+                "styles": ["text-2xl", "font-bold", "text-[#111827]", "w-full"],
+                "text": "Dashboard Cards"
+              },
+              {
+                "type": "FRAME",
+                "name": "Dashboard Cards Grid",
+                "styles": ["flex-row", "wrap", "w-full", "h-auto", "gap-[24]", "bg-transparent"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Analytics Card",
+                    "styles": ["flex-col", "w-[280]", "h-auto", "bg-white", "rounded-lg", "shadow-sm", "p-[24]"],
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "name": "Analytics Header",
+                        "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-lg", "font-bold", "text-[#111827]", "w-full"],
+                            "text": "Revenue"
+                          },
+                          {
+                            "type": "FRAME",
+                            "name": "Trend",
+                            "styles": ["flex-row", "items-center", "gap-[4]", "h-auto", "w-auto", "bg-[#DCFCE7]", "rounded-full", "px-[8]", "py-[2]"],
+                            "children": [
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-xs", "text-[#059669]", "w-auto"],
+                                "text": "+12.5%"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Text Wrapper",
+                        "styles": ["flex-col", "w-full", "h-auto", "pt-[8]", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-2xl", "font-bold", "text-[#111827]", "w-full"],
+                            "text": "$24,563"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Chart",
+                        "styles": ["w-full", "h-auto", "bg-[#F3F4F6]", "rounded-lg", "mt-[16]"]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Progress Card",
+                    "styles": ["flex-col", "w-[280]", "h-auto", "bg-white", "rounded-lg", "shadow-sm", "p-[24]"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-lg", "font-bold", "text-[#111827]", "w-full"],
+                        "text": "Project Status"
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Progress Items",
+                        "styles": ["flex-col", "w-full", "h-auto", "gap-[16]", "pt-[16]", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "FRAME",
+                            "name": "Progress Item",
+                            "styles": ["flex-col", "w-full", "h-auto", "gap-[8]", "bg-transparent"],
+                            "children": [
+                              {
+                                "type": "FRAME",
+                                "name": "Progress Header",
+                                "styles": ["flex-row", "justify-between", "w-full", "h-auto", "bg-transparent"],
+                                "children": [
+                                  {
+                                    "type": "TEXT",
+                                    "styles": ["text-sm", "text-[#6B7280]", "w-full"],
+                                    "text": "Design"
+                                  },
+                                  {
+                                    "type": "TEXT",
+                                    "styles": ["text-sm", "text-[#6B7280]", "w-auto"],
+                                    "text": "80%"
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "FRAME",
+                                "name": "Progress Bar BG",
+                                "styles": ["w-full", "h-auto", "bg-[#F3F4F6]", "rounded-full"],
+                                "children": [
+                                  {
+                                    "type": "RECTANGLE",
+                                    "styles": ["bg-[#3B82F6]", "w-[80%]", "h-[8]", "rounded-full"]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "type": "FRAME",
+                            "name": "Progress Item",
+                            "styles": ["flex-col", "w-full", "h-auto", "gap-[8]", "bg-transparent"],
+                            "children": [
+                              {
+                                "type": "FRAME",
+                                "name": "Progress Header",
+                                "styles": ["flex-row", "justify-between", "w-full", "h-auto", "bg-transparent"],
+                                "children": [
+                                  {
+                                    "type": "TEXT",
+                                    "styles": ["text-sm", "text-[#6B7280]", "w-auto"],
+                                    "text": "Development"
+                                  },
+                                  {
+                                    "type": "TEXT",
+                                    "styles": ["text-sm", "text-[#6B7280]", "w-auto"],
+                                    "text": "60%"
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "FRAME",
+                                "name": "Progress Bar BG",
+                                "styles": ["w-full", "h-auto", "bg-[#F3F4F6]", "rounded-full"],
+                                "children": [
+                                  {
+                                    "type": "RECTANGLE",
+                                    "styles": ["bg-[#3B82F6]", "w-[60%]", "h-[8]", "rounded-full"]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Timeline Card",
+                    "styles": ["flex-col", "w-[280]", "h-auto", "bg-white", "rounded-lg", "shadow-sm", "p-[24]"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-lg", "font-bold", "text-[#111827]", "w-full"],
+                        "text": "Recent Activity"
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Timeline Items",
+                        "styles": ["flex-col", "w-full", "h-auto", "gap-[16]", "pt-[16]", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "FRAME",
+                            "name": "Timeline Item",
+                            "styles": ["flex-row", "w-full", "h-auto", "gap-[12]", "bg-transparent"],
+                            "children": [
+                              {
+                                "type": "FRAME",
+                                "name": "Timeline Dot",
+                                "styles": ["w-[12]", "h-[12]", "bg-[#3B82F6]", "rounded-full", "mt-[4]"]
+                              },
+                              {
+                                "type": "FRAME",
+                                "name": "Timeline Content",
+                                "styles": ["flex-col", "w-full", "h-auto", "gap-[4]", "bg-transparent"],
+                                "children": [
+                                  {
+                                    "type": "TEXT",
+                                    "styles": ["text-sm", "text-[#111827]", "w-full"],
+                                    "text": "New feature released"
+                                  },
+                                  {
+                                    "type": "TEXT",
+                                    "styles": ["text-xs", "text-[#6B7280]", "w-full"],
+                                    "text": "2 hours ago"
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "type": "FRAME",
+                            "name": "Timeline Item",
+                            "styles": ["flex-row", "w-full", "h-auto", "gap-[12]", "bg-transparent"],
+                            "children": [
+                              {
+                                "type": "FRAME",
+                                "name": "Timeline Dot",
+                                "styles": ["w-[12]", "h-[12]", "bg-[#3B82F6]", "rounded-full", "mt-[4]"]
+                              },
+                              {
+                                "type": "FRAME",
+                                "name": "Timeline Content",
+                                "styles": ["flex-col", "w-full", "h-auto", "gap-[4]", "bg-transparent"],
+                                "children": [
+                                  {
+                                    "type": "TEXT",
+                                    "styles": ["text-sm", "text-[#111827]", "w-full"],
+                                    "text": "Team meeting"
+                                  },
+                                  {
+                                    "type": "TEXT",
+                                    "styles": ["text-xs", "text-[#6B7280]", "w-full"],
+                                    "text": "4 hours ago"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Feature Cards Section",
+            "styles": ["flex-col", "w-full", "h-auto", "gap-[24]", "bg-transparent", "mt-[32]"],
+            "children": [
+              {
+                "type": "TEXT",
+                "styles": ["text-2xl", "font-bold", "text-[#111827]", "w-full"],
+                "text": "Feature Cards"
+              },
+              {
+                "type": "FRAME",
+                "name": "Feature Cards Grid",
+                "styles": ["flex-row", "wrap", "w-full", "h-auto", "gap-[24]", "bg-transparent"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Pricing Card",
+                    "styles": ["flex-col", "w-[280]", "h-auto", "bg-white", "rounded-lg", "shadow-sm", "p-[24]"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-lg", "font-bold", "text-[#111827]", "w-full"],
+                        "text": "Pro Plan"
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Price",
+                        "styles": ["flex-row", "w-full", "h-auto", "items-end", "gap-[4]", "mt-[16]", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-2xl", "font-bold", "text-[#111827]", "w-auto"],
+                            "text": "$49"
+                          },
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "text-[#6B7280]", "w-auto"],
+                            "text": "/month"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Features List",
+                        "styles": ["flex-col", "w-full", "h-auto", "gap-[12]", "mt-[16]", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "FRAME",
+                            "name": "Feature Item",
+                            "styles": ["flex-row", "w-full", "h-auto", "items-center", "gap-[8]", "bg-transparent"],
+                            "children": [
+                              {
+                                "type": "RECTANGLE",
+                                "styles": ["bg-[#10B981]", "w-[16]", "h-[16]", "rounded-full"]
+                              },
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-sm", "text-[#6B7280]", "w-full"],
+                                "text": "Unlimited projects"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "FRAME",
+                            "name": "Feature Item",
+                            "styles": ["flex-row", "w-full", "h-auto", "items-center", "gap-[8]", "bg-transparent"],
+                            "children": [
+                              {
+                                "type": "RECTANGLE",
+                                "styles": ["bg-[#10B981]", "w-[16]", "h-[16]", "rounded-full"]
+                              },
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-sm", "text-[#6B7280]", "w-full"],
+                                "text": "Priority support"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "CTA Button",
+                        "styles": ["flex-row", "w-full", "h-auto", "items-center", "justify-center", "bg-[#3B82F6]", "rounded-lg", "p-[12]", "mt-[24]"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "font-bold", "text-white", "w-full"],
+                            "text": "Get Started"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Comparison Card",
+                    "styles": ["flex-col", "w-[280]", "h-auto", "bg-white", "rounded-lg", "shadow-sm", "p-[24]"],
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-lg", "font-bold", "text-[#111827]", "w-full"],
+                        "text": "Plan Comparison"
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Comparison Items",
+                        "styles": ["flex-col", "w-full", "h-auto", "gap-[16]", "mt-[16]", "bg-transparent"],
+                        "children": [
+                          {
+                            "type": "FRAME",
+                            "name": "Comparison Item",
+                            "styles": ["flex-row", "w-full", "h-auto", "justify-between", "items-center", "bg-transparent"],
+                            "children": [
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-sm", "text-[#6B7280]", "w-auto"],
+                                "text": "Storage"
+                              },
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-sm", "font-bold", "text-[#111827]", "w-auto"],
+                                "text": "100GB"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "FRAME",
+                            "name": "Comparison Item",
+                            "styles": ["flex-row", "w-full", "h-auto", "justify-between", "items-center", "bg-transparent"],
+                            "children": [
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-sm", "text-[#6B7280]", "w-auto"],
+                                "text": "Users"
+                              },
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-sm", "font-bold", "text-[#111827]", "w-auto"],
+                                "text": "Unlimited"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Feature Highlight Card",
+                    "styles": ["flex-col", "w-[280]", "h-auto", "bg-gradient-to-br", "from-[#3B82F6]", "to-[#1D4ED8]", "rounded-lg", "shadow-sm", "p-[24]"],
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "name": "Feature Icon",
+                        "styles": ["flex-row", "w-[48]", "h-auto", "items-center", "justify-center", "bg-white", "rounded-lg"],
+                        "children": [
+                          {
+                            "type": "RECTANGLE",
+                            "styles": ["bg-[#3B82F6]", "w-[24]", "h-[24]", "rounded-md"]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-lg", "font-bold", "text-white", "w-full", "mt-[16]"],
+                        "text": "AI-Powered Analytics"
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-sm", "text-[#E0F2FE]", "w-full", "mt-[8]"],
+                        "text": "Get insights from your data with our advanced AI algorithms"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Modern Cards Section",
+            "styles": ["flex-col", "w-full", "h-auto", "gap-[24]", "bg-transparent", "mt-[32]"],
+            "children": [
+              {
+                "type": "TEXT",
+                "styles": ["text-xl", "font-bold", "text-[#111827]", "w-full"],
+                "text": "Modern Cards"
+              },
+              {
+                "type": "FRAME",
+                "name": "Modern Cards Grid",
+                "styles": ["flex-row", "wrap", "w-full", "h-auto", "gap-[24]", "bg-transparent", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Gradient Feature Card",
+                    "styles": ["flex-col", "w-[280]", "h-auto", "bg-gradient-to-br", "from-[#6366F1]", "to-[#A855F7]", "rounded-2xl", "shadow-lg", "p-[24]", "gap-[16]", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "name": "Icon Container",
+                        "styles": ["flex-row", "items-center", "justify-center", "w-[56]", "h-[56]", "bg-white", "bg-opacity-10", "rounded-xl", "auto-layout"]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Content",
+                        "styles": ["flex-col", "gap-[12]", "w-full", "h-auto", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-xl", "font-bold", "text-white", "w-full"],
+                            "text": "AI 기반 개인화"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Stats",
+                        "styles": ["flex-row", "justify-between", "w-full", "h-auto", "mt-[8]", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "FRAME",
+                            "name": "Stat Item",
+                            "styles": ["flex-col", "gap-[4]", "h-auto", "w-full", "auto-layout"],
+                            "children": [
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-2xl", "font-bold", "text-white", "w-full"],
+                                "text": "98%"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Glass Effect Card",
+                    "styles": ["flex-col", "w-[280]", "h-auto", "bg-white", "bg-opacity-5", "backdrop-blur-lg", "rounded-2xl", "shadow-lg", "border", "border-[#E5E7EB]", "p-[24]", "gap-[16]", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "name": "Header",
+                        "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "FRAME",
+                            "name": "Profile",
+                            "styles": ["flex-row", "items-center", "gap-[12]", "w-full", "auto-layout"],
+                            "children": [
+                              {
+                                "type": "ELLIPSE",
+                                "styles": ["bg-gradient-to-br", "from-[#F472B6]", "to-[#EC4899]", "w-[40]", "h-[40]"]
+                              },
+                              {
+                                "type": "FRAME",
+                                "name": "Info",
+                                "styles": ["flex-col", "gap-[2]", "w-full", "auto-layout"],
+                                "children": [
+                                  {
+                                    "type": "TEXT",
+                                    "styles": ["text-sm", "font-bold", "text-[#111827]", "w-full"],
+                                    "text": "김서연"
+                                  },
+                                  {
+                                    "type": "TEXT",
+                                    "styles": ["text-xs", "text-[#6B7280]", "w-full"],
+                                    "text": "제품 디자이너"
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "type": "FRAME",
+                            "name": "Badge",
+                            "styles": ["flex-row", "items-center", "justify-center", "px-[12]", "py-[4]", "bg-[#F3E8FF]", "rounded-full", "auto-layout"],
+                            "children": [
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-xs", "text-[#9333EA]", "font-bold"],
+                                "text": "PRO"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Stats Grid",
+                        "styles": ["grid", "grid-cols-3", "gap-[16]", "w-full", "h-auto", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "FRAME",
+                            "name": "Stat Item",
+                            "styles": ["flex-col", "items-center", "gap-[4]", "p-[12]", "bg-[#F9FAFB]", "rounded-xl", "w-full", "auto-layout"],
+                            "children": [
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-lg", "font-bold", "text-[#111827]", "w-full"],
+                                "text": "128"
+                              },
+                              {
+                                "type": "TEXT",
+                                "styles": ["text-xs", "text-[#6B7280]", "w-full"],
+                                "text": "프로젝트"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+} 

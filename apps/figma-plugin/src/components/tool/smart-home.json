@@ -1,0 +1,753 @@
+{
+  "frame": {
+    "type": "FRAME",
+    "name": "Smart Home Control Interface",
+    "styles": ["bg-[#1F2937]", "flex-col", "w-[390]", "items-center", "gap-[16]", "auto-layout"],
+    "children": [
+      {
+        "type": "FRAME",
+        "name": "Status Bar",
+        "styles": ["w-[390]", "flex-row", "justify-between", "items-center", "p-[16]", "bg-[#1F2937]", "h-auto", "auto-layout"],
+        "children": [
+          {
+            "type": "TEXT",
+            "styles": ["text-md", "font-bold", "text-white", "w-auto"],
+            "text": "9:41"
+          },
+          {
+            "type": "FRAME",
+            "name": "Status Icons",
+            "styles": ["flex-row", "gap-[8]", "items-center", "h-auto", "w-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-white", "w-[16]", "h-[16]", "rounded-sm"]
+              },
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-white", "w-[16]", "h-[16]", "rounded-sm"]
+              },
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-white", "w-[16]", "h-[16]", "rounded-sm"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Header",
+        "styles": ["w-[390]", "flex-row", "justify-between", "items-center", "p-[16]", "bg-[#1F2937]", "h-auto", "auto-layout"],
+        "children": [
+          {
+            "type": "FRAME",
+            "name": "Welcome",
+            "styles": ["flex-col", "h-auto", "w-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "TEXT",
+                "styles": ["text-sm", "text-[#9CA3AF]", "w-auto"],
+                "text": "안녕하세요"
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-lg", "font-bold", "text-white", "w-auto"],
+                "text": "스마트홈"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Profile",
+            "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[40]", "bg-[#374151]", "rounded-full", "shadow-sm", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-[#0E9F6E]", "w-[20]", "h-[20]", "rounded-sm"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Home Status",
+        "styles": ["w-[358]", "flex-col", "p-[16]", "bg-[#374151]", "rounded-lg", "shadow-md", "gap-[16]", "h-auto", "auto-layout"],
+        "children": [
+          {
+            "type": "FRAME",
+            "name": "Status Title",
+            "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "TEXT",
+                "styles": ["text-md", "font-bold", "text-white", "w-auto"],
+                "text": "홈 상태"
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-sm", "text-[#0E9F6E]", "w-auto"],
+                "text": "모두 정상"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Status Cards",
+            "styles": ["flex-row", "justify-between", "w-full", "h-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Status Card",
+                "styles": ["flex-col", "items-center", "gap-[8]", "p-[12]", "bg-[#1F2937]", "rounded-lg", "w-[100]", "h-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Icon Container",
+                    "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[40]", "bg-[#0E9F6E]", "rounded-full", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#1F2937]", "w-[20]", "h-[20]", "rounded-sm"]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-lg", "font-bold", "text-white", "w-auto"],
+                    "text": "23°C"
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-xs", "text-[#9CA3AF]", "w-auto"],
+                    "text": "온도"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Status Card",
+                "styles": ["flex-col", "items-center", "gap-[8]", "p-[12]", "bg-[#1F2937]", "rounded-lg", "w-[100]", "h-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Icon Container",
+                    "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[40]", "bg-[#0E9F6E]", "rounded-full", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#1F2937]", "w-[20]", "h-[20]", "rounded-sm"]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-lg", "font-bold", "text-white", "w-auto"],
+                    "text": "45%"
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-xs", "text-[#9CA3AF]", "w-auto"],
+                    "text": "습도"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Status Card",
+                "styles": ["flex-col", "items-center", "gap-[8]", "p-[12]", "bg-[#1F2937]", "rounded-lg", "w-[100]", "h-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Icon Container",
+                    "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[40]", "bg-[#0E9F6E]", "rounded-full", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#1F2937]", "w-[20]", "h-[20]", "rounded-sm"]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-lg", "font-bold", "text-white", "w-auto"],
+                    "text": "맑음"
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-xs", "text-[#9CA3AF]", "w-auto"],
+                    "text": "날씨"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Rooms",
+        "styles": ["w-[358]", "flex-col", "gap-[16]", "h-auto", "auto-layout"],
+        "children": [
+          {
+            "type": "FRAME",
+            "name": "Section Header",
+            "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "TEXT",
+                "styles": ["text-lg", "font-bold", "text-white", "w-auto"],
+                "text": "방 별 제어"
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-sm", "text-[#0E9F6E]", "w-auto"],
+                "text": "모두 보기"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Room Grid",
+            "styles": ["flex-row", "wrap", "justify-between", "gap-[16]", "w-full", "h-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Room Card",
+                "styles": ["flex-col", "p-[16]", "bg-[#374151]", "rounded-lg", "w-[171]", "h-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Room Header",
+                    "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "name": "Icon Container",
+                        "styles": ["flex-row", "items-center", "justify-center", "w-[32]", "h-[32]", "bg-[#0E9F6E]", "rounded-full", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "RECTANGLE",
+                            "styles": ["bg-[#1F2937]", "w-[16]", "h-[16]", "rounded-sm"]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Room Status",
+                        "styles": ["flex-row", "items-center", "justify-center", "h-auto", "w-auto", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "ELLIPSE",
+                            "styles": ["bg-[#0E9F6E]", "w-[8]", "h-[8]"]
+                          },
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-xs", "text-[#9CA3AF]", "w-auto", "ml-[4]"],
+                            "text": "3 작동중"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-md", "font-bold", "text-white", "w-auto", "mt-[8]"],
+                    "text": "거실"
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Device Controls",
+                    "styles": ["flex-col", "gap-[8]", "w-full", "h-auto", "pt-[12]", "pb-[8]", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "name": "Control Row",
+                        "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "text-white", "w-auto"],
+                            "text": "조명"
+                          },
+                          {
+                            "type": "FRAME",
+                            "name": "Toggle",
+                            "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[24]", "bg-[#0E9F6E]", "rounded-full", "auto-layout"],
+                            "children": [
+                              {
+                                "type": "ELLIPSE",
+                                "styles": ["bg-white", "w-[18]", "h-[18]", "ml-[14]"]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Control Row",
+                        "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "text-white", "w-auto"],
+                            "text": "에어컨"
+                          },
+                          {
+                            "type": "FRAME",
+                            "name": "Toggle",
+                            "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[24]", "bg-[#0E9F6E]", "rounded-full", "auto-layout"],
+                            "children": [
+                              {
+                                "type": "ELLIPSE",
+                                "styles": ["bg-white", "w-[18]", "h-[18]", "ml-[14]"]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Control Row",
+                        "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "text-white", "w-auto"],
+                            "text": "TV"
+                          },
+                          {
+                            "type": "FRAME",
+                            "name": "Toggle",
+                            "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[24]", "bg-[#0E9F6E]", "rounded-full", "auto-layout"],
+                            "children": [
+                              {
+                                "type": "ELLIPSE",
+                                "styles": ["bg-white", "w-[18]", "h-[18]", "ml-[14]"]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Room Card",
+                "styles": ["flex-col", "p-[16]", "bg-[#374151]", "rounded-lg", "w-[171]", "h-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Room Header",
+                    "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "name": "Icon Container",
+                        "styles": ["flex-row", "items-center", "justify-center", "w-[32]", "h-[32]", "bg-[#0E9F6E]", "rounded-full", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "RECTANGLE",
+                            "styles": ["bg-[#1F2937]", "w-[16]", "h-[16]", "rounded-sm"]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Room Status",
+                        "styles": ["flex-row", "items-center", "justify-center", "h-auto", "w-auto", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "ELLIPSE",
+                            "styles": ["bg-[#0E9F6E]", "w-[8]", "h-[8]"]
+                          },
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-xs", "text-[#9CA3AF]", "w-auto", "ml-[4]"],
+                            "text": "2 작동중"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-md", "font-bold", "text-white", "w-auto", "mt-[8]"],
+                    "text": "침실"
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Device Controls",
+                    "styles": ["flex-col", "gap-[8]", "w-full", "h-auto", "pt-[12]", "pb-[8]", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "name": "Control Row",
+                        "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "text-white", "w-auto"],
+                            "text": "조명"
+                          },
+                          {
+                            "type": "FRAME",
+                            "name": "Toggle",
+                            "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[24]", "bg-[#0E9F6E]", "rounded-full", "auto-layout"],
+                            "children": [
+                              {
+                                "type": "ELLIPSE",
+                                "styles": ["bg-white", "w-[18]", "h-[18]", "ml-[14]"]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Control Row",
+                        "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "text-white", "w-auto"],
+                            "text": "에어컨"
+                          },
+                          {
+                            "type": "FRAME",
+                            "name": "Toggle",
+                            "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[24]", "bg-[#0E9F6E]", "rounded-full", "auto-layout"],
+                            "children": [
+                              {
+                                "type": "ELLIPSE",
+                                "styles": ["bg-white", "w-[18]", "h-[18]", "ml-[14]"]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "name": "Control Row",
+                        "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "styles": ["text-sm", "text-white", "w-auto"],
+                            "text": "블라인드"
+                          },
+                          {
+                            "type": "FRAME",
+                            "name": "Toggle",
+                            "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[24]", "bg-[#4B5563]", "rounded-full", "auto-layout"],
+                            "children": [
+                              {
+                                "type": "ELLIPSE",
+                                "styles": ["bg-white", "w-[18]", "h-[18]", "ml-[4]"]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Energy Consumption",
+        "styles": ["w-[358]", "flex-col", "p-[16]", "bg-[#374151]", "rounded-lg", "shadow-sm", "gap-[16]", "h-auto", "mt-[16]", "auto-layout"],
+        "children": [
+          {
+            "type": "FRAME",
+            "name": "Section Header",
+            "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "TEXT",
+                "styles": ["text-md", "font-bold", "text-white", "w-auto"],
+                "text": "에너지 소비"
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-sm", "text-[#0E9F6E]", "w-auto"],
+                "text": "최근 30일"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Energy Chart",
+            "styles": ["flex-col", "w-full", "gap-[8]", "h-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Chart Bars",
+                "styles": ["flex-row", "justify-between", "items-end", "h-[100]", "w-full", "auto-layout"],
+                "children": [
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#0E9F6E]", "w-[12]", "h-[40]", "rounded-lg"]
+                  },
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#0E9F6E]", "w-[12]", "h-[60]", "rounded-lg"]
+                  },
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#0E9F6E]", "w-[12]", "h-[45]", "rounded-lg"]
+                  },
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#0E9F6E]", "w-[12]", "h-[70]", "rounded-lg"]
+                  },
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#0E9F6E]", "w-[12]", "h-[50]", "rounded-lg"]
+                  },
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#0E9F6E]", "w-[12]", "h-[80]", "rounded-lg"]
+                  },
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#0E9F6E]", "w-[12]", "h-[65]", "rounded-lg"]
+                  },
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#0E9F6E]", "w-[12]", "h-[45]", "rounded-lg"]
+                  },
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#0E9F6E]", "w-[12]", "h-[55]", "rounded-lg"]
+                  },
+                  {
+                    "type": "RECTANGLE",
+                    "styles": ["bg-[#0E9F6E]", "w-[12]", "h-[90]", "rounded-lg"]
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Chart Summary",
+                "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-sm", "text-[#9CA3AF]", "w-auto"],
+                    "text": "평균 소비량: 32kWh/일"
+                  },
+                  {
+                    "type": "FRAME",
+                    "name": "Change Indicator",
+                    "styles": ["flex-row", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#0E9F6E]", "w-[12]", "h-[12]", "rounded-sm"]
+                      },
+                      {
+                        "type": "TEXT",
+                        "styles": ["text-sm", "text-[#0E9F6E]", "w-auto"],
+                        "text": "-12%"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Quick Scenes",
+        "styles": ["w-[358]", "flex-col", "gap-[16]", "h-auto", "mt-[16]", "auto-layout"],
+        "children": [
+          {
+            "type": "TEXT",
+            "styles": ["text-lg", "font-bold", "text-white", "w-auto"],
+            "text": "빠른 장면 설정"
+          },
+          {
+            "type": "FRAME",
+            "name": "Scene Cards",
+            "styles": ["flex-row", "justify-between", "w-full", "h-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "FRAME",
+                "name": "Scene Card",
+                "styles": ["flex-col", "items-center", "p-[16]", "bg-[#374151]", "rounded-lg", "w-[85]", "h-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Icon Container",
+                    "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[40]", "bg-[#0E9F6E]", "rounded-full", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#1F2937]", "w-[20]", "h-[20]", "rounded-sm"]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-sm", "text-white", "w-auto", "text-center", "mt-[8]"],
+                    "text": "외출 모드"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Scene Card",
+                "styles": ["flex-col", "items-center", "p-[16]", "bg-[#374151]", "rounded-lg", "w-[85]", "h-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Icon Container",
+                    "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[40]", "bg-[#0E9F6E]", "rounded-full", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#1F2937]", "w-[20]", "h-[20]", "rounded-sm"]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-sm", "text-white", "w-auto", "text-center", "mt-[8]"],
+                    "text": "수면 모드"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Scene Card",
+                "styles": ["flex-col", "items-center", "p-[16]", "bg-[#374151]", "rounded-lg", "w-[85]", "h-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Icon Container",
+                    "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[40]", "bg-[#0E9F6E]", "rounded-full", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#1F2937]", "w-[20]", "h-[20]", "rounded-sm"]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-sm", "text-white", "w-auto", "text-center", "mt-[8]"],
+                    "text": "영화 모드"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "name": "Scene Card",
+                "styles": ["flex-col", "items-center", "p-[16]", "bg-[#374151]", "rounded-lg", "w-[85]", "h-auto", "auto-layout"],
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "name": "Icon Container",
+                    "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[40]", "bg-[#1F2937]", "rounded-full", "auto-layout"],
+                    "children": [
+                      {
+                        "type": "RECTANGLE",
+                        "styles": ["bg-[#9CA3AF]", "w-[20]", "h-[20]", "rounded-sm"]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "styles": ["text-sm", "text-white", "w-auto", "text-center", "mt-[8]"],
+                    "text": "추가"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "FRAME",
+        "name": "Bottom Navigation",
+        "styles": ["w-[390]", "flex-row", "justify-between", "items-center", "p-[24]", "bg-[#1F2937]", "shadow-md", "mt-[16]", "h-auto", "auto-layout"],
+        "children": [
+          {
+            "type": "FRAME",
+            "name": "Nav Item",
+            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-[#0E9F6E]", "w-[24]", "h-[24]", "rounded-sm"]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-xs", "text-[#0E9F6E]", "w-auto", "text-center"],
+                "text": "홈"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Nav Item",
+            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-[#9CA3AF]", "w-[24]", "h-[24]", "rounded-sm"]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-xs", "text-[#9CA3AF]", "w-auto", "text-center"],
+                "text": "기기"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Nav Item",
+            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-[#9CA3AF]", "w-[24]", "h-[24]", "rounded-sm"]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-xs", "text-[#9CA3AF]", "w-auto", "text-center"],
+                "text": "자동화"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "name": "Nav Item",
+            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+            "children": [
+              {
+                "type": "RECTANGLE",
+                "styles": ["bg-[#9CA3AF]", "w-[24]", "h-[24]", "rounded-sm"]
+              },
+              {
+                "type": "TEXT",
+                "styles": ["text-xs", "text-[#9CA3AF]", "w-auto", "text-center"],
+                "text": "설정"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+} 
