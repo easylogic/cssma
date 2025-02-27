@@ -12,18 +12,16 @@ Your response must follow this compact format with predefined style classes and 
 
 {
   "frame": {
-    "type": "FRAME",
     "name": "Landing Page",
-    "styles": ["bg-white", "p-6", "flex-col", "gap-6", "w-[1440]", "items-center"],
+    "styles": "bg-white p-6 flex-col gap-6 w-[1440] items-center",
     "children": [
       {
-        "type": "FRAME",
         "name": "Hero Section",
-        "styles": ["w-full", "flex-col", "bg-[#f8f9fa]", "p-[32]", "rounded-lg", "gap-4"],
+        "styles": "w-full flex-col bg-[#f8f9fa] p-[32] rounded-lg gap-4",
         "children": [
           {
             "type": "TEXT",
-            "styles": ["text-2xl", "text-[#333333]", "font-bold"],
+            "styles": "text-2xl text-[#333333] font-bold",
             "text": "Welcome to Our Platform"
           }
         ]
@@ -65,7 +63,7 @@ Examples:
 
 ## Node Types
 Always use uppercase Figma node types:
-- "FRAME" - Container element (similar to div)
+- "FRAME" - Container element (similar to div), default type
 - "TEXT" - Text element
 - "RECTANGLE" - Rectangle shape
 - "ELLIPSE" - Circle or ellipse shape
@@ -94,13 +92,12 @@ Always use uppercase Figma node types:
 ### Button
 
 {
-  "type": "FRAME",
   "name": "Button",
-  "styles": ["bg-[#0077FF]", "p-[12]", "flex-row", "items-center", "justify-center", "gap-2", "rounded-md"],
+  "styles": "bg-[#0077FF] p-[12] flex-row items-center justify-center gap-2 rounded-md",
   "children": [
     {
       "type": "TEXT",
-      "styles": ["text-white", "text-md", "font-bold"],
+      "styles": "text-white text-md font-bold",
       "text": "Get Started"
     }
   ]
@@ -110,18 +107,17 @@ Always use uppercase Figma node types:
 ### Card
 
 {
-  "type": "FRAME",
   "name": "Card",
-  "styles": ["bg-white", "p-4", "flex-col", "gap-4", "rounded-md", "shadow-sm", "w-[300]"],
+  "styles": "bg-white p-4 flex-col gap-4 rounded-md shadow-sm w-[300]",
   "children": [
     {
       "type": "TEXT",
-      "styles": ["text-lg", "text-[#333]", "font-bold"],
+      "styles": "text-lg text-[#333] font-bold",
       "text": "Card Title"
     },
     {
       "type": "TEXT",
-      "styles": ["text-md", "text-[#666]"],
+      "styles": "text-md text-[#666]",
       "text": "Card description goes here with important information"
     }
   ]

@@ -1,618 +1,165 @@
 {
   "frame": {
-    "type": "FRAME",
-    "name": "Travel Booking Platform",
-    "styles": ["bg-white", "flex-col", "w-[390]", "items-center", "gap-[16]", "auto-layout"],
+    "name": "Travel Booking App",
+    "styles": "bg-[#FEF2F2] flex-col w-[390] h-auto items-center gap-[16]",
     "children": [
       {
-        "type": "FRAME",
         "name": "Status Bar",
-        "styles": ["w-[390]", "flex-row", "justify-between", "items-center", "p-[16]", "bg-white", "h-auto", "auto-layout"],
+        "styles": "w-[390] flex-row justify-between items-center p-[16] bg-transparent h-auto",
         "children": [
           {
             "type": "TEXT",
-            "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto"],
+            "styles": "text-md font-bold text-[#111827] w-auto",
             "text": "9:41"
           },
           {
-            "type": "FRAME",
             "name": "Status Icons",
-            "styles": ["flex-row", "gap-[8]", "items-center", "h-auto", "w-auto", "auto-layout"],
+            "styles": "flex-row gap-[8] items-center h-auto w-auto",
             "children": [
               {
                 "type": "RECTANGLE",
-                "styles": ["bg-[#111827]", "w-[16]", "h-[16]", "rounded-sm"]
+                "styles": "bg-[#111827] w-[16] h-[16] rounded-sm"
               },
               {
                 "type": "RECTANGLE",
-                "styles": ["bg-[#111827]", "w-[16]", "h-[16]", "rounded-sm"]
+                "styles": "bg-[#111827] w-[16] h-[16] rounded-sm"
               },
               {
                 "type": "RECTANGLE",
-                "styles": ["bg-[#111827]", "w-[16]", "h-[16]", "rounded-sm"]
+                "styles": "bg-[#111827] w-[16] h-[16] rounded-sm"
               }
             ]
           }
         ]
       },
       {
-        "type": "FRAME",
         "name": "Header",
-        "styles": ["w-[390]", "flex-row", "justify-between", "items-center", "p-[16]", "bg-white", "h-auto", "auto-layout"],
+        "styles": "w-[390] flex-row justify-between items-center p-[16] bg-[#EF4444] h-auto",
         "children": [
           {
-            "type": "FRAME",
-            "name": "Logo",
-            "styles": ["flex-row", "items-center", "gap-[8]", "h-auto", "w-auto", "auto-layout"],
+            "name": "Title",
+            "styles": "flex-col h-auto w-auto",
             "children": [
               {
-                "type": "RECTANGLE",
-                "styles": ["bg-[#0EA5E9]", "w-[32]", "h-[32]", "rounded-md"]
+                "type": "TEXT",
+                "styles": "text-sm text-[#FEE2E2] w-auto",
+                "text": "Travel Booking"
               },
               {
                 "type": "TEXT",
-                "styles": ["text-lg", "font-bold", "text-[#111827]", "w-auto"],
-                "text": "TravelEase"
+                "styles": "text-lg font-bold text-white w-auto",
+                "text": "Find Your Trip"
               }
             ]
           },
           {
-            "type": "FRAME",
-            "name": "User Profile",
-            "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[40]", "bg-[#F3F4F6]", "rounded-full", "auto-layout"],
+            "name": "Profile",
+            "styles": "flex-row items-center justify-center w-[40] h-[40] bg-[#DC2626] rounded-full shadow-sm",
             "children": [
               {
-                "type": "ELLIPSE",
-                "styles": ["bg-[#E0F2FE]", "w-[36]", "h-[36]"]
+                "type": "RECTANGLE",
+                "styles": "bg-white w-[20] h-[20] rounded-sm"
               }
             ]
           }
         ]
       },
       {
-        "type": "FRAME",
-        "name": "Search Section",
-        "styles": ["w-[390]", "flex-col", "p-[16]", "bg-[#0EA5E9]", "gap-[16]", "h-auto", "auto-layout"],
+        "name": "Search Form",
+        "styles": "w-[358] flex-col gap-[16] p-[16] bg-white rounded-lg shadow-sm h-auto",
         "children": [
           {
-            "type": "TEXT",
-            "styles": ["text-xl", "font-bold", "text-white", "w-auto"],
-            "text": "Where to next?"
-          },
-          {
-            "type": "FRAME",
-            "name": "Search Bar",
-            "styles": ["flex-row", "items-center", "gap-[8]", "p-[12]", "bg-white", "rounded-lg", "w-full", "h-auto", "auto-layout"],
-            "children": [
-              {
-                "type": "RECTANGLE",
-                "styles": ["bg-[#9CA3AF]", "w-[20]", "h-[20]", "rounded-sm"]
-              },
-              {
-                "type": "TEXT",
-                "styles": ["text-md", "text-[#9CA3AF]", "w-auto"],
-                "text": "Search destinations, hotels..."
-              }
-            ]
-          },
-          {
-            "type": "FRAME",
-            "name": "Filter Tabs",
-            "styles": ["flex-row", "gap-[12]", "w-full", "h-auto", "auto-layout"],
-            "children": [
-              {
-                "type": "FRAME",
-                "name": "Tab",
-                "styles": ["flex-row", "items-center", "justify-center", "p-[8]", "bg-white", "rounded-full", "h-auto", "auto-layout"],
-                "children": [
-                  {
-                    "type": "TEXT",
-                    "styles": ["text-sm", "text-[#0EA5E9]", "font-bold", "w-auto"],
-                    "text": "Flights"
-                  }
-                ]
-              },
-              {
-                "type": "FRAME",
-                "name": "Tab",
-                "styles": ["flex-row", "items-center", "justify-center", "p-[8]", "bg-[#0C4A6E]", "rounded-full", "h-auto", "auto-layout"],
-                "children": [
-                  {
-                    "type": "TEXT",
-                    "styles": ["text-sm", "text-white", "w-auto"],
-                    "text": "Hotels"
-                  }
-                ]
-              },
-              {
-                "type": "FRAME",
-                "name": "Tab",
-                "styles": ["flex-row", "items-center", "justify-center", "p-[8]", "bg-[#0C4A6E]", "rounded-full", "h-auto", "auto-layout"],
-                "children": [
-                  {
-                    "type": "TEXT",
-                    "styles": ["text-sm", "text-white", "w-auto"],
-                    "text": "Experiences"
-                  }
-                ]
-              },
-              {
-                "type": "FRAME",
-                "name": "Tab",
-                "styles": ["flex-row", "items-center", "justify-center", "p-[8]", "bg-[#0C4A6E]", "rounded-full", "h-auto", "auto-layout"],
-                "children": [
-                  {
-                    "type": "TEXT",
-                    "styles": ["text-sm", "text-white", "w-auto"],
-                    "text": "Cars"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "FRAME",
-        "name": "Popular Destinations",
-        "styles": ["w-[390]", "flex-col", "p-[16]", "gap-[16]", "h-auto", "auto-layout"],
-        "children": [
-          {
-            "type": "FRAME",
-            "name": "Section Header",
-            "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+            "name": "Location Input",
+            "styles": "flex-col gap-[8] w-full h-auto",
             "children": [
               {
                 "type": "TEXT",
-                "styles": ["text-lg", "font-bold", "text-[#111827]", "w-auto"],
-                "text": "Popular Destinations"
+                "styles": "text-sm font-bold text-[#111827] w-auto",
+                "text": "Where to?"
               },
               {
-                "type": "TEXT",
-                "styles": ["text-sm", "text-[#0EA5E9]", "w-auto"],
-                "text": "See All"
-              }
-            ]
-          },
-          {
-            "type": "FRAME",
-            "name": "Destinations Carousel",
-            "styles": ["flex-row", "gap-[12]", "w-full", "h-auto", "auto-layout"],
-            "children": [
-              {
-                "type": "FRAME",
-                "name": "Destination Card",
-                "styles": ["flex-col", "w-[150]", "h-auto", "rounded-lg", "shadow-sm", "auto-layout"],
+                "name": "Input Field",
+                "styles": "flex-row items-center gap-[8] p-[12] bg-[#F3F4F6] rounded-lg w-full h-auto",
                 "children": [
                   {
                     "type": "RECTANGLE",
-                    "styles": ["bg-[#BAE6FD]", "w-[150]", "h-[120]", "rounded-lg"]
-                  },
-                  {
-                    "type": "FRAME",
-                    "name": "Card Content",
-                    "styles": ["flex-col", "p-[8]", "gap-[4]", "bg-white", "w-full", "h-auto", "rounded-b-lg", "auto-layout"],
-                    "children": [
-                      {
-                        "type": "TEXT",
-                        "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto"],
-                        "text": "Bali"
-                      },
-                      {
-                        "type": "TEXT",
-                        "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
-                        "text": "Indonesia"
-                      },
-                      {
-                        "type": "FRAME",
-                        "name": "Rating",
-                        "styles": ["flex-row", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
-                        "children": [
-                          {
-                            "type": "RECTANGLE",
-                            "styles": ["bg-[#FBBF24]", "w-[12]", "h-[12]", "rounded-sm"]
-                          },
-                          {
-                            "type": "TEXT",
-                            "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
-                            "text": "4.8 (2.5k)"
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "type": "FRAME",
-                "name": "Destination Card",
-                "styles": ["flex-col", "w-[150]", "h-auto", "rounded-lg", "shadow-sm", "auto-layout"],
-                "children": [
-                  {
-                    "type": "RECTANGLE",
-                    "styles": ["bg-[#BAE6FD]", "w-[150]", "h-[120]", "rounded-lg"]
-                  },
-                  {
-                    "type": "FRAME",
-                    "name": "Card Content",
-                    "styles": ["flex-col", "p-[8]", "gap-[4]", "bg-white", "w-full", "h-auto", "rounded-b-lg", "auto-layout"],
-                    "children": [
-                      {
-                        "type": "TEXT",
-                        "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto"],
-                        "text": "Santorini"
-                      },
-                      {
-                        "type": "TEXT",
-                        "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
-                        "text": "Greece"
-                      },
-                      {
-                        "type": "FRAME",
-                        "name": "Rating",
-                        "styles": ["flex-row", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
-                        "children": [
-                          {
-                            "type": "RECTANGLE",
-                            "styles": ["bg-[#FBBF24]", "w-[12]", "h-[12]", "rounded-sm"]
-                          },
-                          {
-                            "type": "TEXT",
-                            "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
-                            "text": "4.9 (3.1k)"
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "type": "FRAME",
-                "name": "Destination Card",
-                "styles": ["flex-col", "w-[150]", "h-auto", "rounded-lg", "shadow-sm", "auto-layout"],
-                "children": [
-                  {
-                    "type": "RECTANGLE",
-                    "styles": ["bg-[#BAE6FD]", "w-[150]", "h-[120]", "rounded-lg"]
-                  },
-                  {
-                    "type": "FRAME",
-                    "name": "Card Content",
-                    "styles": ["flex-col", "p-[8]", "gap-[4]", "bg-white", "w-full", "h-auto", "rounded-b-lg", "auto-layout"],
-                    "children": [
-                      {
-                        "type": "TEXT",
-                        "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto"],
-                        "text": "Paris"
-                      },
-                      {
-                        "type": "TEXT",
-                        "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
-                        "text": "France"
-                      },
-                      {
-                        "type": "FRAME",
-                        "name": "Rating",
-                        "styles": ["flex-row", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
-                        "children": [
-                          {
-                            "type": "RECTANGLE",
-                            "styles": ["bg-[#FBBF24]", "w-[12]", "h-[12]", "rounded-sm"]
-                          },
-                          {
-                            "type": "TEXT",
-                            "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
-                            "text": "4.7 (5.2k)"
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "FRAME",
-        "name": "Special Offers",
-        "styles": ["w-[390]", "flex-col", "p-[16]", "gap-[16]", "h-auto", "auto-layout"],
-        "children": [
-          {
-            "type": "FRAME",
-            "name": "Section Header",
-            "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
-            "children": [
-              {
-                "type": "TEXT",
-                "styles": ["text-lg", "font-bold", "text-[#111827]", "w-auto"],
-                "text": "Special Offers"
-              },
-              {
-                "type": "TEXT",
-                "styles": ["text-sm", "text-[#0EA5E9]", "w-auto"],
-                "text": "See All"
-              }
-            ]
-          },
-          {
-            "type": "FRAME",
-            "name": "Offer Card",
-            "styles": ["flex-row", "w-full", "h-auto", "bg-[#F0F9FF]", "rounded-lg", "shadow-sm", "auto-layout"],
-            "children": [
-              {
-                "type": "FRAME",
-                "name": "Offer Content",
-                "styles": ["flex-col", "p-[16]", "gap-[8]", "w-[230]", "h-auto", "auto-layout"],
-                "children": [
-                  {
-                    "type": "TEXT",
-                    "styles": ["text-md", "font-bold", "text-[#0C4A6E]", "w-auto"],
-                    "text": "Summer Sale"
+                    "styles": "bg-[#EF4444] w-[20] h-[20] rounded-sm"
                   },
                   {
                     "type": "TEXT",
-                    "styles": ["text-sm", "text-[#0C4A6E]", "w-auto"],
-                    "text": "Get 25% off on selected hotels worldwide"
-                  },
-                  {
-                    "type": "FRAME",
-                    "name": "Button",
-                    "styles": ["flex-row", "items-center", "justify-center", "p-[8]", "bg-[#0EA5E9]", "rounded-full", "mt-[8]", "h-auto", "w-auto", "auto-layout"],
-                    "children": [
-                      {
-                        "type": "TEXT",
-                        "styles": ["text-sm", "text-white", "font-bold", "w-auto"],
-                        "text": "Book Now"
-                      }
-                    ]
+                    "styles": "text-md text-[#6B7280] w-auto",
+                    "text": "Search destinations"
                   }
                 ]
-              },
-              {
-                "type": "RECTANGLE",
-                "styles": ["bg-[#BAE6FD]", "w-[128]", "h-[128]", "rounded-r-lg"]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "FRAME",
-        "name": "Recommended Hotels",
-        "styles": ["w-[390]", "flex-col", "p-[16]", "gap-[16]", "h-auto", "auto-layout"],
-        "children": [
-          {
-            "type": "FRAME",
-            "name": "Section Header",
-            "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
-            "children": [
-              {
-                "type": "TEXT",
-                "styles": ["text-lg", "font-bold", "text-[#111827]", "w-auto"],
-                "text": "Recommended Hotels"
-              },
-              {
-                "type": "TEXT",
-                "styles": ["text-sm", "text-[#0EA5E9]", "w-auto"],
-                "text": "See All"
               }
             ]
           },
           {
-            "type": "FRAME",
-            "name": "Hotel Card",
-            "styles": ["flex-row", "w-full", "h-auto", "bg-white", "rounded-lg", "shadow-sm", "auto-layout"],
+            "name": "Date Range",
+            "styles": "flex-row justify-between w-full h-auto",
             "children": [
               {
-                "type": "RECTANGLE",
-                "styles": ["bg-[#BAE6FD]", "w-[100]", "h-[100]", "rounded-lg"]
-              },
-              {
-                "type": "FRAME",
-                "name": "Hotel Info",
-                "styles": ["flex-col", "p-[12]", "gap-[4]", "w-full", "h-auto", "auto-layout"],
+                "name": "Check In",
+                "styles": "flex-col gap-[8] w-[156] h-auto",
                 "children": [
                   {
                     "type": "TEXT",
-                    "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto"],
-                    "text": "Luxury Resort & Spa"
+                    "styles": "text-sm font-bold text-[#111827] w-auto",
+                    "text": "Check in"
                   },
                   {
-                    "type": "FRAME",
-                    "name": "Location",
-                    "styles": ["flex-row", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+                    "name": "Input Field",
+                    "styles": "flex-row items-center gap-[8] p-[12] bg-[#F3F4F6] rounded-lg w-full h-auto",
                     "children": [
                       {
                         "type": "RECTANGLE",
-                        "styles": ["bg-[#9CA3AF]", "w-[12]", "h-[12]", "rounded-sm"]
+                        "styles": "bg-[#EF4444] w-[20] h-[20] rounded-sm"
                       },
                       {
                         "type": "TEXT",
-                        "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
-                        "text": "Bali, Indonesia"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "FRAME",
-                    "name": "Rating",
-                    "styles": ["flex-row", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
-                    "children": [
-                      {
-                        "type": "RECTANGLE",
-                        "styles": ["bg-[#FBBF24]", "w-[12]", "h-[12]", "rounded-sm"]
-                      },
-                      {
-                        "type": "TEXT",
-                        "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
-                        "text": "4.8 (520)"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "FRAME",
-                    "name": "Price",
-                    "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "mt-[4]", "auto-layout"],
-                    "children": [
-                      {
-                        "type": "TEXT",
-                        "styles": ["text-md", "font-bold", "text-[#0EA5E9]", "w-auto"],
-                        "text": "$120"
-                      },
-                      {
-                        "type": "TEXT",
-                        "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
-                        "text": "per night"
+                        "styles": "text-md text-[#6B7280] w-auto",
+                        "text": "Add date"
                       }
                     ]
                   }
                 ]
-              }
-            ]
-          },
-          {
-            "type": "FRAME",
-            "name": "Hotel Card",
-            "styles": ["flex-row", "w-full", "h-auto", "bg-white", "rounded-lg", "shadow-sm", "pt-[12]", "pb-[8]", "auto-layout"],
-            "children": [
-              {
-                "type": "RECTANGLE",
-                "styles": ["bg-[#BAE6FD]", "w-[100]", "h-[100]", "rounded-lg"]
               },
               {
-                "type": "FRAME",
-                "name": "Hotel Info",
-                "styles": ["flex-col", "p-[12]", "gap-[4]", "w-full", "h-auto", "auto-layout"],
+                "name": "Check Out",
+                "styles": "flex-col gap-[8] w-[156] h-auto",
                 "children": [
                   {
                     "type": "TEXT",
-                    "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto"],
-                    "text": "Beachfront Villa"
+                    "styles": "text-sm font-bold text-[#111827] w-auto",
+                    "text": "Check out"
                   },
                   {
-                    "type": "FRAME",
-                    "name": "Location",
-                    "styles": ["flex-row", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+                    "name": "Input Field",
+                    "styles": "flex-row items-center gap-[8] p-[12] bg-[#F3F4F6] rounded-lg w-full h-auto",
                     "children": [
                       {
                         "type": "RECTANGLE",
-                        "styles": ["bg-[#9CA3AF]", "w-[12]", "h-[12]", "rounded-sm"]
+                        "styles": "bg-[#EF4444] w-[20] h-[20] rounded-sm"
                       },
                       {
                         "type": "TEXT",
-                        "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
-                        "text": "Santorini, Greece"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "FRAME",
-                    "name": "Rating",
-                    "styles": ["flex-row", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
-                    "children": [
-                      {
-                        "type": "RECTANGLE",
-                        "styles": ["bg-[#FBBF24]", "w-[12]", "h-[12]", "rounded-sm"]
-                      },
-                      {
-                        "type": "TEXT",
-                        "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
-                        "text": "4.9 (350)"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "FRAME",
-                    "name": "Price",
-                    "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "mt-[4]", "auto-layout"],
-                    "children": [
-                      {
-                        "type": "TEXT",
-                        "styles": ["text-md", "font-bold", "text-[#0EA5E9]", "w-auto"],
-                        "text": "$180"
-                      },
-                      {
-                        "type": "TEXT",
-                        "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
-                        "text": "per night"
+                        "styles": "text-md text-[#6B7280] w-auto",
+                        "text": "Add date"
                       }
                     ]
                   }
                 ]
               }
             ]
-          }
-        ]
-      },
-      {
-        "type": "FRAME",
-        "name": "Bottom Navigation",
-        "styles": ["w-[390]", "flex-row", "justify-between", "items-center", "p-[24]", "bg-white", "shadow-sm", "h-auto", "auto-layout"],
-        "children": [
-          {
-            "type": "FRAME",
-            "name": "Nav Item",
-            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
-            "children": [
-              {
-                "type": "RECTANGLE",
-                "styles": ["bg-[#0EA5E9]", "w-[24]", "h-[24]", "rounded-sm"]
-              },
-              {
-                "type": "TEXT",
-                "styles": ["text-xs", "text-[#0EA5E9]", "w-auto", "text-center"],
-                "text": "Explore"
-              }
-            ]
           },
           {
-            "type": "FRAME",
-            "name": "Nav Item",
-            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+            "name": "Search Button",
+            "styles": "flex-row items-center justify-center p-[16] bg-[#EF4444] rounded-lg w-full h-auto",
             "children": [
               {
-                "type": "RECTANGLE",
-                "styles": ["bg-[#9CA3AF]", "w-[24]", "h-[24]", "rounded-sm"]
-              },
-              {
                 "type": "TEXT",
-                "styles": ["text-xs", "text-[#9CA3AF]", "w-auto", "text-center"],
-                "text": "Bookings"
-              }
-            ]
-          },
-          {
-            "type": "FRAME",
-            "name": "Nav Item",
-            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
-            "children": [
-              {
-                "type": "RECTANGLE",
-                "styles": ["bg-[#9CA3AF]", "w-[24]", "h-[24]", "rounded-sm"]
-              },
-              {
-                "type": "TEXT",
-                "styles": ["text-xs", "text-[#9CA3AF]", "w-auto", "text-center"],
-                "text": "Wishlist"
-              }
-            ]
-          },
-          {
-            "type": "FRAME",
-            "name": "Nav Item",
-            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
-            "children": [
-              {
-                "type": "RECTANGLE",
-                "styles": ["bg-[#9CA3AF]", "w-[24]", "h-[24]", "rounded-sm"]
-              },
-              {
-                "type": "TEXT",
-                "styles": ["text-xs", "text-[#9CA3AF]", "w-auto", "text-center"],
-                "text": "Profile"
+                "styles": "text-md font-bold text-white w-auto",
+                "text": "Search"
               }
             ]
           }
@@ -620,4 +167,4 @@
       }
     ]
   }
-} 
+}

@@ -1,3 +1,4 @@
+import { figmaToTailwind } from 'css-to-figma';
 import { handleCreateDesignSystem } from './handlers/create';
 import { frameHandlers } from './handlers/createFrame';
 
@@ -11,6 +12,33 @@ figma.ui.onmessage = async (msg) => {
   switch (msg.type) {
     case 'create-design-system':
       handleCreateDesignSystem();
+      break;
+
+    case 'analyze-design':
+      try {
+
+        function getTailwindJSON(node: any) {
+          const tailwind = figmaToTailwind(node);
+
+          let data: any = {
+            name: node.name,
+            styles: tailwind,
+            type: node.type,
+            children: node.children?.map(getTailwindJSON) || [],
+          }
+
+          if (node.type === 'VECTOR') {
+            data.paths = (node as VectorNode).vectorPaths?.map(path => path.data) || [];
+          }
+
+          return data;
+        }
+
+        const tailwind = getTailwindJSON(figma.currentPage.selection[0]);
+        console.log(JSON.stringify(tailwind, null, 2));
+      } catch (error: any) {
+        console.error('Error analyzing design:', error);
+      }
       break;
 
     case 'create-design':

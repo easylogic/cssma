@@ -6,6 +6,11 @@ export function round(value: number): number {
 
 // Color Tokens
 export const COLORS: Record<string, FigmaColor> = {
+  // Basic Colors
+  'white': { r: 1, g: 1, b: 1 },
+  'black': { r: 0, g: 0, b: 0 },
+  'transparent': { r: 0, g: 0, b: 0, a: 0 },
+
   // Gray Scale
   'gray-50': { r: round(249/255), g: round(250/255), b: round(251/255) },
   'gray-100': { r: round(243/255), g: round(244/255), b: round(246/255) },
@@ -72,6 +77,7 @@ export const FONT_SIZES: Record<string, number> = {
   'xs': 12,
   'sm': 14,
   'base': 16,
+  'md': 16,
   'lg': 18,
   'xl': 20,
   '2xl': 24,
@@ -181,3 +187,10 @@ export const GRADIENT_TRANSFORMS = {
   'to-br': [[0.7071, 0.7071, 0], [-0.7071, 0.7071, 0]],
   'to-bl': [[-0.7071, 0.7071, 1], [-0.7071, -0.7071, 1]]
 } as const; 
+
+export const TEXT_ALIGNMENTS = {
+  'left': 'LEFT',
+  'center': 'CENTER',
+  'right': 'RIGHT',
+  'justify': 'JUSTIFIED'
+} as const;

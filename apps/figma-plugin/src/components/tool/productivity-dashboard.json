@@ -1,67 +1,61 @@
 {
   "frame": {
-    "type": "FRAME",
     "name": "Productivity Dashboard",
-    "styles": ["bg-[#F9FAFB]", "flex-col", "w-[390]", "items-center", "gap-[16]", "auto-layout"],
+    "styles": "bg-[#F9FAFB] flex-col w-[390] h-auto items-center gap-[16]",
     "children": [
       {
-        "type": "FRAME",
         "name": "Status Bar",
-        "styles": ["w-[390]", "flex-row", "justify-between", "items-center", "p-[16]", "bg-[#F9FAFB]", "h-auto", "auto-layout"],
+        "styles": "w-[390] flex-row justify-between items-center p-[16] bg-transparent h-auto",
         "children": [
           {
             "type": "TEXT",
-            "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto"],
+            "styles": "text-md font-bold text-[#111827] w-auto",
             "text": "9:41"
           },
           {
-            "type": "FRAME",
             "name": "Status Icons",
-            "styles": ["flex-row", "gap-[8]", "items-center", "h-auto", "w-auto", "auto-layout"],
+            "styles": "flex-row gap-[8] items-center h-auto w-auto",
             "children": [
               {
                 "type": "RECTANGLE",
-                "styles": ["bg-[#111827]", "w-[16]", "h-[16]", "rounded-sm"]
+                "styles": "bg-[#111827] w-[16] h-[16] rounded-sm"
               },
               {
                 "type": "RECTANGLE",
-                "styles": ["bg-[#111827]", "w-[16]", "h-[16]", "rounded-sm"]
+                "styles": "bg-[#111827] w-[16] h-[16] rounded-sm"
               },
               {
                 "type": "RECTANGLE",
-                "styles": ["bg-[#111827]", "w-[16]", "h-[16]", "rounded-sm"]
+                "styles": "bg-[#111827] w-[16] h-[16] rounded-sm"
               }
             ]
           }
         ]
       },
       {
-        "type": "FRAME",
         "name": "Header",
-        "styles": ["w-[390]", "flex-row", "justify-between", "items-center", "p-[16]", "bg-[#8B5CF6]", "h-auto", "auto-layout"],
+        "styles": "w-[390] flex-row justify-between items-center p-[16] bg-[#8B5CF6] h-auto auto-layout",
         "children": [
           {
-            "type": "FRAME",
             "name": "User Info",
-            "styles": ["flex-row", "items-center", "gap-[12]", "h-auto", "w-auto", "auto-layout"],
+            "styles": "flex-row items-center gap-[12] h-auto w-auto auto-layout",
             "children": [
               {
                 "type": "ELLIPSE",
-                "styles": ["bg-[#F3E8FF]", "w-[40]", "h-[40]"]
+                "styles": "bg-[#F3E8FF] w-[40] h-[40]"
               },
               {
-                "type": "FRAME",
                 "name": "User Name",
-                "styles": ["flex-col", "h-auto", "w-auto", "auto-layout"],
+                "styles": "flex-col h-auto w-auto auto-layout",
                 "children": [
                   {
                     "type": "TEXT",
-                    "styles": ["text-md", "font-bold", "text-white", "w-auto"],
+                    "styles": "text-md font-bold text-white w-auto",
                     "text": "Hi, Taylor"
                   },
                   {
                     "type": "TEXT",
-                    "styles": ["text-sm", "text-[#EDE9FE]", "w-auto"],
+                    "styles": "text-sm text-[#EDE9FE] w-auto",
                     "text": "Let's be productive!"
                   }
                 ]
@@ -69,82 +63,77 @@
             ]
           },
           {
-            "type": "FRAME",
             "name": "Notification",
-            "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[40]", "bg-[#7C3AED]", "rounded-full", "shadow-sm", "auto-layout"],
+            "styles": "flex-row items-center justify-center w-[40] h-[40] bg-[#7C3AED] rounded-full shadow-sm auto-layout",
             "children": [
               {
                 "type": "RECTANGLE",
-                "styles": ["bg-white", "w-[20]", "h-[20]", "rounded-sm"]
+                "styles": "bg-white w-[20] h-[20] rounded-sm"
               }
             ]
           }
         ]
       },
       {
-        "type": "FRAME",
         "name": "Stats Overview",
-        "styles": ["w-[358]", "flex-row", "justify-between", "mt-[8]", "h-auto", "auto-layout"],
+        "styles": "w-[358] flex-row justify-between mt-[8] h-auto auto-layout",
         "children": [
           {
-            "type": "FRAME",
             "name": "Stat Card",
-            "styles": ["flex-col", "items-center", "justify-center", "p-[16]", "bg-white", "rounded-lg", "shadow-sm", "w-[115]", "h-[115]", "auto-layout"],
+            "styles": "flex-col items-center justify-center p-[16] bg-white rounded-lg shadow-sm w-[115] h-[115] auto-layout",
             "children": [
               {
                 "type": "RECTANGLE",
-                "styles": ["bg-[#8B5CF6]", "rounded-full", "w-[24]", "h-[24]"]
+                "styles": "bg-[#8B5CF6] rounded-full w-[24] h-[24]"
               },
               {
                 "type": "TEXT",
-                "styles": ["text-2xl", "font-bold", "text-[#111827]", "w-auto", "mt-[8]"],
+                "styles": "text-2xl font-bold text-[#111827] w-auto mt-[8]",
                 "text": "12"
               },
               {
                 "type": "TEXT",
-                "styles": ["text-xs", "text-[#6B7280]", "w-auto", "text-center"],
+                "styles": "text-xs text-[#6B7280] w-auto text-center",
                 "text": "Tasks Today"
               }
             ]
           },
           {
-            "type": "FRAME",
             "name": "Stat Card",
-            "styles": ["flex-col", "items-center", "justify-center", "p-[16]", "bg-white", "rounded-lg", "shadow-sm", "w-[115]", "h-[115]", "auto-layout"],
+            "styles": "flex-col items-center justify-center p-[16] bg-white rounded-lg shadow-sm w-[115] h-[115] auto-layout",
             "children": [
               {
                 "type": "RECTANGLE",
-                "styles": ["bg-[#10B981]", "rounded-full", "w-[24]", "h-[24]"]
+                "styles": "bg-[#10B981] rounded-full w-[24] h-[24]"
               },
               {
                 "type": "TEXT",
-                "styles": ["text-2xl", "font-bold", "text-[#111827]", "w-auto", "mt-[8]"],
+                "styles": "text-2xl font-bold text-[#111827] w-auto mt-[8]",
                 "text": "8"
               },
               {
                 "type": "TEXT",
-                "styles": ["text-xs", "text-[#6B7280]", "w-auto", "text-center"],
+                "styles": "text-xs text-[#6B7280] w-auto text-center",
                 "text": "Completed"
               }
             ]
           },
           {
-            "type": "FRAME",
             "name": "Stat Card",
-            "styles": ["flex-col", "items-center", "justify-center", "p-[16]", "bg-white", "rounded-lg", "shadow-sm", "w-[115]", "h-[115]", "auto-layout"],
+            "styles": "flex-col items-center justify-center p-[16] bg-white rounded-lg shadow-sm w-[115] h-[115] auto-layout",
             "children": [
               {
                 "type": "RECTANGLE",
-                "styles": ["bg-[#F59E0B]", "rounded-full", "w-[24]", "h-[24]"]
+                "styles": "bg-[#F59E0B] rounded-full w-[24] h-[24]"
               },
               {
                 "type": "TEXT",
-                "styles": ["text-2xl", "font-bold", "text-[#111827]", "w-auto", "mt-[8]"],
+                "styles": "text-2xl font-bold text-[#111827] w-auto mt-[8]",
                 "text": "4"
               },
               {
                 "type": "TEXT",
-                "styles": ["text-xs", "text-[#6B7280]", "w-auto", "text-center"],
+                "styles": "text-xs text-[#6B7280] w-auto text-center",
                 "text": "In Progress"
               }
             ]
@@ -152,46 +141,42 @@
         ]
       },
       {
-        "type": "FRAME",
         "name": "Tab Navigation",
-        "styles": ["w-[358]", "flex-row", "justify-between", "items-center", "mt-[16]", "h-auto", "auto-layout"],
+        "styles": "w-[358] flex-row justify-between items-center mt-[16] h-auto auto-layout",
         "children": [
           {
-            "type": "FRAME",
             "name": "Tab",
-            "styles": ["flex-col", "items-center", "gap-[4]", "p-[8]", "h-auto", "auto-layout"],
+            "styles": "flex-col items-center gap-[4] p-[8] h-auto auto-layout",
             "children": [
               {
                 "type": "TEXT",
-                "styles": ["text-md", "font-bold", "text-[#8B5CF6]", "w-auto"],
+                "styles": "text-md font-bold text-[#8B5CF6] w-auto",
                 "text": "Tasks"
               },
               {
                 "type": "RECTANGLE",
-                "styles": ["bg-[#8B5CF6]", "w-[32]", "h-[2]", "rounded-full"]
+                "styles": "bg-[#8B5CF6] w-[32] h-[2] rounded-full"
               }
             ]
           },
           {
-            "type": "FRAME",
             "name": "Tab",
-            "styles": ["flex-col", "items-center", "gap-[4]", "p-[8]", "h-auto", "auto-layout"],
+            "styles": "flex-col items-center gap-[4] p-[8] h-auto auto-layout",
             "children": [
               {
                 "type": "TEXT",
-                "styles": ["text-md", "text-[#9CA3AF]", "w-auto"],
+                "styles": "text-md text-[#9CA3AF] w-auto",
                 "text": "Projects"
               }
             ]
           },
           {
-            "type": "FRAME",
             "name": "Tab",
-            "styles": ["flex-col", "items-center", "gap-[4]", "p-[8]", "h-auto", "auto-layout"],
+            "styles": "flex-col items-center gap-[4] p-[8] h-auto auto-layout",
             "children": [
               {
                 "type": "TEXT",
-                "styles": ["text-md", "text-[#9CA3AF]", "w-auto"],
+                "styles": "text-md text-[#9CA3AF] w-auto",
                 "text": "Calendar"
               }
             ]
@@ -199,28 +184,25 @@
         ]
       },
       {
-        "type": "FRAME",
         "name": "Kanban Board Section",
-        "styles": ["w-[390]", "flex-col", "p-[16]", "gap-[16]", "h-auto", "auto-layout"],
+        "styles": "w-[390] flex-col p-[16] gap-[16] h-auto auto-layout",
         "children": [
           {
-            "type": "FRAME",
             "name": "Section Header",
-            "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+            "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
             "children": [
               {
                 "type": "TEXT",
-                "styles": ["text-lg", "font-bold", "text-[#111827]", "w-auto"],
+                "styles": "text-lg font-bold text-[#111827] w-auto",
                 "text": "Today's Tasks"
               },
               {
-                "type": "FRAME",
                 "name": "Add Button",
-                "styles": ["flex-row", "items-center", "justify-center", "w-[32]", "h-[32]", "bg-[#8B5CF6]", "rounded-full", "auto-layout"],
+                "styles": "flex-row items-center justify-center w-[32] h-[32] bg-[#8B5CF6] rounded-full auto-layout",
                 "children": [
                   {
                     "type": "TEXT",
-                    "styles": ["text-lg", "font-bold", "text-white", "w-auto"],
+                    "styles": "text-lg font-bold text-white w-auto",
                     "text": "+"
                   }
                 ]
@@ -228,54 +210,50 @@
             ]
           },
           {
-            "type": "FRAME",
             "name": "Kanban Lane",
-            "styles": ["flex-col", "gap-[12]", "w-full", "h-auto", "auto-layout"],
+            "styles": "flex-col gap-[12] w-full h-auto auto-layout",
             "children": [
               {
                 "type": "TEXT",
-                "styles": ["text-md", "font-bold", "text-[#6B7280]", "w-auto"],
+                "styles": "text-md font-bold text-[#6B7280] w-auto",
                 "text": "To Do"
               },
               {
-                "type": "FRAME",
                 "name": "Task Card",
-                "styles": ["flex-col", "p-[16]", "gap-[8]", "bg-white", "rounded-lg", "shadow-sm", "w-full", "h-auto", "auto-layout"],
+                "styles": "flex-col p-[16] gap-[8] bg-white rounded-lg shadow-sm w-full h-auto auto-layout",
                 "children": [
                   {
-                    "type": "FRAME",
                     "name": "Task Header",
-                    "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+                    "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
                     "children": [
                       {
                         "type": "TEXT",
-                        "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto"],
+                        "styles": "text-md font-bold text-[#111827] w-auto",
                         "text": "Create project presentation"
                       },
                       {
                         "type": "RECTANGLE",
-                        "styles": ["bg-[#F3E8FF]", "w-[16]", "h-[16]", "rounded-sm"]
+                        "styles": "bg-[#F3E8FF] w-[16] h-[16] rounded-sm"
                       }
                     ]
                   },
                   {
                     "type": "TEXT",
-                    "styles": ["text-sm", "text-[#6B7280]", "w-auto"],
+                    "styles": "text-sm text-[#6B7280] w-auto",
                     "text": "Prepare slides for the client meeting"
                   },
                   {
-                    "type": "FRAME",
                     "name": "Task Footer",
-                    "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "mt-[8]", "auto-layout"],
+                    "styles": "flex-row justify-between items-center w-full h-auto mt-[8] auto-layout",
                     "children": [
                       {
                         "type": "TEXT",
-                        "styles": ["text-xs", "text-[#8B5CF6]", "w-auto"],
+                        "styles": "text-xs text-[#8B5CF6] w-auto",
                         "text": "Marketing"
                       },
                       {
                         "type": "TEXT",
-                        "styles": ["text-xs", "text-[#EF4444]", "w-auto"],
+                        "styles": "text-xs text-[#EF4444] w-auto",
                         "text": "High Priority"
                       }
                     ]
@@ -283,44 +261,41 @@
                 ]
               },
               {
-                "type": "FRAME",
                 "name": "Task Card",
-                "styles": ["flex-col", "p-[16]", "gap-[8]", "bg-white", "rounded-lg", "shadow-sm", "w-full", "h-auto", "mt-[8]", "auto-layout"],
+                "styles": "flex-col p-[16] gap-[8] bg-white rounded-lg shadow-sm w-full h-auto mt-[8] auto-layout",
                 "children": [
                   {
-                    "type": "FRAME",
                     "name": "Task Header",
-                    "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+                    "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
                     "children": [
                       {
                         "type": "TEXT",
-                        "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto"],
+                        "styles": "text-md font-bold text-[#111827] w-auto",
                         "text": "Update website content"
                       },
                       {
                         "type": "RECTANGLE",
-                        "styles": ["bg-[#F3E8FF]", "w-[16]", "h-[16]", "rounded-sm"]
+                        "styles": "bg-[#F3E8FF] w-[16] h-[16] rounded-sm"
                       }
                     ]
                   },
                   {
                     "type": "TEXT",
-                    "styles": ["text-sm", "text-[#6B7280]", "w-auto"],
+                    "styles": "text-sm text-[#6B7280] w-auto",
                     "text": "Add new product information to the homepage"
                   },
                   {
-                    "type": "FRAME",
                     "name": "Task Footer",
-                    "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "mt-[8]", "auto-layout"],
+                    "styles": "flex-row justify-between items-center w-full h-auto mt-[8] auto-layout",
                     "children": [
                       {
                         "type": "TEXT",
-                        "styles": ["text-xs", "text-[#3B82F6]", "w-auto"],
+                        "styles": "text-xs text-[#3B82F6] w-auto",
                         "text": "Design"
                       },
                       {
                         "type": "TEXT",
-                        "styles": ["text-xs", "text-[#F59E0B]", "w-auto"],
+                        "styles": "text-xs text-[#F59E0B] w-auto",
                         "text": "Medium Priority"
                       }
                     ]
@@ -330,54 +305,49 @@
             ]
           },
           {
-            "type": "FRAME",
             "name": "Kanban Lane",
-            "styles": ["flex-col", "gap-[12]", "w-full", "h-auto", "mt-[16]", "auto-layout"],
+            "styles": "flex-col gap-[12] w-full h-auto mt-[16] auto-layout",
             "children": [
               {
                 "type": "TEXT",
-                "styles": ["text-md", "font-bold", "text-[#6B7280]", "w-auto"],
+                "styles": "text-md font-bold text-[#6B7280] w-auto",
                 "text": "In Progress"
               },
               {
-                "type": "FRAME",
                 "name": "Task Card",
-                "styles": ["flex-col", "p-[16]", "gap-[8]", "bg-white", "rounded-lg", "shadow-sm", "w-full", "h-auto", "border-l-[4]", "border-[#F59E0B]", "auto-layout"],
+                "styles": "flex-col p-[16] gap-[8] bg-white rounded-lg shadow-sm w-full h-auto border-l-[4] border-[#F59E0B] auto-layout",
                 "children": [
                   {
-                    "type": "FRAME",
                     "name": "Task Header",
-                    "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+                    "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
                     "children": [
                       {
                         "type": "TEXT",
-                        "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto"],
+                        "styles": "text-md font-bold text-[#111827] w-auto",
                         "text": "Review user feedback"
                       },
                       {
                         "type": "RECTANGLE",
-                        "styles": ["bg-[#F3E8FF]", "w-[16]", "h-[16]", "rounded-sm"]
+                        "styles": "bg-[#F3E8FF] w-[16] h-[16] rounded-sm"
                       }
                     ]
                   },
                   {
                     "type": "TEXT",
-                    "styles": ["text-sm", "text-[#6B7280]", "w-auto"],
+                    "styles": "text-sm text-[#6B7280] w-auto",
                     "text": "Analyze latest survey results"
                   },
                   {
-                    "type": "FRAME",
                     "name": "Task Progress",
-                    "styles": ["flex-col", "gap-[4]", "w-full", "h-auto", "mt-[8]", "auto-layout"],
+                    "styles": "flex-col gap-[4] w-full h-auto mt-[8] auto-layout",
                     "children": [
                       {
-                        "type": "FRAME",
                         "name": "Progress Text",
-                        "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+                        "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
                         "children": [
                           {
                             "type": "TEXT",
-                            "styles": ["text-xs", "text-[#6B7280]", "w-auto"],
+                            "styles": "text-xs text-[#6B7280] w-auto",
                             "text": "Progress"
                           },
                           {
@@ -388,31 +358,29 @@
                         ]
                       },
                       {
-                        "type": "FRAME",
                         "name": "Progress Bar BG",
-                        "styles": ["w-full", "h-[4]", "bg-[#F3F4F6]", "rounded-full", "auto-layout"],
+                        "styles": "w-full h-[4] bg-[#F3F4F6] rounded-full auto-layout",
                         "children": [
                           {
                             "type": "RECTANGLE",
-                            "styles": ["bg-[#F59E0B]", "w-[60%]", "h-[4]", "rounded-full"]
+                            "styles": "bg-[#F59E0B] w-[60%] h-[4] rounded-full"
                           }
                         ]
                       }
                     ]
                   },
                   {
-                    "type": "FRAME",
                     "name": "Task Footer",
-                    "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "mt-[8]", "auto-layout"],
+                    "styles": "flex-row justify-between items-center w-full h-auto mt-[8] auto-layout",
                     "children": [
                       {
                         "type": "TEXT",
-                        "styles": ["text-xs", "text-[#10B981]", "w-auto"],
+                        "styles": "text-xs text-[#10B981] w-auto",
                         "text": "Research"
                       },
                       {
                         "type": "TEXT",
-                        "styles": ["text-xs", "text-[#F59E0B]", "w-auto"],
+                        "styles": "text-xs text-[#F59E0B] w-auto",
                         "text": "Medium Priority"
                       }
                     ]
@@ -422,54 +390,50 @@
             ]
           },
           {
-            "type": "FRAME",
             "name": "Kanban Lane",
-            "styles": ["flex-col", "gap-[12]", "w-full", "h-auto", "mt-[16]", "auto-layout"],
+            "styles": "flex-col gap-[12] w-full h-auto mt-[16] auto-layout",
             "children": [
               {
                 "type": "TEXT",
-                "styles": ["text-md", "font-bold", "text-[#6B7280]", "w-auto"],
+                "styles": "text-md font-bold text-[#6B7280] w-auto",
                 "text": "Completed"
               },
               {
-                "type": "FRAME",
                 "name": "Task Card",
-                "styles": ["flex-col", "p-[16]", "gap-[8]", "bg-white", "rounded-lg", "shadow-sm", "w-full", "h-auto", "border-l-[4]", "border-[#10B981]", "auto-layout"],
+                "styles": "flex-col p-[16] gap-[8] bg-white rounded-lg shadow-sm w-full h-auto border-l-[4] border-[#10B981] auto-layout",
                 "children": [
                   {
-                    "type": "FRAME",
                     "name": "Task Header",
-                    "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "auto-layout"],
+                    "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
                     "children": [
                       {
                         "type": "TEXT",
-                        "styles": ["text-md", "font-bold", "text-[#111827]", "w-auto", "line-through"],
+                        "styles": "text-md font-bold text-[#111827] w-auto line-through",
                         "text": "Send weekly newsletter"
                       },
                       {
                         "type": "RECTANGLE",
-                        "styles": ["bg-[#10B981]", "w-[16]", "h-[16]", "rounded-sm"]
+                        "styles": "bg-[#10B981] w-[16] h-[16] rounded-sm"
                       }
                     ]
                   },
                   {
                     "type": "TEXT",
-                    "styles": ["text-sm", "text-[#9CA3AF]", "w-auto", "line-through"],
+                    "styles": "text-sm text-[#9CA3AF] w-auto line-through",
                     "text": "Email subscribers with product updates"
                   },
                   {
-                    "type": "FRAME",
                     "name": "Task Footer",
-                    "styles": ["flex-row", "justify-between", "items-center", "w-full", "h-auto", "mt-[8]", "auto-layout"],
+                    "styles": "flex-row justify-between items-center w-full h-auto mt-[8] auto-layout",
                     "children": [
                       {
                         "type": "TEXT",
-                        "styles": ["text-xs", "text-[#8B5CF6]", "w-auto"],
+                        "styles": "text-xs text-[#8B5CF6] w-auto",
                         "text": "Marketing"
                       },
                       {
                         "type": "TEXT",
-                        "styles": ["text-xs", "text-[#10B981]", "w-auto"],
+                        "styles": "text-xs text-[#10B981] w-auto",
                         "text": "Completed"
                       }
                     ]
@@ -481,70 +445,65 @@
         ]
       },
       {
-        "type": "FRAME",
         "name": "Bottom Navigation",
-        "styles": ["w-[390]", "flex-row", "justify-between", "items-center", "p-[24]", "bg-white", "shadow-sm", "h-auto", "auto-layout"],
+        "styles": "w-[390] flex-row justify-between items-center p-[24] bg-white shadow-sm h-auto auto-layout",
         "children": [
           {
-            "type": "FRAME",
             "name": "Nav Item",
-            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
             "children": [
               {
                 "type": "RECTANGLE",
-                "styles": ["bg-[#8B5CF6]", "w-[24]", "h-[24]", "rounded-sm"]
+                "styles": "bg-[#8B5CF6] w-[24] h-[24] rounded-sm"
               },
               {
                 "type": "TEXT",
-                "styles": ["text-xs", "text-[#8B5CF6]", "w-auto", "text-center"],
+                "styles": "text-xs text-[#8B5CF6] w-auto text-center",
                 "text": "Dashboard"
               }
             ]
           },
           {
-            "type": "FRAME",
             "name": "Nav Item",
-            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
             "children": [
               {
                 "type": "RECTANGLE",
-                "styles": ["bg-[#9CA3AF]", "w-[24]", "h-[24]", "rounded-sm"]
+                "styles": "bg-[#9CA3AF] w-[24] h-[24] rounded-sm"
               },
               {
                 "type": "TEXT",
-                "styles": ["text-xs", "text-[#9CA3AF]", "w-auto", "text-center"],
+                "styles": "text-xs text-[#9CA3AF] w-auto text-center",
                 "text": "Tasks"
               }
             ]
           },
           {
-            "type": "FRAME",
             "name": "Nav Item",
-            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
             "children": [
               {
                 "type": "RECTANGLE",
-                "styles": ["bg-[#9CA3AF]", "w-[24]", "h-[24]", "rounded-sm"]
+                "styles": "bg-[#9CA3AF] w-[24] h-[24] rounded-sm"
               },
               {
                 "type": "TEXT",
-                "styles": ["text-xs", "text-[#9CA3AF]", "w-auto", "text-center"],
+                "styles": "text-xs text-[#9CA3AF] w-auto text-center",
                 "text": "Analytics"
               }
             ]
           },
           {
-            "type": "FRAME",
             "name": "Nav Item",
-            "styles": ["flex-col", "items-center", "gap-[4]", "h-auto", "w-auto", "auto-layout"],
+            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
             "children": [
               {
                 "type": "RECTANGLE",
-                "styles": ["bg-[#9CA3AF]", "w-[24]", "h-[24]", "rounded-sm"]
+                "styles": "bg-[#9CA3AF] w-[24] h-[24] rounded-sm"
               },
               {
                 "type": "TEXT",
-                "styles": ["text-xs", "text-[#9CA3AF]", "w-auto", "text-center"],
+                "styles": "text-xs text-[#9CA3AF] w-auto text-center",
                 "text": "Settings"
               }
             ]
@@ -553,4 +512,4 @@
       }
     ]
   }
-} 
+}

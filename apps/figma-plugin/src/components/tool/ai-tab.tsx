@@ -14,6 +14,7 @@ import socialAnalytics from './social-analytics.json';
 import travelBooking from './travel-booking.json';
 import cardSamples from './card-samples.json';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Button } from '../ui/button';
 
 const list = [
   {
@@ -104,11 +105,19 @@ export const AITab: React.FC = () => {
     }
   };
 
+  const handleAnalyze = () => {
+    parent.postMessage({
+      pluginMessage: {
+        type: 'analyze-design',
+      }
+    }, '*');
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* Select 영역 */}
-      <div className="flex-none border-b border-border">
-        <div className="p-4">
+      <div className="flex-none flex flex-row gap-1 border-b border-border">
+        <div className="p-4 flex-1">
           <Select onValueChange={handleDesignChange}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="디자인 선택" />
@@ -123,6 +132,11 @@ export const AITab: React.FC = () => {
               ))}
             </SelectContent>
           </Select>
+        </div>
+        <div className="p-4">
+          <Button variant="outline" className="w-full" onClick={handleAnalyze}>
+            <span>분석</span>
+          </Button>
         </div>
       </div>
 

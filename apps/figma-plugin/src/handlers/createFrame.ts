@@ -1,9 +1,226 @@
+import { processStyles } from 'css-to-figma';
 /**
  * Figma 노드 생성을 위한 유틸리티 클래스
  * 토큰 기반 스타일 시스템을 사용하여 UI 요소를 생성합니다.
  */
 import { CompactNodeData, CompactFrameStructure } from '../types/compact';
-import { applyStyles, validateLayoutStyles } from '../utils/styleTokens';
+
+type StyleApplyPhase = 'layout' | 'sizing' | 'spacing' | 'appearance';
+
+const STYLE_APPLY_ORDER: Record<StyleApplyPhase, string[]> = {
+  // Phase 1: 레이아웃 모드 및 정렬 설정
+  layout: [
+    'layoutMode',              // VERTICAL, HORIZONTAL
+    'primaryAxisAlignItems',   // MIN, CENTER, MAX, SPACE_BETWEEN
+    'counterAxisAlignItems',   // MIN, CENTER, MAX, BASELINE
+    'layoutWrap'              // WRAP, NO_WRAP
+  ],
+
+  // Phase 2: 기본 사이징 설정
+  sizing: [
+    'width',                  // 먼저 실제 크기 설정
+    'height',
+    'layoutSizingHorizontal', // 그 다음 layoutSizing 모드 설정
+    'layoutSizingVertical',
+    'primaryAxisSizingMode',
+    'counterAxisSizingMode'
+  ],
+
+  // Phase 3: 간격 및 여백 설정
+  spacing: [
+    'itemSpacing',
+    'counterAxisSpacing',
+    'paddingTop',
+    'paddingRight',
+    'paddingBottom',
+    'paddingLeft'
+  ],
+
+  // Phase 4: 시각적 스타일 설정
+  appearance: [
+    'fills',
+    'strokes',
+    'effects',
+    'cornerRadius',
+    'opacity'
+  ]
+};
+
+function applyStyles(node: SceneNode, styles: string = '') {
+  const styleObject = processStyles(styles);
+  console.log("styleObject", JSON.stringify(styleObject, null, 2));
+
+  // layout 속성 적용
+
+  if (styleObject.layoutMode !== undefined) {
+    (node as FrameNode).layoutMode = styleObject.layoutMode;
+    delete styleObject.layoutMode;
+  }
+
+  if (styleObject.primaryAxisAlignItems !== undefined) {
+    (node as FrameNode).primaryAxisAlignItems = styleObject.primaryAxisAlignItems;
+    delete styleObject.primaryAxisAlignItems;
+  }
+
+  if (styleObject.counterAxisAlignItems !== undefined) {
+    (node as FrameNode).counterAxisAlignItems = styleObject.counterAxisAlignItems;
+    delete styleObject.counterAxisAlignItems;
+  }
+
+  if (styleObject.layoutWrap !== undefined) {
+    (node as FrameNode).layoutWrap = styleObject.layoutWrap;
+    delete styleObject.layoutWrap;
+  }
+
+  // sizing 속성 적용
+  if (styleObject.width !== undefined) {
+    (node as FrameNode).resize(styleObject.width, node.height);
+    delete styleObject.width;
+  }
+
+  if (styleObject.height !== undefined) { 
+    (node as FrameNode).resize(node.width, styleObject.height);
+    delete styleObject.height;
+  }
+
+  if (styleObject.layoutSizingHorizontal !== undefined) {
+    (node as FrameNode).layoutSizingHorizontal = styleObject.layoutSizingHorizontal;
+    delete styleObject.layoutSizingHorizontal;
+  }
+
+  if (styleObject.layoutSizingVertical !== undefined) { 
+    (node as FrameNode).layoutSizingVertical = styleObject.layoutSizingVertical;
+    delete styleObject.layoutSizingVertical;
+  }
+
+  // spacing 속성 적용
+
+  if (styleObject.itemSpacing !== undefined) {
+    (node as FrameNode).itemSpacing = styleObject.itemSpacing;
+    delete styleObject.itemSpacing;
+  }
+
+  if (styleObject.counterAxisSpacing !== undefined) {
+    (node as FrameNode).counterAxisSpacing = styleObject.counterAxisSpacing;
+    delete styleObject.counterAxisSpacing;
+  }
+
+  if (styleObject.paddingTop !== undefined) {
+    (node as FrameNode).paddingTop = styleObject.paddingTop;
+    delete styleObject.paddingTop;
+  }
+
+  if (styleObject.paddingRight !== undefined) { 
+    (node as FrameNode).paddingRight = styleObject.paddingRight;
+    delete styleObject.paddingRight;
+  }
+
+  if (styleObject.paddingBottom !== undefined) {
+    (node as FrameNode).paddingBottom = styleObject.paddingBottom;
+    delete styleObject.paddingBottom;
+  }
+
+  if (styleObject.paddingLeft !== undefined) {
+    (node as FrameNode).paddingLeft = styleObject.paddingLeft;
+    delete styleObject.paddingLeft;
+  }
+
+  // appearance 속성 적용
+
+  if (styleObject.fills !== undefined) {
+    (node as FrameNode).fills = styleObject.fills as Paint[];
+    delete styleObject.fills;
+  }
+
+  if (styleObject.strokes !== undefined) {
+    (node as FrameNode).strokes = styleObject.strokes as Paint[];
+    delete styleObject.strokes;
+  }
+
+  if (styleObject.effects !== undefined) {
+    (node as FrameNode).effects = styleObject.effects as Effect[];
+    delete styleObject.effects;
+  }
+
+
+  if (styleObject.topLeftRadius !== undefined) {
+    (node as FrameNode).topLeftRadius = styleObject.topLeftRadius;
+    delete styleObject.topLeftRadius;
+  }
+
+  if (styleObject.topRightRadius !== undefined) {
+    (node as FrameNode).topRightRadius = styleObject.topRightRadius;
+    delete styleObject.topRightRadius;
+  }
+
+  if (styleObject.bottomLeftRadius !== undefined) {
+    (node as FrameNode).bottomLeftRadius = styleObject.bottomLeftRadius;
+    delete styleObject.bottomLeftRadius;
+  }
+
+  if (styleObject.bottomRightRadius !== undefined) {
+    (node as FrameNode).bottomRightRadius = styleObject.bottomRightRadius;
+    delete styleObject.bottomRightRadius;
+  }
+
+  if (styleObject.opacity !== undefined) {
+    (node as FrameNode).opacity = styleObject.opacity;
+    delete styleObject.opacity;
+  }
+  
+  // 나머지 속성 적용
+  
+  const phases: StyleApplyPhase[] = ['layout', 'sizing', 'spacing', 'appearance'];
+  
+  for (const phase of phases) {
+    const properties = STYLE_APPLY_ORDER[phase];
+    for (const prop of properties) {
+      try {
+        if (styleObject?.[prop] !== undefined) {
+            // width/height는 특별 처리
+            if (prop === 'width' && styleObject.layoutSizingHorizontal !== 'FIXED') {
+              continue; // FILL/HUG인 경우 resize 건너뛰기
+            }
+            if (prop === 'height' && styleObject.layoutSizingVertical !== 'FIXED') {
+              continue; // FILL/HUG인 경우 resize 건너뛰기
+            }
+
+            // resize 처리
+            if (prop === 'width') {
+              (node as FrameNode).resize(styleObject.width, node.height);
+            } else if (prop === 'height') {
+              (node as FrameNode).resize(node.width, styleObject.height);
+            } else {
+              // 일반 속성 적용
+              (node as any)[prop] = styleObject[prop];
+            }
+        }
+      } catch (error) {
+        console.warn(`Failed to apply ${phase} property ${prop}:`, error);
+      }
+    }
+  }
+}
+
+// export function applyStyles(node: SceneNode, styles: string = '') {
+ 
+//     // 스타일 적용
+//     const styleObject = processStyles(styles);
+//     console.log("styleObject", JSON.stringify(styleObject, null, 2));
+
+//     for(const key in styleObject) {
+//       if(key === 'width') {
+//         (node as FrameNode).resize(styleObject[key] as number, node.height);
+//       } else if(key === 'height') {
+//         (node as FrameNode).resize(node.width, styleObject[key] as number);
+//       } else {
+//         Object.assign(node, {
+//           [key]: styleObject[key]
+//         });
+//       }
+//     }
+    
+// }
 
 export class FigmaNodeCreator {
   private static instance: FigmaNodeCreator;
@@ -72,15 +289,11 @@ export class FigmaNodeCreator {
    * @returns 생성된 노드
    */
   private async createNodeFromData(data: CompactNodeData, parent: BaseNode | null = null): Promise<SceneNode | null> {
-    if (!data || !data.type) {
-      console.error('Invalid node data: missing type');
-      return null;
-    }
-    
     let node: SceneNode | null = null;
+    const dataType = data.type || 'FRAME';
     
     // 노드 타입에 따라 생성
-    switch (data.type) {
+    switch (dataType) {
       case 'FRAME':
         node = figma.createFrame();
         break;
@@ -115,6 +328,16 @@ export class FigmaNodeCreator {
         
       case 'VECTOR':
         node = figma.createVector();
+
+        try {
+          (node as VectorNode).vectorPaths = data.paths.map(path => ({
+            windingRule: 'NONZERO',
+            data: path
+          })) as VectorPaths;
+        } catch (error) {
+          console.error('Error setting vector paths:', error);
+        }
+
         break;
         
       default:
@@ -130,73 +353,17 @@ export class FigmaNodeCreator {
     
     // 이름 설정
     if (data.name) node.name = data.name;
-    
-    // 기본 크기 설정
-    let newWidth = node.width;
-    let newHeight = node.height;
-    let shouldResize = false;
-    
-    if (data.width !== undefined) {
-      const widthValue = typeof data.width === 'number' ? data.width : parseInt(data.width);
-      if (!isNaN(widthValue)) {
-        newWidth = widthValue;
-        shouldResize = true;
-      }
-    }
-    
-    if (data.height !== undefined) {
-      const heightValue = typeof data.height === 'number' ? data.height : parseInt(data.height);
-      if (!isNaN(heightValue)) {
-        newHeight = heightValue;
-        shouldResize = true;
-      }
-    }
-    
-    // 두 개의 resize 호출 대신 하나로 통합
-    if (shouldResize && 'resize' in node) {
-      (node as FrameNode).resize(newWidth, newHeight);
-    }
-    
+        
     // 레이아웃 모드 설정 스타일이 있으면 먼저 적용
     // (자식 노드 추가 전에 레이아웃 모드가 설정되어야 함)
     if (data.styles) {
-      const layoutStyles = data.styles.filter(style => 
-        style === 'flex-col' || style === 'flex-row'
-      );
-      
-      if (layoutStyles.length > 0) {
-        // 레이아웃 관련 스타일만 먼저 적용
-        applyStyles(node, layoutStyles);
-      }
+      applyStyles(node, data.styles);
     }
-    
-    // 스타일 클래스 적용 (부모 레이아웃 검증 포함)
-    if (data.styles) {
-      const validatedStyles = validateLayoutStyles(parent, node, data.styles);
-      applyStyles(node, validatedStyles);
-    }
-    
-    // 추가 속성 적용
-    if (data.properties) {
-      // Object.entries는 TypeScript의 일부 버전에서 지원되지 않을 수 있어 for..in 루프 사용
-      for (const key in data.properties) {
-        if (Object.prototype.hasOwnProperty.call(data.properties, key)) {
-          // @ts-ignore - Figma의 타입 정의와 맞지 않을 수 있음
-          node[key] = data.properties[key];
-        }
-      }
-    }
-    
+
     // 자식 노드 처리
     if (data.children && data.children.length > 0 && 'appendChild' in node) {
       for (const childData of data.children) {
-        const childNode = await this.createNodeFromData(childData, node);
-        if (childNode) {
-          (node as FrameNode).appendChild(childNode);
-          
-          // 자식 노드 추가 후 레이아웃 검증
-          this.validateChildLayoutSizing(childNode, childData);
-        }
+        await this.createNodeFromData(childData, node);
       }
     }
     
@@ -240,16 +407,10 @@ export class FigmaNodeCreator {
       node.name = jsonData.name;
     }
 
-    // 스타일 적용
-    if (jsonData.styles && jsonData.styles.length > 0) {
-      applyStyles(node, jsonData.styles);
-    }
-
+    applyStyles(node, jsonData.styles);
     // 텍스트 내용 업데이트
     if (node.type === 'TEXT' && jsonData.text) {
       try {
-
-        
         // 텍스트 내용 설정
         (node as TextNode).fontName = { family: "Inter", style: "Regular" };
         (node as TextNode).characters = jsonData.text;
@@ -286,59 +447,6 @@ export class FigmaNodeCreator {
   }
 
   /**
-   * 자식 노드의 layoutSizing 속성이 부모 노드의 레이아웃 모드와 호환되는지 확인합니다.
-   * 문제가 있으면 경고하고 수정합니다.
-   * @param child 자식 노드
-   * @param parent 부모 노드
-   */
-  private validateChildLayoutSizing(child: SceneNode, childData: CompactNodeData): void {
-    const styles = childData.styles || [];
-
-    // 레이아웃 크기 조정 스타일 처리
-    if (styles.indexOf('w-full') !== -1) {
-      (child as FrameNode).layoutSizingHorizontal = 'FILL';
-    } else if (styles.indexOf('w-auto') !== -1) {
-      (child as FrameNode).layoutSizingHorizontal = 'HUG';
-    } else if (styles.indexOf('w-hug') !== -1) {
-      (child as FrameNode).layoutSizingHorizontal = 'HUG';
-    }
-
-    if (styles.indexOf('h-full') !== -1) {
-      (child as FrameNode).layoutSizingVertical = 'FILL';
-    } else if (styles.indexOf('h-auto') !== -1) {
-      (child as FrameNode).layoutSizingVertical = 'HUG';
-    } else if (styles.indexOf('h-hug') !== -1) {
-      (child as FrameNode).layoutSizingVertical = 'HUG';
-    }
-
-    // 임의 너비 처리 (w-[xxx] 패턴)
-    const widthArbitraryStyle = styles.find(style => style.match(/^w-\[.*\]$/));
-    if (widthArbitraryStyle && 'resize' in child) {
-      const match = widthArbitraryStyle.match(/^w-\[(.*)\]$/);
-      if (match && match[1]) {
-        const width = parseInt(match[1]);
-        if (!isNaN(width)) {
-          console.log(`📏 임의 너비 적용: ${width}px`);
-          (child as FrameNode).resize(width, child.height);
-        }
-      }
-    }
-
-    // 임의 높이 처리 (h-[xxx] 패턴)
-    const heightArbitraryStyle = styles.find(style => style.match(/^h-\[.*\]$/));
-    if (heightArbitraryStyle && 'resize' in child) {
-      const match = heightArbitraryStyle.match(/^h-\[(.*)\]$/);
-      if (match && match[1]) {
-        const height = parseInt(match[1]);
-        if (!isNaN(height)) {
-          console.log(`📏 임의 높이 적용: ${height}px`);
-          (child as FrameNode).resize(child.width, height);
-        }
-      }
-    }
-  }
-
-  /**
    * 에러 메시지를 표시하는 프레임을 생성합니다.
    * @param errorMessage 에러 메시지
    * @returns 에러 메시지가 포함된 프레임
@@ -349,14 +457,22 @@ export class FigmaNodeCreator {
     frame.name = "Error Frame";
     frame.resize(400, 200);
     
+
     // 스타일 적용
-    applyStyles(frame, [
-      'bg-[#FFEEEE]',
-      'p-4',
-      'flex-col',
-      'gap-4',
-      'rounded-md'
-    ]);
+    const styleObject = processStyles('bg-[#FFEEEE] p-4 flex-col gap-4 rounded-md');
+    console.log("styleObject", JSON.stringify(styleObject, null, 2));
+
+    for(const key in styleObject) {
+      if(key === 'width') {
+        (frame as FrameNode).resize(styleObject[key] as number, frame.height);
+      } else if(key === 'height') {
+        (frame as FrameNode).resize(frame.width, styleObject[key] as number);
+      } else {
+        Object.assign(frame, {
+          [key]: styleObject[key]
+        });
+      }
+    }
     
     try {
       // 에러 아이콘 프레임
@@ -364,10 +480,7 @@ export class FigmaNodeCreator {
       iconFrame.name = "Error Icon";
       iconFrame.resize(32, 32);
       
-      applyStyles(iconFrame, [
-        'bg-[#FF5555]',
-        'rounded-full'
-      ]);
+      applyStyles(iconFrame, 'bg-[#FF5555] rounded-full');
       
       frame.appendChild(iconFrame);
       
@@ -434,54 +547,29 @@ export const frameHandlers = {
       frame: {
         type: "FRAME",
         name: "Default Frame",
-        styles: [
-          "bg-white", 
-          "w-[800]", 
-          "h-[600]",
-          "flex-col",
-          "p-8",
-          "gap-4",
-          "rounded-md"
-        ],
+        styles: "bg-white w-[800] h-[600] flex-col p-8 gap-4 rounded-md",
         children: [
           {
             type: "TEXT",
             name: "Title",
-            styles: [
-              "text-2xl",
-              "text-[#333333]",
-              "font-bold"
-            ],
+            styles: "text-2xl text-[#333333] font-bold",
             text: "Welcome to FigmaIKR"
           },
           {
             type: "TEXT",
             name: "Subtitle",
-            styles: [
-              "text-md",
-              "text-[#666666]"
-            ],
+            styles: "text-md text-[#666666]",
             text: "Create Figma designs with a token-based styling system"
           },
           {
             type: "FRAME",
             name: "Content Area",
-            styles: [
-              "w-full",
-              "bg-[#F8F9FA]",
-              "p-6",
-              "flex-col",
-              "gap-4",
-              "rounded-lg"
-            ],
+            styles: "w-full bg-[#F8F9FA] p-6 flex-col gap-4 rounded-lg",
             children: [
               {
                 type: "TEXT",
                 name: "Content",
-                styles: [
-                  "text-md",
-                  "text-[#333333]"
-                ],
+                styles: "text-md text-[#333333]",
                 text: "This is a default frame created with the token-based styling system."
               }
             ]

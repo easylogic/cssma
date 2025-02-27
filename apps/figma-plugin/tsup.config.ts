@@ -6,6 +6,10 @@ import { fileURLToPath } from 'url';
 import postcss from 'postcss';
 import tailwindcss from 'tailwindcss';
 import autoprefixer from 'autoprefixer';
+import dotenv from 'dotenv';
+
+// 환경 변수 로드
+dotenv.config();
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
@@ -27,10 +31,12 @@ export default defineConfig([
     clean: false,
     env: {
       NODE_ENV: 'production',
+      ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY!,
     },
     esbuildOptions(options) {
       options.define = {
         'process.env.NODE_ENV': '"production"',
+        'process.env.ANTHROPIC_API_KEY': `"${process.env.ANTHROPIC_API_KEY}"`,
         global: 'window',
       };
       options.loader = {

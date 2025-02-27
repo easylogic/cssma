@@ -1,35 +1,35 @@
 {
   "frame": {
     "type": "FRAME",
-    "name": "Recipe & Meal Planning App",
-    "styles": ["bg-[#FFFBF5]", "flex-col", "w-[390]", "items-center", "gap-[16]", "auto-layout"],
+    "name": "Recipe Planner App",
+    "styles": "bg-[#FFF7ED] flex-col w-[390] h-auto items-center gap-[16]",
     "children": [
       {
         "type": "FRAME",
         "name": "Status Bar",
-        "styles": ["w-[390]", "flex-row", "justify-between", "items-center", "p-[16]", "bg-[#FFFBF5]", "h-auto", "auto-layout"],
+        "styles": "w-[390] flex-row justify-between items-center p-[16] bg-transparent h-auto",
         "children": [
           {
             "type": "TEXT",
-            "styles": ["text-md", "font-bold", "text-[#1F2937]", "w-auto"],
+            "styles": "text-md font-bold text-[#111827] w-auto",
             "text": "9:41"
           },
           {
             "type": "FRAME",
             "name": "Status Icons",
-            "styles": ["flex-row", "gap-[8]", "items-center", "h-auto", "w-auto", "auto-layout"],
+            "styles": "flex-row gap-[8] items-center h-auto w-auto",
             "children": [
               {
                 "type": "RECTANGLE",
-                "styles": ["bg-[#1F2937]", "w-[16]", "h-[16]", "rounded-sm"]
+                "styles": "bg-[#111827] w-[16] h-[16] rounded-sm"
               },
               {
                 "type": "RECTANGLE",
-                "styles": ["bg-[#1F2937]", "w-[16]", "h-[16]", "rounded-sm"]
+                "styles": "bg-[#111827] w-[16] h-[16] rounded-sm"
               },
               {
                 "type": "RECTANGLE",
-                "styles": ["bg-[#1F2937]", "w-[16]", "h-[16]", "rounded-sm"]
+                "styles": "bg-[#111827] w-[16] h-[16] rounded-sm"
               }
             ]
           }
@@ -38,33 +38,33 @@
       {
         "type": "FRAME",
         "name": "Header",
-        "styles": ["w-[390]", "flex-row", "justify-between", "items-center", "p-[16]", "bg-[#F97316]", "h-auto", "auto-layout"],
+        "styles": "w-[390] flex-row justify-between items-center p-[16] bg-[#F97316] h-auto",
         "children": [
           {
             "type": "FRAME",
-            "name": "Welcome",
-            "styles": ["flex-col", "h-auto", "w-auto", "auto-layout"],
+            "name": "Title",
+            "styles": "flex-col h-auto w-auto",
             "children": [
               {
                 "type": "TEXT",
-                "styles": ["text-sm", "text-[#FFF7ED]", "w-auto"],
-                "text": "안녕하세요"
+                "styles": "text-sm text-[#FFEDD5] w-auto",
+                "text": "Recipe Collection"
               },
               {
                 "type": "TEXT",
-                "styles": ["text-lg", "font-bold", "text-white", "w-auto"],
-                "text": "쿠킹 플래너"
+                "styles": "text-lg font-bold text-white w-auto",
+                "text": "Your Recipes"
               }
             ]
           },
           {
             "type": "FRAME",
             "name": "Profile",
-            "styles": ["flex-row", "items-center", "justify-center", "w-[40]", "h-[40]", "bg-[#FB923C]", "rounded-full", "shadow-sm", "auto-layout"],
+            "styles": "flex-row items-center justify-center w-[40] h-[40] bg-[#EA580C] rounded-full shadow-sm",
             "children": [
               {
-                "type": "ELLIPSE",
-                "styles": ["bg-[#FED7AA]", "w-[36]", "h-[36]"]
+                "type": "RECTANGLE",
+                "styles": "bg-white w-[20] h-[20] rounded-sm"
               }
             ]
           }
@@ -73,15 +73,15 @@
       {
         "type": "FRAME",
         "name": "Search Bar",
-        "styles": ["w-[358]", "flex-row", "items-center", "p-[12]", "bg-white", "rounded-lg", "shadow-sm", "h-auto", "auto-layout"],
+        "styles": "w-[358] flex-row items-center p-[12] bg-white rounded-lg shadow-sm h-auto",
         "children": [
           {
             "type": "RECTANGLE",
-            "styles": ["bg-[#9CA3AF]", "w-[20]", "h-[20]", "rounded-sm"]
+            "styles": "bg-[#9CA3AF] w-[20] h-[20] rounded-sm"
           },
           {
             "type": "TEXT",
-            "styles": ["text-md", "text-[#9CA3AF]", "w-auto", "ml-[8]"],
+            "styles": "text-md text-[#9CA3AF] w-auto ml-[8]",
             "text": "레시피 또는 재료 검색..."
           }
         ]

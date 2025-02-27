@@ -21,9 +21,9 @@ export interface CompactNodeData {
   /**
    * 스타일 클래스 배열
    * 사전 정의된 토큰과 임의 값 지원
-   * (예: ["bg-white", "p-4", "rounded-md", "bg-[#FF5733]"])
+   * (예: styles: "bg-white p-4 rounded-md bg-[#FF5733]")
    */
-  styles?: string[];
+  styles?: string;
   
   /**
    * TEXT 노드 전용: 텍스트 콘텐츠
@@ -51,6 +51,11 @@ export interface CompactNodeData {
    * 직접 지정해야 하는 속성들
    */
   properties?: Record<string, any>;
+
+  /**
+   * 벡터 노드 전용: SVG 경로 배열
+   */
+  paths?: string[];
 }
 
 /**

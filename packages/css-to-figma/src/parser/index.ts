@@ -1,16 +1,16 @@
+import { COLORS, FONT_SIZES, RADIUS, TEXT_ALIGNMENTS } from '../config/tokens';
 import { ParsedStyle } from '../types';
+import { parseBackgroundStyleValue } from './background';
+import { parseBorderStyleValue } from './border';
+import { parseFontStyleValue } from './font';
+import { parseTextStyleValue } from './text';
 
 type PropertyPrefix = 
   | 'w' | 'h' | 'min-w' | 'min-h' | 'max-w' | 'max-h'
   | 'p' | 'pt' | 'pr' | 'pb' | 'pl' | 'px' | 'py'
   | 'gap' | 'gap-x' | 'gap-y'
-  | 'bg' | 'text' | 'border'
-  | 'opacity' | 'shadow' | 'blur'
-  | 'rounded' | 'rounded-t' | 'rounded-r' | 'rounded-b' | 'rounded-l'
-  | 'rounded-tl' | 'rounded-tr' | 'rounded-br' | 'rounded-bl'
   | 'flex-row' | 'flex-col'
-  | 'items' | 'justify'
-  | 'font-bold' | 'text-xl';
+  | 'items' | 'justify';
 
 const PROPERTY_PREFIXES: Record<PropertyPrefix, string> = {
   // Layout
@@ -37,60 +37,110 @@ const PROPERTY_PREFIXES: Record<PropertyPrefix, string> = {
   'py': 'paddingY',
   'gap': 'gap',
   'gap-x': 'columnGap',
-  'gap-y': 'rowGap',
+  'gap-y': 'rowGap'
+};
 
-  // Colors
-  'bg': 'backgroundColor',
-  'text': 'color',
-  'border': 'borderColor',
+type StyleType = 'preset' | 'arbitrary';
 
-  // Effects
-  'opacity': 'opacity',
-  'shadow': 'boxShadow',
-  'blur': 'blur',
+function isValidHexColor(value: string): boolean {
+  return /^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$/.test(value);
+}
 
-  // Border
-  'rounded': 'borderRadius',
-  'rounded-t': 'borderRadiusTop',
-  'rounded-r': 'borderRadiusRight',
-  'rounded-b': 'borderRadiusBottom',
-  'rounded-l': 'borderRadiusLeft',
-  'rounded-tl': 'borderRadiusTopLeft',
-  'rounded-tr': 'borderRadiusTopRight',
-  'rounded-br': 'borderRadiusBottomRight',
-  'rounded-bl': 'borderRadiusBottomLeft',
+function isValidRgbColor(value: string): boolean {
+  const rgbRegex = /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/;
+  const rgbaRegex = /^rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(0|1|0?\.\d+)\s*\)$/;
+  
+  if (rgbRegex.test(value)) {
+    const [, r, g, b] = value.match(rgbRegex) || [];
+    return Number(r) <= 255 && Number(g) <= 255 && Number(b) <= 255;
+  }
+  
+  if (rgbaRegex.test(value)) {
+    const [, r, g, b, a] = value.match(rgbaRegex) || [];
+    return Number(r) <= 255 && Number(g) <= 255 && Number(b) <= 255 && Number(a) <= 1;
+  }
+  
+  return false;
+}
 
-  // Typography
-  'font-bold': 'fontWeight',
-  'text-xl': 'fontSize'
+const BLEND_MODES: Record<string, string> = {
+  'normal': 'NORMAL',
+  'multiply': 'MULTIPLY',
+  'screen': 'SCREEN',
+  'overlay': 'OVERLAY'
 };
 
 /**
- * 임의값 구문을 파싱합니다.
- * 예: w-[100px] -> { property: 'width', value: '100', unit: 'px' }
+ * Tailwind CSS 스타일 값을 파싱합니다.
+ * 프리셋 값과 임의 값 모두 처리합니다.
  */
-export function parseArbitraryValue(className: string): ParsedStyle | null {
-  const match = className.match(/^([a-z-]+)-\[(.*?)(px|rem|em|%)?]$/);
-  if (!match) return null;
+export function parseStyleValue(className: string): ParsedStyle | null {
+  // Background 관련 처리를 위임
+  if (className.startsWith('bg-') || 
+      className.startsWith('from-') || 
+      className.startsWith('via-') || 
+      className.startsWith('to-')) {
+    return parseBackgroundStyleValue(className);
+  }
 
-  const [, prefix, value, unit] = match;
-  const property = PROPERTY_PREFIXES[prefix as PropertyPrefix];
-  if (!property) return null;
+  // Text 관련 처리를 위임
+  if (className.startsWith('text-') || 
+      className === 'underline' || 
+      className === 'line-through' || 
+      className === 'no-underline') {
+    return parseTextStyleValue(className);
+  }
 
-  return {
-    property,
-    value: value.startsWith('#') ? value : value,
-    unit: unit || undefined,
-    variant: 'arbitrary'
-  };
-}
+  // Font 관련 처리를 위임
+  if (className.startsWith('font-')) {
+    return parseFontStyleValue(className);
+  }
 
-/**
- * 프리셋 값을 파싱합니다.
- * 예: w-full -> { property: 'width', value: 'full' }
- */
-export function parsePresetValue(className: string): ParsedStyle | null {
-  // 특별한 케이스 처리
+  // Border 관련 처리를 위임
+  if (className.startsWith('border-') || className.startsWith('rounded')) {
+    return parseBorderStyleValue(className);
+  }
+
+  // 임의값 처리 ([...] 형식)
+  if (className.includes('[') && className.includes(']')) {
+    const match = className.match(/^([a-z-]+)-\[(.*?)\]$/);
+    if (!match) return null;
+
+    const [, prefix, value] = match;
+    
+    // 숫자값 처리
+    const numericValue = parseFloat(value);
+    if (!isNaN(numericValue)) {
+      switch (prefix) {
+        case 'w':
+          return { property: 'width', value: numericValue, variant: 'arbitrary' };
+        case 'h':
+          return { property: 'height', value: numericValue, variant: 'arbitrary' };
+        case 'p':
+          return { property: 'padding', value: numericValue, variant: 'arbitrary' };
+        case 'pt':
+          return { property: 'paddingTop', value: numericValue, variant: 'arbitrary' };
+        case 'pr':
+          return { property: 'paddingRight', value: numericValue, variant: 'arbitrary' };
+        case 'pb':
+          return { property: 'paddingBottom', value: numericValue, variant: 'arbitrary' };
+        case 'pl':
+          return { property: 'paddingLeft', value: numericValue, variant: 'arbitrary' };
+        case 'gap':
+          return { property: 'gap', value: numericValue, variant: 'arbitrary' };
+        case 'gap-x':
+          return { property: 'columnGap', value: numericValue, variant: 'arbitrary' };
+        case 'gap-y':
+          return { property: 'rowGap', value: numericValue, variant: 'arbitrary' };
+        case 'opacity':
+          return { property: 'opacity', value: numericValue, variant: 'arbitrary' };
+      }
+    }
+
+    return null;
+  }
+
+  // 레이아웃 방향
   if (className === 'flex-row') {
     return {
       property: 'layoutMode',
@@ -105,101 +155,182 @@ export function parsePresetValue(className: string): ParsedStyle | null {
       variant: 'preset'
     };
   }
-  if (className === 'font-bold') {
-    return {
-      property: 'fontWeight',
-      value: 'bold',
-      variant: 'preset'
-    };
-  }
-  if (className === 'text-xl') {
-    return {
-      property: 'fontSize',
-      value: 'xl',
-      variant: 'preset'
-    };
-  }
 
-  // 그라디언트 방향 처리
-  if (className.startsWith('bg-gradient-')) {
-    return {
-      property: 'backgroundColor',
-      value: 'gradient',
-      variant: 'preset'
+  // 정렬
+  if (className.startsWith('items-')) {
+    const value = className.replace('items-', '');
+    const alignMap: Record<string, string> = {
+      'start': 'MIN',
+      'center': 'CENTER',
+      'end': 'MAX',
+      'baseline': 'BASELINE'
     };
-  }
-
-  // 그라디언트 색상 처리
-  if (className.startsWith('from-[') || className.startsWith('to-[')) {
-    const match = className.match(/^(from|to)-\[(.*?)]$/);
-    if (match) {
-      const [, type, color] = match;
+    if (alignMap[value]) {
       return {
-        property: type === 'from' ? 'gradientFrom' : 'gradientTo',
-        value: color,
-        variant: 'arbitrary'
+        property: 'counterAxisAlignItems',
+        value: alignMap[value],
+        variant: 'preset'
       };
     }
   }
 
-  // 그림자 처리
-  if (className.startsWith('shadow-')) {
-    const size = className.replace('shadow-', '');
+  if (className.startsWith('justify-')) {
+    const value = className.replace('justify-', '');
+    const alignMap: Record<string, string> = {
+      'start': 'MIN',
+      'center': 'CENTER',
+      'end': 'MAX',
+      'between': 'SPACE_BETWEEN'
+    };
+    if (alignMap[value]) {
+      return {
+        property: 'primaryAxisAlignItems',
+        value: alignMap[value],
+        variant: 'preset'
+      };
+    }
+  }
+
+  // gap 처리
+  if (className.startsWith('gap-')) {
+    const gapMatch = className.match(/^gap-(x|y)?-(\d+)$/);
+    if (gapMatch) {
+      const [, direction, value] = gapMatch;
+      const numericValue = parseInt(value);
+      if (!isNaN(numericValue)) {
+        if (direction === 'x') {
+          return {
+            property: 'columnGap',
+            value: numericValue,
+            variant: 'preset'
+          };
+        } else if (direction === 'y') {
+          return {
+            property: 'rowGap',
+            value: numericValue,
+            variant: 'preset'
+          };
+        } else {
+          return {
+            property: 'gap',
+            value: numericValue,
+            variant: 'preset'
+          };
+        }
+      }
+    }
+  }
+
+  // 크기 관련
+  if (className.startsWith('w-')) {
+    const size = className.replace('w-', '');
     return {
-      property: 'boxShadow',
+      property: 'width',
       value: size,
       variant: 'preset'
     };
   }
 
-  // items-{value} 처리
-  const itemsMatch = className.match(/^items-([a-z]+)$/);
-  if (itemsMatch) {
+  if (className.startsWith('h-')) {
+    const size = className.replace('h-', '');
     return {
-      property: 'counterAxisAlignItems',
-      value: itemsMatch[1],
+      property: 'height',
+      value: size,
       variant: 'preset'
     };
   }
 
-  // justify-{value} 처리
-  const justifyMatch = className.match(/^justify-([a-z]+)$/);
-  if (justifyMatch) {
+  if (className.startsWith('min-w-')) {
+    const size = className.replace('min-w-', '');
     return {
-      property: 'primaryAxisAlignItems',
-      value: justifyMatch[1],
+      property: 'minWidth',
+      value: size,
       variant: 'preset'
     };
   }
 
-  const match = className.match(/^([a-z-]+)-([a-z0-9]+)$/);
-  if (!match) return null;
+  if (className.startsWith('min-h-')) {
+    const size = className.replace('min-h-', '');
+    return {
+      property: 'minHeight',
+      value: size,
+      variant: 'preset'
+    };
+  }
 
-  const [, prefix, value] = match;
-  const property = PROPERTY_PREFIXES[prefix as PropertyPrefix];
-  if (!property) return null;
+  if (className.startsWith('max-w-')) {
+    const size = className.replace('max-w-', '');
+    return {
+      property: 'maxWidth',
+      value: size,
+      variant: 'preset'
+    };
+  }
 
-  return {
-    property,
-    value,
-    variant: 'preset'
-  };
-}
+  if (className.startsWith('max-h-')) {
+    const size = className.replace('max-h-', '');
+    return {
+      property: 'maxHeight',
+      value: size,
+      variant: 'preset' 
+    };
+  }
 
-/**
- * 단일 클래스를 파싱합니다.
- */
-export function parseClass(className: string): ParsedStyle | null {
-  return parseArbitraryValue(className) || parsePresetValue(className);
+  if (className.startsWith('p-')) {
+    const size = className.replace('p-', '');
+    return {
+      property: 'padding',
+      value: size,
+      variant: 'preset'
+    };
+  }
+
+  if (className.startsWith('pt-')) {
+    const size = className.replace('pt-', '');
+    return {
+      property: 'paddingTop',
+      value: size,
+      variant: 'preset'
+    };
+  }
+
+  if (className.startsWith('pr-')) {
+    const size = className.replace('pr-', '');
+    return {
+      property: 'paddingRight',
+      value: size,
+      variant: 'preset'
+    };
+  }
+
+  if (className.startsWith('pb-')) {
+    const size = className.replace('pb-', '');
+    return {
+      property: 'paddingBottom',
+      value: size,
+      variant: 'preset'
+    };
+  }
+
+  if (className.startsWith('pl-')) {
+    const size = className.replace('pl-', '');
+    return {
+      property: 'paddingLeft',
+      value: size,
+      variant: 'preset'
+    };
+  }
+  
+  return null;
 }
 
 /**
  * 여러 클래스를 파싱합니다.
  */
-export function parseClasses(classNames: string): ParsedStyle[] {
+export function parseClasses(classNames: string = ''): ParsedStyle[] {
   return classNames
     .split(' ')
     .filter(Boolean)
-    .map(parseClass)
+    .map(parseStyleValue)
     .filter((style): style is ParsedStyle => style !== null);
 } 

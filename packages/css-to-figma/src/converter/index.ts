@@ -67,7 +67,7 @@ function convertPresetRadius(value: string): number | null {
 }
 
 function convertGeometry(style: ParsedStyle): Partial<FigmaStyleProperties> {
-  const result: Partial<FigmaStyleProperties> = { geometry: {} };
+  const result: Partial<FigmaStyleProperties> = {};
 
   if (style.property === 'borderRadius') {
     const radius = style.variant === 'arbitrary' 
@@ -75,23 +75,22 @@ function convertGeometry(style: ParsedStyle): Partial<FigmaStyleProperties> {
       : convertPresetRadius(style.value as string);
     
     if (radius !== null) {
-      result.geometry!.cornerRadius = radius;
+      result.topLeftRadius = radius;
+      result.topRightRadius = radius;
+      result.bottomLeftRadius = radius;
+      result.bottomRightRadius = radius;
     }
-  }
-
-  if (Object.keys(result.geometry!).length === 0) {
-    delete result.geometry;
   }
 
   return result;
 }
 
 function convertLayout(style: ParsedStyle, context: ConversionContext): Partial<FigmaStyleProperties> {
-  const result: Partial<FigmaStyleProperties> = { layout: {} };
+  const result: Partial<FigmaStyleProperties> = {};
 
   switch (style.property) {
     case 'layoutMode': {
-      result.layout!.layoutMode = style.value as 'HORIZONTAL' | 'VERTICAL';
+      result.layoutMode = style.value as 'HORIZONTAL' | 'VERTICAL';
       break;
     }
 
@@ -100,9 +99,13 @@ function convertLayout(style: ParsedStyle, context: ConversionContext): Partial<
         'start': 'MIN',
         'center': 'CENTER',
         'end': 'MAX',
-        'baseline': 'BASELINE'
+        'baseline': 'BASELINE',
+        'stretch': 'STRETCH'
       };
-      result.layout!.counterAxisAlignItems = alignMap[style.value as string] as 'MIN' | 'CENTER' | 'MAX' | 'BASELINE';
+      const alignValue = alignMap[style.value as string];
+      if (alignValue) {
+        result.counterAxisAlignItems = alignValue as 'MIN' | 'CENTER' | 'MAX' | 'BASELINE' | 'STRETCH' | undefined;
+      }
       break;
     }
 
@@ -113,20 +116,21 @@ function convertLayout(style: ParsedStyle, context: ConversionContext): Partial<
         'end': 'MAX',
         'between': 'SPACE_BETWEEN'
       };
-      result.layout!.primaryAxisAlignItems = alignMap[style.value as string] as 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BETWEEN';
+      result.primaryAxisAlignItems = alignMap[style.value as string] as 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BETWEEN';
       break;
     }
 
     case 'width': {
+      console.log("style.value", style.value);
       if (style.value === 'full') {
-        result.layout!.layoutSizingHorizontal = 'FILL';
+        result.layoutSizingHorizontal = 'FILL';
       } else if (style.value === 'auto') {
-        result.layout!.layoutSizingHorizontal = 'HUG';
+        result.layoutSizingHorizontal = 'HUG';
       } else {
         const size = convertSize(style.value, style.unit);
         if (size !== null) {
-          result.layout!.layoutSizingHorizontal = 'FIXED';
-          result.layout!.width = size;
+          result.layoutSizingHorizontal = 'FIXED';
+          result.width = size;
         }
       }
       break;
@@ -134,14 +138,14 @@ function convertLayout(style: ParsedStyle, context: ConversionContext): Partial<
 
     case 'height': {
       if (style.value === 'full') {
-        result.layout!.layoutSizingVertical = 'FILL';
+        result.layoutSizingVertical = 'FILL';
       } else if (style.value === 'auto') {
-        result.layout!.layoutSizingVertical = 'HUG';
+        result.layoutSizingVertical = 'HUG';
       } else {
         const size = convertSize(style.value, style.unit);
         if (size !== null) {
-          result.layout!.layoutSizingVertical = 'FIXED';
-          result.layout!.height = size;
+          result.layoutSizingVertical = 'FIXED';
+          result.height = size;
         }
       }
       break;
@@ -156,22 +160,22 @@ function convertLayout(style: ParsedStyle, context: ConversionContext): Partial<
       if (size !== null) {
         switch (style.property) {
           case 'padding':
-            result.layout!.paddingTop = size;
-            result.layout!.paddingRight = size;
-            result.layout!.paddingBottom = size;
-            result.layout!.paddingLeft = size;
+            result.paddingTop = size;
+            result.paddingRight = size;
+            result.paddingBottom = size;
+            result.paddingLeft = size;
             break;
           case 'paddingTop':
-            result.layout!.paddingTop = size;
+            result.paddingTop = size;
             break;
           case 'paddingRight':
-            result.layout!.paddingRight = size;
+            result.paddingRight = size;
             break;
           case 'paddingBottom':
-            result.layout!.paddingBottom = size;
+            result.paddingBottom = size;
             break;
           case 'paddingLeft':
-            result.layout!.paddingLeft = size;
+            result.paddingLeft = size;
             break;
         }
       }
@@ -181,8 +185,8 @@ function convertLayout(style: ParsedStyle, context: ConversionContext): Partial<
     case 'gap': {
       const size = convertSize(style.value, style.unit);
       if (size !== null) {
-        result.layout!.itemSpacing = size;
-        result.layout!.counterAxisSpacing = size;
+        result.itemSpacing = size;
+        result.counterAxisSpacing = size;
       }
       break;
     }
@@ -190,7 +194,7 @@ function convertLayout(style: ParsedStyle, context: ConversionContext): Partial<
     case 'columnGap': {
       const size = convertSize(style.value, style.unit);
       if (size !== null) {
-        result.layout!.itemSpacing = size;
+        result.itemSpacing = size;
       }
       break;
     }
@@ -198,14 +202,10 @@ function convertLayout(style: ParsedStyle, context: ConversionContext): Partial<
     case 'rowGap': {
       const size = convertSize(style.value, style.unit);
       if (size !== null) {
-        result.layout!.counterAxisSpacing = size;
+        result.counterAxisSpacing = size;
       }
       break;
     }
-  }
-
-  if (Object.keys(result.layout!).length === 0) {
-    delete result.layout;
   }
 
   return result;
@@ -323,13 +323,17 @@ function convertTypography(style: ParsedStyle): Partial<FigmaStyleProperties> {
         'xs': 12,
         'sm': 14,
         'base': 16,
+        'md': 16,
         'lg': 18,
         'xl': 20,
         '2xl': 24,
         '3xl': 30,
         '4xl': 36
       };
-      result.text!.fontSize = sizeMap[style.value as string];
+      const fontSize = sizeMap[style.value as string];
+      if (fontSize) {
+        result.text!.fontSize = fontSize;
+      }
       break;
     }
     case 'fontWeight': {
@@ -340,6 +344,16 @@ function convertTypography(style: ParsedStyle): Partial<FigmaStyleProperties> {
         'bold': { family: 'Inter', style: 'Bold' }
       };
       result.text!.fontName = weightMap[style.value as string];
+      break;
+    } 
+    case 'textAlign': {
+      const alignMap: Record<string, string> = {
+        'left': 'LEFT',
+        'center': 'CENTER',
+        'right': 'RIGHT',
+        'justify': 'JUSTIFIED'
+      };
+      result.text!.textAlignHorizontal = alignMap[style.value as string] as 'LEFT' | 'CENTER' | 'RIGHT' | 'JUSTIFIED';
       break;
     }
   }
@@ -358,6 +372,7 @@ export function convertToFigma(
   style: ParsedStyle,
   context: ConversionContext = {}
 ): Partial<FigmaStyleProperties> {
+  console.log("style", style);
   switch (style.property) {
     // Layout properties
     case 'layoutMode':
@@ -384,6 +399,7 @@ export function convertToFigma(
     // Typography properties
     case 'fontSize':
     case 'fontWeight':
+    case 'textAlign':
       return convertTypography(style);
 
     // Geometry properties
@@ -408,6 +424,10 @@ export function convertStylesToFigma(
   styles: ParsedStyle[],
   context: ConversionContext = {}
 ): FigmaStyleProperties {
+  // 초기 상태 설정
+  const initialState: FigmaStyleProperties = {
+  };
+
   // 그라디언트 처리를 위한 상태
   let gradientFrom: string | null = null;
   let gradientTo: string | null = null;
@@ -434,18 +454,18 @@ export function convertStylesToFigma(
       return acc;
     }
 
-    return {
+    // 새로운 상태 생성
+    const newState = {
       ...acc,
-      // ...converted,
-      ...(converted.layout || {}),
-      ...(converted.text || {}),
-      ...(converted.geometry || {}),
-      opacity: (converted.opacity || acc.opacity),
-      fills: (converted.fills || []).concat(acc.fills || []),
-      strokes: (converted.strokes || []).concat(acc.strokes || []),
-      effects: (converted.effects || []).concat(acc.effects || [])
+      ...converted,
+      opacity: converted.opacity !== undefined ? converted.opacity : acc.opacity,
+      fills: [...(acc.fills || []), ...(converted.fills || [])],
+      strokes: [...(acc.strokes || []), ...(converted.strokes || [])],
+      effects: [...(acc.effects || []), ...(converted.effects || [])]
     };
-  }, {});
+
+    return newState;
+  }, initialState);
 
   // 그라디언트가 있으면 fills 추가
   if (isGradient && gradientFrom && gradientTo) {
@@ -465,6 +485,11 @@ export function convertStylesToFigma(
         ]
       }];
     }
+  }
+
+  // 최종 결과에서 opacity가 없으면 1로 설정
+  if (result.opacity === undefined) {
+    // result.opacity = 1;
   }
 
   return result;
