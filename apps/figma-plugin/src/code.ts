@@ -1,4 +1,4 @@
-import { figmaToTailwind } from 'css-to-figma';
+import { figmaToStyle } from 'css-to-figma';
 import { handleCreateDesignSystem } from './handlers/create';
 import { frameHandlers } from './handlers/createFrame';
 
@@ -18,7 +18,7 @@ figma.ui.onmessage = async (msg) => {
       try {
 
         function getTailwindJSON(node: any) {
-          const tailwind = figmaToTailwind(node);
+          const tailwind = figmaToStyle(node);
 
           let data: any = {
             name: node.name,

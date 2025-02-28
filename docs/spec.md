@@ -204,7 +204,7 @@ border-{number} → Vector stroke width
 - Border (`border-`) controls the stroke color and width
 
 
-### 2. Figma → Tailwind CSS Conversion (`figmaToTailwind`)
+### 2. Figma → Tailwind CSS Conversion (`figmaToStyle`)
 
 Converts Figma node styles to Tailwind CSS classes:
 
@@ -237,9 +237,9 @@ node.fills = styles.fills;
 node.cornerRadius = styles.geometry.cornerRadius;
 
 // Figma → Tailwind CSS
-import { figmaToTailwind } from 'css-to-figma';
+import { figmaToStyle } from 'css-to-figma';
 
-const tailwindClasses = figmaToTailwind({
+const tailwindClasses = figmaToStyle({
   layoutMode: "VERTICAL",
   fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }],
   cornerRadius: 8
@@ -948,3 +948,214 @@ border-[#00FF00] → strokes: [{ type: "SOLID", color: { r: 0, g: 1, b: 0 } }]
    - Preset colors are optimized for performance
    - Arbitrary colors require additional parsing
    - Use preset colors when possible
+
+## Auto Layout System
+
+### Layout Properties
+
+#### Layout Mode
+```typescript
+// Direction
+flex-row        → layoutMode: "HORIZONTAL"
+flex-col        → layoutMode: "VERTICAL"
+
+// Wrapping
+flex-wrap       → layoutWrap: "WRAP"
+flex-nowrap     → layoutWrap: "NO_WRAP"
+```
+
+#### Alignment
+```typescript
+// Primary Axis (Main Axis)
+justify-start   → primaryAxisAlignItems: "MIN"
+justify-center  → primaryAxisAlignItems: "CENTER"
+justify-end     → primaryAxisAlignItems: "MAX"
+justify-between → primaryAxisAlignItems: "SPACE_BETWEEN"
+
+// Counter Axis (Cross Axis)
+items-start     → counterAxisAlignItems: "MIN"
+items-center    → counterAxisAlignItems: "CENTER"
+items-end       → counterAxisAlignItems: "MAX"
+items-baseline  → counterAxisAlignItems: "BASELINE"
+```
+
+#### Spacing
+```typescript
+// Gap
+gap-[16]       → itemSpacing: 16, counterAxisSpacing: 16
+gap-x-[16]     → itemSpacing: 16 (in HORIZONTAL layout)
+gap-y-[16]     → counterAxisSpacing: 16 (in VERTICAL layout)
+
+// Gap Overriding Rules
+// 1. Basic gap sets both directions
+gap-[16]       → itemSpacing: 16, counterAxisSpacing: 16
+// 2. Directional gaps override basic gap
+gap-[16] gap-x-[24]      → itemSpacing: 24, counterAxisSpacing: 16
+gap-[16] gap-y-[32]      → itemSpacing: 16, counterAxisSpacing: 32
+// 3. Multiple gaps are processed in order
+gap-[16] gap-x-[24] gap-y-[32]  → itemSpacing: 24, counterAxisSpacing: 32
+
+// Padding
+p-[16]         → padding: 16 (all sides)
+px-[16]        → paddingLeft: 16, paddingRight: 16
+py-[16]        → paddingTop: 16, paddingBottom: 16
+pt-[16]        → paddingTop: 16
+pr-[16]        → paddingRight: 16
+pb-[16]        → paddingBottom: 16
+pl-[16]        → paddingLeft: 16
+```
+
+#### Sizing
+```typescript
+// Width
+w-auto         → layoutSizingHorizontal: "HUG"
+w-full         → layoutSizingHorizontal: "FILL"
+w-[100]        → width: 100
+
+// Height
+h-auto         → layoutSizingVertical: "HUG"
+h-full         → layoutSizingVertical: "FILL"
+h-[100]        → height: 100
+```
+
+### Usage Examples
+
+1. **Basic Auto Layout**
+```typescript
+{
+  "type": "FRAME",
+  "name": "Container",
+  "styles": "flex-col items-center gap-[16]"
+}
+```
+
+2. **Complex Layout**
+```typescript
+{
+  "type": "FRAME",
+  "name": "Card",
+  "styles": "flex-row justify-between items-center p-[16] w-full"
+}
+```
+
+3. **Nested Layouts**
+```typescript
+{
+  "type": "FRAME",
+  "name": "Section",
+  "styles": "flex-col gap-[24]",
+  "children": [
+    {
+      "type": "FRAME",
+      "name": "Header",
+      "styles": "flex-row justify-between items-center w-full"
+    }
+  ]
+}
+```
+
+### Notes and Constraints
+
+1. **Layout Mode**
+   - Only supports HORIZONTAL or VERTICAL direction
+   - Cannot mix different layout modes in the same container
+   - Wrap only works in the primary axis direction
+
+2. **Alignment**
+   - Primary axis alignment affects the main layout direction
+   - Counter axis alignment affects the perpendicular direction
+   - Baseline alignment only works with text elements
+
+3. **Spacing**
+   - Gap values follow a specific override pattern:
+     * Basic gap (`gap-[value]`) sets both item and counter-axis spacing
+     * Directional gaps (`gap-x-[value]`, `gap-y-[value]`) override the respective direction
+     * Later gap declarations override earlier ones in the same direction
+   - Gap is always uniform between elements
+   - Padding can be applied independently to each side
+   - All spacing values are in pixels
+
+4. **Sizing**
+   - HUG fits the content size
+   - FILL takes up remaining space
+   - Fixed sizes override layout sizing
+   - Parent must have a layout mode for FILL to work
+
+5. **Performance Considerations**
+   - Deeply nested auto layouts may impact performance
+   - Use fixed sizes when possible for better performance
+   - Limit the use of complex padding combinations
+
+### Value Parsing Rules
+
+#### Unit Handling
+```typescript
+// Pixel Units
+w-[100px]      → width: 100       // px is automatically stripped
+h-[24px]       → height: 24
+gap-[16px]     → itemSpacing: 16
+p-[32px]       → padding: 32
+
+// Numbers Only
+w-[100]        → width: 100       // same as w-[100px]
+h-[24]         → height: 24
+gap-[16]       → itemSpacing: 16
+p-[32]         → padding: 32
+
+// Preset Values
+gap-4          → itemSpacing: 16  // preset values are multiplied by 4
+p-4            → padding: 16
+```
+
+#### Preset Value Map
+```typescript
+// Standard spacing scale
+'0': 0,        // gap-0, p-0
+'1': 4,        // gap-1, p-1
+'2': 8,        // gap-2, p-2
+'3': 12,       // gap-3, p-3
+'4': 16,       // gap-4, p-4
+'5': 20,       // gap-5, p-5
+'6': 24,       // gap-6, p-6
+'8': 32,       // gap-8, p-8
+'10': 40,      // gap-10, p-10
+'12': 48,      // gap-12, p-12
+'16': 64       // gap-16, p-16
+```
+
+### Value Processing Rules
+
+1. **Arbitrary Values**
+   - Values in square brackets `[value]` are processed as arbitrary values
+   - Units (px) are automatically stripped if present
+   - Negative values are allowed for certain properties
+   - Decimal values are supported
+
+2. **Preset Values**
+   - Preset values follow a consistent scale (multiplied by 4)
+   - No units should be specified for preset values
+   - Limited to predefined set of values
+   - More performant than arbitrary values
+
+3. **Value Inheritance**
+   - Later values override earlier values for the same property
+   - Direction-specific values (x/y) override general values
+   - Property-specific values override shorthand values
+
+4. **Error Handling**
+   - Invalid values are ignored
+   - Missing units default to pixels
+   - Invalid preset values return null
+   - Malformed arbitrary values return null
+
+6. **Value Processing**
+   - Always prefer preset values over arbitrary values when possible
+   - Use arbitrary values only when preset values don't meet requirements
+   - Be consistent with unit usage (prefer omitting px for cleaner code)
+   - Consider using variables for frequently reused arbitrary values
+
+7. **Error Prevention**
+   - Validate values before processing
+   - Check for valid units and formats
+   - Handle edge cases (negative values, decimals)
+   - Consider adding type checking in development
