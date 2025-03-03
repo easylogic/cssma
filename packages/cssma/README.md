@@ -1199,255 +1199,6 @@ This example demonstrates:
 - Proper component naming structure
 - Comprehensive style binding
 
-## Using ComponentBuilder
-
-The `ComponentBuilder` class provides a modern and efficient way to create and manage component systems in Figma. This section explains how to use the ComponentBuilder alongside the existing component system.
-
-### Basic Usage
-
-```typescript
-import { ComponentBuilder } from '@easylogic/cssma';
-
-// 1. Create a component set
-const componentSet = ComponentBuilder.buildComponentSet(buttonSystem);
-
-// 2. Create an instance
-const instance = ComponentBuilder.buildInstance('button-primary-md', {
-  text: 'Click me',
-  icon: '→'
-});
-
-// 3. Convert instance to Figma node
-const node = ComponentBuilder.buildNode(instance);
-```
-
-### Key Features
-
-1. **Component Set Creation**
-   ```typescript
-   static buildComponentSet(definition: ComponentDefinition): ComponentSetNode
-   ```
-   Creates a complete component set with all variants:
-   ```typescript
-   const componentSet = ComponentBuilder.buildComponentSet({
-     type: 'COMPONENT_SET',
-     id: 'button-system',
-     name: 'Button',
-     props: {
-       variantProperties: {
-         size: ['sm', 'md', 'lg'],
-         style: ['primary', 'secondary']
-       },
-       // ... other properties
-     }
-   });
-   ```
-
-2. **Instance Creation**
-   ```typescript
-   static buildInstance(
-     componentId: string,
-     properties?: Record<string, any>,
-     variantProps?: Record<string, string>
-   ): ComponentInstance
-   ```
-   Creates component instances with specified properties:
-   ```typescript
-   // Basic instance
-   const basic = ComponentBuilder.buildInstance('button-primary-md');
-
-   // Instance with properties
-   const withProps = ComponentBuilder.buildInstance('button-primary-md', {
-     text: 'Custom Button',
-     icon: '→'
-   });
-
-   // Instance with properties and variant props
-   const withVariants = ComponentBuilder.buildInstance('button-primary-md', {
-     text: 'Custom Button',
-     icon: '→'
-   }, {
-     size: 'md',
-     style: 'primary'
-   });
-   ```
-
-3. **Node Generation**
-   ```typescript
-   static buildNode(instance: ComponentInstance): SceneNode
-   ```
-   Converts component instances to Figma nodes:
-   ```typescript
-   const instance = ComponentBuilder.buildInstance('button-primary-md', {
-     text: 'Click me'
-   });
-   const node = ComponentBuilder.buildNode(instance);
-   figma.currentPage.appendChild(node);
-   ```
-
-### Advanced Usage
-
-1. **Property Binding**
-   ```typescript
-   const buttonWithBinding = {
-     id: 'button-primary',
-     children: [
-       {
-         type: 'TEXT',
-         name: 'Label',
-         bind: {
-           text: 'label',
-           visible: {
-             property: 'showLabel',
-             value: true
-           }
-         }
-       }
-     ]
-   };
-   ```
-
-2. **Style Management**
-   ```typescript
-   // Base styles
-   const baseStyles = 'flex items-center justify-center rounded-md';
-   
-   // Variant-specific styles
-   const buttonVariant = {
-     id: 'button-primary',
-     styles: `${baseStyles} bg-blue-500 text-white`,
-     children: [/* ... */]
-   };
-   ```
-
-3. **Component Organization**
-   ```typescript
-   const buttonSystem = {
-     type: 'COMPONENT_SET',
-     id: 'button-system',
-     props: {
-       variants: {
-         'primary-sm-default': {
-           id: 'button-primary-sm-default',
-           name: 'Button/Primary/Small/Default',
-           // ... variant properties
-         },
-         'primary-sm-hover': {
-           id: 'button-primary-sm-hover',
-           name: 'Button/Primary/Small/Hover',
-           // ... variant properties
-         }
-       }
-     }
-   };
-   ```
-
-### Integration Example
-
-Here's how to integrate ComponentBuilder with existing component definitions:
-
-```typescript
-// 1. Define your component system
-const buttonSystem = {
-  type: 'COMPONENT_SET',
-  id: 'button-system',
-  name: 'Button',
-  props: {
-    variantProperties: {
-      size: ['sm', 'md', 'lg'],
-      style: ['primary', 'secondary'],
-      state: ['default', 'hover']
-    },
-    propertyDefinitions: {
-      text: { type: 'TEXT', defaultValue: 'Button' },
-      icon: { type: 'TEXT' },
-      iconPosition: {
-        type: 'VARIANT',
-        options: ['left', 'right'],
-        defaultValue: 'left'
-      }
-    },
-    variants: {
-      'primary-md-default': {
-        id: 'button-primary-md-default',
-        name: 'Button/Primary/Medium/Default',
-        variant: {
-          size: 'md',
-          style: 'primary',
-          state: 'default'
-        },
-        styles: 'flex items-center px-4 py-2 bg-blue-500 text-white rounded-md',
-        children: [
-          {
-            type: 'TEXT',
-            name: 'Icon/Left',
-            styles: 'text-white',
-            bind: {
-              text: 'icon',
-              visible: {
-                property: 'iconPosition',
-                value: 'left'
-              }
-            }
-          },
-          {
-            type: 'TEXT',
-            name: 'Label',
-            styles: 'text-white font-medium',
-            bind: { text: 'text' }
-          }
-        ]
-      }
-    }
-  }
-};
-
-// 2. Create the component set
-const componentSet = ComponentBuilder.buildComponentSet(buttonSystem);
-
-// 3. Create instances with different configurations
-const instances = [
-  // Default button
-  ComponentBuilder.buildInstance('button-primary-md-default', {
-    text: 'Default Button'
-  }),
-
-  // Button with icon
-  ComponentBuilder.buildInstance('button-primary-md-default', {
-    text: 'Icon Button',
-    icon: '→',
-    iconPosition: 'right'
-  }),
-
-  // Button with custom variant
-  ComponentBuilder.buildInstance('button-primary-md-default', {
-    text: 'Custom Button'
-  }, {
-    size: 'lg',
-    style: 'secondary'
-  })
-];
-
-// 4. Convert instances to nodes and add to page
-const container = figma.createFrame();
-container.name = 'Button Examples';
-container.layoutMode = 'VERTICAL';
-container.itemSpacing = 16;
-
-instances.forEach(instance => {
-  const node = ComponentBuilder.buildNode(instance);
-  container.appendChild(node);
-});
-```
-
-This integration example shows how to:
-- Define a complete component system
-- Create a component set
-- Generate multiple instances with different configurations
-- Handle property binding and variants
-- Organize components in a container
-- Apply layout properties
-
 ## Supported Style Properties
 
 ### Layout Properties
@@ -1671,6 +1422,83 @@ gap-[16]       → itemSpacing: 16
 gap-4          → itemSpacing: 16  // preset values are multiplied by 4
 p-4            → padding: 16
 ```
+
+## Figma Variables System
+
+### Variable Usage
+
+#### Variable References
+```typescript
+// Basic Variable Reference
+bg-[button/background]  → fills: setBoundVariableForPaint(paint, "color", variable)
+text-[text/primary]     → fills: setBoundVariableForPaint(paint, "color", variable)
+p-[spacing/md]         → padding: setBoundVariableForNumber("padding", variable)
+
+// Variable with Opacity
+bg-[button/background]/50  → fills: setBoundVariableForPaint(paint, "color", variable, 0.5)
+text-[text/primary]/75     → fills: setBoundVariableForPaint(paint, "color", variable, 0.75)
+
+// Multiple Variable References
+border-[border/width] border-[border/color]  → 
+  strokes: setBoundVariableForPaint(paint, "color", colorVar)
+  strokeWeight: setBoundVariableForNumber("strokeWeight", widthVar)
+```
+
+#### Variable Collections
+```typescript
+// Collection Organization
+[collection/variable]   → Finds variable in specified collection
+[variable]             → Finds variable in any collection
+
+// Collection Types
+local                  → Local file variables
+team                   → Team library variables
+```
+
+#### Variable Types
+```typescript
+// Color Variables
+bg-[colors/primary]    → Color variable for background
+text-[colors/text]     → Color variable for text
+border-[colors/border] → Color variable for border
+
+// Number Variables
+p-[spacing/sm]        → Number variable for spacing
+gap-[spacing/md]      → Number variable for gap
+text-[size/body]      → Number variable for font size
+
+// Boolean Variables
+hidden-[state/isHidden] → Boolean variable for visibility
+```
+
+### Variable Binding Examples
+
+1. **Color Variable Binding**
+```typescript
+{
+  "type": "FRAME",
+  "name": "Button",
+  "styles": "bg-[button/background] text-[button/text]"
+}
+```
+
+2. **Spacing Variable Binding**
+```typescript
+{
+  "type": "FRAME",
+  "name": "Card",
+  "styles": "p-[spacing/lg] gap-[spacing/md]"
+}
+```
+
+3. **Mixed Variable Types**
+```typescript
+{
+  "type": "FRAME",
+  "name": "Input",
+  "styles": "border-[input/borderWidth] border-[input/borderColor] p-[input/padding]"
+}
+``` 
 
 ## Limitations
 

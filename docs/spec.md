@@ -1159,3 +1159,104 @@ p-4            → padding: 16
    - Check for valid units and formats
    - Handle edge cases (negative values, decimals)
    - Consider adding type checking in development
+```
+
+## Figma Variables System
+
+### Variable Usage
+
+#### Variable References
+```typescript
+// Basic Variable Reference
+bg-[button/background]  → fills: setBoundVariableForPaint(paint, "color", variable)
+text-[text/primary]     → fills: setBoundVariableForPaint(paint, "color", variable)
+p-[spacing/md]         → padding: setBoundVariableForNumber("padding", variable)
+
+// Variable with Opacity
+bg-[button/background]/50  → fills: setBoundVariableForPaint(paint, "color", variable, 0.5)
+text-[text/primary]/75     → fills: setBoundVariableForPaint(paint, "color", variable, 0.75)
+
+// Multiple Variable References
+border-[border/width] border-[border/color]  → 
+  strokes: setBoundVariableForPaint(paint, "color", colorVar)
+  strokeWeight: setBoundVariableForNumber("strokeWeight", widthVar)
+```
+
+#### Variable Collections
+```typescript
+// Collection Organization
+[collection/variable]   → Finds variable in specified collection
+[variable]             → Finds variable in any collection
+
+// Collection Types
+local                  → Local file variables
+team                   → Team library variables
+```
+
+#### Variable Types
+```typescript
+// Color Variables
+bg-[colors/primary]    → Color variable for background
+text-[colors/text]     → Color variable for text
+border-[colors/border] → Color variable for border
+
+// Number Variables
+p-[spacing/sm]        → Number variable for spacing
+gap-[spacing/md]      → Number variable for gap
+text-[size/body]      → Number variable for font size
+
+// Boolean Variables
+hidden-[state/isHidden] → Boolean variable for visibility
+```
+
+### Variable Binding Examples
+
+1. **Color Variable Binding**
+```typescript
+{
+  "type": "FRAME",
+  "name": "Button",
+  "styles": "bg-[button/background] text-[button/text]"
+}
+```
+
+2. **Spacing Variable Binding**
+```typescript
+{
+  "type": "FRAME",
+  "name": "Card",
+  "styles": "p-[spacing/lg] gap-[spacing/md]"
+}
+```
+
+3. **Mixed Variable Types**
+```typescript
+{
+  "type": "FRAME",
+  "name": "Input",
+  "styles": "border-[input/borderWidth] border-[input/borderColor] p-[input/padding]"
+}
+```
+
+### Notes and Constraints
+
+1. **Variable Resolution**
+   - Variables must exist in the Figma file or team library
+   - Local variables take precedence over team variables
+   - Invalid variable references are ignored
+
+2. **Variable Types**
+   - Color variables can be used for fills, strokes, and effects
+   - Number variables can be used for spacing, sizing, and opacity
+   - Boolean variables can be used for visibility and other toggles
+
+3. **Performance Considerations**
+   - Variable bindings are more performant than static values
+   - Use variables for frequently changed values
+   - Consider caching variable references
+
+4. **Best Practices**
+   - Use consistent naming conventions
+   - Organize variables in logical collections
+   - Document variable usage and purpose
+   - Consider variable scope and access
