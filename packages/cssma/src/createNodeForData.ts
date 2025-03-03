@@ -1,29 +1,304 @@
-import { createElement, createFrame, createText } from './createElement';
+import { applyStyles } from './apply/applyStyles';
+import { findVariableByName } from './utils/figma-variable';
 
 /**
- * 노드 데이터 타입 정의
+ * Node data type definition
  */
 export interface NodeData {
-  type: string;                    // 노드 타입 (FRAME, TEXT, RECTANGLE 등)
-  name?: string;                   // 노드 이름
-  styles?: string;                 // Tailwind CSS 스타일 문자열
-  text?: string;                   // 텍스트 노드의 경우 텍스트 내용
-  children?: NodeData[];           // 자식 노드 데이터
-  props?: Record<string, any>;     // 추가 속성
-  data?: Record<string, any>;      // 데이터 속성 (데이터 바인딩용)
-  vectorPaths?: any[];             // 벡터 노드의 경우 경로 데이터
+  type: string;                    // Node type (FRAME, TEXT, RECTANGLE, etc.)
+  name?: string;                   // Node name
+  styles?: string;                 // Tailwind CSS style string
+  text?: string;                   // Text content for text nodes
+  children?: NodeData[];           // Child node data
+  props?: Record<string, any>;     // Additional properties
+  data?: Record<string, any>;      // Data properties (for data binding)
+  vectorPaths?: any[];             // Path data for vector nodes
 }
 
 /**
- * 데이터를 기반으로 Figma 노드를 생성합니다.
+ * Vector node data interface
+ */
+export interface VectorNodeData extends NodeData {
+  type: 'VECTOR';
+  paths: string[];                 // Array of SVG path data
+  windingRule?: 'NONZERO' | 'EVENODD'; // Path fill rule
+}
+
+// Node creation functions by type
+function createFrameNode(props: Record<string, any> = {}): FrameNode {
+  const node = figma.createFrame();
+  if (props.name) node.name = props.name;
+  return node;
+}
+
+function createTextNode(props: Record<string, any> = {}): TextNode {
+  const node = figma.createText();
+  if (props.name) node.name = props.name;
+  
+  // Handle text content with potential bindings
+  if (props.text) {
+    // If this is within a component, store the binding expression
+    if (props.text.match(/\{\{([^}]+)\}\}/)) {
+      // noop
+      // already handled in createComponentSetNode
+    } else {
+      node.characters = props.text;
+    }
+  }
+  
+  return node;
+}
+
+function createRectangleNode(props: Record<string, any> = {}): RectangleNode {
+  const node = figma.createRectangle();
+  if (props.name) node.name = props.name;
+  return node;
+}
+
+function createEllipseNode(props: Record<string, any> = {}): EllipseNode {
+  const node = figma.createEllipse();
+  if (props.name) node.name = props.name;
+  return node;
+}
+
+function createPolygonNode(props: Record<string, any> = {}): PolygonNode {
+  const node = figma.createPolygon();
+  if (props.name) node.name = props.name;
+  return node;
+}
+
+function createStarNode(props: Record<string, any> = {}): StarNode {
+  const node = figma.createStar();
+  if (props.name) node.name = props.name;
+  return node;
+}
+
+function createVectorNode(props: Record<string, any> = {}): VectorNode {
+  const node = figma.createVector();
+  if (props.name) node.name = props.name;
+  if (props.paths) node.vectorPaths = props.paths;
+  return node;
+}
+
+function createLineNode(props: Record<string, any> = {}): LineNode {
+  const node = figma.createLine();
+  if (props.name) node.name = props.name;
+  return node;
+}
+
+function createComponentNode(props: Record<string, any> = {}): ComponentNode {
+  const node = figma.createComponent();
+  
+  // Handle variant properties in the name
+  if (props.variantProperties) {
+    const variantName = Object.entries(props.variantProperties)
+      .map(([key, value]) => `${key}=${value}`)
+      .join(', ');
+    node.name = variantName;
+  } else if (props.name) {
+    node.name = props.name;
+  }
+
+  // Set other properties
+  if (props.description) node.description = props.description;
+  if (props.documentationLinks) node.documentationLinks = props.documentationLinks;
+
+  return node;
+}
+
+function createComponentSetNode(props: Record<string, any> = {}): ComponentSetNode {
+  // Create component variants first
+  const children = props.children.map((childInfo: any) => {
+    // Ensure each child is a component and has variant properties
+    if (childInfo.type !== 'COMPONENT') {
+      childInfo.type = 'COMPONENT';
+    }
+    
+    // Each child component should have its variant properties set
+    if (childInfo.variantProperties) {
+      const component = createNodeForData(childInfo);
+      return component;
+    }
+    
+    throw new Error('Each child of a ComponentSet must have variantProperties defined');
+  });
+
+  // Combine as variants
+  const node = figma.combineAsVariants(children, figma.currentPage);
+  
+  // Set writable properties
+  if (props.name) node.name = props.name;
+  if (props.description) node.description = props.description;
+  if (props.documentationLinks) node.documentationLinks = props.documentationLinks;
+
+  // Add component properties to ComponentSet
+  if (props.componentProperties) {
+    Object.entries(props.componentProperties).forEach(([key, property]: [string, any]) => {
+      node.addComponentProperty(key, property.type, property.defaultValue, {
+        preferredValues: property.preferredValues
+      });
+    });
+  }
+
+  return node;
+}
+
+function createInstanceNode(props: Record<string, any> = {}): InstanceNode {
+  const component = findComponentByName(props.componentName);
+  if (!component) {
+    throw new Error(`Component with name ${props.componentName} not found`);
+  }
+  
+  const node = component.createInstance();
+  if (props.name) node.name = props.name;
+  
+  // Handle variant properties if provided
+  if (props.variantProperties && 'setProperties' in node) {
+    node.setProperties(props.variantProperties);
+  }
+  
+  return node;
+}
+
+// Node creation map
+const nodeCreators: Record<string, (props: Record<string, any>) => SceneNode> = {
+  'FRAME': createFrameNode,
+  'TEXT': createTextNode,
+  'RECTANGLE': createRectangleNode,
+  'ELLIPSE': createEllipseNode,
+  'POLYGON': createPolygonNode,
+  'STAR': createStarNode,
+  'VECTOR': createVectorNode,
+  'LINE': createLineNode,
+  'COMPONENT': createComponentNode,
+  'COMPONENT_SET': createComponentSetNode,
+  'INSTANCE': createInstanceNode,
+};
+
+// Simplified createElement function
+function createElement(
+  nodeType: string,
+  styles: string = '',
+  children?: (SceneNode | string)[] | SceneNode | string,
+  props: Record<string, any> = {}
+): SceneNode {
+  const creator = nodeCreators[nodeType];
+  if (!creator) {
+    throw new Error(`Unsupported node type: ${nodeType}`);
+  }
+
+  const node = creator(props);
+  
+  // Apply styles
+  if (styles) {
+    applyStyles(node, styles);
+  }
+    
+  // Add child nodes
+  if (children) {
+    if (!('appendChild' in node)) {
+      throw new Error(`${nodeType} node cannot have children.`);
+    }
+    
+    const frameNode = node as FrameNode;
+    
+    if (Array.isArray(children)) {
+      children.forEach(child => {
+        if (typeof child === 'string') {
+          const textNode = createTextNode({ text: child });
+          frameNode.appendChild(textNode);
+        } else {
+          frameNode.appendChild(child);
+        }
+      });
+    } else if (typeof children === 'string') {
+      const textNode = createTextNode({ text: children });
+      frameNode.appendChild(textNode);
+    } else {
+      frameNode.appendChild(children);
+    }
+  }
+  
+  return node;
+}
+
+/**
+ * Creates a frame with multiple child nodes.
+ * @param styles Style string to apply (Tailwind CSS format)
+ * @param children Child nodes
+ * @param props Additional properties (optional)
+ * @returns Created frame node
+ */
+export function createFrame(
+  styles: string = '',
+  children?: (SceneNode | string)[] | SceneNode | string,
+  props: Record<string, any> = {}
+): FrameNode {
+  return createElement('FRAME', styles, children, props) as FrameNode;
+}
+
+/**
+ * Creates a text node.
+ * @param text Text content
+ * @param styles Style string to apply (Tailwind CSS format)
+ * @param props Additional properties (optional)
+ * @returns Created text node
+ */
+export function createText(
+  text: string,
+  styles: string = '',
+  props: Record<string, any> = {}
+): TextNode {
+  return createElement('TEXT', styles, undefined, { ...props, text }) as TextNode;
+}
+
+
+
+// Add this function before setupTextNodeBinding
+async function setupTextNodeBinding(textNode: TextNode, text: string, parent: BaseNode): Promise<void> {
+  // Find the closest component set ancestor
+  let current: BaseNode | null = parent;
+  while (current && !['COMPONENT_SET'].includes(current.type)) {
+    current = current.parent;
+  }
+  
+  if (current && (current.type === 'COMPONENT_SET')) {
+    const match = text.match(/\{\{([^}]+)\}\}/);
+    if (match) {
+      const propertyName = match[1].trim();
+      
+      // Try to find and bind variable first
+      const variable = await findVariableByName(propertyName);
+      if (variable) {
+        textNode.setBoundVariable("characters", variable);
+        return;
+      }
+
+      // If no variable found, try component property binding
+      const obj = (current as ComponentSetNode).componentPropertyDefinitions;
+      for(let key in obj) {
+        const [name, id] = key.split('#');
+        if(name === propertyName) {
+          textNode.componentPropertyReferences = {
+            characters: key
+          };
+          break;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Creates a Figma node based on node data.
  * 
- * @param data 노드 데이터
- * @param parentData 부모 노드 데이터 (선택적)
- * @returns 생성된 Figma 노드
+ * @param data Node data
+ * @param parent Optional parent node to append to
+ * @returns Created Figma node
  * 
  * @example
  * ```typescript
- * // 간단한 카드 컴포넌트 생성
+ * // Create a simple card component
  * const cardData = {
  *   type: 'FRAME',
  *   name: 'Card',
@@ -38,66 +313,93 @@ export interface NodeData {
  *       type: 'TEXT',
  *       name: 'Title',
  *       styles: 'text-xl font-bold',
- *       text: '카드 제목'
+ *       text: 'Card Title'
  *     },
  *     {
  *       type: 'TEXT',
  *       name: 'Description',
  *       styles: 'text-sm text-gray-600',
- *       text: '카드 설명 텍스트입니다.'
+ *       text: 'Card description text.'
  *     }
  *   ]
  * };
  * 
  * const cardNode = createNodeForData(cardData);
  * figma.currentPage.appendChild(cardNode);
+ * 
+ * // Create a vector node
+ * const iconData = {
+ *   type: 'VECTOR',
+ *   name: 'Arrow Icon',
+ *   styles: 'stroke-black stroke-2 fill-transparent',
+ *   paths: [
+ *     "M10 10L20 20M20 20L10 30",
+ *     "M30 20H50"
+ *   ]
+ * };
+ * 
+ * const iconNode = createNodeForData(iconData);
+ * figma.currentPage.appendChild(iconNode);
  * ```
  */
-export function createNodeForData(data: NodeData, parentData?: NodeData): SceneNode {
-  // 기본 속성 설정
-  const { type, name, styles = '', children, text, props = {}, vectorPaths } = data;
+export function createNodeForData(data: NodeData, parent?: BaseNode & ChildrenMixin): SceneNode {
+  // 1. Create the node first
+  const { type, name, styles = '', children, text, props = {} } = data;
   
-  // 노드 속성 설정
+  // Set node properties
   const nodeProps: Record<string, any> = { ...props };
   if (name) {
     nodeProps.name = name;
   }
   
-  // 텍스트 노드 특수 처리
+  // Special handling for text nodes
   if (type === 'TEXT' && text) {
     nodeProps.text = text;
   }
-  
-  // 벡터 노드 특수 처리
-  if (type === 'VECTOR' && vectorPaths) {
-    nodeProps.vectorPaths = vectorPaths;
+
+  // Create base node
+  const node = createElement(type, '', undefined, nodeProps);
+
+  // 4. Append to parent if provided
+  if (parent) {
+    parent.appendChild(node);
+    
+    // Handle text binding after appending to parent
+    if (type === 'TEXT' && text && text.match(/\{\{([^}]+)\}\}/)) {
+      setupTextNodeBinding(node as TextNode, text, parent);
+    }
   }
   
-  // 자식 노드 처리
-  let childNodes: (SceneNode | string)[] | undefined;
-  if (children && children.length > 0) {
-    childNodes = children.map(childData => createNodeForData(childData, data));
+  // 2. Apply styles (including layout mode) before adding children
+  if (styles) {
+    applyStyles(node, styles);
   }
   
-  // 노드 생성
-  return createElement(type as any, styles, childNodes, nodeProps);
+  // 3. Create and append children after parent's layout is set
+  if (children && children.length > 0 && 'appendChild' in node) {
+    children.forEach(childData => {
+      createNodeForData(childData, node as BaseNode & ChildrenMixin);
+    });
+  }
+
+  return node;
 }
 
 /**
- * 데이터 배열을 기반으로 여러 Figma 노드를 생성합니다.
+ * Creates multiple Figma nodes based on an array of node data.
  * 
- * @param dataArray 노드 데이터 배열
- * @returns 생성된 Figma 노드 배열
+ * @param dataArray Array of node data
+ * @returns Array of created Figma nodes
  */
 export function createNodesForDataArray(dataArray: NodeData[]): SceneNode[] {
   return dataArray.map(data => createNodeForData(data));
 }
 
 /**
- * 데이터 객체를 기반으로 컴포넌트를 생성합니다.
+ * Creates a component based on component data.
  * 
- * @param componentData 컴포넌트 데이터
- * @returns 생성된 컴포넌트 노드
+ * @param componentData Component data
+ * @returns Created component node
  */
 export function createComponentFromData(componentData: NodeData): ComponentNode {
   if (componentData.type !== 'COMPONENT') {
@@ -107,11 +409,11 @@ export function createComponentFromData(componentData: NodeData): ComponentNode 
 }
 
 /**
- * 데이터 객체를 기반으로 인스턴스를 생성합니다.
+ * Creates an instance based on a component node.
  * 
- * @param componentNode 컴포넌트 노드
- * @param instanceData 인스턴스 데이터 (선택적)
- * @returns 생성된 인스턴스 노드
+ * @param componentNode Component node
+ * @param instanceData Instance data (optional)
+ * @returns Created instance node
  */
 export function createInstanceFromComponent(
   componentNode: ComponentNode,
@@ -127,13 +429,12 @@ export function createInstanceFromComponent(
     }
     
     if (styles) {
-      // 스타일 적용
-      const styleProps = props || {};
-      createElement('INSTANCE', styles, undefined, { ...styleProps, node: instance });
+      // Apply styles
+      applyStyles(instance, styles);
     }
     
     if (props) {
-      // 추가 속성 적용
+      // Apply additional properties
       Object.entries(props).forEach(([key, value]) => {
         if (key in instance) {
           (instance as any)[key] = value;
@@ -146,27 +447,32 @@ export function createInstanceFromComponent(
 }
 
 /**
- * 데이터 객체를 기반으로 데이터 바인딩된 노드를 생성합니다.
+ * Creates a node with data binding based on template and data.
  * 
- * @param template 템플릿 데이터
- * @param data 바인딩할 데이터
- * @returns 생성된 Figma 노드
+ * @param template Template data
+ * @param data Data to bind
+ * @returns Created Figma node
  */
 export function createNodeWithDataBinding(template: NodeData, data: Record<string, any>): SceneNode {
-  // 템플릿 복제
+  // Clone template
   const clonedTemplate = JSON.parse(JSON.stringify(template));
   
-  // 데이터 바인딩 처리 함수
+  // Data binding processor function
   function processDataBinding(nodeData: NodeData, bindingData: Record<string, any>): void {
-    // 텍스트 바인딩 처리
+    // Process text binding
     if (nodeData.text && typeof nodeData.text === 'string') {
       nodeData.text = nodeData.text.replace(/\{\{([^}]+)\}\}/g, (match, key) => {
         const trimmedKey = key.trim();
+        // Check if it's a component property reference
+        if (trimmedKey.startsWith('componentProperties.')) {
+          const propertyKey = trimmedKey.replace('componentProperties.', '');
+          return bindingData[propertyKey] !== undefined ? String(bindingData[propertyKey]) : match;
+        }
         return bindingData[trimmedKey] !== undefined ? String(bindingData[trimmedKey]) : match;
       });
     }
     
-    // 스타일 바인딩 처리
+    // Process style binding
     if (nodeData.styles && typeof nodeData.styles === 'string') {
       nodeData.styles = nodeData.styles.replace(/\{\{([^}]+)\}\}/g, (match, key) => {
         const trimmedKey = key.trim();
@@ -174,9 +480,20 @@ export function createNodeWithDataBinding(template: NodeData, data: Record<strin
       });
     }
     
-    // 자식 노드 바인딩 처리
+    // Process vector path binding
+    if (nodeData.type === 'VECTOR' && (nodeData as VectorNodeData).paths) {
+      const vectorData = nodeData as VectorNodeData;
+      vectorData.paths = vectorData.paths.map(path => 
+        path.replace(/\{\{([^}]+)\}\}/g, (match, key) => {
+          const trimmedKey = key.trim();
+          return bindingData[trimmedKey] !== undefined ? String(bindingData[trimmedKey]) : match;
+        })
+      );
+    }
+    
+    // Process child node binding
     if (nodeData.children && nodeData.children.length > 0) {
-      // 배열 바인딩 처리
+      // Process array binding
       if (nodeData.data && nodeData.data.forEach) {
         const forEachKey = nodeData.data.forEach;
         const arrayData = bindingData[forEachKey];
@@ -190,14 +507,14 @@ export function createNodeWithDataBinding(template: NodeData, data: Record<strin
           });
         }
       } else {
-        // 일반 자식 노드 바인딩
+        // Process regular child nodes
         nodeData.children.forEach(child => {
           processDataBinding(child, bindingData);
         });
       }
     }
     
-    // 조건부 렌더링 처리
+    // Process conditional rendering
     if (nodeData.data && nodeData.data.if) {
       const condition = nodeData.data.if;
       const conditionResult = evaluateCondition(condition, bindingData);
@@ -208,10 +525,10 @@ export function createNodeWithDataBinding(template: NodeData, data: Record<strin
     }
   }
   
-  // 조건식 평가 함수
+  // Condition evaluator function
   function evaluateCondition(condition: string, data: Record<string, any>): boolean {
     try {
-      // 간단한 조건식 평가 (실제 구현에서는 더 안전한 방법 사용 필요)
+      // Simple condition evaluation (use safer method in production)
       const conditionWithValues = condition.replace(/\{\{([^}]+)\}\}/g, (match, key) => {
         const trimmedKey = key.trim();
         return JSON.stringify(data[trimmedKey]);
@@ -220,45 +537,145 @@ export function createNodeWithDataBinding(template: NodeData, data: Record<strin
       // eslint-disable-next-line no-new-func
       return new Function(`return ${conditionWithValues}`)();
     } catch (error) {
-      console.error('조건식 평가 오류:', error);
+      console.error('Error evaluating condition:', error);
       return false;
     }
   }
   
-  // 데이터 바인딩 처리
+  // Process data binding
   processDataBinding(clonedTemplate, data);
   
-  // 'HIDDEN' 타입 노드는 생성하지 않음
+  // Don't create 'HIDDEN' type nodes
   if (clonedTemplate.type === 'HIDDEN') {
     return createFrame('w-[0] h-[0] opacity-0');
   }
   
-  // 노드 생성
+  // Create node
   return createNodeForData(clonedTemplate);
 }
 
 /**
- * 데이터 객체를 기반으로 리스트 노드를 생성합니다.
+ * Creates a list node based on data.
  * 
- * @param containerTemplate 컨테이너 템플릿
- * @param itemTemplate 아이템 템플릿
- * @param dataArray 데이터 배열
- * @returns 생성된 리스트 노드
+ * @param containerTemplate Container template
+ * @param itemTemplate Item template
+ * @param dataArray Array of data
+ * @returns Created list node
  */
 export function createListFromData(
   containerTemplate: NodeData,
   itemTemplate: NodeData,
   dataArray: Record<string, any>[]
 ): SceneNode {
-  // 컨테이너 복제
+  // Clone container
   const clonedContainer = JSON.parse(JSON.stringify(containerTemplate));
   
-  // 아이템 생성
+  // Create items
   clonedContainer.children = dataArray.map(itemData => {
     const clonedItem = JSON.parse(JSON.stringify(itemTemplate));
     return createNodeWithDataBinding(clonedItem, itemData);
   });
   
-  // 컨테이너 노드 생성
+  // Create container node
   return createNodeForData(clonedContainer);
+}
+
+/**
+ * Converts SVG path string to Figma vector node.
+ * 
+ * @param svgPath SVG path string
+ * @param styles Style string to apply (optional)
+ * @param props Additional properties (optional)
+ * @returns Created vector node
+ * 
+ * @example
+ * ```typescript
+ * // Create an arrow icon
+ * const arrowIcon = createVectorFromSVGPath(
+ *   "M10 10L20 20M20 20L10 30",
+ *   "stroke-black stroke-2 fill-transparent"
+ * );
+ * figma.currentPage.appendChild(arrowIcon);
+ * ```
+ */
+export function createVectorFromSVGPath(
+  svgPath: string,
+  styles: string = '',
+  props: Record<string, any> = {}
+): VectorNode {
+  const vectorData: VectorNodeData = {
+    type: 'VECTOR',
+    styles,
+    paths: [svgPath],
+    props
+  };
+  
+  return createNodeForData(vectorData) as VectorNode;
+}
+
+/**
+ * Converts multiple SVG path strings to Figma vector node.
+ * 
+ * @param svgPaths Array of SVG path strings
+ * @param styles Style string to apply (optional)
+ * @param props Additional properties (optional)
+ * @returns Created vector node
+ * 
+ * @example
+ * ```typescript
+ * // Create a complex icon
+ * const complexIcon = createVectorFromSVGPaths(
+ *   [
+ *     "M10 10L20 20M20 20L10 30", // First path
+ *     "M30 20H50"                 // Second path
+ *   ],
+ *   "stroke-black stroke-2 fill-transparent"
+ * );
+ * figma.currentPage.appendChild(complexIcon);
+ * ```
+ */
+export function createVectorFromSVGPaths(
+  svgPaths: string[],
+  styles: string = '',
+  props: Record<string, any> = {}
+): VectorNode {
+  const vectorData: VectorNodeData = {
+    type: 'VECTOR',
+    styles,
+    paths: svgPaths,
+    props
+  };
+  
+  return createNodeForData(vectorData) as VectorNode;
+}
+
+// Add this function before createElement
+function findComponentByName(name: string) {
+  // 1. First try to find ComponentSet
+  const componentSet = figma.currentPage.findOne(node => 
+    node.type === "COMPONENT_SET" && node.name === name
+  ) as ComponentSetNode;
+
+  if (componentSet) {
+    return {
+      type: 'COMPONENT_SET',
+      node: componentSet,
+      createInstance: () => componentSet.defaultVariant.createInstance()
+    };
+  }
+
+  // 2. If no ComponentSet, try to find single Component
+  const component = figma.currentPage.findOne(node => 
+    node.type === "COMPONENT" && node.name === name
+  ) as ComponentNode;
+
+  if (component) {
+    return {
+      type: 'COMPONENT',
+      node: component,
+      createInstance: () => component.createInstance()
+    };
+  }
+
+  return null;
 } 

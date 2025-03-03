@@ -1,4 +1,4 @@
-import { ParsedStyle, FigmaPaint, FigmaColor, FigmaGradient } from '../types';
+import { ParsedStyle, FigmaPaint, FigmaColor, FigmaGradient, FigmaSolidPaint } from '../types';
 import { isValidNumber } from '../utils/validators';
 import { parseColor } from '../utils/colors';
 import { GRADIENT_TRANSFORMS } from '../config/constants';
@@ -14,7 +14,12 @@ export function convertBackgroundToFigma(style: ParsedStyle): FigmaPaint[] {
 
   switch (style.property) {
     case 'backgroundColor':
-      if (typeof style.value === 'string') {
+      if (style.variant === 'variable') {
+        result.push({
+          type: 'SOLID',
+          variable: style.value as string
+        } as FigmaSolidPaint);
+      } else if (typeof style.value === 'string') {
         // 일반 배경색 처리
         let colorStr: string | FigmaColor | undefined;
         if (style.variant === 'preset') {

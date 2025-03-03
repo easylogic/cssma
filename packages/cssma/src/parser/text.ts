@@ -118,11 +118,27 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
     if (type === 'tracking') {
       const spacing = parseFloat(value);
       if (!isNaN(spacing)) {
-        return {
-          property: 'letterSpacing',
-          value: spacing,
-          variant: 'arbitrary'
-        };
+        // 단위가 있는 경우 (예: px, em)
+        if (value.endsWith('px')) {
+          return {
+            property: 'letterSpacing',
+            value: { value: spacing, unit: 'PIXELS' },
+            variant: 'arbitrary'
+          };
+        } else if (value.endsWith('em')) {
+          return {
+            property: 'letterSpacing',
+            value: { value: spacing * 100, unit: 'PERCENT' },
+            variant: 'arbitrary'
+          };
+        } else {
+          // 단위가 없는 경우 기본값으로 픽셀 사용
+          return {
+            property: 'letterSpacing',
+            value: spacing,
+            variant: 'arbitrary'
+          };
+        }
       }
     }
   }

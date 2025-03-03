@@ -62,7 +62,7 @@ figma.currentPage.appendChild(node);
 Convert Tailwind CSS class strings to Figma style objects:
 
 ```typescript
-import { processStyles } from '@easylogic/style';
+import { processStyles } from '@easylogic/cssma';
 
 const styles = processStyles('flex-col w-full bg-[#FF0000] rounded-lg');
 // Apply the result to a Figma node
@@ -76,7 +76,7 @@ node.cornerRadius = styles.cornerRadius;
 Convert Figma style objects to Tailwind CSS class strings:
 
 ```typescript
-import { figmaToStyle } from '@easylogic/style';
+import { figmaToStyle } from '@easylogic/cssma';
 
 const tailwindClasses = figmaToStyle({
   layoutMode: "VERTICAL",
@@ -85,6 +85,1368 @@ const tailwindClasses = figmaToStyle({
 });
 // Result: "flex-col bg-[#ff0000] rounded-lg"
 ```
+
+### 3. Node Creation with Styles (`createNodeForData`)
+
+Create Figma nodes with Tailwind CSS styles using a declarative JSON structure:
+
+```typescript
+import { createNodeForData } from '@easylogic/cssma';
+
+// Create a simple card component
+const cardData = {
+  type: 'FRAME',
+  name: 'Card',
+  styles: 'flex-col w-full bg-white rounded-lg p-[16] gap-[8]',
+  children: [
+    {
+      type: 'FRAME',
+      name: 'Image',
+      styles: 'w-full h-[150] bg-gray-200 rounded-md'
+    },
+    {
+      type: 'TEXT',
+      name: 'Title',
+      styles: 'w-full text-xl font-bold',
+      text: 'Card Title'
+    }
+  ]
+};
+
+const card = createNodeForData(cardData);
+figma.currentPage.appendChild(card);
+
+// Create a button component
+const buttonData = {
+  type: 'COMPONENT',
+  name: 'Button',
+  styles: 'flex w-auto h-auto items-center justify-center px-[16] py-[8] bg-blue-500 rounded-md',
+  children: [{
+    type: 'TEXT',
+    styles: 'w-auto h-auto text-white font-medium',
+    text: 'Button'
+  }]
+};
+
+const button = createNodeForData(buttonData);
+```
+
+#### NodeData Interface
+
+```typescript
+interface NodeData {
+  type: string;              // Node type (FRAME, TEXT, RECTANGLE, etc.)
+  name?: string;             // Node name
+  styles?: string;           // Tailwind CSS style string
+  text?: string;            // Text content for text nodes
+  children?: NodeData[];     // Child node data
+  props?: Record<string, any>; // Additional properties
+}
+```
+
+#### Supported Node Types
+- `FRAME`
+- `TEXT`
+- `RECTANGLE`
+- `ELLIPSE`
+- `POLYGON`
+- `STAR`
+- `VECTOR`
+- `LINE`
+- `COMPONENT`
+
+#### Comprehensive Example
+
+Here's a complete example showcasing all supported Figma node types:
+
+```typescript
+import { createNodeForData } from '@easylogic/cssma';
+
+const designSystemData = {
+  type: 'FRAME',
+  name: 'Design System',
+  styles: 'flex-col w-full h-auto bg-[#fafafa] p-[32] gap-[32]',
+  children: [
+    // Typography Section
+    {
+      type: 'FRAME',
+      name: 'Typography',
+      styles: 'flex-col w-full h-auto gap-[16]',
+      children: [
+        {
+          type: 'TEXT',
+          name: 'Heading 1',
+          styles: 'w-full h-auto text-4xl font-bold text-[#111827]',
+          text: 'Heading 1'
+        },
+        {
+          type: 'TEXT',
+          name: 'Body Text',
+          styles: 'w-full h-auto text-base font-normal text-[#374151] leading-relaxed',
+          text: 'Regular body text with comfortable line height.'
+        }
+      ]
+    },
+
+    // Shapes Section
+    {
+      type: 'FRAME',
+      name: 'Basic Shapes',
+      styles: 'flex-row w-full h-auto gap-[16] items-center',
+      children: [
+        {
+          type: 'RECTANGLE',
+          name: 'Square',
+          styles: 'w-[64] h-[64] bg-blue-500 rounded-lg shadow-md'
+        },
+        {
+          type: 'ELLIPSE',
+          name: 'Circle',
+          styles: 'w-[64] h-[64] bg-green-500'
+        },
+        {
+          type: 'POLYGON',
+          name: 'Triangle',
+          styles: 'w-[64] h-[64] bg-yellow-500',
+          props: {
+            pointCount: 3
+          }
+        },
+        {
+          type: 'STAR',
+          name: 'Star',
+          styles: 'w-[64] h-[64] bg-purple-500',
+          props: {
+            pointCount: 5
+          }
+        }
+      ]
+    },
+
+    // Vector Graphics
+    {
+      type: 'FRAME',
+      name: 'Vector Graphics',
+      styles: 'flex-row w-full h-auto gap-[16] items-center',
+      children: [
+        {
+          type: 'VECTOR',
+          name: 'Arrow',
+          styles: 'w-[100] h-[40] stroke-black stroke-2 fill-transparent',
+          props: {
+            vectorPaths: [{
+              windingRule: 'NONZERO',
+              data: 'M10 10L50 50M50 50L90 10'
+            }]
+          }
+        },
+        {
+          type: 'LINE',
+          name: 'Divider',
+          styles: 'w-[100] h-[1] stroke-gray-300 stroke-1',
+          props: {
+            strokeCap: 'ROUND'
+          }
+        }
+      ]
+    },
+
+    // Components Section
+    {
+      type: 'FRAME',
+      name: 'Components',
+      styles: 'flex-col w-full h-auto gap-[24]',
+      children: [
+        // Button Component
+        {
+          type: 'COMPONENT',
+          name: 'Button/Primary',
+          styles: 'flex w-auto h-auto items-center justify-center px-[16] py-[8] bg-blue-500 rounded-md',
+          children: [{
+            type: 'TEXT',
+            styles: 'w-auto h-auto text-white font-medium',
+            text: 'Button'
+          }]
+        },
+        // Card Component
+        {
+          type: 'COMPONENT',
+          name: 'Card/Basic',
+          styles: 'flex-col w-full h-auto bg-white rounded-xl p-[24] gap-[16] shadow-md',
+          children: [
+            {
+              type: 'FRAME',
+              name: 'Image Container',
+              styles: 'w-full h-[200] bg-gray-100 rounded-lg'
+            },
+            {
+              type: 'TEXT',
+              name: 'Title',
+              styles: 'w-full h-auto text-xl font-semibold text-gray-900',
+              text: 'Card Title'
+            },
+            {
+              type: 'TEXT',
+              name: 'Description',
+              styles: 'w-full h-auto text-base text-gray-600',
+              text: 'Card description with detailed information.'
+            }
+          ]
+        }
+      ]
+    },
+
+    // Component Instances
+    {
+      type: 'FRAME',
+      name: 'Component Instances',
+      styles: 'flex-col w-full h-auto gap-[16]',
+      children: [
+        {
+          type: 'INSTANCE',
+          name: 'Button/Primary Instance',
+          styles: 'w-auto h-auto bg-green-500', // Override styles
+          componentProperties: {
+            text: 'Custom Button'
+          }
+        },
+        {
+          type: 'INSTANCE',
+          name: 'Card/Basic Instance',
+          styles: 'w-full bg-gray-50', // Override styles
+          componentProperties: {
+            title: 'Custom Card',
+            description: 'This is a custom card instance.'
+          }
+        }
+      ]
+    },
+
+    // Layout Examples
+    {
+      type: 'FRAME',
+      name: 'Layout Examples',
+      styles: 'flex-col w-full h-auto gap-[24]',
+      children: [
+        {
+          type: 'FRAME',
+          name: 'Grid Layout',
+          styles: 'grid w-full h-auto grid-cols-3 gap-[16]',
+          children: Array(6).fill(null).map((_, i) => ({
+            type: 'RECTANGLE',
+            name: `Grid Item ${i + 1}`,
+            styles: 'w-full h-[100] bg-blue-100 rounded-md'
+          }))
+        },
+        {
+          type: 'FRAME',
+          name: 'Flex Layout',
+          styles: 'flex-row w-full h-auto justify-between items-center',
+          children: [
+            {
+              type: 'RECTANGLE',
+              name: 'Left',
+              styles: 'w-[100] h-[100] bg-green-100 rounded-md'
+            },
+            {
+              type: 'RECTANGLE',
+              name: 'Center',
+              styles: 'w-[100] h-[100] bg-yellow-100 rounded-md'
+            },
+            {
+              type: 'RECTANGLE',
+              name: 'Right',
+              styles: 'w-[100] h-[100] bg-red-100 rounded-md'
+            }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+// Create the design system
+const designSystem = createNodeForData(designSystemData);
+figma.currentPage.appendChild(designSystem);
+```
+
+This example demonstrates:
+- All basic node types (FRAME, TEXT, RECTANGLE, ELLIPSE, etc.)
+- Component creation and instances
+- Complex layouts (Grid and Flex)
+- Various style properties
+- Nested structures
+- Property overrides
+- Vector paths
+- Shape properties
+
+#### Landing Page Example
+
+Here's an example of creating a modern landing page using @easylogic/cssma:
+
+```typescript
+import { createNodeForData } from '@easylogic/cssma';
+
+const landingPageData = {
+  type: 'FRAME',
+  name: 'Landing Page',
+  styles: 'flex-col w-full h-auto bg-white',
+  children: [
+    // Navigation Bar
+    {
+      type: 'FRAME',
+      name: 'Navbar',
+      styles: 'flex-row w-full h-auto px-[64] py-[16] bg-white items-center justify-between shadow-sm',
+      children: [
+        {
+          type: 'TEXT',
+          name: 'Logo',
+          styles: 'w-auto h-auto text-2xl font-bold text-blue-600',
+          text: 'Brand'
+        },
+        {
+          type: 'FRAME',
+          name: 'Nav Links',
+          styles: 'flex-row w-auto h-auto gap-[32] items-center',
+          children: [
+            {
+              type: 'TEXT',
+              name: 'Home',
+              styles: 'w-auto h-auto text-base font-medium text-gray-900',
+              text: 'Home'
+            },
+            {
+              type: 'TEXT',
+              name: 'Features',
+              styles: 'w-auto h-auto text-base font-medium text-gray-600',
+              text: 'Features'
+            },
+            {
+              type: 'TEXT',
+              name: 'Pricing',
+              styles: 'w-auto h-auto text-base font-medium text-gray-600',
+              text: 'Pricing'
+            },
+            {
+              type: 'COMPONENT',
+              name: 'Button/CTA',
+              styles: 'flex w-auto h-auto items-center justify-center px-[16] py-[8] bg-blue-600 rounded-md',
+              children: [{
+                type: 'TEXT',
+                styles: 'w-auto h-auto text-white font-medium',
+                text: 'Get Started'
+              }]
+            }
+          ]
+        }
+      ]
+    },
+
+    // Hero Section
+    {
+      type: 'FRAME',
+      name: 'Hero',
+      styles: 'flex-col w-full h-auto px-[64] py-[80] bg-gray-50 items-center gap-[32] text-center',
+      children: [
+        {
+          type: 'TEXT',
+          name: 'Hero Title',
+          styles: 'w-[600] h-auto text-5xl font-bold text-gray-900 leading-tight',
+          text: 'Build Beautiful Interfaces\nFaster Than Ever'
+        },
+        {
+          type: 'TEXT',
+          name: 'Hero Subtitle',
+          styles: 'w-[600] h-auto text-xl text-gray-600 leading-relaxed',
+          text: 'Create stunning designs with our powerful design system. Save time and focus on what matters most.'
+        },
+        {
+          type: 'FRAME',
+          name: 'CTA Buttons',
+          styles: 'flex-row w-auto h-auto gap-[16] items-center mt-[16]',
+          children: [
+            {
+              type: 'COMPONENT',
+              name: 'Button/Primary',
+              styles: 'flex w-auto h-auto items-center justify-center px-[24] py-[12] bg-blue-600 rounded-md',
+              children: [{
+                type: 'TEXT',
+                styles: 'w-auto h-auto text-lg text-white font-medium',
+                text: 'Get Started Free'
+              }]
+            },
+            {
+              type: 'COMPONENT',
+              name: 'Button/Secondary',
+              styles: 'flex w-auto h-auto items-center justify-center px-[24] py-[12] bg-white border-2 border-gray-200 rounded-md',
+              children: [{
+                type: 'TEXT',
+                styles: 'w-auto h-auto text-lg text-gray-600 font-medium',
+                text: 'Learn More'
+              }]
+            }
+          ]
+        }
+      ]
+    },
+
+    // Features Section
+    {
+      type: 'FRAME',
+      name: 'Features',
+      styles: 'flex-col w-full h-auto px-[64] py-[80] gap-[64]',
+      children: [
+        {
+          type: 'FRAME',
+          name: 'Section Header',
+          styles: 'flex-col w-full h-auto items-center gap-[16] mb-[32]',
+          children: [
+            {
+              type: 'TEXT',
+              name: 'Section Title',
+              styles: 'w-auto h-auto text-3xl font-bold text-gray-900',
+              text: 'Why Choose Us'
+            },
+            {
+              type: 'TEXT',
+              name: 'Section Description',
+              styles: 'w-[600] h-auto text-center text-lg text-gray-600',
+              text: 'We provide the tools you need to create amazing designs quickly and efficiently.'
+            }
+          ]
+        },
+        {
+          type: 'FRAME',
+          name: 'Feature Grid',
+          styles: 'grid w-full h-auto grid-cols-3 gap-[32]',
+          children: [
+            // Feature Card 1
+            {
+              type: 'FRAME',
+              name: 'Feature 1',
+              styles: 'flex-col w-full h-auto p-[32] bg-white rounded-xl border border-gray-100 gap-[16] shadow-sm',
+              children: [
+                {
+                  type: 'FRAME',
+                  name: 'Icon Container',
+                  styles: 'flex w-[48] h-[48] bg-blue-100 rounded-lg items-center justify-center',
+                  children: [
+                    {
+                      type: 'TEXT',
+                      styles: 'w-auto h-auto text-2xl text-blue-600',
+                      text: '⚡'
+                    }
+                  ]
+                },
+                {
+                  type: 'TEXT',
+                  name: 'Feature Title',
+                  styles: 'w-full h-auto text-xl font-semibold text-gray-900',
+                  text: 'Lightning Fast'
+                },
+                {
+                  type: 'TEXT',
+                  name: 'Feature Description',
+                  styles: 'w-full h-auto text-base text-gray-600',
+                  text: 'Create designs in minutes, not hours. Our tools are optimized for speed and efficiency.'
+                }
+              ]
+            },
+            // Feature Card 2
+            {
+              type: 'FRAME',
+              name: 'Feature 2',
+              styles: 'flex-col w-full h-auto p-[32] bg-white rounded-xl border border-gray-100 gap-[16] shadow-sm',
+              children: [
+                {
+                  type: 'FRAME',
+                  name: 'Icon Container',
+                  styles: 'flex w-[48] h-[48] bg-green-100 rounded-lg items-center justify-center',
+                  children: [
+                    {
+                      type: 'TEXT',
+                      styles: 'w-auto h-auto text-2xl text-green-600',
+                      text: '🎨'
+                    }
+                  ]
+                },
+                {
+                  type: 'TEXT',
+                  name: 'Feature Title',
+                  styles: 'w-full h-auto text-xl font-semibold text-gray-900',
+                  text: 'Beautiful Designs'
+                },
+                {
+                  type: 'TEXT',
+                  name: 'Feature Description',
+                  styles: 'w-full h-auto text-base text-gray-600',
+                  text: 'Create stunning interfaces with our pre-built components and design system.'
+                }
+              ]
+            },
+            // Feature Card 3
+            {
+              type: 'FRAME',
+              name: 'Feature 3',
+              styles: 'flex-col w-full h-auto p-[32] bg-white rounded-xl border border-gray-100 gap-[16] shadow-sm',
+              children: [
+                {
+                  type: 'FRAME',
+                  name: 'Icon Container',
+                  styles: 'flex w-[48] h-[48] bg-purple-100 rounded-lg items-center justify-center',
+                  children: [
+                    {
+                      type: 'TEXT',
+                      styles: 'w-auto h-auto text-2xl text-purple-600',
+                      text: '🚀'
+                    }
+                  ]
+                },
+                {
+                  type: 'TEXT',
+                  name: 'Feature Title',
+                  styles: 'w-full h-auto text-xl font-semibold text-gray-900',
+                  text: 'Easy to Use'
+                },
+                {
+                  type: 'TEXT',
+                  name: 'Feature Description',
+                  styles: 'w-full h-auto text-base text-gray-600',
+                  text: 'Intuitive interface and tools that make design accessible to everyone.'
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    // CTA Section
+    {
+      type: 'FRAME',
+      name: 'CTA Section',
+      styles: 'flex-col w-full h-auto px-[64] py-[80] bg-blue-600 items-center gap-[32] text-center',
+      children: [
+        {
+          type: 'TEXT',
+          name: 'CTA Title',
+          styles: 'w-[600] h-auto text-4xl font-bold text-white',
+          text: 'Ready to Get Started?'
+        },
+        {
+          type: 'TEXT',
+          name: 'CTA Description',
+          styles: 'w-[600] h-auto text-xl text-blue-100',
+          text: 'Join thousands of designers who are already using our tools.'
+        },
+        {
+          type: 'COMPONENT',
+          name: 'Button/White',
+          styles: 'flex w-auto h-auto items-center justify-center px-[32] py-[16] bg-white rounded-md mt-[16]',
+          children: [{
+            type: 'TEXT',
+            styles: 'w-auto h-auto text-lg text-blue-600 font-medium',
+            text: 'Start Free Trial'
+          }]
+        }
+      ]
+    }
+  ]
+};
+
+// Create the landing page
+const landingPage = createNodeForData(landingPageData);
+figma.currentPage.appendChild(landingPage);
+```
+
+This landing page example demonstrates:
+- Modern and clean design structure
+- Responsive layout using Flex and Grid
+- Consistent spacing and typography
+- Component reuse (buttons, cards)
+- Proper sizing with w-auto/h-auto for text elements
+- Semantic color usage
+- Nested layouts
+- Shadow and border effects
+- Icon integration
+- Call-to-action sections
+
+## Component System
+
+### Component Set Structure
+
+Component Sets are defined with the following structure:
+
+```typescript
+const buttonSystem: ComponentDefinition = {
+  type: 'COMPONENT_SET',
+  id: 'button-system',           // Unique ID for the component set
+  name: 'Button',                // Base name of the component set
+  props: {
+    // Variant Properties - Shared by all child components
+    variantProperties: {
+      size: ['sm', 'md', 'lg'],
+      style: ['primary', 'secondary', 'outline', 'ghost'],
+      state: ['default', 'hover', 'pressed', 'disabled']
+    },
+    // Property Definitions - Shared properties for all child components
+    propertyDefinitions: {
+      text: {
+        type: 'TEXT',
+        defaultValue: 'Button'
+      },
+      icon: {
+        type: 'TEXT',
+        defaultValue: ''
+      },
+      iconPosition: {
+        type: 'VARIANT',
+        options: ['left', 'right'],
+        defaultValue: 'left'
+      },
+      disabled: {
+        type: 'BOOLEAN',
+        defaultValue: false
+      }
+    },
+    // Variants - Component definitions based on variant property combinations
+    variants: {
+      // Primary Button - Small
+      'primary-sm-default': {
+        id: 'button-primary-sm-default',
+        name: 'Button/Primary/Small/Default',
+        variant: {
+          size: 'sm',
+          style: 'primary',
+          state: 'default'
+        },
+        styles: 'flex w-auto h-auto items-center justify-center gap-[8] px-[12] py-[6] bg-blue-600 rounded-md',
+        children: [
+          {
+            type: 'TEXT',
+            name: 'Icon/Left',
+            styles: 'w-auto h-auto text-sm text-white',
+            bind: {
+              text: 'icon',
+              visible: {
+                property: 'iconPosition',
+                value: 'left'
+              }
+            }
+          },
+          {
+            type: 'TEXT',
+            name: 'Label',
+            styles: 'w-auto h-auto text-sm font-medium text-white',
+            bind: { text: 'text' }
+          },
+          {
+            type: 'TEXT',
+            name: 'Icon/Right',
+            styles: 'w-auto h-auto text-sm text-white',
+            bind: {
+              text: 'icon',
+              visible: {
+                property: 'iconPosition',
+                value: 'right'
+              }
+            }
+          }
+        ]
+      },
+      'primary-sm-hover': {
+        id: 'button-primary-sm-hover',
+        name: 'Button/Primary/Small/Hover',
+        variant: {
+          size: 'sm',
+          style: 'primary',
+          state: 'hover'
+        },
+        styles: 'flex w-auto h-auto items-center justify-center gap-[8] px-[12] py-[6] bg-blue-700 rounded-md',
+        children: [/* Same structure as default */]
+      },
+      // Primary Button - Medium
+      'primary-md-default': {
+        id: 'button-primary-md-default',
+        name: 'Button/Primary/Medium/Default',
+        variant: {
+          size: 'md',
+          style: 'primary',
+          state: 'default'
+        },
+        styles: 'flex w-auto h-auto items-center justify-center gap-[8] px-[16] py-[8] bg-blue-600 rounded-md',
+        children: [
+          {
+            type: 'TEXT',
+            name: 'Icon/Left',
+            styles: 'w-auto h-auto text-base text-white',
+            bind: {
+              text: 'icon',
+              visible: {
+                property: 'iconPosition',
+                value: 'left'
+              }
+            }
+          },
+          {
+            type: 'TEXT',
+            name: 'Label',
+            styles: 'w-auto h-auto text-base font-medium text-white',
+            bind: { text: 'text' }
+          },
+          {
+            type: 'TEXT',
+            name: 'Icon/Right',
+            styles: 'w-auto h-auto text-base text-white',
+            bind: {
+              text: 'icon',
+              visible: {
+                property: 'iconPosition',
+                value: 'right'
+              }
+            }
+          }
+        ]
+      },
+      // Secondary Button - Medium
+      'secondary-md-default': {
+        id: 'button-secondary-md-default',
+        name: 'Button/Secondary/Medium/Default',
+        variant: {
+          size: 'md',
+          style: 'secondary',
+          state: 'default'
+        },
+        styles: 'flex w-auto h-auto items-center justify-center gap-[8] px-[16] py-[8] bg-gray-100 rounded-md',
+        children: [
+          {
+            type: 'TEXT',
+            name: 'Icon/Left',
+            styles: 'w-auto h-auto text-base text-gray-600',
+            bind: {
+              text: 'icon',
+              visible: {
+                property: 'iconPosition',
+                value: 'left'
+              }
+            }
+          },
+          {
+            type: 'TEXT',
+            name: 'Label',
+            styles: 'w-auto h-auto text-base font-medium text-gray-600',
+            bind: { text: 'text' }
+          }
+        ]
+      },
+      // Outline Button - Medium
+      'outline-md-default': {
+        id: 'button-outline-md-default',
+        name: 'Button/Outline/Medium/Default',
+        variant: {
+          size: 'md',
+          style: 'outline',
+          state: 'default'
+        },
+        styles: 'flex w-auto h-auto items-center justify-center gap-[8] px-[16] py-[8] bg-white border-2 border-gray-200 rounded-md',
+        children: [/* Similar structure */]
+      }
+    }
+  },
+  defaultVariant: 'primary-md-default'
+};
+```
+
+### Key Rules
+
+1. **ID System**
+   ```typescript
+   {
+     type: 'COMPONENT_SET',
+     id: 'button-system',                // Component Set ID
+     variants: {
+       'primary-sm': {
+         id: 'button-primary-sm',        // Variant Component ID
+         name: 'Button/Primary/Small'    // Hierarchical name structure
+       }
+     }
+   }
+   ```
+
+2. **Variant Properties**
+   ```typescript
+   variantProperties: {
+     size: ['sm', 'md', 'lg'],          // Size variants
+     style: ['primary', 'secondary']     // Style variants
+   }
+   ```
+   - All child components must share the same variant properties
+   - Variant property values must be selected from predefined options
+
+3. **Naming Convention**
+   ```typescript
+   {
+     name: 'Button',                     // Component set name
+     variants: {
+       'primary-sm': {
+         name: 'Button/Primary/Small'    // {SetName}/{Style}/{Size}
+       },
+       'secondary-md': {
+         name: 'Button/Secondary/Medium' // Name combining variant properties
+       }
+     }
+   }
+   ```
+
+4. **Creating Instances**
+   ```typescript
+   const buttonInstance: ComponentInstance = {
+     type: 'INSTANCE',
+     componentId: 'button-primary-md',    // Reference to variant component ID
+     variantProps: {                      // Must use values from variantProperties
+       size: 'md',
+       style: 'primary'
+     },
+     properties: {                        // Properties defined in propertyDefinitions
+       text: 'Click me',
+       icon: '→'
+     }
+   };
+   ```
+
+### Best Practices
+
+1. **ID Management**
+   - Assign unique IDs to component sets and each variant
+   - Use meaningful prefixes and separators for IDs
+   - Example: `button-system`, `button-primary-sm`
+
+2. **Name Structuring**
+   - Use hierarchical structure (parent/middle/child)
+   - Reflect variant properties in names
+   - Maintain consistent naming conventions
+
+3. **Variant Property Management**
+   - Define clear variant options
+   - Apply consistent variant properties across all child components
+   - Avoid unnecessary variant combinations
+
+4. **Property Binding**
+   - Use clear property names
+   - Set appropriate default values
+   - Maintain type safety
+
+### Complete Button Component Set Example
+
+Here's a comprehensive example of a Button Component Set with all variants and properties:
+
+```typescript
+const buttonSystem: ComponentDefinition = {
+  type: 'COMPONENT_SET',
+  id: 'button-system',
+  name: 'Button',
+  props: {
+    // Variant Properties
+    variantProperties: {
+      size: ['sm', 'md', 'lg'],
+      style: ['primary', 'secondary', 'outline', 'ghost'],
+      state: ['default', 'hover', 'pressed', 'disabled']
+    },
+    // Property Definitions
+    propertyDefinitions: {
+      text: {
+        type: 'TEXT',
+        defaultValue: 'Button'
+      },
+      icon: {
+        type: 'TEXT',
+        defaultValue: ''
+      },
+      iconPosition: {
+        type: 'VARIANT',
+        options: ['left', 'right'],
+        defaultValue: 'left'
+      },
+      disabled: {
+        type: 'BOOLEAN',
+        defaultValue: false
+      }
+    },
+    // Variants
+    variants: {
+      // Primary Button - Small
+      'primary-sm-default': {
+        id: 'button-primary-sm-default',
+        name: 'Button/Primary/Small/Default',
+        variant: {
+          size: 'sm',
+          style: 'primary',
+          state: 'default'
+        },
+        styles: 'flex w-auto h-auto items-center justify-center gap-[8] px-[12] py-[6] bg-blue-600 rounded-md',
+        children: [
+          {
+            type: 'TEXT',
+            name: 'Icon/Left',
+            styles: 'w-auto h-auto text-sm text-white',
+            bind: {
+              text: 'icon',
+              visible: {
+                property: 'iconPosition',
+                value: 'left'
+              }
+            }
+          },
+          {
+            type: 'TEXT',
+            name: 'Label',
+            styles: 'w-auto h-auto text-sm font-medium text-white',
+            bind: { text: 'text' }
+          },
+          {
+            type: 'TEXT',
+            name: 'Icon/Right',
+            styles: 'w-auto h-auto text-sm text-white',
+            bind: {
+              text: 'icon',
+              visible: {
+                property: 'iconPosition',
+                value: 'right'
+              }
+            }
+          }
+        ]
+      },
+      'primary-sm-hover': {
+        id: 'button-primary-sm-hover',
+        name: 'Button/Primary/Small/Hover',
+        variant: {
+          size: 'sm',
+          style: 'primary',
+          state: 'hover'
+        },
+        styles: 'flex w-auto h-auto items-center justify-center gap-[8] px-[12] py-[6] bg-blue-700 rounded-md',
+        children: [/* Same structure as default */]
+      },
+      // Primary Button - Medium
+      'primary-md-default': {
+        id: 'button-primary-md-default',
+        name: 'Button/Primary/Medium/Default',
+        variant: {
+          size: 'md',
+          style: 'primary',
+          state: 'default'
+        },
+        styles: 'flex w-auto h-auto items-center justify-center gap-[8] px-[16] py-[8] bg-blue-600 rounded-md',
+        children: [
+          {
+            type: 'TEXT',
+            name: 'Icon/Left',
+            styles: 'w-auto h-auto text-base text-white',
+            bind: {
+              text: 'icon',
+              visible: {
+                property: 'iconPosition',
+                value: 'left'
+              }
+            }
+          },
+          {
+            type: 'TEXT',
+            name: 'Label',
+            styles: 'w-auto h-auto text-base font-medium text-white',
+            bind: { text: 'text' }
+          },
+          {
+            type: 'TEXT',
+            name: 'Icon/Right',
+            styles: 'w-auto h-auto text-base text-white',
+            bind: {
+              text: 'icon',
+              visible: {
+                property: 'iconPosition',
+                value: 'right'
+              }
+            }
+          }
+        ]
+      },
+      // Secondary Button - Medium
+      'secondary-md-default': {
+        id: 'button-secondary-md-default',
+        name: 'Button/Secondary/Medium/Default',
+        variant: {
+          size: 'md',
+          style: 'secondary',
+          state: 'default'
+        },
+        styles: 'flex w-auto h-auto items-center justify-center gap-[8] px-[16] py-[8] bg-gray-100 rounded-md',
+        children: [
+          {
+            type: 'TEXT',
+            name: 'Icon/Left',
+            styles: 'w-auto h-auto text-base text-gray-600',
+            bind: {
+              text: 'icon',
+              visible: {
+                property: 'iconPosition',
+                value: 'left'
+              }
+            }
+          },
+          {
+            type: 'TEXT',
+            name: 'Label',
+            styles: 'w-auto h-auto text-base font-medium text-gray-600',
+            bind: { text: 'text' }
+          }
+        ]
+      },
+      // Outline Button - Medium
+      'outline-md-default': {
+        id: 'button-outline-md-default',
+        name: 'Button/Outline/Medium/Default',
+        variant: {
+          size: 'md',
+          style: 'outline',
+          state: 'default'
+        },
+        styles: 'flex w-auto h-auto items-center justify-center gap-[8] px-[16] py-[8] bg-white border-2 border-gray-200 rounded-md',
+        children: [/* Similar structure */]
+      }
+    }
+  },
+  defaultVariant: 'primary-md-default'
+};
+
+// Example of creating button instances
+const buttonInstances = {
+  type: 'FRAME',
+  name: 'Button Examples',
+  styles: 'flex-col w-full h-auto gap-[24] p-[32]',
+  children: [
+    // Primary Button with Icon
+    {
+      type: 'INSTANCE',
+      name: 'Primary Button with Left Icon',
+      componentId: 'button-primary-md-default',
+      variantProps: {
+        size: 'md',
+        style: 'primary',
+        state: 'default'
+      },
+      properties: {
+        text: 'Get Started',
+        icon: '→',
+        iconPosition: 'left'
+      }
+    },
+    // Secondary Button
+    {
+      type: 'INSTANCE',
+      name: 'Secondary Button',
+      componentId: 'button-secondary-md-default',
+      variantProps: {
+        size: 'md',
+        style: 'secondary',
+        state: 'default'
+      },
+      properties: {
+        text: 'Learn More'
+      }
+    },
+    // Outline Button
+    {
+      type: 'INSTANCE',
+      name: 'Outline Button',
+      componentId: 'button-outline-md-default',
+      variantProps: {
+        size: 'md',
+        style: 'outline',
+        state: 'default'
+      },
+      properties: {
+        text: 'Cancel'
+      }
+    },
+    // Disabled Primary Button
+    {
+      type: 'INSTANCE',
+      name: 'Disabled Primary Button',
+      componentId: 'button-primary-md-default',
+      variantProps: {
+        size: 'md',
+        style: 'primary',
+        state: 'disabled'
+      },
+      properties: {
+        text: 'Submit',
+        disabled: true
+      },
+      styles: 'opacity-50'
+    }
+  ]
+};
+```
+
+This example demonstrates:
+- Complete variant system (size, style, state)
+- Property definitions with defaults
+- Icon positioning with conditional visibility
+- State handling (default, hover, pressed, disabled)
+- Consistent styling across variants
+- Instance creation with property overrides
+- Proper component naming structure
+- Comprehensive style binding
+
+## Using ComponentBuilder
+
+The `ComponentBuilder` class provides a modern and efficient way to create and manage component systems in Figma. This section explains how to use the ComponentBuilder alongside the existing component system.
+
+### Basic Usage
+
+```typescript
+import { ComponentBuilder } from '@easylogic/cssma';
+
+// 1. Create a component set
+const componentSet = ComponentBuilder.buildComponentSet(buttonSystem);
+
+// 2. Create an instance
+const instance = ComponentBuilder.buildInstance('button-primary-md', {
+  text: 'Click me',
+  icon: '→'
+});
+
+// 3. Convert instance to Figma node
+const node = ComponentBuilder.buildNode(instance);
+```
+
+### Key Features
+
+1. **Component Set Creation**
+   ```typescript
+   static buildComponentSet(definition: ComponentDefinition): ComponentSetNode
+   ```
+   Creates a complete component set with all variants:
+   ```typescript
+   const componentSet = ComponentBuilder.buildComponentSet({
+     type: 'COMPONENT_SET',
+     id: 'button-system',
+     name: 'Button',
+     props: {
+       variantProperties: {
+         size: ['sm', 'md', 'lg'],
+         style: ['primary', 'secondary']
+       },
+       // ... other properties
+     }
+   });
+   ```
+
+2. **Instance Creation**
+   ```typescript
+   static buildInstance(
+     componentId: string,
+     properties?: Record<string, any>,
+     variantProps?: Record<string, string>
+   ): ComponentInstance
+   ```
+   Creates component instances with specified properties:
+   ```typescript
+   // Basic instance
+   const basic = ComponentBuilder.buildInstance('button-primary-md');
+
+   // Instance with properties
+   const withProps = ComponentBuilder.buildInstance('button-primary-md', {
+     text: 'Custom Button',
+     icon: '→'
+   });
+
+   // Instance with properties and variant props
+   const withVariants = ComponentBuilder.buildInstance('button-primary-md', {
+     text: 'Custom Button',
+     icon: '→'
+   }, {
+     size: 'md',
+     style: 'primary'
+   });
+   ```
+
+3. **Node Generation**
+   ```typescript
+   static buildNode(instance: ComponentInstance): SceneNode
+   ```
+   Converts component instances to Figma nodes:
+   ```typescript
+   const instance = ComponentBuilder.buildInstance('button-primary-md', {
+     text: 'Click me'
+   });
+   const node = ComponentBuilder.buildNode(instance);
+   figma.currentPage.appendChild(node);
+   ```
+
+### Advanced Usage
+
+1. **Property Binding**
+   ```typescript
+   const buttonWithBinding = {
+     id: 'button-primary',
+     children: [
+       {
+         type: 'TEXT',
+         name: 'Label',
+         bind: {
+           text: 'label',
+           visible: {
+             property: 'showLabel',
+             value: true
+           }
+         }
+       }
+     ]
+   };
+   ```
+
+2. **Style Management**
+   ```typescript
+   // Base styles
+   const baseStyles = 'flex items-center justify-center rounded-md';
+   
+   // Variant-specific styles
+   const buttonVariant = {
+     id: 'button-primary',
+     styles: `${baseStyles} bg-blue-500 text-white`,
+     children: [/* ... */]
+   };
+   ```
+
+3. **Component Organization**
+   ```typescript
+   const buttonSystem = {
+     type: 'COMPONENT_SET',
+     id: 'button-system',
+     props: {
+       variants: {
+         'primary-sm-default': {
+           id: 'button-primary-sm-default',
+           name: 'Button/Primary/Small/Default',
+           // ... variant properties
+         },
+         'primary-sm-hover': {
+           id: 'button-primary-sm-hover',
+           name: 'Button/Primary/Small/Hover',
+           // ... variant properties
+         }
+       }
+     }
+   };
+   ```
+
+### Integration Example
+
+Here's how to integrate ComponentBuilder with existing component definitions:
+
+```typescript
+// 1. Define your component system
+const buttonSystem = {
+  type: 'COMPONENT_SET',
+  id: 'button-system',
+  name: 'Button',
+  props: {
+    variantProperties: {
+      size: ['sm', 'md', 'lg'],
+      style: ['primary', 'secondary'],
+      state: ['default', 'hover']
+    },
+    propertyDefinitions: {
+      text: { type: 'TEXT', defaultValue: 'Button' },
+      icon: { type: 'TEXT' },
+      iconPosition: {
+        type: 'VARIANT',
+        options: ['left', 'right'],
+        defaultValue: 'left'
+      }
+    },
+    variants: {
+      'primary-md-default': {
+        id: 'button-primary-md-default',
+        name: 'Button/Primary/Medium/Default',
+        variant: {
+          size: 'md',
+          style: 'primary',
+          state: 'default'
+        },
+        styles: 'flex items-center px-4 py-2 bg-blue-500 text-white rounded-md',
+        children: [
+          {
+            type: 'TEXT',
+            name: 'Icon/Left',
+            styles: 'text-white',
+            bind: {
+              text: 'icon',
+              visible: {
+                property: 'iconPosition',
+                value: 'left'
+              }
+            }
+          },
+          {
+            type: 'TEXT',
+            name: 'Label',
+            styles: 'text-white font-medium',
+            bind: { text: 'text' }
+          }
+        ]
+      }
+    }
+  }
+};
+
+// 2. Create the component set
+const componentSet = ComponentBuilder.buildComponentSet(buttonSystem);
+
+// 3. Create instances with different configurations
+const instances = [
+  // Default button
+  ComponentBuilder.buildInstance('button-primary-md-default', {
+    text: 'Default Button'
+  }),
+
+  // Button with icon
+  ComponentBuilder.buildInstance('button-primary-md-default', {
+    text: 'Icon Button',
+    icon: '→',
+    iconPosition: 'right'
+  }),
+
+  // Button with custom variant
+  ComponentBuilder.buildInstance('button-primary-md-default', {
+    text: 'Custom Button'
+  }, {
+    size: 'lg',
+    style: 'secondary'
+  })
+];
+
+// 4. Convert instances to nodes and add to page
+const container = figma.createFrame();
+container.name = 'Button Examples';
+container.layoutMode = 'VERTICAL';
+container.itemSpacing = 16;
+
+instances.forEach(instance => {
+  const node = ComponentBuilder.buildNode(instance);
+  container.appendChild(node);
+});
+```
+
+This integration example shows how to:
+- Define a complete component system
+- Create a component set
+- Generate multiple instances with different configurations
+- Handle property binding and variants
+- Organize components in a container
+- Apply layout properties
 
 ## Supported Style Properties
 
@@ -246,6 +1608,10 @@ border-[#FF0000] → strokes: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }]
 border-solid   → borderStyle: "SOLID"
 border-dashed  → borderStyle: "DASHED"
 border-dotted  → borderStyle: "DOTTED"
+
+// Border Dash Pattern
+border-dashed-[4,2]  → dashPattern: [4, 2]
+border-dashed-[5,3,2] → dashPattern: [5, 3, 2]
 ```
 
 ### Effects
@@ -286,93 +1652,6 @@ rounded-br-lg  → borderRadiusBottomRight: 8
 rounded-bl-lg  → borderRadiusBottomLeft: 8
 ```
 
-### Vector Node Properties
-
-Vector nodes allow you to create scalable vector graphics using SVG path data:
-
-```typescript
-{
-  "type": "VECTOR",
-  "name": "Arrow Icon",
-  "styles": "w-[24] h-[24] bg-[#111827]",
-  "paths": [
-    "M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"
-  ]
-}
-```
-
-## Usage Examples
-
-### Basic Usage
-
-```typescript
-import { processStyles, figmaToStyle } from '@easylogic/style';
-
-// Tailwind CSS → Figma
-const figmaStyles = processStyles('flex-col gap-[16] bg-[#f8f9fa] rounded-lg p-[24]');
-
-// Apply to Figma node
-node.layoutMode = figmaStyles.layout.layoutMode;
-node.itemSpacing = figmaStyles.layout.itemSpacing;
-node.fills = figmaStyles.fills;
-node.cornerRadius = figmaStyles.geometry.cornerRadius;
-node.paddingTop = figmaStyles.layout.paddingTop;
-node.paddingRight = figmaStyles.layout.paddingRight;
-node.paddingBottom = figmaStyles.layout.paddingBottom;
-node.paddingLeft = figmaStyles.layout.paddingLeft;
-
-// Figma → Tailwind CSS
-const figmaNode = {
-  layoutMode: "VERTICAL",
-  itemSpacing: 16,
-  fills: [{ type: "SOLID", color: { r: 0.97, g: 0.98, b: 0.98 } }],
-  cornerRadius: 8,
-  paddingTop: 24,
-  paddingRight: 24,
-  paddingBottom: 24,
-  paddingLeft: 24
-};
-
-const tailwindClasses = figmaToStyle(figmaNode);
-// Result: "flex-col gap-[16] bg-[#f8f9fa] rounded-lg p-[24]"
-```
-
-### Complex Examples
-
-```typescript
-// Text Styling
-const textStyles = processStyles('text-lg font-medium text-[#1a1a1a] leading-relaxed');
-
-// Card Component
-const cardStyles = processStyles('flex-col gap-[16] bg-white rounded-lg shadow-md p-[24] border border-[#e5e7eb]');
-
-// Button Component
-const buttonStyles = processStyles('flex-row justify-center items-center bg-[#3b82f6] text-white font-medium rounded-md px-[16] py-[8] shadow-sm');
-```
-
-### Working with Vector Nodes
-
-```typescript
-// Create a vector icon
-const iconNode = figma.createVector();
-const iconStyles = processStyles('w-[24] h-[24] bg-[#111827]');
-
-// Apply styles
-Object.assign(iconNode, {
-  width: iconStyles.width,
-  height: iconStyles.height,
-  fills: iconStyles.fills
-});
-
-// Add SVG path data
-iconNode.vectorPaths = [
-  {
-    windingRule: "EVENODD",
-    data: "M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"
-  }
-];
-```
-
 ## Value Parsing Rules
 
 ### Unit Handling
@@ -410,7 +1689,7 @@ p-4            → padding: 16
 
 ## Contributing
 
-We welcome contributions! If you'd like to improve @easylogic/style, please:
+We welcome contributions! If you'd like to improve @easylogic/cssma, please:
 
 1. Fork the repository
 2. Create a feature branch
@@ -423,3 +1702,5 @@ MIT License
 ---
 
 For more detailed usage and examples, please refer to the [documentation](../docs/spec.md).
+
+

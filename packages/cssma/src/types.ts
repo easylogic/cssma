@@ -54,6 +54,11 @@ export interface FigmaLineHeight {
   unit: 'PIXELS' | 'PERCENT';
 }
 
+export interface FigmaLetterSpacing {
+  value: number;
+  unit: 'PIXELS' | 'PERCENT';
+}
+
 export interface FigmaGradientStop {
   position: number;
   color: FigmaColor;
@@ -98,6 +103,7 @@ export type FigmaGradient =
 export interface FigmaSolidPaint {
   type: 'SOLID';
   color: FigmaColor;
+  variable?: string; // local variable name
   opacity?: number;
 }
 
@@ -170,8 +176,8 @@ export interface FigmaStyleProperties {
   paddingBottom?: number;
   textAlignHorizontal?: 'LEFT' | 'CENTER' | 'RIGHT' | 'JUSTIFIED';
   textAlignVertical?: 'TOP' | 'CENTER' | 'BOTTOM';
-  letterSpacing?: number;
-  lineHeight?: number | { value: number; unit: 'PIXELS' | 'PERCENT' };
+  letterSpacing?: number | FigmaLetterSpacing;
+  lineHeight?: number | FigmaLineHeight;
   textDecoration?: 'NONE' | 'UNDERLINE' | 'STRIKETHROUGH';
   fontSize?: number;
   fontName?: { family: string; style: string };
@@ -194,7 +200,8 @@ export interface FigmaStyleProperties {
   strokeWeight?: number;
   strokeAlign?: 'INSIDE' | 'OUTSIDE' | 'CENTER';
   dashPattern?: number[];  // 점선 패턴 (예: [4, 2])
-  paths?: string[];        // 벡터 경로 데이터
+  paths?: string[];        // 벡터 경로 데이터 (이전 버전 호환용)
+  vectorPaths?: VectorPath[]; // 벡터 경로 데이터
   // Position-related properties
   position?: 'ABSOLUTE' | 'RELATIVE' | 'FIXED';
   x?: number;
@@ -225,4 +232,101 @@ export interface CompactNodeData {
   styles: string;
   children?: CompactNodeData[];
   props?: Record<string, any>;
+}
+
+export interface BindingCondition {
+  property: string;
+  value: string;
+}
+
+export interface Binding {
+  text?: string;
+  visible?: BindingCondition;
+  [key: string]: string | BindingCondition | undefined;
+}
+
+export interface NodeData {
+  type: string;
+  id?: string;         // 명시적 ID 지원
+  name?: string;
+  styles?: string;
+  text?: string;
+  children?: NodeData[];
+  props?: Record<string, any>;
+  bind?: Binding;
+}
+
+export interface ComponentProps {
+  propertyDefinitions?: Record<string, {
+    type: string;
+    defaultValue?: any;
+    options?: string[];
+  }>;
+  variantProperties?: Record<string, string>;
+  boundVariables?: Record<string, {
+    type: string;
+    property: string;
+  }>;
+  componentProperties?: Record<string, any>;
+}
+
+export type NodeType = 
+  | 'FRAME'
+  | 'TEXT'
+  | 'RECTANGLE'
+  | 'ELLIPSE'
+  | 'POLYGON'
+  | 'STAR'
+  | 'VECTOR'
+  | 'LINE'
+  | 'COMPONENT'
+  | 'COMPONENT_SET'
+  | 'INSTANCE';
+
+export interface ComponentVariantProps {
+  id: string;         // variant ID
+  name: string;       // variant name (e.g. Button/Primary/Small/Default)
+  variant: {
+    size?: string;
+    style?: string;
+    state?: string;
+    [key: string]: string | undefined;
+  };
+  styles?: string;
+  children?: NodeData[];
+}
+
+export interface PropertyDefinition {
+  type: 'TEXT' | 'BOOLEAN' | 'VARIANT' | 'NUMBER';
+  defaultValue?: any;
+  options?: string[];
+}
+
+export interface ComponentDefinition {
+  type: 'COMPONENT_SET';
+  id: string;         // Component Set ID
+  name: string;       // Base name (e.g. "Button")
+  props: {
+    variantProperties: {
+      [key: string]: string[];  // e.g. size: ['sm', 'md', 'lg']
+    };
+    propertyDefinitions: {
+      [key: string]: PropertyDefinition;
+    };
+    variants: {
+      [key: string]: ComponentVariantProps;
+    };
+  };
+  defaultVariant: string;
+}
+
+export interface ComponentInstance extends NodeData {
+  type: 'INSTANCE';
+  componentId: string;  // Reference to variant component ID
+  variantProps: {      // Must match variantProperties from ComponentDefinition
+    [key: string]: string;
+  };
+  properties: {        // Must match propertyDefinitions from ComponentDefinition
+    [key: string]: any;
+  };
 }

@@ -47,7 +47,7 @@ export function dataBindingExample() {
   const cardTemplate: NodeData = {
     type: 'FRAME',
     name: 'Card',
-    styles: 'flex-col bg-white rounded-lg p-[16] gap-[8]',
+    styles: 'flex-col bg-{{backgroundColor}} rounded-lg p-[16] gap-[8]',
     children: [
       {
         type: 'FRAME',
@@ -57,7 +57,7 @@ export function dataBindingExample() {
       {
         type: 'TEXT',
         name: 'Title',
-        styles: 'text-xl font-bold',
+        styles: 'text-xl font-bold text-{{textColor}}',
         text: '{{title}}'
       },
       {
@@ -69,9 +69,11 @@ export function dataBindingExample() {
     ]
   };
   
-  // 바인딩할 데이터
+  // 데이터 정의
   const cardData = {
+    backgroundColor: 'white',
     imageColor: 'blue-500',
+    textColor: 'gray-800',
     title: '데이터 바인딩 카드',
     description: '이 카드는 데이터 바인딩으로 생성되었습니다.'
   };
@@ -89,15 +91,15 @@ export function dataBindingExample() {
  * 리스트 생성 예제
  */
 export function listExample() {
-  // 컨테이너 템플릿 정의
-  const containerTemplate: NodeData = {
+  // 리스트 컨테이너 템플릿
+  const listContainerTemplate: NodeData = {
     type: 'FRAME',
     name: 'List Container',
     styles: 'flex-col bg-gray-100 rounded-lg p-[16] gap-[12]'
   };
   
-  // 아이템 템플릿 정의
-  const itemTemplate: NodeData = {
+  // 리스트 아이템 템플릿
+  const listItemTemplate: NodeData = {
     type: 'FRAME',
     name: 'List Item',
     styles: 'flex-row w-full h-[80] bg-white rounded-lg p-[12] gap-[12] items-center',
@@ -149,7 +151,42 @@ export function listExample() {
   ];
   
   // 리스트 노드 생성
-  const listNode = createListFromData(containerTemplate, itemTemplate, listData);
+  const listNode = createNodeForData({
+    type: 'FRAME',
+    name: 'List Container',
+    styles: 'flex-col bg-gray-100 rounded-lg p-[16] gap-[12]',
+    children: listData.map(item => ({
+      type: 'FRAME',
+      name: `List Item - ${item.name}`,
+      styles: 'flex-row w-full h-[80] bg-white rounded-lg p-[12] gap-[12] items-center',
+      children: [
+        {
+          type: 'FRAME',
+          name: 'Avatar',
+          styles: `w-[56] h-[56] bg-${item.color} rounded-full`
+        },
+        {
+          type: 'FRAME',
+          name: 'Content',
+          styles: 'flex-col gap-[4]',
+          children: [
+            {
+              type: 'TEXT',
+              name: 'Name',
+              styles: 'font-medium',
+              text: item.name
+            },
+            {
+              type: 'TEXT',
+              name: 'Email',
+              styles: 'text-sm text-gray-600',
+              text: item.email
+            }
+          ]
+        }
+      ]
+    }))
+  });
   
   // 현재 페이지에 추가
   figma.currentPage.appendChild(listNode);

@@ -61,6 +61,8 @@ export function convertTextToFigma(style: ParsedStyle): Partial<FigmaStyleProper
     case 'letterSpacing':
       if (typeof style.value === 'number') {
         result.letterSpacing = style.value;
+      } else if (typeof style.value === 'object' && 'value' in style.value && 'unit' in style.value) {
+        result.letterSpacing = style.value;
       }
       break;
 

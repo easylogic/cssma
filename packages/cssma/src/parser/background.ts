@@ -70,16 +70,25 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
     const [, type, value] = match;
     
     // 배경색 처리
-    if (type === 'bg' && (value.startsWith('#') || value.startsWith('rgb'))) {
-      if (!isValidHexColor(value) && !isValidRgbColor(value)) {
-        return null;
+    if (type === 'bg') { 
+      if (value.startsWith('#') || value.startsWith('rgb')) {
+        if (!isValidHexColor(value) && !isValidRgbColor(value)) {
+          return null;
+        }
+        return {
+          property: 'backgroundColor',
+          value,
+          opacity,
+          variant: 'arbitrary'
+        };
+      } else if (value.indexOf('/') > -1) {
+        return {
+          property: 'backgroundColor',
+          value,
+          opacity,
+          variant: 'variable'
+        };
       }
-      return {
-        property: 'backgroundColor',
-        value,
-        opacity,
-        variant: 'arbitrary'
-      };
     }
 
     // 그라디언트 색상 처리
