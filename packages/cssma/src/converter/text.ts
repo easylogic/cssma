@@ -5,6 +5,9 @@ import { parseColor } from 'src/utils/colors';
 const TEXT_ALIGN_VALUES = ['LEFT', 'CENTER', 'RIGHT', 'JUSTIFIED'] as const;
 type TextAlignValue = typeof TEXT_ALIGN_VALUES[number];
 
+const TEXT_ALIGN_VERTICAL_VALUES = ['TOP', 'CENTER', 'BOTTOM'] as const;
+type TextAlignVerticalValue = typeof TEXT_ALIGN_VERTICAL_VALUES[number];
+
 const TEXT_DECORATION_VALUES = ['UNDERLINE', 'STRIKETHROUGH', 'NONE'] as const;
 type TextDecorationValue = typeof TEXT_DECORATION_VALUES[number];
 
@@ -27,6 +30,9 @@ type FigmaVariableText = {
     lineHeight?: BoundVariable;
     letterSpacing?: BoundVariable;
     fontName?: BoundVariable;
+    textAlignVertical?: BoundVariable;
+    paragraphSpacing?: BoundVariable;
+    paragraphIndent?: BoundVariable;
   };
   fills?: FigmaVariableSolidPaint[];
 };
@@ -108,8 +114,16 @@ export function convertTextToFigma(style: ParsedStyle): Partial<FigmaVariableSty
       break;
 
     case 'textAlignVertical':
-      if (typeof style.value === 'string') {
-        result.textAlignVertical = style.value as 'TOP' | 'CENTER' | 'BOTTOM';
+      if (style.variant === 'figma-variable' && style.variableId) {
+        result.textAlignVertical = 'TOP';
+        result.boundVariables = {
+          textAlignVertical: {
+            type: 'VARIABLE_ALIAS',
+            id: style.variableId
+          }
+        };
+      } else if (typeof style.value === 'string' && TEXT_ALIGN_VERTICAL_VALUES.includes(style.value as TextAlignVerticalValue)) {
+        result.textAlignVertical = style.value as TextAlignVerticalValue;
       }
       break;
 

@@ -56,6 +56,12 @@ export function parseStyleValue(className: string, fontState?: FontState): Parse
 
   // Text 관련 스타일
   if (className.startsWith('text-') || 
+      className.startsWith('text-wrap') ||
+      className.startsWith('align-') ||
+      className === 'uppercase' || 
+      className === 'lowercase' || 
+      className === 'capitalize' || 
+      className === 'normal-case' || 
       className === 'underline' || 
       className === 'line-through' || 
       className === 'no-underline') {

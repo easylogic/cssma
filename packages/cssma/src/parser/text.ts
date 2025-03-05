@@ -61,11 +61,86 @@ const PARAGRAPH_INDENT_MAP = {
   'lg': 32
 } as const;
 
+const TEXT_AUTO_RESIZE_MAP = {
+  'fixed': 'NONE',
+  'auto': 'WIDTH_AND_HEIGHT',
+  'auto-h': 'HEIGHT',
+  'truncate': 'TRUNCATE'
+} as const;
+
+const TEXT_CASE_MAP = {
+  'uppercase': 'UPPER',
+  'lowercase': 'LOWER',
+  'capitalize': 'TITLE',
+  'normal-case': 'ORIGINAL'
+} as const;
+
+const TEXT_TRUNCATION_MAP = {
+  'truncate-none': 'DISABLED',
+  'truncate-end': 'ENDING'
+} as const;
+
+const TEXT_WRAP_MAP = {
+  'wrap-balance': 'BALANCE',
+  'wrap': 'WRAP',
+  'wrap-truncate': 'TRUNCATE'
+} as const;
+
+// Helper function to handle text properties
+function handleTextProperty(value: string): ParsedStyle | null {
+  // Text Auto Resize
+  if (TEXT_AUTO_RESIZE_MAP[value as keyof typeof TEXT_AUTO_RESIZE_MAP]) {
+    return {
+      property: 'textAutoResize',
+      value: TEXT_AUTO_RESIZE_MAP[value as keyof typeof TEXT_AUTO_RESIZE_MAP],
+      variant: 'preset'
+    };
+  }
+
+  // Text Case
+  if (TEXT_CASE_MAP[value as keyof typeof TEXT_CASE_MAP]) {
+    return {
+      property: 'textCase',
+      value: TEXT_CASE_MAP[value as keyof typeof TEXT_CASE_MAP],
+      variant: 'preset'
+    };
+  }
+
+  // Text Truncation
+  if (TEXT_TRUNCATION_MAP[value as keyof typeof TEXT_TRUNCATION_MAP]) {
+    return {
+      property: 'textTruncation',
+      value: TEXT_TRUNCATION_MAP[value as keyof typeof TEXT_TRUNCATION_MAP],
+      variant: 'preset'
+    };
+  }
+
+  // Text Wrap
+  if (value === 'wrap' || TEXT_WRAP_MAP[value as keyof typeof TEXT_WRAP_MAP]) {
+    return {
+      property: 'textWrap',
+      value: value === 'wrap' ? 'WRAP' : TEXT_WRAP_MAP[value as keyof typeof TEXT_WRAP_MAP],
+      variant: 'preset'
+    };
+  }
+
+  return null;
+}
+
 export function parseTextStyleValue(className: string): ParsedStyle | null {
   // opacity 처리를 위한 분리
   let opacity: number | undefined;
   let prefix = className;
   
+  // Handle truncate class directly
+  if (prefix === 'truncate') {
+    return {
+      property: 'textAutoResize',
+      value: 'TRUNCATE',
+      variant: 'preset'
+    };
+  }
+
   // Figma 변수가 아닌 부분에서 마지막 '/'를 찾아 opacity 처리
   const lastSlashIndex = className.lastIndexOf('/');
   if (lastSlashIndex !== -1) {
@@ -113,6 +188,15 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
       // Paragraph indent variable
       if (type === 'indent') {
         return createFigmaVariableStyle('paragraphIndent', variableId);
+      }
+
+      // Text wrap variable
+      if (type === 'text-wrap') {
+        return createFigmaVariableStyle('textWrap', variableId);
+      }
+
+      if (type === 'align') {
+        return createFigmaVariableStyle('textAlignVertical', variableId);
       }
     }
     return null;
@@ -234,9 +318,28 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
     }
   }
 
-  // 프리셋 값 처리
+  // Handle text properties
   if (prefix.startsWith('text-')) {
     const value = prefix.replace('text-', '');
+    
+    // Text Auto Resize
+    if (TEXT_AUTO_RESIZE_MAP[value as keyof typeof TEXT_AUTO_RESIZE_MAP]) {
+      return {
+        property: 'textAutoResize',
+        value: TEXT_AUTO_RESIZE_MAP[value as keyof typeof TEXT_AUTO_RESIZE_MAP],
+        variant: 'preset'
+      };
+    }
+
+    // Text Truncation
+    if (TEXT_TRUNCATION_MAP[value as keyof typeof TEXT_TRUNCATION_MAP] || value === 'truncate') {
+      return {
+        property: 'textTruncation',
+        value: value === 'truncate' ? 'ENDING' : TEXT_TRUNCATION_MAP[value as keyof typeof TEXT_TRUNCATION_MAP],
+        variant: 'preset'
+      };
+    }
+
     // Font size
     if (FONT_SIZES[value]) {
       return {
@@ -245,6 +348,10 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
         variant: 'preset'
       };
     }
+
+    // Text properties (auto resize, case)
+    const textPropertyResult = handleTextProperty(value);
+    if (textPropertyResult) return textPropertyResult;
 
     // Horizontal text alignment
     if (TEXT_ALIGN_HORIZONTAL_MAP[value as keyof typeof TEXT_ALIGN_HORIZONTAL_MAP]) {
@@ -273,13 +380,22 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
         variant: 'preset'
       };
     }
+
+    // Text Case with Figma variables
+    if (value.startsWith('text-case-$[')) {
+      const variableId = extractFigmaVariableId(value.replace('text-case-', ''));
+      if (variableId) {
+        return createFigmaVariableStyle('textCase', variableId);
+      }
+      return null;
+    }
   }
 
   // Text transform
-  if (TEXT_TRANSFORM_MAP[prefix as keyof typeof TEXT_TRANSFORM_MAP]) {
+  if (TEXT_CASE_MAP[prefix as keyof typeof TEXT_CASE_MAP]) {
     return {
-      property: 'textTransform',
-      value: TEXT_TRANSFORM_MAP[prefix as keyof typeof TEXT_TRANSFORM_MAP],
+      property: 'textCase',
+      value: TEXT_CASE_MAP[prefix as keyof typeof TEXT_CASE_MAP],
       variant: 'preset'
     };
   }
@@ -338,6 +454,34 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
       return {
         property: 'paragraphIndent',
         value: PARAGRAPH_INDENT_MAP[value as keyof typeof PARAGRAPH_INDENT_MAP],
+        variant: 'preset'
+      };
+    }
+  }
+
+  // Handle vertical alignment directly
+  if (prefix.startsWith('align-')) {
+    const value = prefix.replace('align-', '');
+
+    // Handle Figma variables for vertical alignment
+    if (value.startsWith('$[')) {
+      const variableId = extractFigmaVariableId(value);
+      if (variableId) {
+        return {
+          property: 'textAlignVertical',
+          value: variableId,
+          variant: 'figma-variable',
+          variableId: variableId
+        };
+      }
+      return null;
+    }
+
+    // Handle preset vertical alignment values
+    if (TEXT_ALIGN_VERTICAL_MAP[value as keyof typeof TEXT_ALIGN_VERTICAL_MAP]) {
+      return {
+        property: 'textAlignVertical',
+        value: TEXT_ALIGN_VERTICAL_MAP[value as keyof typeof TEXT_ALIGN_VERTICAL_MAP],
         variant: 'preset'
       };
     }

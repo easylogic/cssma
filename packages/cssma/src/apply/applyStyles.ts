@@ -1,12 +1,15 @@
 import { findVariableByName } from 'src/utils/figma-variable';
 import { processStyles } from '../index';
-import { FigmaVariablePaint, FigmaVariableGradientStop } from '../types';
+import { FigmaSolidPaint, FigmaGradientStop, FigmaStyleProperties, FigmaPaint } from '../types';
 
 type TextVariableTypes = {
   fontSize: number;
   fontName: FontName;
   lineHeight: LineHeight;
   letterSpacing: LetterSpacing;
+  textAlignVertical: 'TOP' | 'CENTER' | 'BOTTOM';
+  paragraphSpacing: number;
+  paragraphIndent: number;
 };
 
 type TextVariableValue = {
@@ -14,46 +17,69 @@ type TextVariableValue = {
   value?: any;
 };
 
+type ExtendedFigmaStyleProperties = FigmaStyleProperties & {
+  minWidth?: number;
+  maxWidth?: number;
+  minHeight?: number;
+  maxHeight?: number;
+  strokeTopWeight?: number;
+  strokeRightWeight?: number;
+  strokeBottomWeight?: number;
+  strokeLeftWeight?: number;
+};
+
+type BoundVariablePaint = FigmaPaint & {
+  boundVariables?: {
+    color?: {
+      type: "VARIABLE_ALIAS";
+      id: string;
+    };
+  };
+};
+
 /**
  * Process Paint objects with Figma variables.
  */
-async function processVariablePaint(paint: FigmaVariablePaint): Promise<Paint> {
+async function processVariablePaint(paint: BoundVariablePaint): Promise<Paint> {
   // Handle solid color variables
   if (paint.type === 'SOLID' && paint.boundVariables?.color) {
     const variable = await findVariableByName(paint.boundVariables.color.id);
     if (!variable) return paint as Paint;
 
-    return figma.variables.setBoundVariableForPaint(
+    const result = await figma.variables.setBoundVariableForPaint(
       {
         type: 'SOLID',
         color: { r: 0, g: 0, b: 0 },
-        ...(paint.opacity !== undefined && { opacity: paint.opacity })
-      },
+        opacity: ('opacity' in paint) ? paint.opacity : undefined
+      } as SolidPaint,
       'color',
       variable
-    ) as Paint;
+    );
+
+    return result;
   }
 
   // Handle gradient variables
   if (['GRADIENT_LINEAR', 'GRADIENT_RADIAL', 'GRADIENT_ANGULAR'].includes(paint.type)) {
+    const gradientPaint = paint as unknown as GradientPaint;
     const stops = await Promise.all(
-      (paint as any).gradientStops.map(async (stop: FigmaVariableGradientStop) => {
-        if (stop.boundVariables?.color) {
+      gradientPaint.gradientStops.map(async (stop) => {
+        if ('boundVariables' in stop && stop.boundVariables?.color) {
           const variable = await findVariableByName(stop.boundVariables.color.id);
           if (!variable) return stop;
 
-          const paint = await figma.variables.setBoundVariableForPaint(
+          const result = await figma.variables.setBoundVariableForPaint(
             {
               type: 'SOLID',
               color: { r: 0, g: 0, b: 0 }
-            },
+            } as SolidPaint,
             'color',
             variable
-          ) as SolidPaint;
+          );
 
           return {
             ...stop,
-            color: paint.color
+            color: (result as SolidPaint).color
           };
         }
         return stop;
@@ -61,8 +87,9 @@ async function processVariablePaint(paint: FigmaVariablePaint): Promise<Paint> {
     );
 
     return {
-      ...paint,
-      gradientStops: stops
+      ...gradientPaint,
+      gradientStops: stops,
+      gradientTransform: gradientPaint.gradientTransform || [[1, 0, 0], [0, 1, 0]]
     } as Paint;
   }
 
@@ -75,7 +102,7 @@ async function processVariablePaint(paint: FigmaVariablePaint): Promise<Paint> {
 async function processTextVariable(
   node: TextNode,
   variableId: string,
-  propertyType: 'fontSize' | 'fontName' | 'lineHeight' | 'letterSpacing' | 'paragraphSpacing' | 'paragraphIndent'
+  propertyType: keyof TextVariableTypes
 ): Promise<any | null> {
   const variable = await findVariableByName(variableId);
   if (!variable) return null;
@@ -112,7 +139,7 @@ export async function applyStyles<T extends SceneNode>(node: T, styles: string =
   if (!styles) return node;
   
   try {
-    const styleObject = processStyles(styles);
+    const styleObject = processStyles(styles) as ExtendedFigmaStyleProperties;
     
     // Check node type for applicable properties
     const isFrameLike = ['FRAME', 'COMPONENT', 'INSTANCE', 'SECTION'].includes(node.type);
@@ -244,7 +271,7 @@ export async function applyStyles<T extends SceneNode>(node: T, styles: string =
       const fillableNode = node as SceneNode & { fills: ReadonlyArray<Paint> | Paint[] };
       if (styleObject.fills) {
         fillableNode.fills = await Promise.all(
-          styleObject.fills.map(fill => processVariablePaint(fill as FigmaVariablePaint))
+          styleObject.fills.map(async (fill) => processVariablePaint(fill))
         );
       }
     }
@@ -262,7 +289,7 @@ export async function applyStyles<T extends SceneNode>(node: T, styles: string =
       
       if (styleObject.strokes !== undefined) {
         strokeableNode.strokes = await Promise.all(
-          styleObject.strokes.map(stroke => processVariablePaint(stroke as FigmaVariablePaint))
+          styleObject.strokes.map(async (stroke) => processVariablePaint(stroke))
         );
       }
       

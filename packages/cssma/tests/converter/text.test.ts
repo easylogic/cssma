@@ -357,4 +357,64 @@ describe('Text Converter', () => {
       });
     });
   });
+
+  describe('Text Vertical Alignment', () => {
+    it('should convert vertical alignment values', () => {
+      const testCases: { input: ParsedStyle; expected: any }[] = [
+        {
+          input: {
+            property: 'textAlignVertical',
+            value: 'TOP',
+            variant: 'preset'
+          },
+          expected: {
+            textAlignVertical: 'TOP'
+          }
+        },
+        {
+          input: {
+            property: 'textAlignVertical',
+            value: 'CENTER',
+            variant: 'preset'
+          },
+          expected: {
+            textAlignVertical: 'CENTER'
+          }
+        },
+        {
+          input: {
+            property: 'textAlignVertical',
+            value: 'BOTTOM',
+            variant: 'preset'
+          },
+          expected: {
+            textAlignVertical: 'BOTTOM'
+          }
+        }
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        expect(convertTextToFigma(input)).toEqual(expected);
+      });
+    });
+
+    it('should convert vertical alignment with Figma variables', () => {
+      const input: ParsedStyle = {
+        property: 'textAlignVertical',
+        value: 'typography/vertical/default',
+        variant: 'figma-variable',
+        variableId: 'typography/vertical/default'
+      };
+
+      expect(convertTextToFigma(input)).toEqual({
+        textAlignVertical: 'TOP',
+        boundVariables: {
+          textAlignVertical: {
+            type: 'VARIABLE_ALIAS',
+            id: 'typography/vertical/default'
+          }
+        }
+      });
+    });
+  });
 }); 

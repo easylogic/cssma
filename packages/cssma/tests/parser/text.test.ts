@@ -269,15 +269,15 @@ describe('Text Style Parser', () => {
   describe('Text Transform', () => {
     it('should parse text transform values', () => {
       const testCases = [
-        { input: 'uppercase', expected: 'UPPERCASE' },
-        { input: 'lowercase', expected: 'LOWERCASE' },
-        { input: 'capitalize', expected: 'CAPITALIZE' },
-        { input: 'normal-case', expected: 'NONE' }
+        { input: 'uppercase', expected: 'UPPER' },
+        { input: 'lowercase', expected: 'LOWER' },
+        { input: 'capitalize', expected: 'TITLE' },
+        { input: 'normal-case', expected: 'ORIGINAL' }
       ];
 
       testCases.forEach(({ input, expected }) => {
         expect(parseTextStyleValue(input)).toEqual({
-          property: 'textTransform',
+          property: 'textCase',
           value: expected,
           variant: 'preset'
         });
@@ -434,6 +434,176 @@ describe('Text Style Parser', () => {
           variant: 'figma-variable',
           variableId: 'typography/indent/normal'
         });
+      });
+    });
+  });
+
+  describe('Text Auto Resize', () => {
+    it('should parse text auto resize values', () => {
+      const testCases = [
+        { input: 'text-fixed', expected: 'NONE' },
+        { input: 'text-auto', expected: 'WIDTH_AND_HEIGHT' },
+        { input: 'text-auto-h', expected: 'HEIGHT' },
+        { input: 'text-truncate', expected: 'TRUNCATE' }
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        expect(parseTextStyleValue(input)).toEqual({
+          property: 'textAutoResize',
+          value: expected,
+          variant: 'preset'
+        });
+      });
+    });
+
+    it('should handle invalid text auto resize values', () => {
+      const invalidCases = [
+        'text-auto-invalid',
+        'text-resize',
+        'auto-text'
+      ];
+
+      invalidCases.forEach(input => {
+        expect(parseTextStyleValue(input)).toBeNull();
+      });
+    });
+  });
+
+  describe('Text Case', () => {
+    it('should parse text case values', () => {
+      const testCases = [
+        { input: 'uppercase', expected: 'UPPER' },
+        { input: 'lowercase', expected: 'LOWER' },
+        { input: 'capitalize', expected: 'TITLE' },
+        { input: 'normal-case', expected: 'ORIGINAL' }
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        expect(parseTextStyleValue(input)).toEqual({
+          property: 'textCase',
+          value: expected,
+          variant: 'preset'
+        });
+      });
+    });
+
+
+    it('should handle invalid text case values', () => {
+      const invalidCases = [
+        'text-smallcase',
+        'text-case-invalid',
+        'case-upper'
+      ];
+
+      invalidCases.forEach(input => {
+        expect(parseTextStyleValue(input)).toBeNull();
+      });
+    });
+  });
+
+  describe('Text Truncation', () => {
+    it('should parse text truncation values', () => {
+      const testCases = [
+        { input: 'text-truncate-none', expected: 'DISABLED' },
+        { input: 'text-truncate-end', expected: 'ENDING' }
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        expect(parseTextStyleValue(input)).toEqual({
+          property: 'textTruncation',
+          value: expected,
+          variant: 'preset'
+        });
+      });
+    });
+
+    it('should handle invalid text truncation values', () => {
+      const invalidCases = [
+        'text-truncate-middle',
+        'truncate-start',
+        'text-clip'
+      ];
+
+      invalidCases.forEach(input => {
+        expect(parseTextStyleValue(input)).toBeNull();
+      });
+    });
+  });
+
+  describe('Text Wrap', () => {
+    it('should parse text wrap values', () => {
+      const testCases = [
+        { input: 'text-wrap-balance', expected: 'BALANCE' },
+        { input: 'text-wrap', expected: 'WRAP' },
+        { input: 'text-wrap-truncate', expected: 'TRUNCATE' }
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        expect(parseTextStyleValue(input)).toEqual({
+          property: 'textWrap',
+          value: expected,
+          variant: 'preset'
+        });
+      });
+    });
+
+    it('should handle text wrap with Figma variables', () => {
+      expect(parseTextStyleValue('text-wrap-$[typography/wrap/default]')).toEqual({
+        property: 'textWrap',
+        value: 'typography/wrap/default',
+        variant: 'figma-variable',
+        variableId: 'typography/wrap/default'
+      });
+    });
+
+    it('should handle invalid text wrap values', () => {
+      const invalidCases = [
+        'text-wrap-invalid',
+        'wrap-text',
+        'text-nowrap'
+      ];
+
+      invalidCases.forEach(input => {
+        expect(parseTextStyleValue(input)).toBeNull();
+      });
+    });
+  });
+
+  describe('Text Vertical Alignment', () => {
+    it('should parse vertical alignment values', () => {
+      const testCases = [
+        { input: 'align-top', expected: 'TOP' },
+        { input: 'align-middle', expected: 'CENTER' },
+        { input: 'align-bottom', expected: 'BOTTOM' }
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        expect(parseTextStyleValue(input)).toEqual({
+          property: 'textAlignVertical',
+          value: expected,
+          variant: 'preset'
+        });
+      });
+    });
+
+    it('should handle invalid vertical alignment values', () => {
+      const invalidCases = [
+        'align-center',
+        'vertical-top',
+        'text-align-middle'
+      ];
+
+      invalidCases.forEach(input => {
+        expect(parseTextStyleValue(input)).toBeNull();
+      });
+    });
+
+    it('should parse vertical alignment with Figma variables', () => {
+      expect(parseTextStyleValue('align-$[typography/vertical/default]')).toEqual({
+        property: 'textAlignVertical',
+        value: 'typography/vertical/default',
+        variant: 'figma-variable',
+        variableId: 'typography/vertical/default'
       });
     });
   });

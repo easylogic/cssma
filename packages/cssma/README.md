@@ -1322,6 +1322,29 @@ text-center    → textAlignHorizontal: "CENTER"
 text-right     → textAlignHorizontal: "RIGHT"
 text-justify   → textAlignHorizontal: "JUSTIFIED"
 
+// Text Transform
+uppercase      → textCase: "UPPER"
+lowercase      → textCase: "LOWER"
+capitalize     → textCase: "TITLE"
+normal-case    → textCase: "ORIGINAL"
+
+
+// Text Vertical Alignment
+align-top      → textAlignVertical: "TOP"
+align-middle   → textAlignVertical: "CENTER"
+align-bottom   → textAlignVertical: "BOTTOM"
+
+// Text Auto-Size
+text-auto-none → textAutoSize: "NONE"
+text-auto-wh      → textAutoSize: "WIDTH_AND_HEIGHT"
+text-truncate  → textAutoSize: "TRUNCATE"
+text-auto-h → textAutoSize: "HEIGHT"
+
+// text wrap
+text-wrap-balance → textWrap: "BALANCE"
+text-wrap    → textWrap: "WRAP"
+text-wrap-truncate → textWrap: "TRUNCATE"
+
 // Text Decoration
 underline      → textDecoration: "UNDERLINE"
 line-through   → textDecoration: "STRIKETHROUGH"
