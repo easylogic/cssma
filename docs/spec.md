@@ -1168,16 +1168,16 @@ p-4            → padding: 16
 #### Variable References
 ```typescript
 // Basic Variable Reference
-bg-[button/background]  → fills: setBoundVariableForPaint(paint, "color", variable)
-text-[text/primary]     → fills: setBoundVariableForPaint(paint, "color", variable)
-p-[spacing/md]         → padding: setBoundVariableForNumber("padding", variable)
+bg-$[button/background]  → fills: setBoundVariableForPaint(paint, "color", variable)
+text-$[text/primary]     → fills: setBoundVariableForPaint(paint, "color", variable)
+p-$[spacing/md]         → padding: setBoundVariableForNumber("padding", variable)
 
 // Variable with Opacity
-bg-[button/background]/50  → fills: setBoundVariableForPaint(paint, "color", variable, 0.5)
-text-[text/primary]/75     → fills: setBoundVariableForPaint(paint, "color", variable, 0.75)
+bg-$[button/background]/50  → fills: setBoundVariableForPaint(paint, "color", variable, 0.5)
+text-$[text/primary]/75     → fills: setBoundVariableForPaint(paint, "color", variable, 0.75)
 
 // Multiple Variable References
-border-[border/width] border-[border/color]  → 
+border-$[border/width] border-$[border/color]  → 
   strokes: setBoundVariableForPaint(paint, "color", colorVar)
   strokeWeight: setBoundVariableForNumber("strokeWeight", widthVar)
 ```
@@ -1185,8 +1185,8 @@ border-[border/width] border-[border/color]  →
 #### Variable Collections
 ```typescript
 // Collection Organization
-[collection/variable]   → Finds variable in specified collection
-[variable]             → Finds variable in any collection
+$[collection/variable]   → Finds variable in specified collection
+$[variable]             → Finds variable in any collection
 
 // Collection Types
 local                  → Local file variables
@@ -1196,17 +1196,17 @@ team                   → Team library variables
 #### Variable Types
 ```typescript
 // Color Variables
-bg-[colors/primary]    → Color variable for background
-text-[colors/text]     → Color variable for text
-border-[colors/border] → Color variable for border
+bg-$[colors/primary]    → Color variable for background
+text-$[colors/text]     → Color variable for text
+border-$[colors/border] → Color variable for border
 
 // Number Variables
-p-[spacing/sm]        → Number variable for spacing
-gap-[spacing/md]      → Number variable for gap
-text-[size/body]      → Number variable for font size
+p-$[spacing/sm]        → Number variable for spacing
+gap-$[spacing/md]      → Number variable for gap
+text-$[size/body]      → Number variable for font size
 
 // Boolean Variables
-hidden-[state/isHidden] → Boolean variable for visibility
+hidden-$[state/isHidden] → Boolean variable for visibility
 ```
 
 ### Variable Binding Examples
@@ -1216,7 +1216,7 @@ hidden-[state/isHidden] → Boolean variable for visibility
 {
   "type": "FRAME",
   "name": "Button",
-  "styles": "bg-[button/background] text-[button/text]"
+  "styles": "bg-$[button/background] text-$[button/text]"
 }
 ```
 
@@ -1225,7 +1225,7 @@ hidden-[state/isHidden] → Boolean variable for visibility
 {
   "type": "FRAME",
   "name": "Card",
-  "styles": "p-[spacing/lg] gap-[spacing/md]"
+  "styles": "p-$[spacing/lg] gap-$[spacing/md]"
 }
 ```
 
@@ -1234,8 +1234,26 @@ hidden-[state/isHidden] → Boolean variable for visibility
 {
   "type": "FRAME",
   "name": "Input",
-  "styles": "border-[input/borderWidth] border-[input/borderColor] p-[input/padding]"
+  "styles": "border-$[input/borderWidth] border-$[input/borderColor] p-$[input/padding]"
 }
+```
+
+### Value Parsing Rules
+
+#### Variable Syntax
+```typescript
+// Basic Syntax
+$[variable]            → Direct variable reference
+$[collection/variable] → Collection-scoped variable reference
+
+// With Property
+bg-$[variable]        → Variable used as background color
+text-$[variable]      → Variable used as text color
+p-$[variable]         → Variable used as padding
+
+// With Opacity
+bg-$[variable]/50     → Variable with 50% opacity
+text-$[variable]/75   → Variable with 75% opacity
 ```
 
 ### Notes and Constraints
@@ -1244,19 +1262,79 @@ hidden-[state/isHidden] → Boolean variable for visibility
    - Variables must exist in the Figma file or team library
    - Local variables take precedence over team variables
    - Invalid variable references are ignored
+   - The `$[ ]` syntax is specifically for Figma variables
 
 2. **Variable Types**
    - Color variables can be used for fills, strokes, and effects
    - Number variables can be used for spacing, sizing, and opacity
    - Boolean variables can be used for visibility and other toggles
 
-3. **Performance Considerations**
-   - Variable bindings are more performant than static values
-   - Use variables for frequently changed values
-   - Consider caching variable references
+3. **Syntax Rules**
+   - `$[ ]` is required for all Figma variable references
+   - Collection path is optional but recommended
+   - Variable names are case-sensitive
+   - Opacity values must be between 0 and 100
 
 4. **Best Practices**
    - Use consistent naming conventions
    - Organize variables in logical collections
    - Document variable usage and purpose
    - Consider variable scope and access
+   - Use collection paths for better organization
+   - Validate variable existence before use
+
+5. **Performance Considerations**
+   - Variable bindings are more performant than static values
+   - Use variables for frequently changed values
+   - Consider caching variable references
+   - Group related variables in the same collection
+
+6. **Error Handling**
+   - Missing variables should fall back to default values
+   - Invalid variable types should be caught and reported
+   - Variable binding errors should be logged
+   - Consider providing fallback values in code
+```
+
+### Size Constraints
+```typescript
+// Min Width
+min-w-[100]    → minWidth: 100
+min-w-0        → minWidth: 0
+min-w-full     → minWidth: "100%"
+
+// Max Width
+max-w-[200]    → maxWidth: 200
+max-w-none     → maxWidth: Infinity
+max-w-full     → maxWidth: "100%"
+
+// Min Height
+min-h-[50]     → minHeight: 50
+min-h-0        → minHeight: 0
+min-h-full     → minHeight: "100%"
+
+// Max Height
+max-h-[150]    → maxHeight: 150
+max-h-none     → maxHeight: Infinity
+max-h-full     → maxHeight: "100%"
+```
+
+### Individual Stroke Weights
+```typescript
+// Individual Border Widths
+stroke-t-[2]   → strokeTopWeight: 2
+stroke-r-[2]   → strokeRightWeight: 2
+stroke-b-[2]   → strokeBottomWeight: 2
+stroke-l-[2]   → strokeLeftWeight: 2
+
+// Preset Values
+stroke-t-0     → strokeTopWeight: 0
+stroke-t-1     → strokeTopWeight: 1
+stroke-t-2     → strokeTopWeight: 2
+stroke-t-4     → strokeTopWeight: 4
+
+// With Color
+stroke-t-[2] stroke-[#FF0000] → 
+  strokeTopWeight: 2,
+  strokes: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }]
+```

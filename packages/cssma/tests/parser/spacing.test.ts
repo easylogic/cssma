@@ -250,4 +250,148 @@ describe('Spacing Parser', () => {
       });
     });
   });
+
+  describe('Figma Variables', () => {
+    describe('Gap Variables', () => {
+      it('should parse gap variables', () => {
+        const testCases = [
+          {
+            input: 'gap-$[spacing/base]',
+            expected: {
+              property: 'gap',
+              value: 'spacing/base',
+              variant: 'figma-variable',
+              variableId: 'spacing/base'
+            }
+          },
+          {
+            input: 'gap-x-$[spacing/horizontal]',
+            expected: {
+              property: 'itemSpacing',
+              value: 'spacing/horizontal',
+              variant: 'figma-variable',
+              variableId: 'spacing/horizontal'
+            }
+          },
+          {
+            input: 'gap-y-$[spacing/vertical]',
+            expected: {
+              property: 'counterAxisSpacing',
+              value: 'spacing/vertical',
+              variant: 'figma-variable',
+              variableId: 'spacing/vertical'
+            }
+          }
+        ];
+
+        testCases.forEach(({ input, expected }) => {
+          expect(parseSpacingValue(input)).toEqual(expected);
+        });
+      });
+
+      it('should handle invalid gap variable paths', () => {
+        const testCases = [
+          'gap-$[]',
+          'gap-$[/]',
+          'gap-$[/invalid]',
+          'gap-$[spacing/]/25',
+          'gap-$[/spacing/gap]/25',
+          'gap-$[spacing//gap]'
+        ];
+
+        testCases.forEach(input => {
+          expect(parseSpacingValue(input)).toBeNull();
+        });
+      });
+    });
+
+    describe('Padding Variables', () => {
+      it('should parse padding variables', () => {
+        const testCases = [
+          {
+            input: 'p-$[spacing/padding]',
+            expected: {
+              property: 'padding',
+              value: 'spacing/padding',
+              variant: 'figma-variable',
+              variableId: 'spacing/padding'
+            }
+          },
+          {
+            input: 'px-$[spacing/horizontal]',
+            expected: {
+              property: 'paddingX',
+              value: 'spacing/horizontal',
+              variant: 'figma-variable',
+              variableId: 'spacing/horizontal'
+            }
+          },
+          {
+            input: 'py-$[spacing/vertical]',
+            expected: {
+              property: 'paddingY',
+              value: 'spacing/vertical',
+              variant: 'figma-variable',
+              variableId: 'spacing/vertical'
+            }
+          },
+          {
+            input: 'pt-$[spacing/top]',
+            expected: {
+              property: 'paddingTop',
+              value: 'spacing/top',
+              variant: 'figma-variable',
+              variableId: 'spacing/top'
+            }
+          },
+          {
+            input: 'pr-$[spacing/right]',
+            expected: {
+              property: 'paddingRight',
+              value: 'spacing/right',
+              variant: 'figma-variable',
+              variableId: 'spacing/right'
+            }
+          },
+          {
+            input: 'pb-$[spacing/bottom]',
+            expected: {
+              property: 'paddingBottom',
+              value: 'spacing/bottom',
+              variant: 'figma-variable',
+              variableId: 'spacing/bottom'
+            }
+          },
+          {
+            input: 'pl-$[spacing/left]',
+            expected: {
+              property: 'paddingLeft',
+              value: 'spacing/left',
+              variant: 'figma-variable',
+              variableId: 'spacing/left'
+            }
+          }
+        ];
+
+        testCases.forEach(({ input, expected }) => {
+          expect(parseSpacingValue(input)).toEqual(expected);
+        });
+      });
+
+      it('should handle invalid padding variable paths', () => {
+        const testCases = [
+          'p-$[]',
+          'p-$[/]',
+          'p-$[/invalid]',
+          'px-$[spacing/]/25',
+          'py-$[/spacing/pad]/25',
+          'pt-$[spacing//pad]'
+        ];
+
+        testCases.forEach(input => {
+          expect(parseSpacingValue(input)).toBeNull();
+        });
+      });
+    });
+  });
 }); 

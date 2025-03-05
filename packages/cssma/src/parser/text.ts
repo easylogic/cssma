@@ -1,6 +1,8 @@
 import { ParsedStyle } from '../types';
 import { FONT_SIZES, COLORS } from '../config/tokens';
 import { isValidHexColor, isValidRgbColor } from '../utils/colors';
+import { extractFigmaVariableId, createFigmaVariableStyle } from '../utils/variables';
+import { parseArbitraryValue } from '../utils/converters';
 
 const TEXT_ALIGN_HORIZONTAL_MAP = {
   'left': 'LEFT',
@@ -46,17 +48,74 @@ const LETTER_SPACING_MAP = {
   'widest': 1.6
 } as const;
 
+const PARAGRAPH_SPACING_MAP = {
+  'tight': 8,
+  'normal': 16,
+  'loose': 24
+} as const;
+
+const PARAGRAPH_INDENT_MAP = {
+  'none': 0,
+  'sm': 16,
+  'md': 24,
+  'lg': 32
+} as const;
+
 export function parseTextStyleValue(className: string): ParsedStyle | null {
   // opacity 처리를 위한 분리
-  let [prefix, opacityValue] = className.split('/');
   let opacity: number | undefined;
+  let prefix = className;
   
-  if (opacityValue) {
-    const numericOpacity = parseFloat(opacityValue);
-    if (isNaN(numericOpacity) || numericOpacity < 0 || numericOpacity > 100) {
-      return null;
+  // Figma 변수가 아닌 부분에서 마지막 '/'를 찾아 opacity 처리
+  const lastSlashIndex = className.lastIndexOf('/');
+  if (lastSlashIndex !== -1) {
+    const potentialOpacity = className.slice(lastSlashIndex + 1);
+    const beforeSlash = className.slice(0, lastSlashIndex);
+    
+    // Figma 변수 내부의 '/'가 아닌지 확인
+    const isInsideVariable = (
+      beforeSlash.includes('$[') && 
+      !beforeSlash.endsWith(']') && 
+      className.indexOf(']', lastSlashIndex) !== -1
+    );
+    
+    if (!isInsideVariable) {
+      const numericOpacity = parseFloat(potentialOpacity);
+      if (!isNaN(numericOpacity) && numericOpacity >= 0 && numericOpacity <= 100) {
+        opacity = numericOpacity / 100;
+        prefix = beforeSlash;
+      }
     }
-    opacity = numericOpacity / 100;
+  }
+
+  // Check for Figma variables first
+  if (prefix.includes('$[')) {
+    const match = prefix.match(/^([a-z-]+)-(\$\[.*?\])$/);
+    if (!match) return null;
+
+    const [, type, value] = match;
+    
+    // Handle Figma variables
+    if (value.startsWith('$[') && value.endsWith(']')) {
+      const variableId = extractFigmaVariableId(value);
+      if (!variableId) return null;
+      
+      // Color variable
+      if (type === 'text') {
+        return createFigmaVariableStyle('color', variableId, { opacity });
+      }
+      
+      // Paragraph spacing variable
+      if (type === 'paragraph') {
+        return createFigmaVariableStyle('paragraphSpacing', variableId);
+      }
+      
+      // Paragraph indent variable
+      if (type === 'indent') {
+        return createFigmaVariableStyle('paragraphIndent', variableId);
+      }
+    }
+    return null;
   }
 
   // 임의값 처리 ([...] 형식)
@@ -66,26 +125,56 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
 
     const [, type, value] = match;
     
-    // 텍스트 색상 처리
-    if (type === 'text' && (value.startsWith('#') || value.startsWith('rgb'))) {
-      if (!isValidHexColor(value) && !isValidRgbColor(value)) {
-        return null;
-      }
-      return {
-        property: 'color',
-        value,
-        opacity,
-        variant: 'arbitrary'
-      };
-    }
-
-    // 텍스트 크기 처리
+    // Handle text color
     if (type === 'text') {
-      const size = parseFloat(value);
-      if (!isNaN(size)) {
+      // 대괄호 제거
+      const cleanValue = value.replace(/^\[|\]$/g, '');
+
+      // 텍스트 크기 처리 (숫자만 있는 경우)
+      const size = parseFloat(cleanValue);
+      if (!isNaN(size) && cleanValue === size.toString()) {
         return {
           property: 'fontSize',
           value: size,
+          variant: 'arbitrary'
+        };
+      }
+
+      // 일반 색상 처리
+      if (cleanValue.startsWith('#') || cleanValue.startsWith('rgb')) {
+        if (!isValidHexColor(cleanValue) && !isValidRgbColor(cleanValue)) {
+          return null;
+        }
+        return {
+          property: 'color',
+          value: cleanValue,
+          opacity,
+          variant: 'arbitrary'
+        };
+      }
+
+      return null;
+    }
+
+    // Paragraph spacing
+    if (type === 'paragraph') {
+      const numericValue = parseFloat(value);
+      if (!isNaN(numericValue)) {
+        return {
+          property: 'paragraphSpacing',
+          value: numericValue,
+          variant: 'arbitrary'
+        };
+      }
+    }
+
+    // Paragraph indent
+    if (type === 'indent') {
+      const numericValue = parseFloat(value);
+      if (!isNaN(numericValue)) {
+        return {
+          property: 'paragraphIndent',
+          value: numericValue,
           variant: 'arbitrary'
         };
       }
@@ -93,8 +182,9 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
 
     // 행간 처리
     if (type === 'leading') {
-      if (value.endsWith('px')) {
-        const size = parseFloat(value);
+      const cleanValue = value.replace(/^\[|\]$/g, '');
+      if (cleanValue.endsWith('px')) {
+        const size = parseFloat(cleanValue);
         if (!isNaN(size)) {
           return {
             property: 'lineHeight',
@@ -103,7 +193,7 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
           };
         }
       } else {
-        const ratio = parseFloat(value);
+        const ratio = parseFloat(cleanValue);
         if (!isNaN(ratio)) {
           return {
             property: 'lineHeight',
@@ -116,16 +206,17 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
 
     // 자간 처리
     if (type === 'tracking') {
-      const spacing = parseFloat(value);
+      const cleanValue = value.replace(/^\[|\]$/g, '');
+      const spacing = parseFloat(cleanValue);
       if (!isNaN(spacing)) {
         // 단위가 있는 경우 (예: px, em)
-        if (value.endsWith('px')) {
+        if (cleanValue.endsWith('px')) {
           return {
             property: 'letterSpacing',
             value: { value: spacing, unit: 'PIXELS' },
             variant: 'arbitrary'
           };
-        } else if (value.endsWith('em')) {
+        } else if (cleanValue.endsWith('em')) {
           return {
             property: 'letterSpacing',
             value: { value: spacing * 100, unit: 'PERCENT' },
@@ -223,6 +314,30 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
       return {
         property: 'letterSpacing',
         value: preset,
+        variant: 'preset'
+      };
+    }
+  }
+
+  // Preset paragraph spacing
+  if (prefix.startsWith('paragraph-')) {
+    const value = prefix.replace('paragraph-', '');
+    if (value in PARAGRAPH_SPACING_MAP) {
+      return {
+        property: 'paragraphSpacing',
+        value: PARAGRAPH_SPACING_MAP[value as keyof typeof PARAGRAPH_SPACING_MAP],
+        variant: 'preset'
+      };
+    }
+  }
+
+  // Preset paragraph indent
+  if (prefix.startsWith('indent-')) {
+    const value = prefix.replace('indent-', '');
+    if (value in PARAGRAPH_INDENT_MAP) {
+      return {
+        property: 'paragraphIndent',
+        value: PARAGRAPH_INDENT_MAP[value as keyof typeof PARAGRAPH_INDENT_MAP],
         variant: 'preset'
       };
     }

@@ -1430,16 +1430,16 @@ p-4            → padding: 16
 #### Variable References
 ```typescript
 // Basic Variable Reference
-bg-[button/background]  → fills: setBoundVariableForPaint(paint, "color", variable)
-text-[text/primary]     → fills: setBoundVariableForPaint(paint, "color", variable)
-p-[spacing/md]         → padding: setBoundVariableForNumber("padding", variable)
+bg-$[button/background]  → fills: setBoundVariableForPaint(paint, "color", variable)
+text-$[text/primary]     → fills: setBoundVariableForPaint(paint, "color", variable)
+p-$[spacing/md]         → padding: setBoundVariableForNumber("padding", variable)
 
 // Variable with Opacity
-bg-[button/background]/50  → fills: setBoundVariableForPaint(paint, "color", variable, 0.5)
-text-[text/primary]/75     → fills: setBoundVariableForPaint(paint, "color", variable, 0.75)
+bg-$[button/background]/50  → fills: setBoundVariableForPaint(paint, "color", variable, 0.5)
+text-$[text/primary]/75     → fills: setBoundVariableForPaint(paint, "color", variable, 0.75)
 
 // Multiple Variable References
-border-[border/width] border-[border/color]  → 
+border-$[border/width] border-$[border/color]  → 
   strokes: setBoundVariableForPaint(paint, "color", colorVar)
   strokeWeight: setBoundVariableForNumber("strokeWeight", widthVar)
 ```
@@ -1447,8 +1447,8 @@ border-[border/width] border-[border/color]  →
 #### Variable Collections
 ```typescript
 // Collection Organization
-[collection/variable]   → Finds variable in specified collection
-[variable]             → Finds variable in any collection
+$[collection/variable]   → Finds variable in specified collection
+$[variable]             → Finds variable in any collection
 
 // Collection Types
 local                  → Local file variables
@@ -1458,17 +1458,17 @@ team                   → Team library variables
 #### Variable Types
 ```typescript
 // Color Variables
-bg-[colors/primary]    → Color variable for background
-text-[colors/text]     → Color variable for text
-border-[colors/border] → Color variable for border
+bg-$[colors/primary]    → Color variable for background
+text-$[colors/text]     → Color variable for text
+border-$[colors/border] → Color variable for border
 
 // Number Variables
-p-[spacing/sm]        → Number variable for spacing
-gap-[spacing/md]      → Number variable for gap
-text-[size/body]      → Number variable for font size
+p-$[spacing/sm]        → Number variable for spacing
+gap-$[spacing/md]      → Number variable for gap
+text-$[size/body]      → Number variable for font size
 
 // Boolean Variables
-hidden-[state/isHidden] → Boolean variable for visibility
+hidden-$[state/isHidden] → Boolean variable for visibility
 ```
 
 ### Variable Binding Examples
@@ -1478,7 +1478,7 @@ hidden-[state/isHidden] → Boolean variable for visibility
 {
   "type": "FRAME",
   "name": "Button",
-  "styles": "bg-[button/background] text-[button/text]"
+  "styles": "bg-$[button/background] text-$[button/text]"
 }
 ```
 
@@ -1487,7 +1487,7 @@ hidden-[state/isHidden] → Boolean variable for visibility
 {
   "type": "FRAME",
   "name": "Card",
-  "styles": "p-[spacing/lg] gap-[spacing/md]"
+  "styles": "p-$[spacing/lg] gap-$[spacing/md]"
 }
 ```
 
@@ -1496,9 +1496,11 @@ hidden-[state/isHidden] → Boolean variable for visibility
 {
   "type": "FRAME",
   "name": "Input",
-  "styles": "border-[input/borderWidth] border-[input/borderColor] p-[input/padding]"
+  "styles": "border-$[input/borderWidth] border-$[input/borderColor] p-$[input/padding]"
 }
-``` 
+```
+
+> **Note**: The `$[ ]` syntax is specifically used for Figma variable system integration. These values must be properly configured in your Figma design system.
 
 ## Limitations
 

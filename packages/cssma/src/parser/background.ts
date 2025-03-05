@@ -1,6 +1,8 @@
 import { ParsedStyle } from '../types';
 import { COLORS } from '../config/tokens';
 import { isValidHexColor, isValidRgbColor, parseColor } from '../utils/colors';
+import { parseArbitraryValue } from '../utils/converters';
+import { extractFigmaVariableId, createFigmaVariableStyle } from '../utils/variables';
 
 const BACKGROUND_SIZE_MAP = {
   'auto': 'AUTO',
@@ -50,88 +52,148 @@ const BACKGROUND_CLIP_MAP = {
 } as const;
 
 export function parseBackgroundStyleValue(className: string): ParsedStyle | null {
-  // opacity 처리를 위한 분리
-  let [prefix, opacityValue] = className.split('/');
+  // Handle opacity separation
   let opacity: number | undefined;
+  let prefix = className;
   
-  if (opacityValue) {
-    const numericOpacity = parseFloat(opacityValue);
-    if (isNaN(numericOpacity) || numericOpacity < 0 || numericOpacity > 100) {
-      return null;
+  // Find the last slash for opacity handling (excluding those inside Figma variables)
+  const lastSlashIndex = className.lastIndexOf('/');
+  if (lastSlashIndex !== -1) {
+    const potentialOpacity = className.slice(lastSlashIndex + 1);
+    const beforeSlash = className.slice(0, lastSlashIndex);
+    
+    // Check if the slash is not inside a Figma variable
+    const isInsideVariable = (
+      beforeSlash.includes('$[') && 
+      !beforeSlash.endsWith(']') && 
+      className.indexOf(']', lastSlashIndex) !== -1
+    );
+    
+    if (!isInsideVariable) {
+      const numericOpacity = parseFloat(potentialOpacity);
+      if (!isNaN(numericOpacity) && numericOpacity >= 0 && numericOpacity <= 100) {
+        opacity = numericOpacity / 100;
+        prefix = beforeSlash;
+      }
     }
-    opacity = numericOpacity / 100;
   }
 
-  // 임의값 처리 ([...] 형식)
+  // Handle arbitrary values and Figma variables
   if (prefix.includes('[') && prefix.includes(']')) {
-    const match = prefix.match(/^([a-z-]+)-\[(.*?)\]$/);
+    const match = prefix.match(/^([a-z-]+)-(\$?\[.*?\])$/);
     if (!match) return null;
 
     const [, type, value] = match;
     
-    // 배경색 처리
+    // Handle background color
     if (type === 'bg') { 
-      if (value.startsWith('#') || value.startsWith('rgb')) {
-        if (!isValidHexColor(value) && !isValidRgbColor(value)) {
-          return null;
+      // Handle Figma variables
+      if (value.startsWith('$[') && value.endsWith(']')) {
+        const variableId = extractFigmaVariableId(value);
+        if (!variableId) return null;
+        
+        return createFigmaVariableStyle('backgroundColor', variableId, { opacity });
+      }
+
+      // Handle arbitrary values
+      const parsedValue = parseArbitraryValue(value, { 
+        allowUnits: false,
+        allowColors: true,
+        requireValidColor: true
+      });
+
+      if (parsedValue) {
+        const result: ParsedStyle = {
+          property: 'backgroundColor',
+          value: parsedValue.value,
+          variant: parsedValue.variant,
+          ...(opacity !== undefined && { opacity })
+        };
+
+        if (parsedValue.variant === 'figma-variable' && parsedValue.variableId) {
+          result.variableId = parsedValue.variableId;
         }
-        return {
-          property: 'backgroundColor',
-          value,
-          opacity,
-          variant: 'arbitrary'
-        };
-      } else if (value.indexOf('/') > -1) {
-        return {
-          property: 'backgroundColor',
-          value,
-          opacity,
-          variant: 'variable'
-        };
+
+        return result;
       }
     }
 
-    // 그라디언트 색상 처리
-    if (['from', 'via', 'to'].includes(type) && (value.startsWith('#') || value.startsWith('rgb'))) {
-      if (!isValidHexColor(value) && !isValidRgbColor(value)) {
-        return null;
+    // Handle gradient colors
+    if (['from', 'via', 'to'].includes(type)) {
+      const parsedValue = parseArbitraryValue(value, { 
+        allowUnits: false,
+        allowColors: true,
+        requireValidColor: true
+      });
+      
+      if (parsedValue) {
+        const property = `gradient${type.charAt(0).toUpperCase() + type.slice(1)}`;
+        const result: ParsedStyle = {
+          property,
+          value: parsedValue.value,
+          variant: parsedValue.variant,
+          ...(opacity !== undefined && { opacity })
+        };
+
+        if (parsedValue.variant === 'figma-variable' && parsedValue.variableId) {
+          result.variableId = parsedValue.variableId;
+        }
+
+        return result;
       }
-      return {
-        property: `gradient${type.charAt(0).toUpperCase() + type.slice(1)}`,
-        value,
-        opacity,
-        variant: 'arbitrary'
-      };
     }
   }
 
-  if (prefix.startsWith('from-')) {
-    const colorValue = prefix.replace('from-', '');
+  // Handle preset gradient colors
+  const gradientMatch = prefix.match(/^(from|via|to)-(.+)$/);
+  if (gradientMatch) {
+    const [, type, colorValue] = gradientMatch;
+    
+    // Handle Figma variables
+    if (colorValue.startsWith('$[') && colorValue.endsWith(']')) {
+      const variableId = extractFigmaVariableId(colorValue);
+      if (!variableId) return null;
+      
+      return createFigmaVariableStyle(
+        `gradient${type.charAt(0).toUpperCase() + type.slice(1)}`,
+        variableId,
+        { opacity }
+      );
+    }
+
+    // Handle regular colors
+    if (colorValue.includes('[')) {
+      const parsedValue = parseArbitraryValue(colorValue, { 
+        allowUnits: false,
+        allowColors: true,
+        requireValidColor: true
+      });
+      if (parsedValue) {
+        const result: ParsedStyle = {
+          property: `gradient${type.charAt(0).toUpperCase() + type.slice(1)}`,
+          value: parsedValue.value,
+          variant: parsedValue.variant,
+          ...(opacity !== undefined && { opacity })
+        };
+
+        if (parsedValue.variant === 'figma-variable' && parsedValue.variableId) {
+          result.variableId = parsedValue.variableId;
+        }
+
+        return result;
+      }
+    }
+    
+    // Handle preset colors
     return {
-      property: 'gradientFrom',
+      property: `gradient${type.charAt(0).toUpperCase() + type.slice(1)}`,
       value: COLORS[colorValue] || parseColor(colorValue),
-      variant: 'preset'
+      variant: 'preset',
+      ...(opacity !== undefined && { opacity })
     };
   }
 
-  if (prefix.startsWith('via-')) {
-    const colorValue = prefix.replace('via-', '');
-    return {
-      property: 'gradientVia',
-      value: COLORS[colorValue] || parseColor(colorValue),
-      variant: 'preset'
-    };
-  }
-
-  if (prefix.startsWith('to-')) {
-    const colorValue = prefix.replace('to-', '');
-    return {
-      property: 'gradientTo',
-      value: COLORS[colorValue] || parseColor(colorValue),
-      variant: 'preset'
-    };
-  }
-  // 프리셋 값 처리
+  // Handle preset values
   if (prefix.startsWith('bg-')) {
     const value = prefix.replace('bg-', '');
 
@@ -142,7 +204,8 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
         return {
           property: 'backgroundBlendMode',
           value: BACKGROUND_BLEND_MODES[mode as keyof typeof BACKGROUND_BLEND_MODES],
-          variant: 'preset'
+          variant: 'preset',
+          ...(opacity !== undefined && { opacity })
         };
       }
       return null;
@@ -153,7 +216,8 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
       return {
         property: 'backgroundSize',
         value: BACKGROUND_SIZE_MAP[value as keyof typeof BACKGROUND_SIZE_MAP],
-        variant: 'preset'
+        variant: 'preset',
+        ...(opacity !== undefined && { opacity })
       };
     }
 
@@ -162,7 +226,8 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
       return {
         property: 'backgroundPosition',
         value: BACKGROUND_POSITION_MAP[value as keyof typeof BACKGROUND_POSITION_MAP],
-        variant: 'preset'
+        variant: 'preset',
+        ...(opacity !== undefined && { opacity })
       };
     }
 
@@ -173,7 +238,8 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
         return {
           property: 'backgroundRepeat',
           value: repeat,
-          variant: 'preset'
+          variant: 'preset',
+          ...(opacity !== undefined && { opacity })
         };
       }
       return null;
@@ -184,7 +250,8 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
       return {
         property: 'backgroundAttachment',
         value: BACKGROUND_ATTACHMENT_MAP[value as keyof typeof BACKGROUND_ATTACHMENT_MAP],
-        variant: 'preset'
+        variant: 'preset',
+        ...(opacity !== undefined && { opacity })
       };
     }
 
@@ -195,7 +262,8 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
         return {
           property: 'backgroundOrigin',
           value: BACKGROUND_ORIGIN_MAP[origin as keyof typeof BACKGROUND_ORIGIN_MAP],
-          variant: 'preset'
+          variant: 'preset',
+          ...(opacity !== undefined && { opacity })
         };
       }
       return null;
@@ -208,7 +276,8 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
         return {
           property: 'backgroundClip',
           value: BACKGROUND_CLIP_MAP[clip as keyof typeof BACKGROUND_CLIP_MAP],
-          variant: 'preset'
+          variant: 'preset',
+          ...(opacity !== undefined && { opacity })
         };
       }
       return null;
@@ -220,7 +289,8 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
         property: 'backgroundColor',
         value: 'linear',
         direction: value.replace('linear-to-', ''),
-        variant: 'preset'
+        variant: 'preset',
+        ...(opacity !== undefined && { opacity })
       };
     }
 
@@ -229,7 +299,8 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
       return {
         property: 'backgroundColor',
         value: 'radial',
-        variant: 'preset'
+        variant: 'preset',
+        ...(opacity !== undefined && { opacity })
       };
     }
 
@@ -238,7 +309,8 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
       return {
         property: 'backgroundColor',
         value: 'conic',
-        variant: 'preset'
+        variant: 'preset',
+        ...(opacity !== undefined && { opacity })
       };
     }
 
@@ -247,7 +319,7 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
       return {
         property: 'backgroundColor',
         value: COLORS[value],
-        opacity,
+        ...(opacity !== undefined && { opacity }),
         variant: 'preset'
       };
     }

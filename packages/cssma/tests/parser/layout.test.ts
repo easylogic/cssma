@@ -162,6 +162,121 @@ describe('Layout Parser', () => {
     });
   });
 
+  describe('Figma Variables', () => {
+    describe('Width', () => {
+      it('should parse width variables', () => {
+        const testCases = [
+          { input: 'w-$[sizing/width/button]', expected: 'sizing/width/button' },
+          { input: 'w-$[sizing/width/container]', expected: 'sizing/width/container' }
+        ];
+
+        testCases.forEach(({ input, expected }) => {
+          expect(parseLayoutValue(input)).toEqual({
+            property: 'width',
+            value: expected,
+            variant: 'figma-variable',
+            variableId: expected
+          });
+        });
+      });
+
+      it('should reject invalid width variable paths', () => {
+        const invalidCases = [
+          'w-$[]',
+          'w-$[/sizing/width]',
+          'w-$[sizing/width/]',
+          'w-$[sizing//width]'
+        ];
+
+        invalidCases.forEach(input => {
+          expect(parseLayoutValue(input)).toBeNull();
+        });
+      });
+    });
+
+    describe('Height', () => {
+      it('should parse height variables', () => {
+        const testCases = [
+          { input: 'h-$[sizing/height/button]', expected: 'sizing/height/button' },
+          { input: 'h-$[sizing/height/container]', expected: 'sizing/height/container' }
+        ];
+
+        testCases.forEach(({ input, expected }) => {
+          expect(parseLayoutValue(input)).toEqual({
+            property: 'height',
+            value: expected,
+            variant: 'figma-variable',
+            variableId: expected
+          });
+        });
+      });
+
+      it('should reject invalid height variable paths', () => {
+        const invalidCases = [
+          'h-$[]',
+          'h-$[/sizing/height]',
+          'h-$[sizing/height/]',
+          'h-$[sizing//height]'
+        ];
+
+        invalidCases.forEach(input => {
+          expect(parseLayoutValue(input)).toBeNull();
+        });
+      });
+    });
+
+    describe('Gap', () => {
+      it('should parse gap variables', () => {
+        const testCases = [
+          { 
+            input: 'gap-$[spacing/gap/small]', 
+            expected: {
+              property: 'gap',
+              value: 'spacing/gap/small',
+              variant: 'figma-variable',
+              variableId: 'spacing/gap/small'
+            }
+          },
+          { 
+            input: 'gap-x-$[spacing/gap/medium]', 
+            expected: {
+              property: 'itemSpacing',
+              value: 'spacing/gap/medium',
+              variant: 'figma-variable',
+              variableId: 'spacing/gap/medium'
+            }
+          },
+          { 
+            input: 'gap-y-$[spacing/gap/large]', 
+            expected: {
+              property: 'counterAxisSpacing',
+              value: 'spacing/gap/large',
+              variant: 'figma-variable',
+              variableId: 'spacing/gap/large'
+            }
+          }
+        ];
+
+        testCases.forEach(({ input, expected }) => {
+          expect(parseLayoutValue(input)).toEqual(expected);
+        });
+      });
+
+      it('should reject invalid gap variable paths', () => {
+        const invalidCases = [
+          'gap-$[]',
+          'gap-x-$[/spacing/gap]',
+          'gap-y-$[spacing/gap/]',
+          'gap-$[spacing//gap]'
+        ];
+
+        invalidCases.forEach(input => {
+          expect(parseLayoutValue(input)).toBeNull();
+        });
+      });
+    });
+  });
+
   describe('Invalid Values', () => {
     it('should return null for invalid values', () => {
       expect(parseLayoutValue('flex-invalid')).toBeNull();

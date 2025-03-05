@@ -1,24 +1,57 @@
-import { ParsedStyle, FigmaPaint, FigmaColor, FigmaGradient, FigmaSolidPaint } from '../types';
+import { ParsedStyle, FigmaPaint, FigmaColor, FigmaGradient, FigmaSolidPaint, FigmaGradientLinear, FigmaGradientRadial, FigmaGradientAngular } from '../types';
 import { isValidNumber } from '../utils/validators';
 import { parseColor } from '../utils/colors';
 import { GRADIENT_TRANSFORMS } from '../config/constants';
 import { COLORS } from '../config/tokens';
-import { round } from 'src/utils/math';
+import { round } from '../utils/math';
 
+type BoundVariable = {
+  type: 'VARIABLE_ALIAS';
+  id: string;
+};
+
+type FigmaVariableColor = {
+  boundVariables?: {
+    color: BoundVariable;
+  };
+};
+
+type FigmaVariableSolidPaint = FigmaSolidPaint & FigmaVariableColor;
+type FigmaVariableGradientStop = {
+  position: number;
+  color: FigmaColor;
+} & FigmaVariableColor;
+
+type FigmaVariableGradientPaint = (
+  | (Omit<FigmaGradientLinear, 'gradientStops'> & { gradientStops: FigmaVariableGradientStop[] })
+  | (Omit<FigmaGradientRadial, 'gradientStops'> & { gradientStops: FigmaVariableGradientStop[] })
+  | (Omit<FigmaGradientAngular, 'gradientStops'> & { gradientStops: FigmaVariableGradientStop[] })
+);
+
+type FigmaVariablePaint = FigmaVariableSolidPaint | FigmaVariableGradientPaint;
 
 /**
  * Background 스타일을 Figma 스타일로 변환합니다.
  */
-export function convertBackgroundToFigma(style: ParsedStyle): FigmaPaint[] {
-  const result: FigmaPaint[] = [];
+export function convertBackgroundToFigma(style: ParsedStyle): FigmaVariablePaint[] {
+  const result: FigmaVariablePaint[] = [];
 
   switch (style.property) {
     case 'backgroundColor':
-      if (style.variant === 'variable') {
-        result.push({
+      if (style.variant === 'figma-variable' && style.variableId) {
+        // Figma 변수 처리
+        const paint: FigmaVariableSolidPaint = {
           type: 'SOLID',
-          variable: style.value as string
-        } as FigmaSolidPaint);
+          color: { r: 0, g: 0, b: 0 },
+          opacity: style.opacity,
+          boundVariables: {
+            color: {
+              type: 'VARIABLE_ALIAS',
+              id: style.variableId
+            }
+          }
+        };
+        result.push(paint);
       } else if (typeof style.value === 'string') {
         // 일반 배경색 처리
         let colorStr: string | FigmaColor | undefined;
@@ -31,64 +64,62 @@ export function convertBackgroundToFigma(style: ParsedStyle): FigmaPaint[] {
         if (colorStr) {
           const color = parseColor(colorStr as string);
           if (color) {
-            const fill: FigmaPaint = {
+            const fill: FigmaVariableSolidPaint = {
               type: 'SOLID',
               color: { 
                 r: color.r,
                 g: color.g,
                 b: color.b
-              }
+              },
+              ...(isValidNumber(color.a) ? { opacity: color.a } : 
+                 style.opacity !== undefined ? { opacity: style.opacity } : {})
             };
-
-            if (isValidNumber(color.a)) {
-              fill.opacity = color.a;
-            }
-
             result.push(fill);
           }
         }
       } else if (typeof style.value === 'object') {
-        result.push({
+        const fill: FigmaVariableSolidPaint = {
           type: 'SOLID',
           color: {
             r: (style.value as FigmaColor).r,
             g: (style.value as FigmaColor).g,
             b: (style.value as FigmaColor).b,
           },
-          opacity: style.opacity
-        });
+          ...(style.opacity !== undefined && { opacity: style.opacity })
+        };
+        result.push(fill);
       }
       break;
   }
 
   return result;
-} 
-
-export function convertGradientListToFigma(styles: ParsedStyle[]): FigmaPaint[] {
- const group: ParsedStyle[][] = [];
- let groupIndex = -1;
-
- for (const style of styles) {
-  if (style.property === 'backgroundColor') {
-    groupIndex++;
-    group.push([]);
-  }
-
-  group[groupIndex].push(style);
- }
-
- return group.map(convertGradientToFigma).flat();
 }
 
-export function convertGradientToFigma(styles: ParsedStyle[]): FigmaPaint[] {
-  const result: FigmaPaint[] = [];
+export function convertGradientListToFigma(styles: ParsedStyle[]): FigmaVariablePaint[] {
+  const group: ParsedStyle[][] = [];
+  let groupIndex = -1;
+
+  for (const style of styles) {
+    if (style.property === 'backgroundColor') {
+      groupIndex++;
+      group.push([]);
+    }
+
+    group[groupIndex].push(style);
+  }
+
+  return group.map(convertGradientToFigma).flat();
+}
+
+export function convertGradientToFigma(styles: ParsedStyle[]): FigmaVariablePaint[] {
+  const result: FigmaVariablePaint[] = [];
   // 그라디언트 타입 확인
   const gradientRoot = styles.find(s => s.property === 'backgroundColor');
   const gradientType = gradientRoot?.value;
   const gradientDirection = gradientRoot?.direction;
 
   // 기본 선형 그라디언트 설정
-  let gradientPaint: FigmaGradient = {
+  let gradientPaint: FigmaVariableGradientPaint = {
     type: 'GRADIENT_LINEAR',
     gradientStops: [],
     gradientTransform: [[1, 0, 0], [0, 1, 0]]
@@ -111,7 +142,7 @@ export function convertGradientToFigma(styles: ParsedStyle[]): FigmaPaint[] {
     };
   } else if (gradientType === 'conic') {
     gradientPaint = {
-      type: 'GRADIENT_ANGULAR', 
+      type: 'GRADIENT_ANGULAR',
       gradientStops: [],
       centerX: 0.5,
       centerY: 0.5,
@@ -131,7 +162,6 @@ export function convertGradientToFigma(styles: ParsedStyle[]): FigmaPaint[] {
     unitPosition = 1 / (colorStops.length - 1);
   }
 
-
   let startPosition = 0;
   
   for (const stop of colorStops) {
@@ -145,25 +175,49 @@ export function convertGradientToFigma(styles: ParsedStyle[]): FigmaPaint[] {
       position = startPosition + unitPosition;
       startPosition = position;
     }
-                    
-    if (typeof stop.value === 'string') {
+
+    if (stop.variant === 'figma-variable' && stop.variableId) {
+      // Figma 변수 처리
+      const gradientStop: FigmaVariableGradientStop = {
+        position,
+        color: {
+          r: 0,
+          g: 0,
+          b: 0,
+          ...(stop.opacity !== undefined && { a: stop.opacity })
+        },
+        boundVariables: {
+          color: {
+            type: 'VARIABLE_ALIAS',
+            id: stop.variableId
+          }
+        }
+      };
+      gradientPaint.gradientStops.push(gradientStop);
+    } else if (typeof stop.value === 'string') {
       const color = parseColor(stop.value);
       if (color) {
-        gradientPaint.gradientStops.push({
+        const gradientStop: FigmaVariableGradientStop = {
           position,
           color: {
             r: round(color.r, 3),
-            g: round(color.g, 3), 
+            g: round(color.g, 3),
             b: round(color.b, 3),
-            a: typeof color.a === 'number' ? round(color.a, 3) : undefined
+            ...(color.a !== undefined ? { a: round(color.a, 3) } : 
+               stop.opacity !== undefined ? { a: stop.opacity } : {})
           }
-        });
+        };
+        gradientPaint.gradientStops.push(gradientStop);
       }
     } else if (typeof stop.value === 'object') {
-      gradientPaint.gradientStops.push({
+      const gradientStop: FigmaVariableGradientStop = {
         position,
-        color: stop.value as FigmaColor
-      });
+        color: {
+          ...stop.value as FigmaColor,
+          ...(stop.opacity !== undefined && { a: stop.opacity })
+        }
+      };
+      gradientPaint.gradientStops.push(gradientStop);
     }
   }
 

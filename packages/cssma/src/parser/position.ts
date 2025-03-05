@@ -1,4 +1,5 @@
 import { ParsedStyle } from '../types';
+import { extractFigmaVariableId, createFigmaVariableStyle } from '../utils/variables';
 
 const POSITION_TYPE_MAP = {
   'absolute': 'ABSOLUTE',
@@ -41,6 +42,29 @@ function parseMixedPositionValues(value: string): (number | null)[] {
     if (!parsed) return null;
     return parsed.value;
   });
+}
+
+type ConstraintValue = 'SCALE' | 'MIN' | 'MAX' | 'CENTER' | 'STRETCH';
+type Constraints = {
+  horizontal?: ConstraintValue;
+  vertical?: ConstraintValue;
+};
+
+function getPositionConstraints(direction: string, isPercent: boolean = false): Constraints {
+  switch (direction) {
+    case 'left':
+      return { horizontal: isPercent ? 'SCALE' : 'MIN' };
+    case 'right':
+      return { horizontal: isPercent ? 'SCALE' : 'MAX' };
+    case 'top':
+      return { vertical: isPercent ? 'SCALE' : 'MIN' };
+    case 'bottom':
+      return { vertical: isPercent ? 'SCALE' : 'MAX' };
+    case 'inset':
+      return { horizontal: 'SCALE', vertical: 'SCALE' };
+    default:
+      return {};
+  }
 }
 
 export function parsePositionStyleValue(className: string): ParsedStyle | null {
@@ -86,24 +110,30 @@ export function parsePositionStyleValue(className: string): ParsedStyle | null {
   if (positionMatch) {
     const [, direction, value] = positionMatch;
 
+    // Figma 변수 처리
+    if (value.startsWith('$[')) {
+      const variableId = extractFigmaVariableId(value);
+      if (!variableId) return null;
+
+      const style = createFigmaVariableStyle(
+        direction === 'inset' ? 'position' : direction,
+        variableId
+      );
+
+      return {
+        ...style,
+        constraints: getPositionConstraints(direction)
+      };
+    }
+
     // 프리셋 값 처리 (0)
     if (value === '0') {
-      const result: ParsedStyle = {
+      return {
         property: direction === 'inset' ? 'position' : direction,
         value: 0,
-        variant: 'preset'
+        variant: 'preset',
+        constraints: getPositionConstraints(direction)
       };
-
-      // constraints 추가
-      if (direction === 'left' || direction === 'right') {
-        result.constraints = { horizontal: direction === 'left' ? 'MIN' : 'MAX' };
-      } else if (direction === 'top' || direction === 'bottom') {
-        result.constraints = { vertical: direction === 'top' ? 'MIN' : 'MAX' };
-      } else if (direction === 'inset') {
-        result.constraints = { horizontal: 'SCALE', vertical: 'SCALE' };
-      }
-
-      return result;
     }
 
     // 임의값 처리
@@ -127,26 +157,12 @@ export function parsePositionStyleValue(className: string): ParsedStyle | null {
       // 단일 값 처리
       const posValue = parsePositionValue(innerValue);
       if (posValue) {
-        const result: ParsedStyle = {
+        return {
           property: direction === 'inset' ? 'position' : direction,
           value: posValue.value,
-          variant: 'arbitrary'
+          variant: 'arbitrary',
+          constraints: getPositionConstraints(direction, posValue.isPercent)
         };
-
-        // constraints 추가
-        if (direction === 'left' || direction === 'right') {
-          result.constraints = { 
-            horizontal: posValue.isPercent ? 'SCALE' : (direction === 'left' ? 'MIN' : 'MAX')
-          };
-        } else if (direction === 'top' || direction === 'bottom') {
-          result.constraints = { 
-            vertical: posValue.isPercent ? 'SCALE' : (direction === 'top' ? 'MIN' : 'MAX')
-          };
-        } else if (direction === 'inset') {
-          result.constraints = { horizontal: 'SCALE', vertical: 'SCALE' };
-        }
-
-        return result;
       }
     }
   }

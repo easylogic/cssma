@@ -3,7 +3,8 @@ export interface ParsedStyle {
   property: string;
   value: number | number[] | string | FigmaColor | FigmaFontName | FigmaLineHeight | Shadow[];
   unit?: string;
-  variant?: string;  // 예: 'arbitrary' | 'preset'
+  variant?: string;  // 예: 'arbitrary' | 'preset' | 'figma-variable'
+  variableId?: string;  // Figma 변수 ID
   angle?: number;   // 예: 45
   direction?: string; // 예: 'to-r'
   opacity?: number;
@@ -183,6 +184,8 @@ export interface FigmaStyleProperties {
   fontName?: { family: string; style: string };
   fontWeight?: number;
   fontStyle?: 'NORMAL' | 'ITALIC';
+  paragraphSpacing?: number;
+  paragraphIndent?: number;
   textCase?: 'ORIGINAL' | 'UPPER' | 'LOWER' | 'TITLE';
   textTransform?: 'NONE' | 'UPPER' | 'LOWER' | 'TITLE';
   textOverflow?: 'ELLIPSIS' | 'TRUNCATE';

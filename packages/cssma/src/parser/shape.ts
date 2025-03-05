@@ -1,4 +1,6 @@
 import { ParsedStyle } from '../types';
+import { parseArbitraryValue } from '../utils/converters';
+import { extractFigmaVariableId, createFigmaVariableStyle } from '../utils/variables';
 
 const OPACITY_MAP = {
   '0': 0,
@@ -31,7 +33,26 @@ function parseOpacityValue(value: string): number | null {
   return null;
 }
 
+// 기본적인 변수 경로 유효성 검사 (슬래시 형식)
+const isValidVariablePath = (path: string) => {
+  return path !== '' && 
+         !path.startsWith('/') && 
+         !path.endsWith('/') && 
+         !path.includes('//');
+};
+
 export function parseShapeStyleValue(className: string): ParsedStyle | null {
+  // Handle Figma variables
+  if (className.includes('$[')) {
+    const match = className.match(/^opacity-\$\[(.*?)\]$/);
+    if (!match) return null;
+
+    const variableId = extractFigmaVariableId(`$[${match[1]}]`);
+    if (!variableId) return null;
+
+    return createFigmaVariableStyle('opacity', variableId);
+  }
+
   // Opacity 처리
   if (className.startsWith('opacity-')) {
     // 프리셋 값 처리

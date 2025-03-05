@@ -625,4 +625,131 @@ describe('Background Style Parser', () => {
       expect(parseStyleValue('bg-[#FF0000]/-1')).toBeNull();
     });
   });
+
+  describe('Figma Variables', () => {
+    it('should parse background color variables', () => {
+      const testCases = [
+        {
+          input: 'bg-$[colors/primary]',
+          expected: 'colors/primary'
+        },
+        {
+          input: 'bg-$[colors/background]',
+          expected: 'colors/background'
+        }
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        const result = parseStyleValue(input);
+        expect(result).toEqual({
+          property: 'backgroundColor',
+          value: expected,
+          variant: 'figma-variable',
+          variableId: expected
+        });
+      });
+    });
+
+    it('should parse background color variables with opacity', () => {
+      const testCases = [
+        {
+          input: 'bg-$[colors/primary]/50',
+          expected: 'colors/primary',
+          opacity: 0.5
+        },
+        {
+          input: 'bg-$[colors/background]/75',
+          expected: 'colors/background',
+          opacity: 0.75
+        }
+      ];
+
+      testCases.forEach(({ input, expected, opacity }) => {
+        const result = parseStyleValue(input);
+        expect(result).toEqual({
+          property: 'backgroundColor',
+          value: expected,
+          variant: 'figma-variable',
+          variableId: expected,
+          opacity
+        });
+      });
+    });
+
+    it('should parse gradient color variables', () => {
+      const fromResult = parseStyleValue('from-$[colors/gradientStart]');
+      expect(fromResult).toEqual({
+        property: 'gradientFrom',
+        value: 'colors/gradientStart',
+        variant: 'figma-variable',
+        variableId: 'colors/gradientStart'
+      });
+
+      const viaResult = parseStyleValue('via-$[colors/gradientMiddle]');
+      expect(viaResult).toEqual({
+        property: 'gradientVia',
+        value: 'colors/gradientMiddle',
+        variant: 'figma-variable',
+        variableId: 'colors/gradientMiddle'
+      });
+
+      const toResult = parseStyleValue('to-$[colors/gradientEnd]');
+      expect(toResult).toEqual({
+        property: 'gradientTo',
+        value: 'colors/gradientEnd',
+        variant: 'figma-variable',
+        variableId: 'colors/gradientEnd'
+      });
+    });
+
+    it('should parse gradient color variables with opacity', () => {
+      const testCases = [
+        {
+          input: 'from-$[colors/gradientStart]/50',
+          property: 'gradientFrom',
+          expected: 'colors/gradientStart',
+          opacity: 0.5
+        },
+        {
+          input: 'via-$[colors/gradientMiddle]/75',
+          property: 'gradientVia',
+          expected: 'colors/gradientMiddle',
+          opacity: 0.75
+        },
+        {
+          input: 'to-$[colors/gradientEnd]/25',
+          property: 'gradientTo',
+          expected: 'colors/gradientEnd',
+          opacity: 0.25
+        }
+      ];
+
+      testCases.forEach(({ input, property, expected, opacity }) => {
+        const result = parseStyleValue(input);
+        expect(result).toEqual({
+          property,
+          value: expected,
+          variant: 'figma-variable',
+          variableId: expected,
+          opacity
+        });
+      });
+    });
+
+    it('should handle invalid variable paths', () => {
+      const testCases = [
+        'bg-$[]',
+        'bg-$[/]',
+        'bg-$[/invalid]',
+        'from-$[]',
+        'via-$[]',
+        'to-$[]'
+      ];
+
+      testCases.forEach(input => {
+        const result = parseStyleValue(input);
+        expect(result).toBeNull();
+      });
+    });
+  });
 }); 

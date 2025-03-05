@@ -1,5 +1,6 @@
 import { ParsedStyle } from '../types';
 import { parseArbitraryValue } from '../utils/converters';
+import { extractFigmaVariableId, createFigmaVariableStyle } from '../utils/variables';
 
 const SPACING_MAP = {
   '0': 0,
@@ -47,34 +48,46 @@ export function parseSpacingValue(className: string): ParsedStyle | null {
       }
     }
 
-    // 임의값 처리
-    const arbitraryMatch = className.match(/^gap-(x|y)?-?\[(.*?)\]$/);
+    // Handle arbitrary values and Figma variables
+    const arbitraryMatch = className.match(/^gap-(x|y)?-?(\$?\[.*?\])$/);
     if (arbitraryMatch) {
       const [, direction = '', valueWithUnit] = arbitraryMatch;
-      const value = parseArbitraryValue(`[${valueWithUnit}]`, {
+      
+      // Handle Figma variables
+      if (valueWithUnit.startsWith('$[') && valueWithUnit.endsWith(']')) {
+        const variableId = extractFigmaVariableId(valueWithUnit);
+        if (!variableId) return null;
+        
+        return createFigmaVariableStyle(
+          direction === 'x' ? 'itemSpacing' : 
+          direction === 'y' ? 'counterAxisSpacing' : 
+          'gap',
+          variableId
+        );
+      }
+
+      // Handle arbitrary values
+      const parsedValue = parseArbitraryValue(valueWithUnit, {
         allowNegative: true,
+        allowUnits: true,
+        allowFigmaVariables: true,
+        allowColors: false
       });
       
-      if (value !== null) {
-        if (direction === 'x') {
-          return {
-            property: 'itemSpacing',
-            value: value,
-            variant: 'arbitrary'
-          };
-        } else if (direction === 'y') {
-          return {
-            property: 'counterAxisSpacing',
-            value: value,
-            variant: 'arbitrary'
-          };
-        } else {
-          return {
-            property: 'gap',
-            value: value,
-            variant: 'arbitrary'
-          };
+      if (parsedValue !== null) {
+        const result: ParsedStyle = {
+          property: direction === 'x' ? 'itemSpacing' : 
+                   direction === 'y' ? 'counterAxisSpacing' : 
+                   'gap',
+          value: parsedValue.value,
+          variant: parsedValue.variant
+        };
+
+        if (parsedValue.variant === 'figma-variable' && parsedValue.variableId) {
+          result.variableId = parsedValue.variableId;
         }
+
+        return result;
       }
     }
   }
@@ -107,31 +120,40 @@ export function parseSpacingValue(className: string): ParsedStyle | null {
       }
     }
 
-    // 임의값 처리
-    const arbitraryMatch = className.match(/^p([trbl]|[xy])?-?\[(.*?)\]$/);
+    // 임의값과 Figma 변수 처리
+    const arbitraryMatch = className.match(/^p([trbl]|[xy])?-?(\$?\[.*?\])$/);
     if (arbitraryMatch) {
       const [, direction = '', valueWithUnit] = arbitraryMatch;
-      const value = parseArbitraryValue(`[${valueWithUnit}]`, {
+      const parsedValue = parseArbitraryValue(valueWithUnit, {
         allowNegative: true,
+        allowUnits: true,
+        allowFigmaVariables: true,
+        allowColors: false
       });
       
-      if (value !== null) {
+      if (parsedValue !== null) {
+        let property: string;
         switch (direction) {
-          case 't':
-            return { property: 'paddingTop', value: value, variant: 'arbitrary' };
-          case 'r':
-            return { property: 'paddingRight', value: value, variant: 'arbitrary' };
-          case 'b':
-            return { property: 'paddingBottom', value: value, variant: 'arbitrary' };
-          case 'l':
-            return { property: 'paddingLeft', value: value, variant: 'arbitrary' };
-          case 'x':
-            return { property: 'paddingX', value: value, variant: 'arbitrary' };
-          case 'y':
-            return { property: 'paddingY', value: value, variant: 'arbitrary' };
-          default:
-            return { property: 'padding', value: value, variant: 'arbitrary' };
+          case 't': property = 'paddingTop'; break;
+          case 'r': property = 'paddingRight'; break;
+          case 'b': property = 'paddingBottom'; break;
+          case 'l': property = 'paddingLeft'; break;
+          case 'x': property = 'paddingX'; break;
+          case 'y': property = 'paddingY'; break;
+          default: property = 'padding';
         }
+
+        const result: ParsedStyle = {
+          property,
+          value: parsedValue.value,
+          variant: parsedValue.variant
+        };
+
+        if (parsedValue.variant === 'figma-variable' && parsedValue.variableId) {
+          result.variableId = parsedValue.variableId;
+        }
+
+        return result;
       }
     }
   }

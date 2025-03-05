@@ -136,4 +136,128 @@ describe('Border Converter', () => {
       });
     });
   });
+
+  describe('Figma Variables', () => {
+    it('should convert border width variables', () => {
+      const input: ParsedStyle = {
+        property: 'borderWidth',
+        value: 'borders/width/medium',
+        variant: 'figma-variable',
+        variableId: 'borders/width/medium'
+      };
+      
+      expect(convertBorderToFigma(input)).toEqual({
+        strokeWeight: undefined,
+        boundVariables: {
+          strokeWeight: {
+            type: 'VARIABLE_ALIAS',
+            id: 'borders/width/medium'
+          }
+        }
+      });
+    });
+
+    it('should convert border color variables', () => {
+      const input: ParsedStyle = {
+        property: 'borderColor',
+        value: 'borders/color/primary',
+        variant: 'figma-variable',
+        variableId: 'borders/color/primary'
+      };
+      
+      expect(convertBorderToFigma(input)).toEqual({
+        strokes: [{
+          type: 'SOLID',
+          color: { r: 0, g: 0, b: 0 },
+          boundVariables: {
+            color: {
+              type: 'VARIABLE_ALIAS',
+              id: 'borders/color/primary'
+            }
+          }
+        }]
+      });
+    });
+
+    it('should convert border radius variables', () => {
+      const testCases: { input: ParsedStyle; expected: any }[] = [
+        {
+          input: {
+            property: 'borderRadius',
+            value: 'borders/radius/medium',
+            variant: 'figma-variable',
+            variableId: 'borders/radius/medium'
+          },
+          expected: {
+            cornerRadius: undefined,
+            boundVariables: {
+              cornerRadius: {
+                type: 'VARIABLE_ALIAS',
+                id: 'borders/radius/medium'
+              }
+            }
+          }
+        },
+        {
+          input: {
+            property: 'borderRadiusTopLeft',
+            value: 'borders/radius/large',
+            variant: 'figma-variable',
+            variableId: 'borders/radius/large'
+          },
+          expected: {
+            topLeftRadius: undefined,
+            boundVariables: {
+              topLeftRadius: {
+                type: 'VARIABLE_ALIAS',
+                id: 'borders/radius/large'
+              }
+            }
+          }
+        }
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        expect(convertBorderToFigma(input)).toEqual(expected);
+      });
+    });
+
+    it('should handle invalid variable cases', () => {
+      const testCases: { input: ParsedStyle; expected: any }[] = [
+        {
+          // Missing variableId
+          input: {
+            property: 'borderWidth',
+            value: 'borders/width/medium',
+            variant: 'figma-variable'
+          },
+          expected: {}
+        },
+        {
+          // Empty variableId
+          input: {
+            property: 'borderWidth',
+            value: '',
+            variant: 'figma-variable',
+            variableId: ''
+          },
+          expected: {}
+        },
+        {
+          // Invalid property for variables
+          input: {
+            property: 'borderStyle',
+            value: 'borders/style/solid',
+            variant: 'figma-variable',
+            variableId: 'borders/style/solid'
+          },
+          expected: {}
+        }
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        expect(convertBorderToFigma(input)).toEqual(expected);
+      });
+    });
+  });
 }); 

@@ -335,4 +335,81 @@ describe('Position Style Parser', () => {
       });
     });
   });
+
+  describe('Figma Variables', () => {
+    describe('Position Values', () => {
+      it('should parse position variables', () => {
+        const testCases = [
+          { 
+            input: 'top-$[spacing/position/top]', 
+            expected: {
+              property: 'top',
+              value: 'spacing/position/top',
+              variant: 'figma-variable',
+              variableId: 'spacing/position/top',
+              constraints: { vertical: 'MIN' }
+            }
+          },
+          { 
+            input: 'right-$[spacing/position/right]', 
+            expected: {
+              property: 'right',
+              value: 'spacing/position/right',
+              variant: 'figma-variable',
+              variableId: 'spacing/position/right',
+              constraints: { horizontal: 'MAX' }
+            }
+          },
+          { 
+            input: 'bottom-$[spacing/position/bottom]', 
+            expected: {
+              property: 'bottom',
+              value: 'spacing/position/bottom',
+              variant: 'figma-variable',
+              variableId: 'spacing/position/bottom',
+              constraints: { vertical: 'MAX' }
+            }
+          },
+          { 
+            input: 'left-$[spacing/position/left]', 
+            expected: {
+              property: 'left',
+              value: 'spacing/position/left',
+              variant: 'figma-variable',
+              variableId: 'spacing/position/left',
+              constraints: { horizontal: 'MIN' }
+            }
+          },
+          { 
+            input: 'inset-$[spacing/position/all]', 
+            expected: {
+              property: 'position',
+              value: 'spacing/position/all',
+              variant: 'figma-variable',
+              variableId: 'spacing/position/all',
+              constraints: { horizontal: 'SCALE', vertical: 'SCALE' }
+            }
+          }
+        ];
+
+        testCases.forEach(({ input, expected }) => {
+          expect(parsePositionStyleValue(input)).toEqual(expected);
+        });
+      });
+
+      it('should reject invalid position variable paths', () => {
+        const invalidCases = [
+          'top-$[]',
+          'right-$[/spacing/position]',
+          'bottom-$[spacing/position/]',
+          'left-$[spacing//position]',
+          'inset-$[/]'
+        ];
+
+        invalidCases.forEach(input => {
+          expect(parsePositionStyleValue(input)).toBeNull();
+        });
+      });
+    });
+  });
 }); 

@@ -169,4 +169,167 @@ describe('Border Style Parser', () => {
       });
     });
   });
+
+  describe('Figma Variables', () => {
+    describe('Border Color Variables', () => {
+      it('should parse border color variables', () => {
+        const testCases = [
+          {
+            input: 'border-color-$[colors/border]',
+            expected: {
+              property: 'borderColor',
+              value: 'colors/border',
+              variant: 'figma-variable',
+              variableId: 'colors/border'
+            }
+          },
+          {
+            input: 'border-color-$[theme/border/primary]',
+            expected: {
+              property: 'borderColor',
+              value: 'theme/border/primary',
+              variant: 'figma-variable',
+              variableId: 'theme/border/primary'
+            }
+          }
+        ];
+
+        testCases.forEach(({ input, expected }) => {
+          expect(parseBorderStyleValue(input)).toEqual(expected);
+        });
+      });
+
+      it('should handle invalid border color variable paths', () => {
+        const testCases = [
+          'border-color-$[]',
+          'border-color-$[/]',
+          'border-color-$[/invalid]',
+          'border-color-$[colors/]/25',
+          'border-color-$[/colors/border]',
+          'border-color-$[colors//border]'
+        ];
+
+        testCases.forEach(input => {
+          expect(parseBorderStyleValue(input)).toBeNull();
+        });
+      });
+    });
+
+    describe('Border Width Variables', () => {
+      it('should parse border width variables', () => {
+        const testCases = [
+          {
+            input: 'border-width-$[borders/width/thin]',
+            expected: {
+              property: 'borderWidth',
+              value: 'borders/width/thin',
+              variant: 'figma-variable',
+              variableId: 'borders/width/thin'
+            }
+          },
+          {
+            input: 'border-width-$[theme/border/width/thick]',
+            expected: {
+              property: 'borderWidth',
+              value: 'theme/border/width/thick',
+              variant: 'figma-variable',
+              variableId: 'theme/border/width/thick'
+            }
+          }
+        ];
+
+        testCases.forEach(({ input, expected }) => {
+          expect(parseBorderStyleValue(input)).toEqual(expected);
+        });
+      });
+
+      it('should handle invalid border width variable paths', () => {
+        const testCases = [
+          'border-width-$[]',
+          'border-width-$[/]',
+          'border-width-$[/invalid]',
+          'border-width-$[borders/]/25',
+          'border-width-$[/borders/width]',
+          'border-width-$[borders//width]'
+        ];
+
+        testCases.forEach(input => {
+          expect(parseBorderStyleValue(input)).toBeNull();
+        });
+      });
+    });
+
+    describe('Legacy Border Variables', () => {
+      it('should parse border variables as width', () => {
+        const testCases = [
+          {
+            input: 'border-$[borders/size/thin]',
+            expected: {
+              property: 'borderWidth',
+              value: 'borders/size/thin',
+              variant: 'figma-variable',
+              variableId: 'borders/size/thin'
+            }
+          }
+        ];
+
+        testCases.forEach(({ input, expected }) => {
+          expect(parseBorderStyleValue(input)).toEqual(expected);
+        });
+      });
+    });
+
+    describe('Border Radius Variables', () => {
+      it('should parse border radius variables', () => {
+        const testCases = [
+          {
+            input: 'rounded-$[radii/small]',
+            expected: {
+              property: 'borderRadius',
+              value: 'radii/small',
+              variant: 'figma-variable',
+              variableId: 'radii/small'
+            }
+          },
+          {
+            input: 'rounded-t-$[radii/medium]',
+            expected: {
+              property: 'borderRadiusTop',
+              value: 'radii/medium',
+              variant: 'figma-variable',
+              variableId: 'radii/medium'
+            }
+          },
+          {
+            input: 'rounded-tr-$[radii/large]',
+            expected: {
+              property: 'borderRadiusTopRight',
+              value: 'radii/large',
+              variant: 'figma-variable',
+              variableId: 'radii/large'
+            }
+          }
+        ];
+
+        testCases.forEach(({ input, expected }) => {
+          expect(parseBorderStyleValue(input)).toEqual(expected);
+        });
+      });
+
+      it('should handle invalid border radius variable paths', () => {
+        const testCases = [
+          'rounded-$[]',
+          'rounded-$[/]',
+          'rounded-$[/invalid]',
+          'rounded-t-$[radii/]/25',
+          'rounded-tr-$[/radii/corner]',
+          'rounded-tl-$[radii//small]'
+        ];
+
+        testCases.forEach(input => {
+          expect(parseBorderStyleValue(input)).toBeNull();
+        });
+      });
+    });
+  });
 }); 

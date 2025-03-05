@@ -1,5 +1,5 @@
 import { COLORS } from 'src/config/tokens';
-import { ParsedStyle, FigmaStyleProperties, FigmaFontName, FigmaLineHeight, FigmaColor } from '../types';
+import { ParsedStyle, FigmaStyleProperties, FigmaFontName, FigmaLineHeight, FigmaColor, FigmaSolidPaint } from '../types';
 import { parseColor } from 'src/utils/colors';
 
 const TEXT_ALIGN_VALUES = ['LEFT', 'CENTER', 'RIGHT', 'JUSTIFIED'] as const;
@@ -8,15 +8,52 @@ type TextAlignValue = typeof TEXT_ALIGN_VALUES[number];
 const TEXT_DECORATION_VALUES = ['UNDERLINE', 'STRIKETHROUGH', 'NONE'] as const;
 type TextDecorationValue = typeof TEXT_DECORATION_VALUES[number];
 
+type BoundVariable = {
+  type: 'VARIABLE_ALIAS';
+  id: string;
+};
+
+type FigmaVariableColor = {
+  boundVariables?: {
+    color: BoundVariable;
+  };
+};
+
+type FigmaVariableSolidPaint = FigmaSolidPaint & FigmaVariableColor;
+
+type FigmaVariableText = {
+  boundVariables?: {
+    fontSize?: BoundVariable;
+    lineHeight?: BoundVariable;
+    letterSpacing?: BoundVariable;
+    fontName?: BoundVariable;
+  };
+  fills?: FigmaVariableSolidPaint[];
+};
+
+type FigmaVariableStyleProperties = Omit<FigmaStyleProperties, 'fills'> & FigmaVariableText;
+
 /**
  * Text 스타일을 Figma 스타일로 변환합니다.
  */
-export function convertTextToFigma(style: ParsedStyle): Partial<FigmaStyleProperties> {
-  const result: Partial<FigmaStyleProperties> = {};
+export function convertTextToFigma(style: ParsedStyle): Partial<FigmaVariableStyleProperties> {
+  const result: Partial<FigmaVariableStyleProperties> = {};
 
   switch (style.property) {
     case 'color':
-      if (typeof style.value === 'object') {
+      if (style.variant === 'figma-variable' && style.variableId) {
+        result.fills = [{
+          type: 'SOLID',
+          color: { r: 0, g: 0, b: 0 },
+          ...(style.opacity !== undefined && { opacity: style.opacity }),
+          boundVariables: {
+            color: {
+              type: 'VARIABLE_ALIAS',
+              id: style.variableId
+            }
+          }
+        }];
+      } else if (typeof style.value === 'object') {
         result.fills = [{
           type: 'SOLID',
           color: style.value as FigmaColor
@@ -33,14 +70,32 @@ export function convertTextToFigma(style: ParsedStyle): Partial<FigmaStyleProper
           opacity: color.a
         }];
       }
+      break;
+
     case 'fontSize':
-      if (typeof style.value === 'number' && style.value > 0) {
+      if (style.variant === 'figma-variable' && style.variableId) {
+        result.fontSize = 0;
+        result.boundVariables = {
+          fontSize: {
+            type: 'VARIABLE_ALIAS',
+            id: style.variableId
+          }
+        };
+      } else if (typeof style.value === 'number' && style.value > 0) {
         result.fontSize = style.value;
       }
       break;
 
     case 'fontName':
-      if (typeof style.value === 'object' && 'family' in style.value) {
+      if (style.variant === 'figma-variable' && style.variableId) {
+        result.fontName = { family: '', style: '' };
+        result.boundVariables = {
+          fontName: {
+            type: 'VARIABLE_ALIAS',
+            id: style.variableId
+          }
+        };
+      } else if (typeof style.value === 'object' && 'family' in style.value) {
         const fontName = style.value as FigmaFontName;
         result.fontName = fontName;
       }
@@ -59,7 +114,15 @@ export function convertTextToFigma(style: ParsedStyle): Partial<FigmaStyleProper
       break;
 
     case 'letterSpacing':
-      if (typeof style.value === 'number') {
+      if (style.variant === 'figma-variable' && style.variableId) {
+        result.letterSpacing = 0;
+        result.boundVariables = {
+          letterSpacing: {
+            type: 'VARIABLE_ALIAS',
+            id: style.variableId
+          }
+        };
+      } else if (typeof style.value === 'number') {
         result.letterSpacing = style.value;
       } else if (typeof style.value === 'object' && 'value' in style.value && 'unit' in style.value) {
         result.letterSpacing = style.value;
@@ -67,7 +130,15 @@ export function convertTextToFigma(style: ParsedStyle): Partial<FigmaStyleProper
       break;
 
     case 'lineHeight':
-      if (typeof style.value === 'object' && 'value' in style.value && 'unit' in style.value) {
+      if (style.variant === 'figma-variable' && style.variableId) {
+        result.lineHeight = { value: 0, unit: 'PIXELS' };
+        result.boundVariables = {
+          lineHeight: {
+            type: 'VARIABLE_ALIAS',
+            id: style.variableId
+          }
+        };
+      } else if (typeof style.value === 'object' && 'value' in style.value && 'unit' in style.value) {
         result.lineHeight = style.value;
       }
       break;
@@ -99,6 +170,34 @@ export function convertTextToFigma(style: ParsedStyle): Partial<FigmaStyleProper
     case 'fontWeight':
       if (typeof style.value === 'number') {
         result.fontWeight = style.value;
+      }
+      break;
+
+    case 'paragraphSpacing':
+      if (style.variant === 'figma-variable' && style.variableId) {
+        result.paragraphSpacing = 0;
+        result.boundVariables = {
+          paragraphSpacing: {
+            type: 'VARIABLE_ALIAS',
+            id: style.variableId
+          }
+        };
+      } else if (typeof style.value === 'number') {
+        result.paragraphSpacing = style.value;
+      }
+      break;
+
+    case 'paragraphIndent':
+      if (style.variant === 'figma-variable' && style.variableId) {
+        result.paragraphIndent = 0;
+        result.boundVariables = {
+          paragraphIndent: {
+            type: 'VARIABLE_ALIAS',
+            id: style.variableId
+          }
+        };
+      } else if (typeof style.value === 'number') {
+        result.paragraphIndent = style.value;
       }
       break;
   }

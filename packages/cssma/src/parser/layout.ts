@@ -1,4 +1,6 @@
 import { ParsedStyle } from '../types';
+import { extractFigmaVariableId, createFigmaVariableStyle } from '../utils/variables';
+import { parseArbitraryValue } from '../utils/converters';
 
 const LAYOUT_WRAP_MAP = {
   'wrap': 'WRAP',
@@ -20,29 +22,28 @@ const COUNTER_AXIS_ALIGN_MAP = {
 } as const;
 
 /**
- * 임의 값에서 숫자를 추출합니다.
- * @param value 파싱할 값
- * @param allowNegative 음수 허용 여부 (기본값: false)
- * @returns 파싱된 숫자 또는 null
+ * Parse arbitrary numeric value from a string
+ * @param value Value to parse
+ * @param allowNegative Whether to allow negative values
+ * @returns Parsed number or null if invalid
  */
-function parseArbitraryValue(value: string, allowNegative: boolean = false): number | null {
+function parseArbitraryNumericValue(value: string, allowNegative: boolean = false): number | null {
   const match = value.match(/^\[([-\d.]+)(?:px)?\]$/);
   if (!match) return null;
   
   const num = parseFloat(match[1]);
   if (isNaN(num)) return null;
   
-  // 음수가 허용되지 않는 경우 음수 값은 null 반환
   if (!allowNegative && num < 0) return null;
   
   return num;
 }
 
 /**
- * Layout 관련 스타일을 파싱합니다.
+ * Parse layout-related style values
  */
 export function parseLayoutValue(className: string): ParsedStyle | null {
-  // Flex direction
+  // Handle Flex direction
   if (className === 'flex-row') {
     return {
       property: 'layoutMode',
@@ -59,7 +60,7 @@ export function parseLayoutValue(className: string): ParsedStyle | null {
     };
   }
 
-  // Flex wrap
+  // Handle Flex wrap
   if (className in LAYOUT_WRAP_MAP) {
     return {
       property: 'layoutWrap',
@@ -68,7 +69,7 @@ export function parseLayoutValue(className: string): ParsedStyle | null {
     };
   }
 
-  // Alignment
+  // Handle Alignment
   if (className in COUNTER_AXIS_ALIGN_MAP) {
     return {
       property: 'counterAxisAlignItems',
@@ -85,43 +86,37 @@ export function parseLayoutValue(className: string): ParsedStyle | null {
     };
   }
 
-  // Size
-  if (className === 'w-full') {
-    return {
-      property: 'layoutSizingHorizontal',
-      value: 'FILL',
-      variant: 'preset'
-    };
-  }
-
-  if (className === 'w-auto') {
-    return {
-      property: 'layoutSizingHorizontal',
-      value: 'HUG',
-      variant: 'preset'
-    };
-  }
-
-  if (className === 'h-full') {
-    return {
-      property: 'layoutSizingVertical',
-      value: 'FILL',
-      variant: 'preset'
-    };
-  }
-
-  if (className === 'h-auto') {
-    return {
-      property: 'layoutSizingVertical',
-      value: 'HUG',
-      variant: 'preset'
-    };
-  }
-
-  // 임의값 처리
+  // Handle Width
   if (className.startsWith('w-')) {
-    const value = className.slice(2); // 'w-' 제거
-    const size = parseArbitraryValue(value);
+    const value = className.slice(2);
+
+    // Handle preset values
+    if (value === 'full') {
+      return {
+        property: 'layoutSizingHorizontal',
+        value: 'FILL',
+        variant: 'preset'
+      };
+    }
+
+    if (value === 'auto') {
+      return {
+        property: 'layoutSizingHorizontal',
+        value: 'HUG',
+        variant: 'preset'
+      };
+    }
+
+    // Handle Figma variables
+    if (value.startsWith('$[')) {
+      const variableId = extractFigmaVariableId(value);
+      if (!variableId) return null;
+      
+      return createFigmaVariableStyle('width', variableId);
+    }
+
+    // Handle arbitrary values
+    const size = parseArbitraryNumericValue(value);
     if (size !== null) {
       return {
         property: 'width',
@@ -131,12 +126,73 @@ export function parseLayoutValue(className: string): ParsedStyle | null {
     }
   }
 
+  // Handle Height
   if (className.startsWith('h-')) {
-    const value = className.slice(2); // 'h-' 제거
-    const size = parseArbitraryValue(value);
+    const value = className.slice(2);
+
+    // Handle preset values
+    if (value === 'full') {
+      return {
+        property: 'layoutSizingVertical',
+        value: 'FILL',
+        variant: 'preset'
+      };
+    }
+
+    if (value === 'auto') {
+      return {
+        property: 'layoutSizingVertical',
+        value: 'HUG',
+        variant: 'preset'
+      };
+    }
+
+    // Handle Figma variables
+    if (value.startsWith('$[')) {
+      const variableId = extractFigmaVariableId(value);
+      if (!variableId) return null;
+      
+      return createFigmaVariableStyle('height', variableId);
+    }
+
+    // Handle arbitrary values
+    const size = parseArbitraryNumericValue(value);
     if (size !== null) {
       return {
         property: 'height',
+        value: size,
+        variant: 'arbitrary'
+      };
+    }
+  }
+
+  // Handle Gap
+  if (className.startsWith('gap-')) {
+    const match = className.match(/^gap-(x|y)?-?(.+)$/);
+    if (!match) return null;
+
+    const [, direction, value] = match;
+
+    // Handle Figma variables
+    if (value.startsWith('$[')) {
+      const variableId = extractFigmaVariableId(value);
+      if (!variableId) return null;
+      
+      return createFigmaVariableStyle(
+        direction === 'x' ? 'itemSpacing' :
+        direction === 'y' ? 'counterAxisSpacing' :
+        'gap',
+        variableId
+      );
+    }
+
+    // Handle arbitrary values
+    const size = parseArbitraryNumericValue(value);
+    if (size !== null) {
+      return {
+        property: direction === 'x' ? 'itemSpacing' :
+                 direction === 'y' ? 'counterAxisSpacing' :
+                 'gap',
         value: size,
         variant: 'arbitrary'
       };

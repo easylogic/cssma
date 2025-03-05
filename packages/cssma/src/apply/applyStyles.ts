@@ -1,20 +1,108 @@
 import { findVariableByName } from 'src/utils/figma-variable';
 import { processStyles } from '../index';
+import { FigmaVariablePaint, FigmaVariableGradientStop } from '../types';
+
+type TextVariableTypes = {
+  fontSize: number;
+  fontName: FontName;
+  lineHeight: LineHeight;
+  letterSpacing: LetterSpacing;
+};
+
+type TextVariableValue = {
+  variableId: string;
+  value?: any;
+};
 
 /**
- * Figma 노드에 Tailwind CSS 스타일을 적용합니다.
+ * Process Paint objects with Figma variables.
+ */
+async function processVariablePaint(paint: FigmaVariablePaint): Promise<Paint> {
+  // Handle solid color variables
+  if (paint.type === 'SOLID' && paint.boundVariables?.color) {
+    const variable = await findVariableByName(paint.boundVariables.color.id);
+    if (!variable) return paint as Paint;
+
+    return figma.variables.setBoundVariableForPaint(
+      {
+        type: 'SOLID',
+        color: { r: 0, g: 0, b: 0 },
+        ...(paint.opacity !== undefined && { opacity: paint.opacity })
+      },
+      'color',
+      variable
+    ) as Paint;
+  }
+
+  // Handle gradient variables
+  if (['GRADIENT_LINEAR', 'GRADIENT_RADIAL', 'GRADIENT_ANGULAR'].includes(paint.type)) {
+    const stops = await Promise.all(
+      (paint as any).gradientStops.map(async (stop: FigmaVariableGradientStop) => {
+        if (stop.boundVariables?.color) {
+          const variable = await findVariableByName(stop.boundVariables.color.id);
+          if (!variable) return stop;
+
+          const paint = await figma.variables.setBoundVariableForPaint(
+            {
+              type: 'SOLID',
+              color: { r: 0, g: 0, b: 0 }
+            },
+            'color',
+            variable
+          ) as SolidPaint;
+
+          return {
+            ...stop,
+            color: paint.color
+          };
+        }
+        return stop;
+      })
+    );
+
+    return {
+      ...paint,
+      gradientStops: stops
+    } as Paint;
+  }
+
+  return paint as Paint;
+}
+
+/**
+ * Apply Figma variables to text properties.
+ */
+async function processTextVariable(
+  node: TextNode,
+  variableId: string,
+  propertyType: 'fontSize' | 'fontName' | 'lineHeight' | 'letterSpacing' | 'paragraphSpacing' | 'paragraphIndent'
+): Promise<any | null> {
+  const variable = await findVariableByName(variableId);
+  if (!variable) return null;
+
+  try {
+    // Bind variable to text property
+    node.setBoundVariable(propertyType as VariableBindableTextField, variable);
+  } catch (error) {
+    console.error('text variable error:', error);
+    return null;
+  }
+}
+
+/**
+ * Apply Tailwind CSS styles to a Figma node.
  * 
- * @param node 스타일을 적용할 Figma 노드
- * @param styles Tailwind CSS 형식의 스타일 문자열 (예: 'flex-col bg-white rounded-lg p-[16] gap-[8]')
- * @returns 스타일이 적용된 노드
+ * @param node The target Figma node to apply styles to
+ * @param styles Tailwind CSS style string (e.g., 'flex-col bg-white rounded-lg p-[16] gap-[8]')
+ * @returns The styled node
  * 
  * @example
  * ```typescript
- * // 프레임 생성 및 스타일 적용
+ * // Create and style a frame
  * const frame = figma.createFrame();
  * applyStyles(frame, 'flex-col bg-white rounded-lg p-[16] gap-[8]');
  * 
- * // 텍스트 노드 생성 및 스타일 적용
+ * // Create and style a text node
  * const text = figma.createText();
  * text.characters = 'Hello World';
  * applyStyles(text, 'text-lg font-bold text-[#1a1a1a]');
@@ -26,12 +114,12 @@ export async function applyStyles<T extends SceneNode>(node: T, styles: string =
   try {
     const styleObject = processStyles(styles);
     
-    // 노드 타입에 따라 적용 가능한 속성 확인
+    // Check node type for applicable properties
     const isFrameLike = ['FRAME', 'COMPONENT', 'INSTANCE', 'SECTION'].includes(node.type);
     const isTextNode = node.type === 'TEXT';
     const isVectorNode = node.type === 'VECTOR';
     
-    // 속성 존재 여부 확인 (필요한 경우에만)
+    // Check for property existence (only when needed)
     const hasCornerRadius = styleObject.cornerRadius !== undefined || 
                            styleObject.topLeftRadius !== undefined || 
                            styleObject.topRightRadius !== undefined || 
@@ -48,16 +136,27 @@ export async function applyStyles<T extends SceneNode>(node: T, styles: string =
     const hasResize = styleObject.width !== undefined || styleObject.height !== undefined;
     const hasOpacity = styleObject.opacity !== undefined;
     
-    // 레이아웃 속성 적용 (프레임, 컴포넌트, 인스턴스에만 적용)
+    // Check for size constraints
+    const hasSizeConstraints = styleObject.minWidth !== undefined ||
+                              styleObject.maxWidth !== undefined ||
+                              styleObject.minHeight !== undefined ||
+                              styleObject.maxHeight !== undefined;
+
+    const hasIndividualStrokes = styleObject.strokeTopWeight !== undefined ||
+                                styleObject.strokeRightWeight !== undefined ||
+                                styleObject.strokeBottomWeight !== undefined ||
+                                styleObject.strokeLeftWeight !== undefined;
+    
+    // Apply layout properties (only for frame-like nodes)
     if (isFrameLike) {
       const frameNode = node as FrameNode;
       
-      // 레이아웃 모드 및 방향
+      // Layout mode and direction
       if (styleObject.layoutMode !== undefined) {
         frameNode.layoutMode = styleObject.layoutMode;
       }
       
-      // 정렬 속성
+      // Alignment properties
       if (styleObject.primaryAxisAlignItems !== undefined) {
         frameNode.primaryAxisAlignItems = styleObject.primaryAxisAlignItems;
       }
@@ -66,12 +165,12 @@ export async function applyStyles<T extends SceneNode>(node: T, styles: string =
         frameNode.counterAxisAlignItems = styleObject.counterAxisAlignItems;
       }
       
-      // 레이아웃 랩 (줄바꿈)
+      // Layout wrap (line break)
       if (styleObject.layoutWrap !== undefined) {
         frameNode.layoutWrap = styleObject.layoutWrap;
       }
       
-      // 사이징 속성
+      // Sizing properties
       if (styleObject.layoutSizingHorizontal !== undefined) {
         frameNode.layoutSizingHorizontal = styleObject.layoutSizingHorizontal;
       }
@@ -80,7 +179,7 @@ export async function applyStyles<T extends SceneNode>(node: T, styles: string =
         frameNode.layoutSizingVertical = styleObject.layoutSizingVertical;
       }
       
-      // 간격 속성
+      // Spacing properties
       if (styleObject.itemSpacing !== undefined) {
         frameNode.itemSpacing = styleObject.itemSpacing;
       }
@@ -89,7 +188,7 @@ export async function applyStyles<T extends SceneNode>(node: T, styles: string =
         frameNode.counterAxisSpacing = styleObject.counterAxisSpacing;
       }
       
-      // 패딩 속성
+      // Padding properties
       if (styleObject.paddingTop !== undefined) {
         frameNode.paddingTop = styleObject.paddingTop;
       }
@@ -107,7 +206,7 @@ export async function applyStyles<T extends SceneNode>(node: T, styles: string =
       }
     }
     
-    // 모서리 반경 속성
+    // Apply corner radius properties
     if (hasCornerRadius && 'cornerRadius' in node) {
       const roundableNode = node as SceneNode & { 
         cornerRadius: number;
@@ -117,12 +216,12 @@ export async function applyStyles<T extends SceneNode>(node: T, styles: string =
         bottomRightRadius?: number;
       };
       
-      // 전체 모서리 반경
+      // Apply global corner radius
       if (styleObject.cornerRadius !== undefined) {
         roundableNode.cornerRadius = styleObject.cornerRadius;
       }
       
-      // 개별 모서리 반경
+      // Apply individual corner radii
       if ('topLeftRadius' in roundableNode && styleObject.topLeftRadius !== undefined) {
         roundableNode.topLeftRadius = styleObject.topLeftRadius;
       }
@@ -140,22 +239,17 @@ export async function applyStyles<T extends SceneNode>(node: T, styles: string =
       }
     }
     
-    // 채우기 속성
+    // Apply fill properties
     if (hasFills && 'fills' in node) {
       const fillableNode = node as SceneNode & { fills: ReadonlyArray<Paint> | Paint[] };
-      fillableNode.fills = await Promise.all(styleObject.fills?.map(async (fill) => {
-        if (fill.type === 'SOLID' && 'variable' in fill) {
-          return figma.variables.setBoundVariableForPaint(
-            { type: 'SOLID', color: { r: 0, g: 0, b: 0 } },
-            'color',
-            await findVariableByName(fill.variable as string)
-          ) as Paint;
-        }
-        return fill as Paint;
-      }) || []);
+      if (styleObject.fills) {
+        fillableNode.fills = await Promise.all(
+          styleObject.fills.map(fill => processVariablePaint(fill as FigmaVariablePaint))
+        );
+      }
     }
     
-    // 테두리 속성
+    // Apply stroke properties
     if (hasStrokes && 'strokes' in node) {
       const strokeableNode = node as SceneNode & { 
         strokes: ReadonlyArray<Paint> | Paint[];
@@ -167,7 +261,9 @@ export async function applyStyles<T extends SceneNode>(node: T, styles: string =
       };
       
       if (styleObject.strokes !== undefined) {
-        strokeableNode.strokes = styleObject.strokes as Paint[];
+        strokeableNode.strokes = await Promise.all(
+          styleObject.strokes.map(stroke => processVariablePaint(stroke as FigmaVariablePaint))
+        );
       }
       
       if ('strokeWeight' in strokeableNode && styleObject.strokeWeight !== undefined) {
@@ -183,13 +279,13 @@ export async function applyStyles<T extends SceneNode>(node: T, styles: string =
       }
     }
     
-    // 효과 속성
+    // Apply effect properties
     if (hasEffects && 'effects' in node) {
       const effectableNode = node as SceneNode & { effects: ReadonlyArray<Effect> | Effect[] };
       effectableNode.effects = styleObject.effects as Effect[];
     }
     
-    // 불투명도 속성
+    // Apply opacity property
     if (hasOpacity && 'opacity' in node) {
       const opacityNode = node as SceneNode & { opacity: number };
       if (styleObject.opacity !== undefined) {
@@ -197,21 +293,37 @@ export async function applyStyles<T extends SceneNode>(node: T, styles: string =
       }
     }
     
-    // 텍스트 노드 특수 처리
+    // Handle text node specific properties
     if (isTextNode) {
       const textNode = node as TextNode;
       
-      // 폰트 크기
+      // Font size
       if (styleObject.fontSize !== undefined) {
-        textNode.fontSize = styleObject.fontSize;
+        if (typeof styleObject.fontSize === 'object' && 'variableId' in styleObject.fontSize) {
+          await processTextVariable(
+            textNode,
+            (styleObject.fontSize as TextVariableValue).variableId,
+            'fontSize'
+          );
+        } else {
+          textNode.fontSize = styleObject.fontSize as number;
+        }
       }
       
-      // 폰트 이름 (폰트 패밀리 + 스타일)
+      // Font name (family + style)
       if (styleObject.fontName !== undefined) {
-        textNode.fontName = styleObject.fontName as FontName;
+        if (typeof styleObject.fontName === 'object' && 'variableId' in styleObject.fontName) {
+          await processTextVariable(
+            textNode,
+            (styleObject.fontName as TextVariableValue).variableId,
+            'fontName'
+          );
+        } else {
+          textNode.fontName = styleObject.fontName as FontName;
+        }
       }
       
-      // 텍스트 정렬
+      // Text alignment
       if (styleObject.textAlignHorizontal !== undefined) {
         textNode.textAlignHorizontal = styleObject.textAlignHorizontal as 'LEFT' | 'CENTER' | 'RIGHT' | 'JUSTIFIED';
       }
@@ -220,44 +332,70 @@ export async function applyStyles<T extends SceneNode>(node: T, styles: string =
         textNode.textAlignVertical = styleObject.textAlignVertical as 'TOP' | 'CENTER' | 'BOTTOM';
       }
       
-      // 행간
+      // Line height
       if (styleObject.lineHeight !== undefined) {
-        // 행간 값이 숫자인 경우 LineHeight 객체로 변환
-        if (typeof styleObject.lineHeight === 'number') {
-          textNode.lineHeight = {
-            value: styleObject.lineHeight,
-            unit: 'PIXELS'
-          };
+        if (typeof styleObject.lineHeight === 'object' && 'variableId' in styleObject.lineHeight) {
+          await processTextVariable(
+            textNode,
+            (styleObject.lineHeight as TextVariableValue).variableId,
+            'lineHeight'
+          );
         } else {
           textNode.lineHeight = styleObject.lineHeight as LineHeight;
         }
       }
       
-      // 자간
+      // Letter spacing
       if (styleObject.letterSpacing !== undefined) {
-        // 자간 값이 숫자인 경우 LetterSpacing 객체로 변환
-        if (typeof styleObject.letterSpacing === 'number') {
-          textNode.letterSpacing = {
-            value: styleObject.letterSpacing,
-            unit: 'PIXELS'
-          };
+        if (typeof styleObject.letterSpacing === 'object' && 'variableId' in styleObject.letterSpacing) {
+          await processTextVariable(
+            textNode,
+            (styleObject.letterSpacing as TextVariableValue).variableId,
+            'letterSpacing'
+          );
         } else {
           textNode.letterSpacing = styleObject.letterSpacing as LetterSpacing;
         }
       }
       
-      // 텍스트 장식
+      // Text decoration
       if (styleObject.textDecoration !== undefined) {
         textNode.textDecoration = styleObject.textDecoration as 'NONE' | 'UNDERLINE' | 'STRIKETHROUGH';
       }
       
-      // 텍스트 변환
+      // Text transform
       if (styleObject.textCase !== undefined) {
         textNode.textCase = styleObject.textCase as 'ORIGINAL' | 'UPPER' | 'LOWER' | 'TITLE';
       }
+      
+      // Paragraph spacing
+      if (styleObject.paragraphSpacing !== undefined) {
+        if (typeof styleObject.paragraphSpacing === 'object' && 'variableId' in styleObject.paragraphSpacing) {
+          await processTextVariable(
+            textNode,
+            (styleObject.paragraphSpacing as TextVariableValue).variableId,
+            'paragraphSpacing'
+          );
+        } else {
+          textNode.paragraphSpacing = styleObject.paragraphSpacing as number;
+        }
+      }
+      
+      // Paragraph indent
+      if (styleObject.paragraphIndent !== undefined) {
+        if (typeof styleObject.paragraphIndent === 'object' && 'variableId' in styleObject.paragraphIndent) {
+          await processTextVariable(
+            textNode,
+            (styleObject.paragraphIndent as TextVariableValue).variableId,
+            'paragraphIndent'
+          );
+        } else {
+          textNode.paragraphIndent = styleObject.paragraphIndent as number;
+        }
+      }
     }
     
-    // 벡터 노드 특수 처리
+    // Handle vector node specific properties
     if (isVectorNode) {
       const vectorNode = node as VectorNode;
       const extendedStyleObject = styleObject as any;
@@ -265,7 +403,7 @@ export async function applyStyles<T extends SceneNode>(node: T, styles: string =
       if (extendedStyleObject.vectorPaths !== undefined) {
         vectorNode.vectorPaths = extendedStyleObject.vectorPaths;
       } else if (extendedStyleObject.paths !== undefined) {
-        // 이전 버전 호환성을 위한 처리
+        // Legacy compatibility handling
         vectorNode.vectorPaths = extendedStyleObject.paths.map((path: string) => ({
           data: path,
           windingRule: 'NONZERO'
@@ -273,7 +411,7 @@ export async function applyStyles<T extends SceneNode>(node: T, styles: string =
       }
     }
     
-    // 크기 속성 (resize 메서드가 있는 노드에만 적용)
+    // Sizing properties (only for nodes with resize method)
     if (hasResize && 'resize' in node) {
       const resizableNode = node as SceneNode & { resize: (width: number, height: number) => void };
       
@@ -286,9 +424,48 @@ export async function applyStyles<T extends SceneNode>(node: T, styles: string =
       }
     }
     
+    // Apply size constraints
+    if (hasSizeConstraints) {
+      if (styleObject.minWidth !== undefined) {
+        node.minWidth = styleObject.minWidth;
+      }
+      if (styleObject.maxWidth !== undefined) {
+        node.maxWidth = styleObject.maxWidth;
+      }
+      if (styleObject.minHeight !== undefined) {
+        node.minHeight = styleObject.minHeight;
+      }
+      if (styleObject.maxHeight !== undefined) {
+        node.maxHeight = styleObject.maxHeight;
+      }
+    }
+
+    // Apply individual stroke weights
+    if (hasIndividualStrokes && 'strokes' in node) {
+      const strokeableNode = node as SceneNode & {
+        strokeTopWeight?: number;
+        strokeRightWeight?: number;
+        strokeBottomWeight?: number;
+        strokeLeftWeight?: number;
+      };
+
+      if (styleObject.strokeTopWeight !== undefined) {
+        strokeableNode.strokeTopWeight = styleObject.strokeTopWeight;
+      }
+      if (styleObject.strokeRightWeight !== undefined) {
+        strokeableNode.strokeRightWeight = styleObject.strokeRightWeight;
+      }
+      if (styleObject.strokeBottomWeight !== undefined) {
+        strokeableNode.strokeBottomWeight = styleObject.strokeBottomWeight;
+      }
+      if (styleObject.strokeLeftWeight !== undefined) {
+        strokeableNode.strokeLeftWeight = styleObject.strokeLeftWeight;
+      }
+    }
+    
     return node;
   } catch (error) {
-    console.error('스타일 적용 중 오류 발생:', error);
+    console.error('Error occurred during style application:', error);
     return node;
   }
 }

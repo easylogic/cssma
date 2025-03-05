@@ -57,4 +57,50 @@ describe('Shape Style Parser', () => {
       expect(parseShapeStyleValue('opacity-[101%]')).toBeNull();
     });
   });
+
+  describe('Figma Variables', () => {
+    describe('Opacity Variables', () => {
+      it('should parse opacity variables', () => {
+        const testCases = [
+          {
+            input: 'opacity-$[opacity/default]',
+            expected: {
+              property: 'opacity',
+              value: 'opacity/default',
+              variant: 'figma-variable',
+              variableId: 'opacity/default'
+            }
+          },
+          {
+            input: 'opacity-$[theme/opacity/hover]',
+            expected: {
+              property: 'opacity',
+              value: 'theme/opacity/hover',
+              variant: 'figma-variable',
+              variableId: 'theme/opacity/hover'
+            }
+          }
+        ];
+
+        testCases.forEach(({ input, expected }) => {
+          expect(parseShapeStyleValue(input)).toEqual(expected);
+        });
+      });
+
+      it('should handle invalid opacity variable paths', () => {
+        const testCases = [
+          'opacity-$[]',
+          'opacity-$[/]',
+          'opacity-$[/invalid]',
+          'opacity-$[opacity/]/50',
+          'opacity-$[/opacity/value]',
+          'opacity-$[opacity//value]'
+        ];
+
+        testCases.forEach(input => {
+          expect(parseShapeStyleValue(input)).toBeNull();
+        });
+      });
+    });
+  });
 }); 

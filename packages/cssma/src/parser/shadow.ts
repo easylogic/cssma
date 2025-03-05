@@ -3,6 +3,7 @@ import { ParsedStyle } from '../types';
 import { COLORS } from '../config/tokens';
 import { parseColor } from '../utils/colors';
 import { isValidHexColor, isValidNumber, isValidRgbColor } from '../utils/validators';
+import { extractFigmaVariableId, createFigmaVariableStyle } from '../utils/variables';
 
 interface ShadowConfig {
   type: 'outer' | 'inner';
@@ -72,17 +73,55 @@ const SHADOW_PRESETS: Record<string, ShadowConfig[]> = {
   }]
 };
 
+// 기본적인 변수 경로 유효성 검사 (슬래시 형식)
+const isValidVariablePath = (path: string) => {
+  return path !== '' && 
+         !path.startsWith('/') && 
+         !path.endsWith('/') && 
+         !path.includes('//');
+};
+
 export function parseShadowStyleValue(className: string): ParsedStyle | null {
   // opacity 처리를 위한 분리
-  let [prefix, opacityValue] = className.split('/');
   let opacity: number | undefined;
+  let prefix = className;
   
-  if (opacityValue) {
-    const numericOpacity = parseFloat(opacityValue);
-    if (isNaN(numericOpacity) || numericOpacity < 0 || numericOpacity > 100) {
-      return null;
+  // Figma 변수가 아닌 부분에서 마지막 '/'를 찾아 opacity 처리
+  const lastSlashIndex = className.lastIndexOf('/');
+  if (lastSlashIndex !== -1) {
+    const potentialOpacity = className.slice(lastSlashIndex + 1);
+    const beforeSlash = className.slice(0, lastSlashIndex);
+    
+    // Figma 변수 내부의 '/'가 아닌지 확인
+    const isInsideVariable = (
+      beforeSlash.includes('$[') && 
+      !beforeSlash.endsWith(']') && 
+      className.indexOf(']', lastSlashIndex) !== -1
+    );
+    
+    if (!isInsideVariable) {
+      const numericOpacity = parseFloat(potentialOpacity);
+      if (!isNaN(numericOpacity) && numericOpacity >= 0 && numericOpacity <= 100) {
+        opacity = numericOpacity / 100;
+        prefix = beforeSlash;
+      }
     }
-    opacity = numericOpacity / 100;
+  }
+
+  // Figma 변수 처리
+  if (prefix.includes('$[')) {
+    const match = prefix.match(/^shadow(?:-color)?-\$\[(.*?)\]$/);
+    if (!match) return null;
+
+    const variableId = extractFigmaVariableId(`$[${match[1]}]`);
+    if (!variableId) return null;
+
+    const isColorVariable = prefix.startsWith('shadow-color-');
+    return createFigmaVariableStyle(
+      isColorVariable ? 'boxShadowColor' : 'boxShadow',
+      variableId,
+      { opacity }
+    );
   }
 
   // custom shadow
@@ -93,31 +132,34 @@ export function parseShadowStyleValue(className: string): ParsedStyle | null {
     const newBlur = `[${blur}]`;
     const newSpread = `[${spread}]`;
 
-    if (!isValidNumber(parseArbitraryValue(newX, { allowNegative: true }))) {
+    const parsedX = parseArbitraryValue(newX, { allowNegative: true, allowUnits: true });
+    const parsedY = parseArbitraryValue(newY, { allowNegative: true, allowUnits: true });
+    const parsedBlur = parseArbitraryValue(newBlur, { allowNegative: true, allowUnits: true });
+    const parsedSpread = parseArbitraryValue(newSpread, { allowNegative: true, allowUnits: true });
+
+    if (parsedX?.value === undefined || parsedY?.value === undefined || parsedBlur?.value === undefined || parsedSpread?.value === undefined) {
       return null;
     }
 
-    if (!isValidNumber(parseArbitraryValue(newY, { allowNegative: true }))) {
+    const xValue = Number(parsedX.value);
+    const yValue = Number(parsedY.value);
+    const blurValue = Number(parsedBlur.value);
+    const spreadValue = Number(parsedSpread.value);
+
+    if (isNaN(xValue) || isNaN(yValue) || isNaN(blurValue) || isNaN(spreadValue)) {
       return null;
     }
 
-    if (!isValidNumber(parseArbitraryValue(newBlur, { allowNegative: true }))) {
-      return null;
+    let colorValue;
+    if (color.startsWith('#')) {
+      if (!isValidHexColor(color)) return null;
+      colorValue = parseColor(color);
+    } else if (color.startsWith('rgb')) {
+      if (!isValidRgbColor(color)) return null;
+      colorValue = parseColor(color);
+    } else {
+      colorValue = COLORS[color as keyof typeof COLORS] || parseColor(color);
     }
-
-    if (!isValidNumber(parseArbitraryValue(newSpread, { allowNegative: true }))) {
-      return null;
-    }
-
-    if (color.startsWith('#') && !isValidHexColor(color)) {
-      return null;
-    }
-
-    if (color.startsWith('rgb') && !isValidRgbColor(color)) {
-      return null;
-    }
-
-    const colorValue = COLORS[color as keyof typeof COLORS] || parseColor(color);
 
     if (!colorValue) {
       return null;
@@ -127,10 +169,10 @@ export function parseShadowStyleValue(className: string): ParsedStyle | null {
       property: 'boxShadow',
       value: [{
         type: 'outer',
-        x: parseArbitraryValue(newX, { allowNegative: true }) as number,
-        y: parseArbitraryValue(newY, { allowNegative: true }) as number,
-        blur: parseArbitraryValue(newBlur, { allowNegative: true }) as number,
-        spread: parseArbitraryValue(newSpread, { allowNegative: true }) as number,
+        x: xValue,
+        y: yValue,
+        blur: blurValue,
+        spread: spreadValue,
         color: colorValue
       }],
       variant: 'arbitrary'

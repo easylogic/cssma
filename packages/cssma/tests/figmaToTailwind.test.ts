@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { figmaToStyle } from '../src/figmaToStyle';
+import { figmaToStyle } from '../src/figmaToTailwind';
 
 export function normalizeClasses(classString: string): string[] {
   return classString.split(' ').sort();

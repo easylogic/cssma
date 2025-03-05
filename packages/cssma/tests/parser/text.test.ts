@@ -130,4 +130,311 @@ describe('Text Style Parser', () => {
       expect(parseTextStyleValue('text-[rgb(256,0,0)]')).toBeNull();
     });
   });
+
+  describe('Figma Variables', () => {
+    it('should parse text color variables', () => {
+      const testCases = [
+        {
+          input: 'text-$[colors/primary]',
+          expected: 'colors/primary',
+          opacity: undefined
+        },
+        {
+          input: 'text-$[colors/text]/50',
+          expected: 'colors/text',
+          opacity: 0.5
+        },
+        {
+          input: 'text-$[theme/colors/text]/75',
+          expected: 'theme/colors/text',
+          opacity: 0.75
+        }
+      ];
+
+      testCases.forEach(({ input, expected, opacity }) => {
+        expect(parseTextStyleValue(input)).toEqual({
+          property: 'color',
+          value: expected,
+          variant: 'figma-variable',
+          variableId: expected,
+          opacity
+        });
+      });
+    });
+
+    it('should handle invalid variable paths', () => {
+      const testCases = [
+        'text-$[]',
+        'text-$[/]',
+        'text-$[/invalid]',
+        'text-$[colors/]/50',
+        'text-$[/colors/text]/25',
+        'text-$[colors//text]/75'
+      ];
+
+      testCases.forEach(input => {
+        expect(parseTextStyleValue(input)).toBeNull();
+      });
+    });
+  });
+
+  describe('Line Height', () => {
+    it('should parse preset line heights', () => {
+      const testCases = [
+        { input: 'leading-none', expected: { value: 100, unit: 'PERCENT' } },
+        { input: 'leading-tight', expected: { value: 125, unit: 'PERCENT' } },
+        { input: 'leading-snug', expected: { value: 137.5, unit: 'PERCENT' } },
+        { input: 'leading-normal', expected: { value: 150, unit: 'PERCENT' } },
+        { input: 'leading-relaxed', expected: { value: 165, unit: 'PERCENT' } },
+        { input: 'leading-loose', expected: { value: 200, unit: 'PERCENT' } }
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        expect(parseTextStyleValue(input)).toEqual({
+          property: 'lineHeight',
+          value: expected,
+          variant: 'preset'
+        });
+      });
+    });
+
+    it('should parse arbitrary line heights', () => {
+      const testCases = [
+        { 
+          input: 'leading-[24px]', 
+          expected: { value: 24, unit: 'PIXELS' }
+        },
+        { 
+          input: 'leading-[1.5]', 
+          expected: { value: 150, unit: 'PERCENT' }
+        }
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        expect(parseTextStyleValue(input)).toEqual({
+          property: 'lineHeight',
+          value: expected,
+          variant: 'arbitrary'
+        });
+      });
+    });
+  });
+
+  describe('Letter Spacing', () => {
+    it('should parse preset letter spacing', () => {
+      const testCases = [
+        { input: 'tracking-tighter', expected: -0.8 },
+        { input: 'tracking-tight', expected: -0.4 },
+        { input: 'tracking-normal', expected: 0 },
+        { input: 'tracking-wide', expected: 0.4 },
+        { input: 'tracking-wider', expected: 0.8 },
+        { input: 'tracking-widest', expected: 1.6 }
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        expect(parseTextStyleValue(input)).toEqual({
+          property: 'letterSpacing',
+          value: expected,
+          variant: 'preset'
+        });
+      });
+    });
+
+    it('should parse arbitrary letter spacing', () => {
+      const testCases = [
+        { 
+          input: 'tracking-[2px]', 
+          expected: { value: 2, unit: 'PIXELS' }
+        },
+        { 
+          input: 'tracking-[0.2em]', 
+          expected: { value: 20, unit: 'PERCENT' }
+        },
+        { 
+          input: 'tracking-[0.5]', 
+          expected: 0.5
+        }
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        expect(parseTextStyleValue(input)).toEqual({
+          property: 'letterSpacing',
+          value: expected,
+          variant: 'arbitrary'
+        });
+      });
+    });
+  });
+
+  describe('Text Transform', () => {
+    it('should parse text transform values', () => {
+      const testCases = [
+        { input: 'uppercase', expected: 'UPPERCASE' },
+        { input: 'lowercase', expected: 'LOWERCASE' },
+        { input: 'capitalize', expected: 'CAPITALIZE' },
+        { input: 'normal-case', expected: 'NONE' }
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        expect(parseTextStyleValue(input)).toEqual({
+          property: 'textTransform',
+          value: expected,
+          variant: 'preset'
+        });
+      });
+    });
+  });
+
+  describe('Text Color with Opacity', () => {
+    it('should parse preset colors with opacity', () => {
+      const testCases = [
+        { 
+          input: 'text-red-500/50', 
+          expected: { r: 0.94, g: 0.27, b: 0.27 },
+          opacity: 0.5 
+        },
+        { 
+          input: 'text-blue-600/75', 
+          expected: { r: 0.15, g: 0.39, b: 0.92 },
+          opacity: 0.75 
+        }
+      ];
+
+      testCases.forEach(({ input, expected, opacity }) => {
+        expect(parseTextStyleValue(input)).toEqual({
+          property: 'color',
+          value: expected,
+          variant: 'preset',
+          opacity
+        });
+      });
+    });
+
+    it('should parse arbitrary colors with opacity', () => {
+      const testCases = [
+        { 
+          input: 'text-[#FF0000]/50', 
+          expected: '#FF0000',
+          opacity: 0.5 
+        },
+        { 
+          input: 'text-[rgb(0,255,0)]/75', 
+          expected: 'rgb(0,255,0)',
+          opacity: 0.75 
+        }
+      ];
+
+      testCases.forEach(({ input, expected, opacity }) => {
+        expect(parseTextStyleValue(input)).toEqual({
+          property: 'color',
+          value: expected,
+          variant: 'arbitrary',
+          opacity
+        });
+      });
+    });
+  });
+
+  describe('Edge Cases', () => {
+    it('should handle invalid opacity values', () => {
+      const testCases = [
+        'text-red-500/101',    // opacity > 100
+        'text-red-500/-1',     // negative opacity
+        'text-red-500/abc',    // non-numeric opacity
+        'text-[#FF0000]/xyz'   // invalid opacity format
+      ];
+
+      testCases.forEach(input => {
+        expect(parseTextStyleValue(input)).toBeNull();
+      });
+    });
+
+    it('should handle malformed arbitrary values', () => {
+      const testCases = [
+        'text-[]',             // empty brackets
+        'text-[12px]',         // invalid font size unit
+        'text-[rgb 255,0,0]',  // malformed rgb
+        'text-[#XYZ]',         // invalid hex
+        'leading-[]',          // empty line height
+        'tracking-[]'          // empty letter spacing
+      ];
+
+      testCases.forEach(input => {
+        expect(parseTextStyleValue(input)).toBeNull();
+      });
+    });
+  });
+
+  describe('Paragraph Properties', () => {
+    describe('Paragraph Spacing', () => {
+      it('should parse preset paragraph spacing', () => {
+        const testCases = [
+          { input: 'paragraph-tight', expected: 8 },
+          { input: 'paragraph-normal', expected: 16 },
+          { input: 'paragraph-loose', expected: 24 }
+        ];
+
+        testCases.forEach(({ input, expected }) => {
+          expect(parseTextStyleValue(input)).toEqual({
+            property: 'paragraphSpacing',
+            value: expected,
+            variant: 'preset'
+          });
+        });
+      });
+
+      it('should parse arbitrary paragraph spacing', () => {
+        expect(parseTextStyleValue('paragraph-[20]')).toEqual({
+          property: 'paragraphSpacing',
+          value: 20,
+          variant: 'arbitrary'
+        });
+      });
+
+      it('should parse paragraph spacing variables', () => {
+        expect(parseTextStyleValue('paragraph-$[typography/spacing/normal]')).toEqual({
+          property: 'paragraphSpacing',
+          value: 'typography/spacing/normal',
+          variant: 'figma-variable',
+          variableId: 'typography/spacing/normal'
+        });
+      });
+    });
+
+    describe('Paragraph Indent', () => {
+      it('should parse preset paragraph indent', () => {
+        const testCases = [
+          { input: 'indent-none', expected: 0 },
+          { input: 'indent-sm', expected: 16 },
+          { input: 'indent-md', expected: 24 },
+          { input: 'indent-lg', expected: 32 }
+        ];
+
+        testCases.forEach(({ input, expected }) => {
+          expect(parseTextStyleValue(input)).toEqual({
+            property: 'paragraphIndent',
+            value: expected,
+            variant: 'preset'
+          });
+        });
+      });
+
+      it('should parse arbitrary paragraph indent', () => {
+        expect(parseTextStyleValue('indent-[20]')).toEqual({
+          property: 'paragraphIndent',
+          value: 20,
+          variant: 'arbitrary'
+        });
+      });
+
+      it('should parse paragraph indent variables', () => {
+        expect(parseTextStyleValue('indent-$[typography/indent/normal]')).toEqual({
+          property: 'paragraphIndent',
+          value: 'typography/indent/normal',
+          variant: 'figma-variable',
+          variableId: 'typography/indent/normal'
+        });
+      });
+    });
+  });
 }); 

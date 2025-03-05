@@ -1,6 +1,8 @@
 import { ParsedStyle } from '../types';
 import { COLORS, RADIUS } from '../config/tokens';
 import { isValidHexColor, isValidRgbColor } from '../utils/colors';
+import { parseArbitraryValue } from '../utils/converters';
+import { extractFigmaVariableId, createFigmaVariableStyle } from '../utils/variables';
 
 const BORDER_STYLE_MAP = {
   'solid': 'SOLID',
@@ -33,15 +35,32 @@ export function parseBorderStyleValue(className: string): ParsedStyle | null {
 
   // 임의값 처리 ([...] 형식)
   if (className.includes('[') && className.includes(']')) {
-    const match = className.match(/^([a-z-]+)-\[(.*?)\]$/);
+    const match = className.match(/^([a-z-]+)-(\$?\[.*?\])$/);
     if (!match) return null;
 
     const [, type, value] = match;
     
     // border-dashed-[value] 형태 처리
     if (type === 'border-dashed') {
+      // Figma 변수인 경우
+      if (value.startsWith('$[')) {
+        const parsedValue = parseArbitraryValue(value, {
+          allowFigmaVariables: true
+        });
+        
+        if (parsedValue?.variant === 'figma-variable') {
+          return {
+            property: 'dashPattern',
+            value: parsedValue.value,
+            variant: 'figma-variable',
+            variableId: parsedValue.variableId
+          };
+        }
+        return null;
+      }
+
       // 쉼표로 구분된 값들을 배열로 변환
-      const dashValues = value.split(',').map(v => parseFloat(v.trim()));
+      const dashValues = value.slice(1, -1).split(',').map(v => parseFloat(v.trim()));
       
       // 모든 값이 유효한 숫자인지 확인
       if (dashValues.every(v => !isNaN(v))) {
@@ -54,50 +73,107 @@ export function parseBorderStyleValue(className: string): ParsedStyle | null {
       return null;
     }
     
-    // 보더 색상 처리
-    if (type === 'border' && (value.startsWith('#') || value.startsWith('rgb'))) {
-      if (!isValidHexColor(value) && !isValidRgbColor(value)) {
+    // Figma 변수 경로 유효성 검사 함수
+    const isValidVariablePath = (path: string, prefix?: string) => {
+      const isValidFormat = path !== '' && 
+                          !path.startsWith('/') && 
+                          !path.endsWith('/') && 
+                          !path.includes('//');
+      
+      if (!isValidFormat) return false;
+      if (prefix && !path.startsWith(prefix)) return false;
+      
+      return true;
+    };
+
+    // Figma 변수 경로 추출 및 검증
+    if (value.startsWith('$[')) {
+      const variableId = extractFigmaVariableId(value);
+      if (!variableId) return null;
+      
+      // rounded- 관련 변수는 radii/ 로 시작해야 함
+      if (type.startsWith('rounded') && !variableId.startsWith('radii/')) {
         return null;
       }
-      return {
-        property: 'borderColor',
-        value,
-        variant: 'arbitrary'
-      };
-    }
 
-    // 보더 너비 처리
-    if (type === 'border') {
-      const width = parseFloat(value);
-      if (!isNaN(width)) {
-        return {
-          property: 'borderWidth',
-          value: width,
-          variant: 'arbitrary'
-        };
-      }
-    }
-
-    // 보더 반경 처리 - 임의값
-    if (type.startsWith('rounded')) {
-      const radius = parseFloat(value);
-      if (!isNaN(radius)) {
-        // 위치 지정이 있는 경우 (예: rounded-t-[8])
+      // 보더 반경 처리
+      if (type.startsWith('rounded')) {
         const position = type.replace('rounded-', '') as RadiusPosition;
-        if (position && RADIUS_POSITION_MAP[position]) {
-          return {
-            property: RADIUS_POSITION_MAP[position],
-            value: radius,
-            variant: 'arbitrary'
-          };
-        }
-        // 전체 적용
-        return {
-          property: 'borderRadius',
-          value: radius,
-          variant: 'arbitrary'
-        };
+        const property = position && RADIUS_POSITION_MAP[position] ? 
+                        RADIUS_POSITION_MAP[position] : 
+                        'borderRadius';
+        return createFigmaVariableStyle(property, variableId);
       }
+      
+      // 명시적 보더 색상 처리
+      if (type === 'border-color') {
+        return createFigmaVariableStyle('borderColor', variableId);
+      }
+      
+      // 명시적 보더 너비 처리
+      if (type === 'border-width') {
+        return createFigmaVariableStyle('borderWidth', variableId);
+      }
+      
+      // 기존 border- 처리 (숫자만 허용)
+      if (type === 'border') {
+        return createFigmaVariableStyle('borderWidth', variableId);
+      }
+    }
+
+    // 보더 색상, 너비, 반경 처리
+    const parsedValue = parseArbitraryValue(value, {
+      allowNegative: type.startsWith('rounded'),
+      allowUnits: true,
+      allowColors: type === 'border-color' || type === 'border',
+      allowFigmaVariables: true
+    });
+
+    if (parsedValue !== null) {
+      let property: string;
+      
+      // 보더 반경 처리
+      if (type.startsWith('rounded')) {
+        const position = type.replace('rounded-', '') as RadiusPosition;
+        property = position && RADIUS_POSITION_MAP[position] ? 
+                  RADIUS_POSITION_MAP[position] : 
+                  'borderRadius';
+      }
+      // 명시적 보더 색상 처리
+      else if (type === 'border-color') {
+        property = 'borderColor';
+      }
+      // 명시적 보더 너비 처리
+      else if (type === 'border-width') {
+        property = 'borderWidth';
+      }
+      // 기존 border- 처리 (숫자 또는 색상 리터럴만 허용)
+      else if (type === 'border') {
+        if (parsedValue.variant === 'figma-variable') {
+          // Figma 변수의 경우 숫자로만 처리
+          property = 'borderWidth';
+        } else {
+          // 리터럴 값은 타입에 따라 처리
+          property = (typeof parsedValue.value === 'string' && 
+                     (parsedValue.value.startsWith('#') || parsedValue.value.startsWith('rgb'))) ?
+                    'borderColor' : 'borderWidth';
+        }
+      }
+      else {
+        return null;
+      }
+
+      const result: ParsedStyle = {
+        property,
+        value: parsedValue.value,
+        variant: parsedValue.variant
+      };
+
+      if (parsedValue.variant === 'figma-variable' && parsedValue.variableId) {
+        result.variableId = parsedValue.variableId;
+      }
+
+      return result;
     }
   }
 

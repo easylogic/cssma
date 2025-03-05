@@ -252,4 +252,109 @@ describe('Text Converter', () => {
       });
     });
   });
+
+  describe('Figma Variables', () => {
+    it('should convert text color variables', () => {
+      const input: ParsedStyle = {
+        property: 'color',
+        value: 'typography/color/primary',
+        variant: 'figma-variable',
+        variableId: 'typography/color/primary'
+      };
+
+      expect(convertTextToFigma(input)).toEqual({
+        fills: [{
+          type: 'SOLID',
+          color: { r: 0, g: 0, b: 0 },
+          boundVariables: {
+            color: {
+              type: 'VARIABLE_ALIAS',
+              id: 'typography/color/primary'
+            }
+          }
+        }]
+      });
+    });
+
+    it('should convert font size variables', () => {
+      const input: ParsedStyle = {
+        property: 'fontSize',
+        value: 'typography/size/body',
+        variant: 'figma-variable',
+        variableId: 'typography/size/body'
+      };
+
+      expect(convertTextToFigma(input)).toEqual({
+        fontSize: 0,
+        boundVariables: {
+          fontSize: {
+            type: 'VARIABLE_ALIAS',
+            id: 'typography/size/body'
+          }
+        }
+      });
+    });
+
+    it('should convert line height variables', () => {
+      const input: ParsedStyle = {
+        property: 'lineHeight',
+        value: 'typography/lineHeight/body',
+        variant: 'figma-variable',
+        variableId: 'typography/lineHeight/body'
+      };
+
+      expect(convertTextToFigma(input)).toEqual({
+        lineHeight: { value: 0, unit: 'PIXELS' },
+        boundVariables: {
+          lineHeight: {
+            type: 'VARIABLE_ALIAS',
+            id: 'typography/lineHeight/body'
+          }
+        }
+      });
+    });
+
+    it('should convert letter spacing variables', () => {
+      const input: ParsedStyle = {
+        property: 'letterSpacing',
+        value: 'typography/letterSpacing/tight',
+        variant: 'figma-variable',
+        variableId: 'typography/letterSpacing/tight'
+      };
+
+      expect(convertTextToFigma(input)).toEqual({
+        letterSpacing: 0,
+        boundVariables: {
+          letterSpacing: {
+            type: 'VARIABLE_ALIAS',
+            id: 'typography/letterSpacing/tight'
+          }
+        }
+      });
+    });
+
+    it('should handle opacity with text color variables', () => {
+      const input: ParsedStyle = {
+        property: 'color',
+        value: 'typography/color/primary',
+        variant: 'figma-variable',
+        variableId: 'typography/color/primary',
+        opacity: 0.5
+      };
+
+      expect(convertTextToFigma(input)).toEqual({
+        fills: [{
+          type: 'SOLID',
+          color: { r: 0, g: 0, b: 0 },
+          opacity: 0.5,
+          boundVariables: {
+            color: {
+              type: 'VARIABLE_ALIAS',
+              id: 'typography/color/primary'
+            }
+          }
+        }]
+      });
+    });
+  });
 }); 

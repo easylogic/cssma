@@ -4,6 +4,25 @@ import { parseShadowStyleValue } from '../../src/parser/shadow';
 
 describe('Shadow Style Parser', () => {
   describe('Preset Shadows', () => {
+    it('should parse preset shadows', () => {
+      const testCases = [
+        'shadow-sm',
+        'shadow',
+        'shadow-md',
+        'shadow-lg',
+        'shadow-xl',
+        'shadow-2xl',
+        'shadow-inner'
+      ];
+
+      testCases.forEach(input => {
+        expect(parseShadowStyleValue(input)).toMatchObject({
+          property: 'boxShadow',
+          variant: 'preset'
+        });
+      });
+    });
+
     it('should parse basic shadow values', () => {
       const testCases = [
         {
@@ -188,20 +207,139 @@ describe('Shadow Style Parser', () => {
     });
   });
 
+  describe('Custom Shadows', () => {
+    it('should parse custom shadow values', () => {
+      expect(parseShadowStyleValue('shadow-[0_2_4_-1_#000000]')).toEqual({
+        property: 'boxShadow',
+        value: [{
+          type: 'outer',
+          x: 0,
+          y: 2,
+          blur: 4,
+          spread: -1,
+          color: parseColor('#000000')
+        }],
+        variant: 'arbitrary'
+      });
+    });
+
+    it('should parse rgb color values', () => {
+      expect(parseShadowStyleValue('shadow-[0_2_4_-1_rgb(0,0,0)]')).toEqual({
+        property: 'boxShadow',
+        value: [{
+          type: 'outer',
+          x: 0,
+          y: 2,
+          blur: 4,
+          spread: -1,
+          color: { r: 0, g: 0, b: 0 }
+        }],
+        variant: 'arbitrary'
+      });
+    });
+  });
+
+  describe('Figma Variables', () => {
+    describe('Shadow Variables', () => {
+      it('should parse shadow variables', () => {
+        const testCases = [
+          {
+            input: 'shadow-$[effects/shadow/default]',
+            expected: {
+              property: 'boxShadow',
+              value: 'effects/shadow/default',
+              variant: 'figma-variable',
+              variableId: 'effects/shadow/default'
+            }
+          },
+          {
+            input: 'shadow-$[theme/shadows/card]',
+            expected: {
+              property: 'boxShadow',
+              value: 'theme/shadows/card',
+              variant: 'figma-variable',
+              variableId: 'theme/shadows/card'
+            }
+          }
+        ];
+
+        testCases.forEach(({ input, expected }) => {
+          expect(parseShadowStyleValue(input)).toEqual(expected);
+        });
+      });
+
+      it('should handle invalid shadow variable paths', () => {
+        const testCases = [
+          'shadow-$[]',
+          'shadow-$[/]',
+          'shadow-$[/invalid]',
+          'shadow-$[effects/]/25',
+          'shadow-$[/effects/shadow]',
+          'shadow-$[effects//shadow]'
+        ];
+
+        testCases.forEach(input => {
+          expect(parseShadowStyleValue(input)).toBeNull();
+        });
+      });
+    });
+
+    describe('Shadow Color Variables', () => {
+      it('should parse shadow color variables', () => {
+        const testCases = [
+          {
+            input: 'shadow-color-$[colors/shadow]',
+            expected: {
+              property: 'boxShadowColor',
+              value: 'colors/shadow',
+              variant: 'figma-variable',
+              variableId: 'colors/shadow'
+            }
+          },
+          {
+            input: 'shadow-color-$[theme/shadows/color]',
+            expected: {
+              property: 'boxShadowColor',
+              value: 'theme/shadows/color',
+              variant: 'figma-variable',
+              variableId: 'theme/shadows/color'
+            }
+          }
+        ];
+
+        testCases.forEach(({ input, expected }) => {
+          expect(parseShadowStyleValue(input)).toEqual(expected);
+        });
+      });
+
+      it('should handle invalid shadow color variable paths', () => {
+        const testCases = [
+          'shadow-color-$[]',
+          'shadow-color-$[/]',
+          'shadow-color-$[/invalid]',
+          'shadow-color-$[colors/]/25',
+          'shadow-color-$[/colors/shadow]',
+          'shadow-color-$[colors//shadow]'
+        ];
+
+        testCases.forEach(input => {
+          expect(parseShadowStyleValue(input)).toBeNull();
+        });
+      });
+    });
+  });
+
   describe('Invalid Values', () => {
     it('should return null for invalid values', () => {
-      const invalidCases = [
-        'shadow-invalid',
+      const testCases = [
         'shadow-[invalid]',
-        'shadow-[0_invalid_6px_-1px_rgba(0,0,0,0.1)]',
-        'shadow-[0_0_0_0_invalid-color]',
-        'shadow-[0_0_0]', // 파라미터 부족
-        'shadow-[]', // 빈 값
-        'shadow-[0_0_0_0_#gggggg]', // 잘못된 hex 색상
-        'shadow-[0_0_0_0_rgb(256,0,0)]' // 잘못된 RGB 값
+        'shadow-[0_invalid_4_-1_#000000]',
+        'shadow-[0_2_4_-1_invalid]',
+        'shadow-[0_2_4_-1_#GGGGGG]',
+        'shadow-[0_2_4_-1_rgb(256,0,0)]'
       ];
 
-      invalidCases.forEach(input => {
+      testCases.forEach(input => {
         expect(parseShadowStyleValue(input)).toBeNull();
       });
     });
