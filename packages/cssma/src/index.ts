@@ -34,4 +34,7 @@ export * from './apply/applyStyles';
 // export * from './createElement';
 
 // createNodeForData 함수들 내보내기
-export * from './createNodeForData';
+export * from './core/createNodeForData';
+
+// figmaToTailwind 함수 내보내기
+export * from './core/figmaToTailwind';

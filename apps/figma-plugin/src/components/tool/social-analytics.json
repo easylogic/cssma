@@ -66,7 +66,7 @@
       },
       {
         "name": "Period Selector",
-        "styles": "w-[358] flex-row items-center justify-between p-[16] bg-white rounded-lg shadow-sm h-auto auto-layout",
+        "styles": "w-[358] flex-row items-center justify-between p-[16] bg-white rounded-lg shadow-sm h-auto ",
         "children": [
           {
             "type": "TEXT",
@@ -75,7 +75,7 @@
           },
           {
             "name": "Selector",
-            "styles": "flex-row items-center p-[8] bg-[#F5F3FF] rounded-full h-auto auto-layout",
+            "styles": "flex-row items-center p-[8] bg-[#F5F3FF] rounded-full h-auto ",
             "children": [
               {
                 "type": "TEXT",
@@ -92,7 +92,7 @@
       },
       {
         "name": "Overall Performance",
-        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm h-auto auto-layout",
+        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm h-auto ",
         "children": [
           {
             "type": "TEXT",
@@ -101,11 +101,11 @@
           },
           {
             "name": "Metric Cards",
-            "styles": "flex-row justify-between w-full h-auto auto-layout",
+            "styles": "flex-row justify-between w-full h-auto ",
             "children": [
               {
                 "name": "Metric Card",
-                "styles": "flex-col items-center gap-[4] p-[12] bg-[#F5F3FF] rounded-lg w-[100] h-auto auto-layout",
+                "styles": "flex-col items-center gap-[4] p-[12] bg-[#F5F3FF] rounded-lg w-[100] h-auto ",
                 "children": [
                   {
                     "type": "TEXT",
@@ -119,7 +119,7 @@
                   },
                   {
                     "name": "Change",
-                    "styles": "flex-row items-center gap-[2] h-auto w-auto auto-layout",
+                    "styles": "flex-row items-center gap-[2] h-auto w-auto ",
                     "children": [
                       {
                         "type": "RECTANGLE",
@@ -136,7 +136,7 @@
               },
               {
                 "name": "Metric Card",
-                "styles": "flex-col items-center gap-[4] p-[12] bg-[#F5F3FF] rounded-lg w-[100] h-auto auto-layout",
+                "styles": "flex-col items-center gap-[4] p-[12] bg-[#F5F3FF] rounded-lg w-[100] h-auto ",
                 "children": [
                   {
                     "type": "TEXT",
@@ -150,7 +150,7 @@
                   },
                   {
                     "name": "Change",
-                    "styles": "flex-row items-center gap-[2] h-auto w-auto auto-layout",
+                    "styles": "flex-row items-center gap-[2] h-auto w-auto ",
                     "children": [
                       {
                         "type": "RECTANGLE",
@@ -167,7 +167,7 @@
               },
               {
                 "name": "Metric Card",
-                "styles": "flex-col items-center gap-[4] p-[12] bg-[#F5F3FF] rounded-lg w-[100] h-auto auto-layout",
+                "styles": "flex-col items-center gap-[4] p-[12] bg-[#F5F3FF] rounded-lg w-[100] h-auto ",
                 "children": [
                   {
                     "type": "TEXT",
@@ -181,7 +181,7 @@
                   },
                   {
                     "name": "Change",
-                    "styles": "flex-row items-center gap-[2] h-auto w-auto auto-layout",
+                    "styles": "flex-row items-center gap-[2] h-auto w-auto ",
                     "children": [
                       {
                         "type": "RECTANGLE",
@@ -202,11 +202,11 @@
       },
       {
         "name": "Platform Breakdown",
-        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm h-auto auto-layout",
+        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm h-auto ",
         "children": [
           {
             "name": "Section Header",
-            "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+            "styles": "flex-row justify-between items-center w-full h-auto ",
             "children": [
               {
                 "type": "TEXT",
@@ -222,15 +222,15 @@
           },
           {
             "name": "Platform Cards",
-            "styles": "flex-col gap-[12] w-full h-auto auto-layout",
+            "styles": "flex-col gap-[12] w-full h-auto ",
             "children": [
               {
                 "name": "Platform Card",
-                "styles": "flex-row items-center p-[12] gap-[12] bg-[#F5F3FF] rounded-lg w-full h-auto auto-layout",
+                "styles": "flex-row items-center p-[12] gap-[12] bg-[#F5F3FF] rounded-lg w-full h-auto ",
                 "children": [
                   {
                     "name": "Platform Icon",
-                    "styles": "flex-row items-center justify-center w-[40] h-[40] bg-[#7C3AED] rounded-md auto-layout",
+                    "styles": "flex-row items-center justify-center w-[40] h-[40] bg-[#7C3AED] rounded-md ",
                     "children": [
                       {
                         "type": "RECTANGLE",
@@ -240,11 +240,11 @@
                   },
                   {
                     "name": "Platform Stats",
-                    "styles": "flex-col gap-[4] h-auto w-full auto-layout",
+                    "styles": "flex-col gap-[4] h-auto w-full ",
                     "children": [
                       {
                         "name": "Platform Header",
-                        "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+                        "styles": "flex-row justify-between items-center w-full h-auto ",
                         "children": [
                           {
                             "type": "TEXT",
@@ -253,7 +253,7 @@
                           },
                           {
                             "name": "Growth",
-                            "styles": "flex-row items-center gap-[2] h-auto w-auto auto-layout",
+                            "styles": "flex-row items-center gap-[2] h-auto w-auto ",
                             "children": [
                               {
                                 "type": "RECTANGLE",
@@ -279,11 +279,11 @@
               },
               {
                 "name": "Platform Card",
-                "styles": "flex-row items-center p-[12] gap-[12] bg-[#F5F3FF] rounded-lg w-full h-auto auto-layout",
+                "styles": "flex-row items-center p-[12] gap-[12] bg-[#F5F3FF] rounded-lg w-full h-auto ",
                 "children": [
                   {
                     "name": "Platform Icon",
-                    "styles": "flex-row items-center justify-center w-[40] h-[40] bg-[#1DA1F2] rounded-md auto-layout",
+                    "styles": "flex-row items-center justify-center w-[40] h-[40] bg-[#1DA1F2] rounded-md ",
                     "children": [
                       {
                         "type": "RECTANGLE",
@@ -293,11 +293,11 @@
                   },
                   {
                     "name": "Platform Stats",
-                    "styles": "flex-col gap-[4] h-auto w-full auto-layout",
+                    "styles": "flex-col gap-[4] h-auto w-full ",
                     "children": [
                       {
                         "name": "Platform Header",
-                        "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+                        "styles": "flex-row justify-between items-center w-full h-auto ",
                         "children": [
                           {
                             "type": "TEXT",
@@ -306,7 +306,7 @@
                           },
                           {
                             "name": "Growth",
-                            "styles": "flex-row items-center gap-[2] h-auto w-auto auto-layout",
+                            "styles": "flex-row items-center gap-[2] h-auto w-auto ",
                             "children": [
                               {
                                 "type": "RECTANGLE",
@@ -332,11 +332,11 @@
               },
               {
                 "name": "Platform Card",
-                "styles": "flex-row items-center p-[12] gap-[12] bg-[#F5F3FF] rounded-lg w-full h-auto auto-layout",
+                "styles": "flex-row items-center p-[12] gap-[12] bg-[#F5F3FF] rounded-lg w-full h-auto ",
                 "children": [
                   {
                     "name": "Platform Icon",
-                    "styles": "flex-row items-center justify-center w-[40] h-[40] bg-[#0077B5] rounded-md auto-layout",
+                    "styles": "flex-row items-center justify-center w-[40] h-[40] bg-[#0077B5] rounded-md ",
                     "children": [
                       {
                         "type": "RECTANGLE",
@@ -346,11 +346,11 @@
                   },
                   {
                     "name": "Platform Stats",
-                    "styles": "flex-col gap-[4] h-auto w-full auto-layout",
+                    "styles": "flex-col gap-[4] h-auto w-full ",
                     "children": [
                       {
                         "name": "Platform Header",
-                        "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+                        "styles": "flex-row justify-between items-center w-full h-auto ",
                         "children": [
                           {
                             "type": "TEXT",
@@ -359,7 +359,7 @@
                           },
                           {
                             "name": "Growth",
-                            "styles": "flex-row items-center gap-[2] h-auto w-auto auto-layout",
+                            "styles": "flex-row items-center gap-[2] h-auto w-auto ",
                             "children": [
                               {
                                 "type": "RECTANGLE",
@@ -389,11 +389,11 @@
       },
       {
         "name": "Engagement Trend",
-        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm h-auto auto-layout",
+        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm h-auto ",
         "children": [
           {
             "name": "Section Header",
-            "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+            "styles": "flex-row justify-between items-center w-full h-auto ",
             "children": [
               {
                 "type": "TEXT",
@@ -409,15 +409,15 @@
           },
           {
             "name": "Chart",
-            "styles": "flex-col w-full h-[180] auto-layout",
+            "styles": "flex-col w-full h-[180] ",
             "children": [
               {
                 "name": "Line Chart",
-                "styles": "w-full h-[180] bg-[#F5F3FF] rounded-md auto-layout",
+                "styles": "w-full h-[180] bg-[#F5F3FF] rounded-md ",
                 "children": [
                   {
                     "name": "Chart Lines",
-                              "styles": "flex-col justify-between w-full h-full p-[16] auto-layout",
+                              "styles": "flex-col justify-between w-full h-full p-[16] ",
                     "children": [
                       {
                         "type": "RECTANGLE",
@@ -443,11 +443,11 @@
           },
           {
             "name": "Chart Legend",
-            "styles":   "flex-row gap-[16] h-auto w-auto auto-layout",
+            "styles":   "flex-row gap-[16] h-auto w-auto ",
             "children": [
               {
                 "name": "Legend Item",
-                "styles": "flex-row items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-row items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -462,7 +462,7 @@
               },
               {
                 "name": "Legend Item",
-                "styles": "flex-row items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-row items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -477,7 +477,7 @@
               },
               {
                 "name": "Legend Item",
-                "styles": "flex-row items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-row items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -496,11 +496,11 @@
       },
       {
         "name": "Top Performing Content",
-        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm h-auto auto-layout",
+        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm h-auto ",
         "children": [
           {
             "name": "Section Header",
-            "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+            "styles": "flex-row justify-between items-center w-full h-auto ",
             "children": [
               {
                 "type": "TEXT",
@@ -516,11 +516,11 @@
           },
           {
             "name": "Content Cards",
-            "styles": "flex-col gap-[12] w-full h-auto auto-layout",
+            "styles": "flex-col gap-[12] w-full h-auto ",
             "children": [
               {
                 "name": "Content Card",
-                "styles": "flex-row gap-[12] p-[12] bg-[#F5F3FF] rounded-lg w-full h-auto auto-layout",
+                "styles": "flex-row gap-[12] p-[12] bg-[#F5F3FF] rounded-lg w-full h-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -528,15 +528,15 @@
                   },
                   {
                     "name": "Content Info",
-                    "styles": "flex-col justify-between gap-[8] h-auto w-full auto-layout",
+                    "styles": "flex-col justify-between gap-[8] h-auto w-full ",
                     "children": [
                       {
                         "name": "Top Row",
-                        "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+                        "styles": "flex-row justify-between items-center w-full h-auto ",
                         "children": [
                           {
                             "name": "Platform Badge",
-                            "styles": "flex-row items-center gap-[4] p-[4] bg-[#7C3AED] rounded-full h-auto w-auto auto-layout",
+                            "styles": "flex-row items-center gap-[4] p-[4] bg-[#7C3AED] rounded-full h-auto w-auto ",
                             "children": [
                               {
                                 "type": "RECTANGLE",
@@ -563,11 +563,11 @@
                       },
                       {
                         "name": "Stats",
-                        "styles": "flex-row gap-[8] h-auto w-auto auto-layout",
+                        "styles": "flex-row gap-[8] h-auto w-auto ",
                         "children": [
                           {
                             "name": "Stat",
-                            "styles": "flex-row items-center gap-[4] h-auto w-auto auto-layout",
+                            "styles": "flex-row items-center gap-[4] h-auto w-auto ",
                             "children": [
                               {
                                 "type": "RECTANGLE",
@@ -582,7 +582,7 @@
                           },
                           {
                             "name": "Stat",
-                            "styles": "flex-row items-center gap-[4] h-auto w-auto auto-layout",
+                            "styles": "flex-row items-center gap-[4] h-auto w-auto ",
                             "children": [
                               {
                                 "type": "RECTANGLE",
@@ -603,7 +603,7 @@
               },
               {
                 "name": "Content Card",
-                "styles": "flex-row gap-[12] p-[12] bg-[#F5F3FF] rounded-lg w-full h-auto auto-layout",
+                "styles": "flex-row gap-[12] p-[12] bg-[#F5F3FF] rounded-lg w-full h-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -611,15 +611,15 @@
                   },
                   {
                     "name": "Content Info",
-                    "styles": "flex-col justify-between gap-[8] h-auto w-full auto-layout",
+                    "styles": "flex-col justify-between gap-[8] h-auto w-full ",
                     "children": [
                       {
                         "name": "Top Row",
-                        "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+                        "styles": "flex-row justify-between items-center w-full h-auto ",
                         "children": [
                           {
                             "name": "Platform Badge",
-                            "styles": "flex-row items-center gap-[4] p-[4] bg-[#1DA1F2] rounded-full h-auto w-auto auto-layout",
+                            "styles": "flex-row items-center gap-[4] p-[4] bg-[#1DA1F2] rounded-full h-auto w-auto ",
                             "children": [
                               {
                                 "type": "RECTANGLE",
@@ -646,11 +646,11 @@
                       },
                       {
                         "name": "Stats",
-                        "styles": "flex-row gap-[8] h-auto w-auto auto-layout",
+                        "styles": "flex-row gap-[8] h-auto w-auto ",
                         "children": [
                           {
                             "name": "Stat",
-                            "styles": "flex-row items-center gap-[4] h-auto w-auto auto-layout",
+                            "styles": "flex-row items-center gap-[4] h-auto w-auto ",
                             "children": [
                               {
                                 "type": "RECTANGLE",
@@ -665,7 +665,7 @@
                           },
                           {
                             "name": "Stat",
-                            "styles": "flex-row items-center gap-[4] h-auto w-auto auto-layout",
+                            "styles": "flex-row items-center gap-[4] h-auto w-auto ",
                             "children": [
                               {
                                 "type": "RECTANGLE",
@@ -690,11 +690,11 @@
       },
       {
         "name": "Bottom Navigation",
-        "styles": "w-[390] flex-row justify-between items-center p-[24] bg-white shadow-md mt-[16] h-auto auto-layout",
+        "styles": "w-[390] flex-row justify-between items-center p-[24] bg-white shadow-md mt-[16] h-auto ",
         "children": [
           {
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -709,7 +709,7 @@
           },
           {
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -724,7 +724,7 @@
           },
           {
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -739,7 +739,7 @@
           },
           {
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",

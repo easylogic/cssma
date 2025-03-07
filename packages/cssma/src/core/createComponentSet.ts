@@ -1,5 +1,5 @@
-import { ComponentDefinition, ComponentVariantProps, NodeData } from './types';
-import { processStyles } from './style/processStyles';
+import { ComponentDefinition, ComponentVariantProps, NodeData } from '../types';
+import { processStyles } from '../style/processStyles';
 
 /**
  * Creates a Figma component set from a component definition

@@ -1,5 +1,5 @@
-import { applyStyles } from './apply/applyStyles';
-import { findVariableByName } from './utils/figma-variable';
+import { applyStyles } from '../apply/applyStyles';
+import { findVariableByName } from '../utils/figma-variable';
 
 /**
  * Node data type definition

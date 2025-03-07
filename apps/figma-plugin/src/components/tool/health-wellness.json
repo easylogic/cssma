@@ -154,7 +154,7 @@
               },
               {
                 "name": "Stat",
-                "styles": "bg-transparent flex-col items-center h-auto w-auto auto-layout",
+                "styles": "bg-transparent flex-col items-center h-auto w-auto ",
                 "children": [
                   {
                     "type": "TEXT",
@@ -174,15 +174,15 @@
       },
       {
         "name": "Quick Actions",
-        "styles": "w-[358] flex-row justify-between p-[16] bg-white rounded-lg shadow-sm mt-[16] h-auto auto-layout",
+        "styles": "w-[358] flex-row justify-between p-[16] bg-white rounded-lg shadow-sm mt-[16] h-auto ",
         "children": [
           {
             "name": "Action Item",
-            "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[8] h-auto w-auto ",
             "children": [
               {
                 "name": "Icon Container",
-                "styles": "flex-row items-center justify-center w-[48] h-[48] bg-[#DCFCE7] rounded-full auto-layout",
+                "styles": "flex-row items-center justify-center w-[48] h-[48] bg-[#DCFCE7] rounded-full ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -199,11 +199,11 @@
           },
           {
             "name": "Action Item",
-            "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[8] h-auto w-auto ",
             "children": [
               {
                 "name": "Icon Container",
-                "styles": "flex-row items-center justify-center w-[48] h-[48] bg-[#DCFCE7] rounded-full auto-layout",
+                "styles": "flex-row items-center justify-center w-[48] h-[48] bg-[#DCFCE7] rounded-full ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -220,11 +220,11 @@
           },
           {
             "name": "Action Item",
-            "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[8] h-auto w-auto ",
             "children": [
               {
                 "name": "Icon Container",
-                "styles": "flex-row items-center justify-center w-[48] h-[48] bg-[#DCFCE7] rounded-full auto-layout",
+                "styles": "flex-row items-center justify-center w-[48] h-[48] bg-[#DCFCE7] rounded-full ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -241,11 +241,11 @@
           },
           {
             "name": "Action Item",
-            "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[8] h-auto w-auto ",
             "children": [
               {
                 "name": "Icon Container",
-                "styles": "flex-row items-center justify-center w-[48] h-[48] bg-[#DCFCE7] rounded-full auto-layout",
+                "styles": "flex-row items-center justify-center w-[48] h-[48] bg-[#DCFCE7] rounded-full ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -264,11 +264,11 @@
       },
       {
         "name": "Activity Insights",
-        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm mt-[16] gap-[16] h-auto auto-layout",
+        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm mt-[16] gap-[16] h-auto ",
         "children": [
           {
             "name": "Section Header",
-            "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+            "styles": "flex-row justify-between items-center w-full h-auto ",
             "children": [
               {
                 "type": "TEXT",
@@ -284,11 +284,11 @@
           },
           {
             "name": "Activity Chart",
-            "styles": "flex-row justify-between items-end h-[120] w-full auto-layout",
+            "styles": "flex-row justify-between items-end h-[120] w-full ",
             "children": [
               {
                 "name": "Chart Bar",
-                "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-col items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -303,7 +303,7 @@
               },
               {
                 "name": "Chart Bar",
-                "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-col items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -318,7 +318,7 @@
               },
               {
                 "name": "Chart Bar",
-                "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-col items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -333,7 +333,7 @@
               },
               {
                 "name": "Chart Bar",
-                "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-col items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -348,7 +348,7 @@
               },
               {
                 "name": "Chart Bar",
-                "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-col items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -363,7 +363,7 @@
               },
               {
                 "name": "Chart Bar",
-                "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-col items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -378,7 +378,7 @@
               },
               {
                 "name": "Chart Bar",
-                "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-col items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -397,11 +397,11 @@
       },
       {
         "name": "Upcoming Workout",
-        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm mt-[16] gap-[16] h-auto auto-layout",
+        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm mt-[16] gap-[16] h-auto ",
         "children": [
           {
             "name": "Section Header",
-            "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+            "styles": "flex-row justify-between items-center w-full h-auto ",
             "children": [
               {
                 "type": "TEXT",
@@ -417,7 +417,7 @@
           },
           {
             "name": "Workout Card",
-            "styles": "flex-row gap-[16] w-full h-auto auto-layout",
+            "styles": "flex-row gap-[16] w-full h-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -425,7 +425,7 @@
               },
               {
                 "name": "Workout Details",
-                "styles": "flex-col justify-center gap-[8] h-auto w-full auto-layout",
+                "styles": "flex-col justify-center gap-[8] h-auto w-full ",
                 "children": [
                   {
                     "type": "TEXT",
@@ -434,11 +434,11 @@
                   },
                   {
                     "name": "Workout Info",
-                    "styles": "flex-row items-center gap-[16] h-auto w-auto auto-layout",
+                    "styles": "flex-row items-center gap-[16] h-auto w-auto ",
                     "children": [
                       {
                         "name": "Info Item",
-                        "styles": "flex-row items-center gap-[4] h-auto w-auto auto-layout",
+                        "styles": "flex-row items-center gap-[4] h-auto w-auto ",
                         "children": [
                           {
                             "type": "RECTANGLE",
@@ -453,7 +453,7 @@
                       },
                       {
                         "name": "Info Item",
-                        "styles": "flex-row items-center gap-[4] h-auto w-auto auto-layout",
+                        "styles": "flex-row items-center gap-[4] h-auto w-auto ",
                         "children": [
                           {
                             "type": "RECTANGLE",
@@ -470,7 +470,7 @@
                   },
                   {
                     "name": "Start Button",
-                    "styles": "flex-row items-center justify-center p-[8] bg-[#10B981] rounded-full w-[100] h-auto mt-[8] auto-layout",
+                    "styles": "flex-row items-center justify-center p-[8] bg-[#10B981] rounded-full w-[100] h-auto mt-[8] ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -487,11 +487,11 @@
       },
       {
         "name": "Bottom Navigation",
-        "styles": "w-[390] flex-row justify-between items-center p-[24] bg-white shadow-sm mt-[16] h-auto auto-layout",
+        "styles": "w-[390] flex-row justify-between items-center p-[24] bg-white shadow-sm mt-[16] h-auto ",
         "children": [
           {
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -506,7 +506,7 @@
           },
           {
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -521,7 +521,7 @@
           },
           {
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -536,7 +536,7 @@
           },
           {
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",

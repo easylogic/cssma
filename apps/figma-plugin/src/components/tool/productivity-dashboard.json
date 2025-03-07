@@ -34,11 +34,11 @@
       },
       {
         "name": "Header",
-        "styles": "w-[390] flex-row justify-between items-center p-[16] bg-[#8B5CF6] h-auto auto-layout",
+        "styles": "w-[390] flex-row justify-between items-center p-[16] bg-[#8B5CF6] h-auto ",
         "children": [
           {
             "name": "User Info",
-            "styles": "flex-row items-center gap-[12] h-auto w-auto auto-layout",
+            "styles": "flex-row items-center gap-[12] h-auto w-auto ",
             "children": [
               {
                 "type": "ELLIPSE",
@@ -46,7 +46,7 @@
               },
               {
                 "name": "User Name",
-                "styles": "flex-col h-auto w-auto auto-layout",
+                "styles": "flex-col h-auto w-auto ",
                 "children": [
                   {
                     "type": "TEXT",
@@ -64,7 +64,7 @@
           },
           {
             "name": "Notification",
-            "styles": "flex-row items-center justify-center w-[40] h-[40] bg-[#7C3AED] rounded-full shadow-sm auto-layout",
+            "styles": "flex-row items-center justify-center w-[40] h-[40] bg-[#7C3AED] rounded-full shadow-sm ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -76,11 +76,11 @@
       },
       {
         "name": "Stats Overview",
-        "styles": "w-[358] flex-row justify-between mt-[8] h-auto auto-layout",
+        "styles": "w-[358] flex-row justify-between mt-[8] h-auto ",
         "children": [
           {
             "name": "Stat Card",
-            "styles": "flex-col items-center justify-center p-[16] bg-white rounded-lg shadow-sm w-[115] h-[115] auto-layout",
+            "styles": "flex-col items-center justify-center p-[16] bg-white rounded-lg shadow-sm w-[115] h-[115] ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -100,7 +100,7 @@
           },
           {
             "name": "Stat Card",
-            "styles": "flex-col items-center justify-center p-[16] bg-white rounded-lg shadow-sm w-[115] h-[115] auto-layout",
+            "styles": "flex-col items-center justify-center p-[16] bg-white rounded-lg shadow-sm w-[115] h-[115] ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -120,7 +120,7 @@
           },
           {
             "name": "Stat Card",
-            "styles": "flex-col items-center justify-center p-[16] bg-white rounded-lg shadow-sm w-[115] h-[115] auto-layout",
+            "styles": "flex-col items-center justify-center p-[16] bg-white rounded-lg shadow-sm w-[115] h-[115] ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -142,11 +142,11 @@
       },
       {
         "name": "Tab Navigation",
-        "styles": "w-[358] flex-row justify-between items-center mt-[16] h-auto auto-layout",
+        "styles": "w-[358] flex-row justify-between items-center mt-[16] h-auto ",
         "children": [
           {
             "name": "Tab",
-            "styles": "flex-col items-center gap-[4] p-[8] h-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] p-[8] h-auto ",
             "children": [
               {
                 "type": "TEXT",
@@ -161,7 +161,7 @@
           },
           {
             "name": "Tab",
-            "styles": "flex-col items-center gap-[4] p-[8] h-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] p-[8] h-auto ",
             "children": [
               {
                 "type": "TEXT",
@@ -172,7 +172,7 @@
           },
           {
             "name": "Tab",
-            "styles": "flex-col items-center gap-[4] p-[8] h-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] p-[8] h-auto ",
             "children": [
               {
                 "type": "TEXT",
@@ -185,11 +185,11 @@
       },
       {
         "name": "Kanban Board Section",
-        "styles": "w-[390] flex-col p-[16] gap-[16] h-auto auto-layout",
+        "styles": "w-[390] flex-col p-[16] gap-[16] h-auto ",
         "children": [
           {
             "name": "Section Header",
-            "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+            "styles": "flex-row justify-between items-center w-full h-auto ",
             "children": [
               {
                 "type": "TEXT",
@@ -198,7 +198,7 @@
               },
               {
                 "name": "Add Button",
-                "styles": "flex-row items-center justify-center w-[32] h-[32] bg-[#8B5CF6] rounded-full auto-layout",
+                "styles": "flex-row items-center justify-center w-[32] h-[32] bg-[#8B5CF6] rounded-full ",
                 "children": [
                   {
                     "type": "TEXT",
@@ -211,7 +211,7 @@
           },
           {
             "name": "Kanban Lane",
-            "styles": "flex-col gap-[12] w-full h-auto auto-layout",
+            "styles": "flex-col gap-[12] w-full h-auto ",
             "children": [
               {
                 "type": "TEXT",
@@ -220,11 +220,11 @@
               },
               {
                 "name": "Task Card",
-                "styles": "flex-col p-[16] gap-[8] bg-white rounded-lg shadow-sm w-full h-auto auto-layout",
+                "styles": "flex-col p-[16] gap-[8] bg-white rounded-lg shadow-sm w-full h-auto ",
                 "children": [
                   {
                     "name": "Task Header",
-                    "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+                    "styles": "flex-row justify-between items-center w-full h-auto ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -244,7 +244,7 @@
                   },
                   {
                     "name": "Task Footer",
-                    "styles": "flex-row justify-between items-center w-full h-auto mt-[8] auto-layout",
+                    "styles": "flex-row justify-between items-center w-full h-auto mt-[8] ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -262,11 +262,11 @@
               },
               {
                 "name": "Task Card",
-                "styles": "flex-col p-[16] gap-[8] bg-white rounded-lg shadow-sm w-full h-auto mt-[8] auto-layout",
+                "styles": "flex-col p-[16] gap-[8] bg-white rounded-lg shadow-sm w-full h-auto mt-[8] ",
                 "children": [
                   {
                     "name": "Task Header",
-                    "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+                    "styles": "flex-row justify-between items-center w-full h-auto ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -286,7 +286,7 @@
                   },
                   {
                     "name": "Task Footer",
-                    "styles": "flex-row justify-between items-center w-full h-auto mt-[8] auto-layout",
+                    "styles": "flex-row justify-between items-center w-full h-auto mt-[8] ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -306,7 +306,7 @@
           },
           {
             "name": "Kanban Lane",
-            "styles": "flex-col gap-[12] w-full h-auto mt-[16] auto-layout",
+            "styles": "flex-col gap-[12] w-full h-auto mt-[16] ",
             "children": [
               {
                 "type": "TEXT",
@@ -315,11 +315,11 @@
               },
               {
                 "name": "Task Card",
-                "styles": "flex-col p-[16] gap-[8] bg-white rounded-lg shadow-sm w-full h-auto border-l-[4] border-[#F59E0B] auto-layout",
+                "styles": "flex-col p-[16] gap-[8] bg-white rounded-lg shadow-sm w-full h-auto border-l-[4] border-[#F59E0B] ",
                 "children": [
                   {
                     "name": "Task Header",
-                    "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+                    "styles": "flex-row justify-between items-center w-full h-auto ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -339,11 +339,11 @@
                   },
                   {
                     "name": "Task Progress",
-                    "styles": "flex-col gap-[4] w-full h-auto mt-[8] auto-layout",
+                    "styles": "flex-col gap-[4] w-full h-auto mt-[8] ",
                     "children": [
                       {
                         "name": "Progress Text",
-                        "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+                        "styles": "flex-row justify-between items-center w-full h-auto ",
                         "children": [
                           {
                             "type": "TEXT",
@@ -359,7 +359,7 @@
                       },
                       {
                         "name": "Progress Bar BG",
-                        "styles": "w-full h-[4] bg-[#F3F4F6] rounded-full auto-layout",
+                        "styles": "w-full h-[4] bg-[#F3F4F6] rounded-full ",
                         "children": [
                           {
                             "type": "RECTANGLE",
@@ -371,7 +371,7 @@
                   },
                   {
                     "name": "Task Footer",
-                    "styles": "flex-row justify-between items-center w-full h-auto mt-[8] auto-layout",
+                    "styles": "flex-row justify-between items-center w-full h-auto mt-[8] ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -391,7 +391,7 @@
           },
           {
             "name": "Kanban Lane",
-            "styles": "flex-col gap-[12] w-full h-auto mt-[16] auto-layout",
+            "styles": "flex-col gap-[12] w-full h-auto mt-[16] ",
             "children": [
               {
                 "type": "TEXT",
@@ -400,11 +400,11 @@
               },
               {
                 "name": "Task Card",
-                "styles": "flex-col p-[16] gap-[8] bg-white rounded-lg shadow-sm w-full h-auto border-l-[4] border-[#10B981] auto-layout",
+                "styles": "flex-col p-[16] gap-[8] bg-white rounded-lg shadow-sm w-full h-auto border-l-[4] border-[#10B981] ",
                 "children": [
                   {
                     "name": "Task Header",
-                    "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+                    "styles": "flex-row justify-between items-center w-full h-auto ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -424,7 +424,7 @@
                   },
                   {
                     "name": "Task Footer",
-                    "styles": "flex-row justify-between items-center w-full h-auto mt-[8] auto-layout",
+                    "styles": "flex-row justify-between items-center w-full h-auto mt-[8] ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -446,11 +446,11 @@
       },
       {
         "name": "Bottom Navigation",
-        "styles": "w-[390] flex-row justify-between items-center p-[24] bg-white shadow-sm h-auto auto-layout",
+        "styles": "w-[390] flex-row justify-between items-center p-[24] bg-white shadow-sm h-auto ",
         "children": [
           {
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -465,7 +465,7 @@
           },
           {
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -480,7 +480,7 @@
           },
           {
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -495,7 +495,7 @@
           },
           {
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",

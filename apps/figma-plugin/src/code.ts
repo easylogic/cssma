@@ -1,6 +1,5 @@
-import { figmaToStyle } from 'css-to-figma';
+import { figmaToStyle, createNodeForData } from '@easylogic/cssma';
 import { handleCreateDesignSystem } from './handlers/create';
-import { frameHandlers } from './handlers/createFrame';
 
 figma.showUI(__html__, {
     width: 480,
@@ -49,7 +48,7 @@ figma.ui.onmessage = async (msg) => {
           console.log('Creating design with spec:', item.name);
           
           // Figma 프레임 생성
-          const frame = await frameHandlers.createFrame(item.designSpec);
+          const frame = await createNodeForData(item.designSpec.frame);
           
           // 생성된 프레임을 뷰포트 중앙에 배치 
           figma.viewport.scrollAndZoomIntoView([frame!]);

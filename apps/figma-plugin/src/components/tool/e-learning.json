@@ -93,7 +93,7 @@
         "children": [
           {
             "name": "Section Header",
-            "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+            "styles": "flex-row justify-between items-center w-full h-auto ",
             "children": [
               {
                 "type": "TEXT",
@@ -109,7 +109,7 @@
           },
           {
             "name": "Course Card",
-            "styles": "flex-col bg-white rounded-lg border-[#E5E7EB] shadow-sm w-full h-auto auto-layout",
+            "styles": "flex-col bg-white rounded-lg border-[#E5E7EB] shadow-sm w-full h-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -117,7 +117,7 @@
               },
               {
                 "name": "Course Info",
-                "styles": "flex-col p-[12] gap-[8] w-full h-auto auto-layout",
+                "styles": "flex-col p-[12] gap-[8] w-full h-auto ",
                 "children": [
                   {
                     "type": "TEXT",
@@ -131,11 +131,11 @@
                   },
                   {
                     "name": "Progress",
-                    "styles": "flex-col gap-[4] w-full h-auto mt-[8] auto-layout",
+                    "styles": "flex-col gap-[4] w-full h-auto mt-[8] ",
                     "children": [
                       {
                         "name": "Progress Header",
-                        "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+                        "styles": "flex-row justify-between items-center w-full h-auto ",
                         "children": [
                           {
                             "type": "TEXT",
@@ -151,7 +151,7 @@
                       },
                       {
                         "name": "Progress Bar BG",
-                        "styles": "w-full h-[4] bg-[#E5E7EB] rounded-full auto-layout",
+                        "styles": "w-full h-[4] bg-[#E5E7EB] rounded-full ",
                         "children": [
                           {
                             "type": "RECTANGLE",
@@ -163,7 +163,7 @@
                   },
                   {
                     "name": "Continue Button",
-                    "styles": "flex-row items-center justify-center p-[8] bg-[#1E40AF] rounded-lg w-full h-auto pt-[12] pb-[8] auto-layout",
+                    "styles": "flex-row items-center justify-center p-[8] bg-[#1E40AF] rounded-lg w-full h-auto pt-[12] pb-[8] ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -189,15 +189,15 @@
           },
           {
             "name": "Category Icons",
-            "styles": "flex-row justify-between w-full h-auto auto-layout",
+            "styles": "flex-row justify-between w-full h-auto ",
             "children": [
               {
                 "name": "Category Item",
-                "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-col items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     "name": "Icon Container",
-                    "styles": "flex-row items-center justify-center w-[60] h-[60] bg-[#DBEAFE] rounded-full auto-layout",
+                    "styles": "flex-row items-center justify-center w-[60] h-[60] bg-[#DBEAFE] rounded-full ",
                     "children": [
                       {
                         "type": "RECTANGLE",
@@ -214,11 +214,11 @@
               },
               {
                 "name": "Category Item",
-                "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-col items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     "name": "Icon Container",
-                    "styles": "flex-row items-center justify-center w-[60] h-[60] bg-[#DBEAFE] rounded-full auto-layout",
+                    "styles": "flex-row items-center justify-center w-[60] h-[60] bg-[#DBEAFE] rounded-full ",
                     "children": [
                       {
                         "type": "RECTANGLE",
@@ -235,11 +235,11 @@
               },
               {
                 "name": "Category Item",
-                "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-col items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     "name": "Icon Container",
-                    "styles": "flex-row items-center justify-center w-[60] h-[60] bg-[#DBEAFE] rounded-full auto-layout",
+                    "styles": "flex-row items-center justify-center w-[60] h-[60] bg-[#DBEAFE] rounded-full ",
                     "children": [
                       {
                         "type": "RECTANGLE",
@@ -256,11 +256,11 @@
               },
               {
                 "name": "Category Item",
-                "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-col items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     "name": "Icon Container",
-                    "styles": "flex-row items-center justify-center w-[60] h-[60] bg-[#DBEAFE] rounded-full auto-layout",
+                    "styles": "flex-row items-center justify-center w-[60] h-[60] bg-[#DBEAFE] rounded-full ",
                     "children": [
                       {
                         "type": "RECTANGLE",
@@ -285,7 +285,7 @@
         "children": [
           {
             "name": "Section Header",
-            "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+            "styles": "flex-row justify-between items-center w-full h-auto ",
             "children": [
               {
                 "type": "TEXT",
@@ -313,7 +313,7 @@
                   },
                   {
                     "name": "Course Info",
-                    "styles": "flex-col p-[12] gap-[4] w-full h-auto auto-layout",
+                    "styles": "flex-col p-[12] gap-[4] w-full h-auto ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -327,7 +327,7 @@
                       },
                       {
                         "name": "Rating",
-                        "styles": "flex-row items-center gap-[4] h-auto w-auto mt-[4] auto-layout",
+                        "styles": "flex-row items-center gap-[4] h-auto w-auto mt-[4] ",
                         "children": [
                           {
                             "type": "RECTANGLE",
@@ -359,7 +359,7 @@
                   },
                   {
                     "name": "Course Info",
-                    "styles": "flex-col p-[12] gap-[4] w-full h-auto auto-layout",
+                    "styles": "flex-col p-[12] gap-[4] w-full h-auto ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -373,7 +373,7 @@
                       },
                       {
                         "name": "Rating",
-                        "styles": "flex-row items-center gap-[4] h-auto w-auto mt-[4] auto-layout",
+                        "styles": "flex-row items-center gap-[4] h-auto w-auto mt-[4] ",
                         "children": [
                           {
                             "type": "RECTANGLE",
@@ -410,11 +410,11 @@
           },
           {
             "name": "Schedule Item",
-            "styles": "flex-row gap-[12] w-full h-auto auto-layout",
+            "styles": "flex-row gap-[12] w-full h-auto ",
             "children": [
               {
                 "name": "Date",
-                "styles": "flex-col bg-[#111827] items-center justify-center w-[48] h-[48] rounded-lg auto-layout",
+                "styles": "flex-col bg-[#111827] items-center justify-center w-[48] h-[48] rounded-lg ",
                 "children": [
                   {
                     "type": "TEXT",
@@ -430,7 +430,7 @@
               },
               {
                 "name": "Study Info",
-                "styles": "flex-col justify-center gap-[4] h-auto w-full auto-layout",
+                "styles": "flex-col justify-center gap-[4] h-auto w-full ",
                 "children": [
                   {
                     "type": "TEXT",
@@ -448,11 +448,11 @@
           },
           {
             "name": "Schedule Item",
-            "styles": "flex-row gap-[12] w-full h-auto pt-[12] pb-[8] auto-layout",
+            "styles": "flex-row gap-[12] w-full h-auto pt-[12] pb-[8] ",
             "children": [
               {
                 "name": "Date",
-                "styles": "flex-col items-center justify-center w-[48] h-[48] bg-white rounded-lg auto-layout",
+                "styles": "flex-col items-center justify-center w-[48] h-[48] bg-white rounded-lg ",
                 "children": [
                   {
                     "type": "TEXT",
@@ -468,7 +468,7 @@
               },
               {
                 "name": "Study Info",
-                "styles": "flex-col justify-center gap-[4] h-auto w-full auto-layout",
+                "styles": "flex-col justify-center gap-[4] h-auto w-full ",
                 "children": [
                   {
                     "type": "TEXT",
@@ -497,7 +497,7 @@
           },
           {
             "name": "Instructor Card",
-            "styles": "flex-row gap-[16] w-full h-auto auto-layout",
+            "styles": "flex-row gap-[16] w-full h-auto ",
             "children": [
               {
                 "type": "ELLIPSE",
@@ -505,7 +505,7 @@
               },
               {
                 "name": "Instructor Info",
-                "styles": "flex-col justify-center gap-[8] h-auto w-full auto-layout",
+                "styles": "flex-col justify-center gap-[8] h-auto w-full ",
                 "children": [
                   {
                     "type": "TEXT",
@@ -519,11 +519,11 @@
                   },
                   {
                     "name": "Stats",
-                    "styles": "flex-row gap-[16] h-auto w-auto auto-layout",
+                    "styles": "flex-row gap-[16] h-auto w-auto ",
                     "children": [
                       {
                         "name": "Stat",
-                        "styles": "flex-row items-center gap-[4] h-auto w-auto auto-layout",
+                        "styles": "flex-row items-center gap-[4] h-auto w-auto ",
                         "children": [
                           {
                             "type": "RECTANGLE",
@@ -538,7 +538,7 @@
                       },
                       {
                         "name": "Stat",
-                        "styles": "flex-row items-center gap-[4] h-auto w-auto auto-layout",
+                        "styles": "flex-row items-center gap-[4] h-auto w-auto ",
                         "children": [
                           {
                             "type": "RECTANGLE",
@@ -565,7 +565,7 @@
         "children": [
           {
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -580,7 +580,7 @@
           },
           {
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -595,7 +595,7 @@
           },
           {
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -610,7 +610,7 @@
           },
           {
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",

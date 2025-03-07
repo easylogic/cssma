@@ -2,12 +2,12 @@
   "frame": {
     
     "name": "E-commerce Mobile App",
-    "styles": "bg-[#F9FAFB] flex-col w-[390] items-center gap-[16] auto-layout",
+    "styles": "bg-[#F9FAFB] flex-col w-[390] items-center gap-[16] ",
     "children": [
       {
         
         "name": "Status Bar",
-        "styles": "w-[390] flex-row justify-between items-center p-[16] bg-[#F9FAFB] h-auto auto-layout",
+        "styles": "w-[390] flex-row justify-between items-center p-[16] bg-[#F9FAFB] h-auto ",
         "children": [
           {
             "type": "TEXT",
@@ -17,7 +17,7 @@
           {
             
             "name": "Status Icons",
-            "styles": "flex-row gap-[8] items-center h-auto w-auto auto-layout",
+            "styles": "flex-row gap-[8] items-center h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -38,12 +38,12 @@
       {
         
         "name": "Header",
-        "styles": "w-[390] flex-row justify-between items-center p-[16] bg-[#0D9488] h-auto auto-layout",
+        "styles": "w-[390] flex-row justify-between items-center p-[16] bg-[#0D9488] h-auto ",
         "children": [
           {
             
             "name": "Title",
-            "styles": "flex-col h-auto w-auto auto-layout",
+            "styles": "flex-col h-auto w-auto ",
             "children": [
               {
                 "type": "TEXT",
@@ -60,12 +60,12 @@
           {
             
             "name": "Icons",
-            "styles": "flex-row items-center gap-[16] h-auto w-auto auto-layout",
+            "styles": "flex-row items-center gap-[16] h-auto w-auto ",
             "children": [
               {
                 
                 "name": "Notification",
-                "styles": "flex-row items-center justify-center w-[40] h-[40] bg-[#14B8A6] rounded-full shadow-sm auto-layout",
+                "styles": "flex-row items-center justify-center w-[40] h-[40] bg-[#14B8A6] rounded-full shadow-sm ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -80,7 +80,7 @@
       {
         
         "name": "Search Bar",
-        "styles": "w-[358] flex-row items-center p-[12] bg-white rounded-lg shadow-sm h-auto auto-layout",
+        "styles": "w-[358] flex-row items-center p-[12] bg-white rounded-lg shadow-sm h-auto ",
         "children": [
           {
             "type": "RECTANGLE",
@@ -96,17 +96,17 @@
       {
         
         "name": "Promotional Banner",
-        "styles": "w-[358] flex-col bg-[#0F766E] rounded-lg shadow-sm overflow-hidden h-auto auto-layout",
+        "styles": "w-[358] flex-col bg-[#0F766E] rounded-lg shadow-sm overflow-hidden h-auto ",
         "children": [
           {
             
             "name": "Banner Content",
-            "styles": "flex-row w-full h-auto auto-layout",
+            "styles": "flex-row w-full h-auto ",
             "children": [
               {
                 
                 "name": "Banner Text",
-                "styles": "flex-col justify-center gap-[8] p-[24] w-[200] h-auto auto-layout",
+                "styles": "flex-col justify-center gap-[8] p-[24] w-[200] h-auto ",
                 "children": [
                   {
                     "type": "TEXT",
@@ -121,7 +121,7 @@
                   {
                     
                     "name": "Button",
-                    "styles": "flex-row items-center justify-center p-[8] bg-white rounded-full mt-[8] w-[100] h-auto auto-layout",
+                    "styles": "flex-row items-center justify-center p-[8] bg-white rounded-full mt-[8] w-[100] h-auto ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -143,7 +143,7 @@
       {
         
         "name": "Categories",
-        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm gap-[16] h-auto mt-[16] auto-layout",
+        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm gap-[16] h-auto mt-[16] ",
         "children": [
           {
             "type": "TEXT",
@@ -153,17 +153,17 @@
           {
             
             "name": "Category Grid",
-            "styles": "flex-row wrap justify-between gap-[16] w-full h-auto auto-layout",
+            "styles": "flex-row wrap justify-between gap-[16] w-full h-auto ",
             "children": [
               {
                 
                 "name": "Category Item",
-                "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-col items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     
                     "name": "Icon Container",
-                    "styles": "flex-row items-center justify-center w-[60] h-[60] bg-[#CCFBF1] rounded-full auto-layout",
+                    "styles": "flex-row items-center justify-center w-[60] h-[60] bg-[#CCFBF1] rounded-full ",
                     "children": [
                       {
                         "type": "RECTANGLE",
@@ -181,12 +181,12 @@
               {
                 
                 "name": "Category Item",
-                "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-col items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     
                     "name": "Icon Container",
-                    "styles": "flex-row items-center justify-center w-[60] h-[60] bg-[#CCFBF1] rounded-full auto-layout",
+                    "styles": "flex-row items-center justify-center w-[60] h-[60] bg-[#CCFBF1] rounded-full ",
                     "children": [
                       {
                         "type": "RECTANGLE",
@@ -204,12 +204,12 @@
               {
                 
                 "name": "Category Item",
-                "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-col items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     
                     "name": "Icon Container",
-                    "styles": "flex-row items-center justify-center w-[60] h-[60] bg-[#CCFBF1] rounded-full auto-layout",
+                    "styles": "flex-row items-center justify-center w-[60] h-[60] bg-[#CCFBF1] rounded-full ",
                     "children": [
                       {
                         "type": "RECTANGLE",
@@ -227,12 +227,12 @@
               {
                 
                 "name": "Category Item",
-                "styles": "flex-col items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-col items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     
                     "name": "Icon Container",
-                    "styles": "flex-row items-center justify-center w-[60] h-[60] bg-[#CCFBF1] rounded-full auto-layout",
+                    "styles": "flex-row items-center justify-center w-[60] h-[60] bg-[#CCFBF1] rounded-full ",
                     "children": [
                       {
                         "type": "RECTANGLE",
@@ -254,17 +254,17 @@
       {
         
         "name": "Flash Sale",
-        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm gap-[16] h-auto mt-[16] auto-layout",
+        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm gap-[16] h-auto mt-[16] ",
         "children": [
           {
             
             "name": "Section Header",
-            "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+            "styles": "flex-row justify-between items-center w-full h-auto ",
             "children": [
               {
                 
                 "name": "Title",
-                "styles": "flex-row items-center gap-[8] h-auto w-auto auto-layout",
+                "styles": "flex-row items-center gap-[8] h-auto w-auto ",
                 "children": [
                   {
                     "type": "TEXT",
@@ -274,7 +274,7 @@
                   {
                     
                     "name": "Timer",
-                    "styles": "flex-row items-center gap-[4] p-[4] bg-[#FEF2F2] rounded-md h-auto w-auto auto-layout",
+                    "styles": "flex-row items-center gap-[4] p-[4] bg-[#FEF2F2] rounded-md h-auto w-auto ",
                     "children": [
                       {
                         "type": "RECTANGLE",
@@ -299,12 +299,12 @@
           {
             
             "name": "Products Carousel",
-            "styles": "flex-row gap-[16] w-full overflow-x-auto h-auto auto-layout",
+            "styles": "flex-row gap-[16] w-full overflow-x-auto h-auto ",
             "children": [
               {
                 
                 "name": "Product Card",
-                "styles": "flex-col w-[150] bg-[#F9FAFB] rounded-lg shadow-sm overflow-hidden h-auto auto-layout",
+                "styles": "flex-col w-[150] bg-[#F9FAFB] rounded-lg shadow-sm overflow-hidden h-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -313,7 +313,7 @@
                   {
                     
                     "name": "Discount Badge",
-                    "styles": "flex-row items-center justify-center p-[4] bg-[#EF4444] rounded-md absolute top-[8] right-[8] h-auto w-auto auto-layout",
+                    "styles": "flex-row items-center justify-center p-[4] bg-[#EF4444] rounded-md absolute top-[8] right-[8] h-auto w-auto ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -325,7 +325,7 @@
                   {
                     
                     "name": "Product Info",
-                    "styles": "flex-col p-[12] gap-[4] w-full h-auto auto-layout",
+                    "styles": "flex-col p-[12] gap-[4] w-full h-auto ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -335,7 +335,7 @@
                       {
                         
                         "name": "Price",
-                        "styles": "flex-row items-center gap-[8] h-auto w-auto auto-layout",
+                        "styles": "flex-row items-center gap-[8] h-auto w-auto ",
                         "children": [
                           {
                             "type": "TEXT",
@@ -352,7 +352,7 @@
                       {
                         
                         "name": "Rating",
-                        "styles": "flex-row items-center gap-[4] h-auto w-auto mt-[4] auto-layout",
+                        "styles": "flex-row items-center gap-[4] h-auto w-auto mt-[4] ",
                         "children": [
                           {
                             "type": "RECTANGLE",
@@ -372,7 +372,7 @@
               {
                 
                 "name": "Product Card",
-                "styles": "flex-col w-[150] bg-[#F9FAFB] rounded-lg shadow-sm overflow-hidden h-auto auto-layout",
+                "styles": "flex-col w-[150] bg-[#F9FAFB] rounded-lg shadow-sm overflow-hidden h-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -381,7 +381,7 @@
                   {
                     
                     "name": "Discount Badge",
-                    "styles": "flex-row items-center justify-center p-[4] bg-[#EF4444] rounded-md absolute top-[8] right-[8] h-auto w-auto auto-layout",
+                    "styles": "flex-row items-center justify-center p-[4] bg-[#EF4444] rounded-md absolute top-[8] right-[8] h-auto w-auto ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -393,7 +393,7 @@
                   {
                     
                     "name": "Product Info",
-                    "styles": "flex-col p-[12] gap-[4] w-full h-auto auto-layout",
+                    "styles": "flex-col p-[12] gap-[4] w-full h-auto ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -403,7 +403,7 @@
                       {
                         
                         "name": "Price",
-                        "styles": "flex-row items-center gap-[8] h-auto w-auto auto-layout",
+                        "styles": "flex-row items-center gap-[8] h-auto w-auto ",
                         "children": [
                           {
                             "type": "TEXT",
@@ -420,7 +420,7 @@
                       {
                         
                         "name": "Rating",
-                        "styles": "flex-row items-center gap-[4] h-auto w-auto mt-[4] auto-layout",
+                        "styles": "flex-row items-center gap-[4] h-auto w-auto mt-[4] ",
                         "children": [
                           {
                             "type": "RECTANGLE",
@@ -440,7 +440,7 @@
               {
                 
                 "name": "Product Card",
-                "styles": "flex-col w-[150] bg-[#F9FAFB] rounded-lg shadow-sm overflow-hidden h-auto auto-layout",
+                "styles": "flex-col w-[150] bg-[#F9FAFB] rounded-lg shadow-sm overflow-hidden h-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -449,7 +449,7 @@
                   {
                     
                     "name": "Discount Badge",
-                    "styles": "flex-row items-center justify-center p-[4] bg-[#EF4444] rounded-md absolute top-[8] right-[8] h-auto w-auto auto-layout",
+                    "styles": "flex-row items-center justify-center p-[4] bg-[#EF4444] rounded-md absolute top-[8] right-[8] h-auto w-auto ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -461,7 +461,7 @@
                   {
                     
                     "name": "Product Info",
-                    "styles": "flex-col p-[12] gap-[4] w-full h-auto auto-layout",
+                    "styles": "flex-col p-[12] gap-[4] w-full h-auto ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -471,7 +471,7 @@
                       {
                         
                         "name": "Price",
-                        "styles": "flex-row items-center gap-[8] h-auto w-auto auto-layout",
+                        "styles": "flex-row items-center gap-[8] h-auto w-auto ",
                         "children": [
                           {
                             "type": "TEXT",
@@ -488,7 +488,7 @@
                       {
                         
                         "name": "Rating",
-                        "styles": "flex-row items-center gap-[4] h-auto w-auto mt-[4] auto-layout",
+                        "styles": "flex-row items-center gap-[4] h-auto w-auto mt-[4] ",
                         "children": [
                           {
                             "type": "RECTANGLE",
@@ -512,12 +512,12 @@
       {
         
         "name": "Popular Products",
-        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm gap-[16] h-auto mt-[16] auto-layout",
+        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm gap-[16] h-auto mt-[16] ",
         "children": [
           {
             
             "name": "Section Header",
-            "styles": "flex-row justify-between items-center w-full h-auto auto-layout",
+            "styles": "flex-row justify-between items-center w-full h-auto ",
             "children": [
               {
                 "type": "TEXT",
@@ -534,12 +534,12 @@
           {
             
             "name": "Product Grid",
-            "styles": "flex-row wrap justify-between gap-[16] w-full h-auto auto-layout",
+            "styles": "flex-row wrap justify-between gap-[16] w-full h-auto ",
             "children": [
               {
                 
                 "name": "Product Card",
-                "styles": "flex-col w-[154] bg-[#F9FAFB] rounded-lg shadow-sm overflow-hidden h-auto auto-layout",
+                "styles": "flex-col w-[154] bg-[#F9FAFB] rounded-lg shadow-sm overflow-hidden h-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -548,7 +548,7 @@
                   {
                     
                     "name": "Product Info",
-                    "styles": "flex-col p-[12] gap-[4] w-full h-auto auto-layout",
+                    "styles": "flex-col p-[12] gap-[4] w-full h-auto ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -563,7 +563,7 @@
                       {
                         
                         "name": "Rating",
-                        "styles": "flex-row items-center gap-[4] h-auto w-auto mt-[4] auto-layout",
+                        "styles": "flex-row items-center gap-[4] h-auto w-auto mt-[4] ",
                         "children": [
                           {
                             "type": "RECTANGLE",
@@ -583,7 +583,7 @@
               {
                 
                 "name": "Product Card",
-                "styles": "flex-col w-[154] bg-[#F9FAFB] rounded-lg shadow-sm overflow-hidden h-auto auto-layout",
+                "styles": "flex-col w-[154] bg-[#F9FAFB] rounded-lg shadow-sm overflow-hidden h-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -592,7 +592,7 @@
                   {
                     
                     "name": "Product Info",
-                    "styles": "flex-col p-[12] gap-[4] w-full h-auto auto-layout",
+                    "styles": "flex-col p-[12] gap-[4] w-full h-auto ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -607,7 +607,7 @@
                       {
                         
                         "name": "Rating",
-                        "styles": "flex-row items-center gap-[4] h-auto w-auto mt-[4] auto-layout",
+                        "styles": "flex-row items-center gap-[4] h-auto w-auto mt-[4] ",
                         "children": [
                           {
                             "type": "RECTANGLE",
@@ -627,7 +627,7 @@
               {
                 
                 "name": "Product Card",
-                "styles": "flex-col w-[154] bg-[#F9FAFB] rounded-lg shadow-sm overflow-hidden h-auto auto-layout",
+                "styles": "flex-col w-[154] bg-[#F9FAFB] rounded-lg shadow-sm overflow-hidden h-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -636,7 +636,7 @@
                   {
                     
                     "name": "Product Info",
-                    "styles": "flex-col p-[12] gap-[4] w-full h-auto auto-layout",
+                    "styles": "flex-col p-[12] gap-[4] w-full h-auto ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -651,7 +651,7 @@
                       {
                         
                         "name": "Rating",
-                        "styles": "flex-row items-center gap-[4] h-auto w-auto mt-[4] auto-layout",
+                        "styles": "flex-row items-center gap-[4] h-auto w-auto mt-[4] ",
                         "children": [
                           {
                             "type": "RECTANGLE",
@@ -671,7 +671,7 @@
               {
                 
                 "name": "Product Card",
-                "styles": "flex-col w-[154] bg-[#F9FAFB] rounded-lg shadow-sm overflow-hidden h-auto auto-layout",
+                "styles": "flex-col w-[154] bg-[#F9FAFB] rounded-lg shadow-sm overflow-hidden h-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -680,7 +680,7 @@
                   {
                     
                     "name": "Product Info",
-                    "styles": "flex-col p-[12] gap-[4] w-full h-auto auto-layout",
+                    "styles": "flex-col p-[12] gap-[4] w-full h-auto ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -695,7 +695,7 @@
                       {
                         
                         "name": "Rating",
-                        "styles": "flex-row items-center gap-[4] h-auto w-auto mt-[4] auto-layout",
+                        "styles": "flex-row items-center gap-[4] h-auto w-auto mt-[4] ",
                         "children": [
                           {
                             "type": "RECTANGLE",
@@ -719,7 +719,7 @@
       {
         
         "name": "Recommended For You",
-        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm gap-[16] h-auto mt-[16] auto-layout",
+        "styles": "w-[358] flex-col p-[16] bg-white rounded-lg shadow-sm gap-[16] h-auto mt-[16] ",
         "children": [
           {
             "type": "TEXT",
@@ -729,12 +729,12 @@
           {
             
             "name": "Recommendation List",
-            "styles": "flex-col gap-[16] w-full h-auto auto-layout",
+            "styles": "flex-col gap-[16] w-full h-auto ",
             "children": [
               {
                 
                 "name": "Product Card",
-                "styles": "flex-row gap-[16] w-full h-auto auto-layout",
+                "styles": "flex-row gap-[16] w-full h-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -743,7 +743,7 @@
                   {
                     
                     "name": "Product Info",
-                    "styles": "flex-col justify-center gap-[4] h-auto w-full auto-layout",
+                    "styles": "flex-col justify-center gap-[4] h-auto w-full ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -758,7 +758,7 @@
                       {
                         
                         "name": "Rating",
-                        "styles": "flex-row items-center gap-[4] h-auto w-auto auto-layout",
+                        "styles": "flex-row items-center gap-[4] h-auto w-auto ",
                         "children": [
                           {
                             "type": "RECTANGLE",
@@ -778,7 +778,7 @@
               {
                 
                 "name": "Product Card",
-                "styles": "flex-row gap-[16] w-full h-auto auto-layout",
+                "styles": "flex-row gap-[16] w-full h-auto ",
                 "children": [
                   {
                     "type": "RECTANGLE",
@@ -787,7 +787,7 @@
                   {
                     
                     "name": "Product Info",
-                    "styles": "flex-col justify-center gap-[4] h-auto w-full auto-layout",
+                    "styles": "flex-col justify-center gap-[4] h-auto w-full ",
                     "children": [
                       {
                         "type": "TEXT",
@@ -802,7 +802,7 @@
                       {
                         
                         "name": "Rating",
-                        "styles": "flex-row items-center gap-[4] h-auto w-auto auto-layout",
+                        "styles": "flex-row items-center gap-[4] h-auto w-auto ",
                         "children": [
                           {
                             "type": "RECTANGLE",
@@ -824,7 +824,7 @@
           {
             
             "name": "View More Button",
-            "styles": "flex-row items-center justify-center p-[12] bg-[#F9FAFB] rounded-lg border-[#E5E7EB] w-full h-auto mt-[8] auto-layout",
+            "styles": "flex-row items-center justify-center p-[12] bg-[#F9FAFB] rounded-lg border-[#E5E7EB] w-full h-auto mt-[8] ",
             "children": [
               {
                 "type": "TEXT",
@@ -838,12 +838,12 @@
       {
         
         "name": "Bottom Navigation",
-        "styles": "w-[390] flex-row justify-between items-center p-[24] bg-white shadow-md mt-[16] h-auto auto-layout",
+        "styles": "w-[390] flex-row justify-between items-center p-[24] bg-white shadow-md mt-[16] h-auto ",
         "children": [
           {
             
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -859,7 +859,7 @@
           {
             
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -875,7 +875,7 @@
           {
             
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
@@ -891,7 +891,7 @@
           {
             
             "name": "Nav Item",
-            "styles": "flex-col items-center gap-[4] h-auto w-auto auto-layout",
+            "styles": "flex-col items-center gap-[4] h-auto w-auto ",
             "children": [
               {
                 "type": "RECTANGLE",
