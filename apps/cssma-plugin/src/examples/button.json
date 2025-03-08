@@ -1,0 +1,13 @@
+{
+  "type": "FRAME",
+  "name": "Button",
+  "styles": "flex-row justify-center items-center bg-[#3B82F6] px-[16] py-[8] rounded-md",
+  "children": [
+    {
+      "type": "TEXT",
+      "name": "Button Text",
+      "styles": "text-sm font-medium text-white",
+      "text": "Button"
+    }
+  ]
+} 

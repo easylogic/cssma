@@ -1,4 +1,4 @@
-import { COLORS } from 'src/config/tokens';
+import { COLORS } from '../config/tokens';
 import { ParsedStyle, FigmaStyleProperties, FigmaEffect, FigmaColor } from '../types';
 import { parseColor } from '../utils/colors';
 

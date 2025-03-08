@@ -1,5 +1,9 @@
 import { FigmaColor, FigmaGradientStop } from '../types';
 
+function isMixedValue(value: any): boolean {
+    return typeof value === 'symbol' && String(value) === 'Symbol(figma.mixed)';
+}
+
 const sizeMap: Record<number, string> = {
     12: 'text-xs',
     14: 'text-sm',
@@ -154,50 +158,70 @@ function convertLayout(styles: Record<string, any>): string[] {
 }
 
 function convertColors(styles: Record<string, any>): string[] {
-  const classes: string[] = [];
+    const classes: string[] = [];
 
-  if (styles.fills && styles.fills.length > 0) {
-    const fill = styles.fills[0];
-    if (fill.type === 'SOLID') {
-      classes.push(`bg-[${colorToHex(fill.color)}]`);
-    } else if (fill.type === 'GRADIENT_LINEAR') {
-      const direction = getGradientDirection(fill.gradientTransform);
-      classes.push(`bg-linear-${direction}`);
-      classes.push(...convertGradientStops(fill.gradientStops));
-    } else if (fill.type === 'GRADIENT_RADIAL') {
-      classes.push('bg-radial');
-      classes.push(...convertGradientStops(fill.gradientStops));
-    } else if (fill.type === 'GRADIENT_ANGULAR') {
-      const rotation = fill.rotation || 0;
-      if (rotation === 0) {
-        classes.push('bg-conic');
-      } else {
-        classes.push(`bg-conic-[${rotation}deg]`);
-      }
-      classes.push(...convertGradientStops(fill.gradientStops));
+    if (styles.fills && styles.fills.length > 0) {
+        const fill = styles.fills[0];
+        if (fill.type === 'SOLID') {
+            classes.push(`bg-[${colorToHex(fill.color)}]`);
+            
+            // opacity가 1(100%)이 아닌 경우에만 추가
+            if (fill.opacity !== undefined && fill.opacity !== 1) {
+                classes.push(`opacity-[${Math.round(fill.opacity * 100)}]`);
+            }
+        } else if (fill.type === 'GRADIENT_LINEAR') {
+            const direction = getGradientDirection(fill.gradientTransform);
+            classes.push(`bg-linear-${direction}`);
+            classes.push(...convertGradientStops(fill.gradientStops));
+        } else if (fill.type === 'GRADIENT_RADIAL') {
+            classes.push('bg-radial');
+            classes.push(...convertGradientStops(fill.gradientStops));
+        } else if (fill.type === 'GRADIENT_ANGULAR') {
+            const rotation = fill.rotation || 0;
+            if (rotation === 0) {
+                classes.push('bg-conic');
+            } else {
+                classes.push(`bg-conic-[${rotation}deg]`);
+            }
+            classes.push(...convertGradientStops(fill.gradientStops));
+        }
     }
-  }
 
-  return classes;
+    return classes;
 }
 
 function convertTypography(styles: Record<string, any>): string[] {
     const classes: string[] = [];
 
     // Font size
-    if (styles.fontSize) {
+    if (!isMixedValue(styles.fontSize) && styles.fontSize) {
         const size = sizeMap[styles.fontSize] || `text-[${styles.fontSize}]`;
         classes.push(size);
     }
 
-    // Font weight
-    if (styles.fontName?.style) {
-        const weight = weightMap[styles.fontName.style];
-        if (weight) classes.push(weight);
+    // Font weight and style
+    if (!isMixedValue(styles.fontName?.style) && styles.fontName?.style) {
+        const fontStyle = styles.fontName.style;
+        
+        // Font weight
+        if (fontStyle.includes('Thin')) classes.push('font-thin');
+        else if (fontStyle.includes('ExtraLight')) classes.push('font-extralight');
+        else if (fontStyle.includes('Light')) classes.push('font-light');
+        else if (fontStyle.includes('Regular')) classes.push('font-normal');
+        else if (fontStyle.includes('Medium')) classes.push('font-medium');
+        else if (fontStyle.includes('Semi Bold') || fontStyle.includes('SemiBold')) classes.push('font-semibold');
+        else if (fontStyle.includes('Bold')) classes.push('font-bold');
+        else if (fontStyle.includes('ExtraBold')) classes.push('font-extrabold');
+        else if (fontStyle.includes('Black')) classes.push('font-black');
+
+        // Font style
+        if (fontStyle.includes('Italic')) {
+            classes.push('italic');
+        }
     }
 
     // Text alignment
-    if (styles.textAlignHorizontal) {
+    if (!isMixedValue(styles.textAlignHorizontal) && styles.textAlignHorizontal) {
         switch (styles.textAlignHorizontal) {
             case 'LEFT':
                 classes.push('text-left');
@@ -215,7 +239,7 @@ function convertTypography(styles: Record<string, any>): string[] {
     }
 
     // Text transform
-    if (styles.textCase) {
+    if (!isMixedValue(styles.textCase) && styles.textCase) {
         switch (styles.textCase) {
             case 'UPPER':
                 classes.push('uppercase');
@@ -233,7 +257,7 @@ function convertTypography(styles: Record<string, any>): string[] {
     }
 
     // Text vertical alignment
-    if (styles.textAlignVertical) {
+    if (!isMixedValue(styles.textAlignVertical) && styles.textAlignVertical) {
         switch (styles.textAlignVertical) {
             case 'TOP':
                 classes.push('align-top');
@@ -248,7 +272,7 @@ function convertTypography(styles: Record<string, any>): string[] {
     }
 
     // Text auto-size
-    if (styles.textAutoSize) {
+    if (!isMixedValue(styles.textAutoSize) && styles.textAutoSize) {
         switch (styles.textAutoSize) {
             case 'NONE':
                 classes.push('text-auto-none');
@@ -266,7 +290,7 @@ function convertTypography(styles: Record<string, any>): string[] {
     }
 
     // Text wrap
-    if (styles.textWrap) {
+    if (!isMixedValue(styles.textWrap) && styles.textWrap) {
         switch (styles.textWrap) {
             case 'BALANCE':
                 classes.push('text-wrap-balance');
@@ -281,7 +305,7 @@ function convertTypography(styles: Record<string, any>): string[] {
     }
 
     // Text decoration
-    if (styles.textDecoration) {
+    if (!isMixedValue(styles.textDecoration) && styles.textDecoration) {
         switch (styles.textDecoration) {
             case 'UNDERLINE':
                 classes.push('underline');
@@ -295,8 +319,52 @@ function convertTypography(styles: Record<string, any>): string[] {
         }
     }
 
+    // Text decoration color
+    if (!isMixedValue(styles.textDecorationColor) && styles.textDecorationColor) {
+        // RGB 객체를 색상 코드로 변환
+        const colorHex = colorToHex(styles.textDecorationColor);
+        classes.push(`decoration-[${colorHex}]`);
+    }
+
+    // Text decoration style
+    if (!isMixedValue(styles.textDecorationStyle) && styles.textDecorationStyle) {
+        switch (styles.textDecorationStyle) {
+            case 'SOLID':
+                classes.push('decoration-solid');
+                break;
+            case 'DOUBLE':
+                classes.push('decoration-double');
+                break;
+            case 'DOTTED':
+                classes.push('decoration-dotted');
+                break;
+            case 'DASHED':
+                classes.push('decoration-dashed');
+                break;
+            case 'WAVY':
+                classes.push('decoration-wavy');
+                break;
+        }
+    }
+
+    // Text decoration thickness
+    if (!isMixedValue(styles.textDecorationThickness) && styles.textDecorationThickness !== null && styles.textDecorationThickness !== undefined) {
+        if (styles.textDecorationThickness === 'from-font') {
+            classes.push('decoration-from-font');
+        } else if (typeof styles.textDecorationThickness === 'number') {
+            classes.push(`decoration-[${styles.textDecorationThickness}px]`);
+        }
+    }
+
+    // Text decoration offset
+    if (!isMixedValue(styles.textDecorationOffset) && styles.textDecorationOffset !== null && styles.textDecorationOffset !== undefined) {
+        if (typeof styles.textDecorationOffset === 'number') {
+            classes.push(`underline-offset-[${styles.textDecorationOffset}px]`);
+        }
+    }
+
     // Line height
-    if (styles.lineHeight) {
+    if (!isMixedValue(styles.lineHeight) && styles.lineHeight) {
         const { value, unit } = styles.lineHeight;
         if (unit === 'PERCENT') {
             switch (value) {
@@ -318,7 +386,7 @@ function convertTypography(styles: Record<string, any>): string[] {
     }
 
     // Letter spacing
-    if (styles.letterSpacing !== undefined) {
+    if (!isMixedValue(styles.letterSpacing) && styles.letterSpacing !== undefined) {
         if (styles.letterSpacing === -0.4) {
             classes.push('tracking-tight');
         } else if (styles.letterSpacing === 0) {
@@ -365,15 +433,32 @@ function convertBorder(styles: Record<string, any>): string[] {
         if (styles.strokeWeight === 0) {
             classes.push('border-0');
         } else {
-            classes.push(`border-[${styles.strokeWeight}]`);
+            
+            // Individual border widths
+            if (styles.strokeTopWeight === styles.strokeRightWeight &&
+                styles.strokeTopWeight === styles.strokeBottomWeight &&
+                styles.strokeTopWeight === styles.strokeLeftWeight &&
+                styles.strokeTopWeight !== undefined) {
+                classes.push(`border-[${styles.strokeTopWeight}]`);
+            } else if (
+                styles.strokeWeight !== undefined && styles.strokeWeight !== null
+            ){ 
+                classes.push(`border-[${styles.strokeWeight}]`);
+            } else {
+                if (styles.strokeTopWeight !== undefined && styles.strokeTopWeight !== null) classes.push(`border-t-[${styles.strokeTopWeight}]`);
+                if (styles.strokeRightWeight !== undefined && styles.strokeRightWeight !== null) classes.push(`border-r-[${styles.strokeRightWeight}]`);
+                if (styles.strokeBottomWeight !== undefined && styles.strokeBottomWeight !== null) classes.push(`border-b-[${styles.strokeBottomWeight}]`);
+                if (styles.strokeLeftWeight !== undefined && styles.strokeLeftWeight !== null) classes.push(`border-l-[${styles.strokeLeftWeight}]`);
+            }
         }
+    } else {
+        if (styles.strokeTopWeight !== undefined && styles.strokeTopWeight !== null) classes.push(`border-t-[${styles.strokeTopWeight}]`);
+        if (styles.strokeRightWeight !== undefined && styles.strokeRightWeight !== null) classes.push(`border-r-[${styles.strokeRightWeight}]`);
+        if (styles.strokeBottomWeight !== undefined && styles.strokeBottomWeight !== null) classes.push(`border-b-[${styles.strokeBottomWeight}]`);
+        if (styles.strokeLeftWeight !== undefined && styles.strokeLeftWeight !== null) classes.push(`border-l-[${styles.strokeLeftWeight}]`);
     }
 
-    // Individual border widths
-    if (styles.strokeTopWeight !== undefined) classes.push(`border-t-[${styles.strokeTopWeight}]`);
-    if (styles.strokeRightWeight !== undefined) classes.push(`border-r-[${styles.strokeRightWeight}]`);
-    if (styles.strokeBottomWeight !== undefined) classes.push(`border-b-[${styles.strokeBottomWeight}]`);
-    if (styles.strokeLeftWeight !== undefined) classes.push(`border-l-[${styles.strokeLeftWeight}]`);
+    
 
     // Border color with opacity
     if (styles.strokes && styles.strokes.length > 0) {
@@ -404,7 +489,7 @@ function convertBorder(styles: Record<string, any>): string[] {
     }
 
     // Border dash pattern
-    if (styles.dashPattern && Array.isArray(styles.dashPattern)) {
+    if (styles.dashPattern && Array.isArray(styles.dashPattern) && styles.dashPattern.length > 0) {
         classes.push(`border-dashed-[${styles.dashPattern.join(',')}]`);
     }
 
@@ -487,8 +572,13 @@ function convertPosition(styles: Record<string, any>): string[] {
         }
     }
 
-    if (styles.x !== undefined) classes.push(`left-[${styles.x}]`);
-    if (styles.y !== undefined) classes.push(`top-[${styles.y}]`);
+    // x, y 값이 유효하고 0이 아닌 경우만 클래스 추가
+    if (styles.x !== undefined && styles.x !== null && styles.x !== 0) {
+        classes.push(`left-[${styles.x}]`);
+    }
+    if (styles.y !== undefined && styles.y !== null && styles.y !== 0) {
+        classes.push(`top-[${styles.y}]`);
+    }
 
     return classes;
 }
@@ -497,10 +587,10 @@ function convertSize(styles: Record<string, any>): string[] {
     const classes: string[] = [];
 
     // Min/Max constraints
-    if (styles.minWidth !== undefined) classes.push(`min-w-[${styles.minWidth}]`);
-    if (styles.maxWidth !== undefined) classes.push(`max-w-[${styles.maxWidth}]`);
-    if (styles.minHeight !== undefined) classes.push(`min-h-[${styles.minHeight}]`);
-    if (styles.maxHeight !== undefined) classes.push(`max-h-[${styles.maxHeight}]`);
+    if (styles.minWidth !== undefined && styles.minWidth !== null) classes.push(`min-w-[${styles.minWidth}]`);
+    if (styles.maxWidth !== undefined && styles.maxWidth !== null) classes.push(`max-w-[${styles.maxWidth}]`);
+    if (styles.minHeight !== undefined && styles.minHeight !== null) classes.push(`min-h-[${styles.minHeight}]`);
+    if (styles.maxHeight !== undefined && styles.maxHeight !== null) classes.push(`max-h-[${styles.maxHeight}]`);
 
     return classes;
 }

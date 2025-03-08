@@ -1,0 +1,52 @@
+{
+  "type": "FRAME",
+  "name": "Card",
+  "styles": "flex-col bg-white p-[16] gap-[12] rounded-lg border border-[#E5E7EB]",
+  "children": [
+    {
+      "type": "TEXT",
+      "name": "Card Title",
+      "styles": "text-lg font-semibold text-[#111827]",
+      "text": "Card Title"
+    },
+    {
+      "type": "TEXT",
+      "name": "Card Description",
+      "styles": "text-base text-[#4B5563]",
+      "text": "This is a description of the card content."
+    },
+    {
+      "type": "FRAME",
+      "name": "Card Footer",
+      "styles": "flex-row justify-end gap-[8] mt-[16]",
+      "children": [
+        {
+          "type": "FRAME",
+          "name": "Cancel Button",
+          "styles": "flex-row justify-center items-center bg-[#F3F4F6] px-[16] py-[8] rounded-md",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Cancel Text",
+              "styles": "text-sm font-medium text-[#374151]",
+              "text": "Cancel"
+            }
+          ]
+        },
+        {
+          "type": "FRAME",
+          "name": "Submit Button",
+          "styles": "flex-row justify-center items-center bg-[#3B82F6] px-[16] py-[8] rounded-md",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Submit Text",
+              "styles": "text-sm font-medium text-white",
+              "text": "Submit"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 

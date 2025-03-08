@@ -1,4 +1,4 @@
-import { parseArbitraryValue } from 'src/utils/converters';
+import { parseArbitraryValue } from '../utils/converters';
 import { ParsedStyle, FigmaStyleProperties } from '../types';
 import { isValidNumber } from '../utils/validators';
 

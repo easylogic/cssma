@@ -1,6 +1,6 @@
-import { findVariableByName } from 'src/utils/figma-variable';
+import { findVariableByName } from '../utils/figma-variable';
 import { processStyles } from '../index';
-import { FigmaSolidPaint, FigmaGradientStop, FigmaStyleProperties, FigmaPaint } from '../types';
+import { FigmaStyleProperties, FigmaPaint } from '../types';
 
 type TextVariableTypes = {
   fontSize: number;

@@ -1,6 +1,6 @@
-import { COLORS } from 'src/config/tokens';
+import { COLORS } from '../config/tokens';
 import { ParsedStyle, FigmaStyleProperties, FigmaFontName, FigmaLineHeight, FigmaColor, FigmaSolidPaint } from '../types';
-import { parseColor } from 'src/utils/colors';
+import { parseColor } from '../utils/colors';
 
 const TEXT_ALIGN_VALUES = ['LEFT', 'CENTER', 'RIGHT', 'JUSTIFIED'] as const;
 type TextAlignValue = typeof TEXT_ALIGN_VALUES[number];

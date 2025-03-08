@@ -90,6 +90,22 @@ describe('figmaToStyle', () => {
         fontName: { family: 'Inter', style: 'Bold' }
       }), 'font-bold');
     });
+
+    it('should convert font style', () => {
+      expectClassesEqual(
+        figmaToStyle({
+          fontName: { family: 'Inter', style: 'Italic' }
+        }),
+        'italic'
+      );
+
+      expectClassesEqual(
+        figmaToStyle({
+          fontName: { family: 'Inter', style: 'Regular' }
+        }),
+        'font-normal'
+      );
+    });
   });
 
   describe('Effects', () => {
@@ -372,6 +388,17 @@ describe('figmaToStyle', () => {
         }),
         'border-t-[1] border-r-[2] border-b-[3] border-l-[4]'
       );
+
+      expectClassesEqual(
+        figmaToStyle({
+          strokeWeight: 1,
+          strokeTopWeight: 1,
+          strokeRightWeight: 1,
+          strokeBottomWeight: 1,
+          strokeLeftWeight: 1
+        }),
+        'border-[1]'
+      );
     });
 
     it('should convert border alignment', () => {
@@ -488,6 +515,16 @@ describe('figmaToStyle', () => {
         }),
         'min-w-[100] max-w-[500] min-h-[50] max-h-[300]'
       );
+
+      expectClassesEqual(
+        figmaToStyle({
+          minWidth: null,
+          maxWidth: null,
+          minHeight: null,
+          maxHeight: null
+        }),
+        ''
+      );
     });
   });
 
@@ -535,7 +572,7 @@ describe('figmaToStyle', () => {
 
       expectClassesEqual(
         figmaToStyle(styles),
-        'fixed flex-col w-[480] h-auto left-[0] top-[0] p-[24] bg-[#ffffff] shadow-xl rounded-2xl gap-[20]'
+        'fixed flex-col w-[480] h-auto p-[24] bg-[#ffffff] shadow-xl rounded-2xl gap-[20]'
       );
     });
 
@@ -703,22 +740,6 @@ describe('figmaToStyle', () => {
       );
     });
 
-    it('should convert font style', () => {
-      expectClassesEqual(
-        figmaToStyle({
-          fontName: { family: 'Inter', style: 'Italic' }
-        }),
-        'italic'
-      );
-
-      expectClassesEqual(
-        figmaToStyle({
-          fontName: { family: 'Inter', style: 'Regular' }
-        }),
-        'not-italic'
-      );
-    });
-
     it('should convert letter spacing', () => {
       expectClassesEqual(
         figmaToStyle({ letterSpacing: -0.4 }),
@@ -755,6 +776,11 @@ describe('figmaToStyle', () => {
       );
 
       expectClassesEqual(
+        figmaToStyle({ borderStyle: '' }),
+        ''
+      );      
+
+      expectClassesEqual(
         figmaToStyle({ borderStyle: 'DOTTED' }),
         'border-dotted'
       );
@@ -769,6 +795,11 @@ describe('figmaToStyle', () => {
       expectClassesEqual(
         figmaToStyle({ dashPattern: [5, 3, 2] }),
         'border-dashed-[5,3,2]'
+      );
+
+      expectClassesEqual(
+        figmaToStyle({ dashPattern: [] }),
+        ''
       );
     });
 
