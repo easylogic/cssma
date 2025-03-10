@@ -17,9 +17,8 @@ const SPACING_MAP = {
 } as const;
 
 export function parseSpacingValue(className: string): ParsedStyle | null {
-  // Gap 처리
+  
   if (className.startsWith('gap-')) {
-    // 프리셋 값 처리 (먼저 체크)
     const presetMatch = className.match(/^gap-(x|y)?-?(\d+)$/);
     if (presetMatch) {
       const [, direction, value] = presetMatch;
@@ -92,9 +91,9 @@ export function parseSpacingValue(className: string): ParsedStyle | null {
     }
   }
 
-  // Padding 처리
+  
   if (className.startsWith('p')) {
-    // 프리셋 값 처리 (먼저 체크)
+    
     const presetMatch = className.match(/^p([trbl]|[xy])?-?(\d+)$/);
     if (presetMatch) {
       const [, direction, value] = presetMatch;
@@ -120,7 +119,7 @@ export function parseSpacingValue(className: string): ParsedStyle | null {
       }
     }
 
-    // 임의값과 Figma 변수 처리
+    
     const arbitraryMatch = className.match(/^p([trbl]|[xy])?-?(\$?\[.*?\])$/);
     if (arbitraryMatch) {
       const [, direction = '', valueWithUnit] = arbitraryMatch;

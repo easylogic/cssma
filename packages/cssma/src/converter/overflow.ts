@@ -1,8 +1,5 @@
 import { ParsedStyle, FigmaStyleProperties } from '../types';
 
-/**
- * Overflow 스타일을 Figma 스타일로 변환합니다.
- */
 export function convertOverflowToFigma(style: ParsedStyle): Partial<FigmaStyleProperties> {
   const result: Partial<FigmaStyleProperties> = {};
 

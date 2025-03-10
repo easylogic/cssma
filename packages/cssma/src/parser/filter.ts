@@ -12,9 +12,9 @@ const BLUR_SIZES = {
 } as const;
 
 export function parseFilterStyleValue(className: string): ParsedStyle | null {
-  // Blur 처리
+  
   if (className === 'blur' || className.startsWith('blur-')) {
-    // blur-none 처리
+    
     if (className === 'blur-none') {
       return {
         property: 'blur',
@@ -23,9 +23,9 @@ export function parseFilterStyleValue(className: string): ParsedStyle | null {
       };
     }
 
-    // 임의값 처리
+    
     if (className.startsWith('blur-[') && className.endsWith(']')) {
-      const value = className.slice(6, -1); // 'blur-[' 와 ']' 제거
+      const value = className.slice(6, -1); 
       const radius = parseInt(value);
       if (!isNaN(radius) && radius >= 0) {
         return {
@@ -37,7 +37,7 @@ export function parseFilterStyleValue(className: string): ParsedStyle | null {
       return null;
     }
 
-    // 프리셋 값 처리
+    
     const size = className === 'blur' ? 'DEFAULT' : className.replace('blur-', '');
     const radius = BLUR_SIZES[size as keyof typeof BLUR_SIZES];
     

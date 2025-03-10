@@ -30,11 +30,11 @@ Here's how to get started with @easylogic/cssma in a Figma plugin:
 
 ```typescript
 // In your Figma plugin code
-import { processStyles } from '@easylogic/cssma';
+import { processCssStyles } from '@easylogic/cssma';
 
 // Convert Tailwind CSS to Figma styles
 const node = figma.createFrame();
-const styles = processStyles('flex-col bg-white rounded-lg p-[16] gap-[8]');
+const styles = processCssStyles('flex-col bg-white rounded-lg p-[16] gap-[8]');
 
 // Apply styles to the node
 Object.assign(node, {
@@ -57,28 +57,28 @@ figma.currentPage.appendChild(node);
 
 ## Core Features
 
-### 1. Tailwind CSS → Figma Conversion (`processStyles`)
+### 1. Tailwind CSS → Figma Conversion (`processCssStyles`)
 
 Convert Tailwind CSS class strings to Figma style objects:
 
 ```typescript
-import { processStyles } from '@easylogic/cssma';
+import { processCssStyles } from '@easylogic/cssma';
 
-const styles = processStyles('flex-col w-full bg-[#FF0000] rounded-lg');
+const styles = processCssStyles('flex-col w-full bg-[#FF0000] rounded-lg');
 // Apply the result to a Figma node
 node.layoutMode = styles.layoutMode;
 node.fills = styles.fills;
 node.cornerRadius = styles.cornerRadius;
 ```
 
-### 2. Figma → Tailwind CSS Conversion (`figmaToStyle`)
+### 2. Figma → Tailwind CSS Conversion (`figmaToCss`)
 
 Convert Figma style objects to Tailwind CSS class strings:
 
 ```typescript
-import { figmaToStyle } from '@easylogic/cssma';
+import { figmaToCss } from '@easylogic/cssma';
 
-const tailwindClasses = figmaToStyle({
+const tailwindClasses = figmaToCss({
   layoutMode: "VERTICAL",
   fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }],
   cornerRadius: 8

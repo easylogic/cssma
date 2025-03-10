@@ -1,5 +1,5 @@
 import { findVariableByName } from '../utils/figma-variable';
-import { processStyles } from '../index';
+import { processCssStyles } from '../index';
 import { FigmaStyleProperties, FigmaPaint } from '../types';
 
 type TextVariableTypes = {
@@ -135,11 +135,11 @@ async function processTextVariable(
  * applyStyles(text, 'text-lg font-bold text-[#1a1a1a]');
  * ```
  */
-export async function applyStyles<T extends SceneNode>(node: T, styles: string = ''): Promise<T> {
+export async function applyCssStyles<T extends SceneNode>(node: T, styles: string = ''): Promise<T> {
   if (!styles) return node;
   
   try {
-    const styleObject = processStyles(styles) as ExtendedFigmaStyleProperties;
+    const styleObject = processCssStyles(styles) as ExtendedFigmaStyleProperties;
     
     // Check node type for applicable properties
     const isFrameLike = ['FRAME', 'COMPONENT', 'INSTANCE', 'SECTION'].includes(node.type);

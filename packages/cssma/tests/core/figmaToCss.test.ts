@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { figmaToStyle } from '../../src/core/figmaToTailwind';
+import { figmaToCss } from '../../src/core/figmaToCss';
 
-describe('Figma to Tailwind Converter', () => {
+describe('Figma to Css Converter', () => {
   describe('Position and Constraints', () => {
     it('should convert position type', () => {
-      expect(figmaToStyle({ layoutPositioning: 'ABSOLUTE' })).toBe('absolute');
-      expect(figmaToStyle({ layoutPositioning: 'AUTO' })).toBe('');
+      expect(figmaToCss({ layoutPositioning: 'ABSOLUTE' })).toBe('absolute');
+      expect(figmaToCss({ layoutPositioning: 'AUTO' })).toBe('');
     });
 
     it('should convert special constraint combinations', () => {
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         width: 100,
         height: 100,
         parent: {
@@ -22,7 +22,7 @@ describe('Figma to Tailwind Converter', () => {
         y: 0,
       })).toBe('w-[100] h-[100] absolute center-x left-[50px] right-[50px] center-y top-[50px] bottom-[50px]');
 
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         width: 100,
         height: 100,
         parent: {
@@ -35,7 +35,7 @@ describe('Figma to Tailwind Converter', () => {
         y: 0,
       })).toBe('w-[100] h-[100] absolute stretch-x left-[0px] right-[100px] stretch-y top-[0px] bottom-[100px]');
 
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         width: 100,
         height: 100,
         parent: {
@@ -50,7 +50,7 @@ describe('Figma to Tailwind Converter', () => {
     });
 
     it('should convert horizontal constraints with coordinates', () => {
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         width: 100,
         height: 100,
         parent: {
@@ -60,7 +60,7 @@ describe('Figma to Tailwind Converter', () => {
         constraints: { horizontal: 'MIN' }, x: 0 
       })).toBe('w-[100] h-[100] left-[0px]');
 
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         width: 100,
         height: 100,
         parent: {
@@ -70,7 +70,7 @@ describe('Figma to Tailwind Converter', () => {
         constraints: { horizontal: 'MIN' }, x: 10 
       })).toBe('w-[100] h-[100] left-[10px]');
 
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         width: 100,
         height: 100,
         parent: {
@@ -80,7 +80,7 @@ describe('Figma to Tailwind Converter', () => {
         constraints: { horizontal: 'MAX' }, x: 0 
       })).toBe('w-[100] h-[100] right-[0px]');
 
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         width: 100,
         height: 100,
         parent: {
@@ -92,15 +92,15 @@ describe('Figma to Tailwind Converter', () => {
     });
 
     it('should convert vertical constraints with coordinates', () => {
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         constraints: { vertical: 'MIN' }, y: 0 
       })).toBe('top-[0px]');
 
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         constraints: { vertical: 'MIN' }, y: 10 
       })).toBe('top-[10px]');
 
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         constraints: { vertical: 'MAX' }, y: 0,
         parent: { 
             width: 100,
@@ -111,7 +111,7 @@ describe('Figma to Tailwind Converter', () => {
         height: 100,
       })).toBe('w-[100] h-[100] absolute bottom-[0px]');
 
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         constraints: { vertical: 'MAX' }, y: 0, 
         parent: { 
             width: 100,
@@ -124,7 +124,7 @@ describe('Figma to Tailwind Converter', () => {
     });
 
     it('should convert scale constraints with coordinates', () => {
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         width: 100,
         height: 100,
         parent: {
@@ -134,7 +134,7 @@ describe('Figma to Tailwind Converter', () => {
         constraints: { horizontal: 'SCALE', vertical: 'SCALE' }, x: 0, y: 0 
       })).toBe('w-[100] h-[100] scale-x left-[0px] right-[100px] scale-y top-[0px] bottom-[100px]');
 
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         width: 100,
         height: 100,
         parent: {
@@ -146,7 +146,7 @@ describe('Figma to Tailwind Converter', () => {
     });
 
     it('should convert individual constraints without coordinates', () => {
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         x: 0,   
         width: 100,
         height: 100,
@@ -157,7 +157,7 @@ describe('Figma to Tailwind Converter', () => {
         constraints: { horizontal: 'MIN' } 
       })).toBe('w-[100] h-[100] left-[0px]');
 
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         x: 0,   
         width: 100,
         height: 100,
@@ -168,7 +168,7 @@ describe('Figma to Tailwind Converter', () => {
         constraints: { horizontal: 'MAX' } 
       })).toBe('w-[100] h-[100] right-[0px]');
 
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         y: 0,   
         width: 100,
         height: 100,
@@ -179,7 +179,7 @@ describe('Figma to Tailwind Converter', () => {
         constraints: { vertical: 'MIN' } 
       })).toBe('w-[100] h-[100] top-[0px]');
 
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         y: 0,   
         width: 100,
         height: 100,
@@ -190,7 +190,7 @@ describe('Figma to Tailwind Converter', () => {
         constraints: { vertical: 'MAX' } 
       })).toBe('w-[100] h-[100] bottom-[0px]');
 
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         x: 0,   
         width: 100,
         height: 100,
@@ -201,7 +201,7 @@ describe('Figma to Tailwind Converter', () => {
         constraints: { horizontal: 'CENTER' } 
       })).toBe('w-[100] h-[100] center-x left-[50px] right-[50px]');
 
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         y: 0,   
         width: 100,
         height: 100,
@@ -214,7 +214,7 @@ describe('Figma to Tailwind Converter', () => {
     });
 
     it('should convert stretch constraints', () => {
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         constraints: { horizontal: 'STRETCH' },
         width: 100,
         height: 100,
@@ -224,7 +224,7 @@ describe('Figma to Tailwind Converter', () => {
         }
       })).toBe('w-[100] h-[100] stretch-x left-[0px] right-[100px]');
 
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         constraints: { vertical: 'STRETCH' },
         width: 100,
         height: 100,
@@ -236,17 +236,17 @@ describe('Figma to Tailwind Converter', () => {
     });
 
     it('should handle coordinates without constraints', () => {
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         parent: { layoutMode: 'NONE' }, x: 10, y: 20 
       })).toBe('left-[10px] top-[20px]');
 
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         parent: { layoutMode: 'NONE' }, x: 0, y: 0 
       })).toBe('left-[0px] top-[0px]');
     });
 
     it('should combine position type with constraints', () => {
-      expect(figmaToStyle({ 
+      expect(figmaToCss({ 
         layoutPositioning: 'ABSOLUTE',
         constraints: { horizontal: 'MIN', vertical: 'MIN' },
         x: 10,

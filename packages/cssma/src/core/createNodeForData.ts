@@ -1,4 +1,4 @@
-import { applyStyles } from '../apply/applyStyles';
+import { applyCssStyles } from '../apply/applyStyles';
 import { findVariableByName } from '../utils/figma-variable';
 
 /**
@@ -191,7 +191,7 @@ function createElement(
   
   // Apply styles
   if (styles) {
-    applyStyles(node, styles);
+    applyCssStyles(node, styles);
   }
     
   // Add child nodes
@@ -372,7 +372,7 @@ export function createNodeForData(data: NodeData, parent?: BaseNode & ChildrenMi
   
   // 2. Apply styles (including layout mode) before adding children
   if (styles) {
-    applyStyles(node, styles);
+    applyCssStyles(node, styles);
   }
   
   // 3. Create and append children after parent's layout is set
@@ -430,7 +430,7 @@ export function createInstanceFromComponent(
     
     if (styles) {
       // Apply styles
-      applyStyles(instance, styles);
+      applyCssStyles(instance, styles);
     }
     
     if (props) {

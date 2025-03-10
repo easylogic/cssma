@@ -2,13 +2,10 @@ import { FigmaColor } from '../types';
 import { COLORS } from '../config/tokens';
 import { round } from './math';
 
-/**
- * HEX 색상 문자열을 Figma 색상 객체로 변환합니다.
- */
 export function parseHexColor(hex: string): FigmaColor | null {
   if (!isValidHexColor(hex)) return null;
 
-  // #RGB 형식 처리
+  
   if (hex.length === 4) {
     const r = round(parseInt(hex[1] + hex[1], 16) / 255);
     const g = round(parseInt(hex[2] + hex[2], 16) / 255);
@@ -16,7 +13,7 @@ export function parseHexColor(hex: string): FigmaColor | null {
     return { r, g, b };
   }
   
-  // #RGBA 형식 처리
+  
   if (hex.length === 5) {
     const r = round(parseInt(hex[1] + hex[1], 16) / 255);
     const g = round(parseInt(hex[2] + hex[2], 16) / 255);
@@ -25,7 +22,7 @@ export function parseHexColor(hex: string): FigmaColor | null {
     return { r, g, b, a };
   }
   
-  // #RRGGBB 형식 처리
+  
   if (hex.length === 7) {
     const r = round(parseInt(hex.slice(1, 3), 16) / 255);
     const g = round(parseInt(hex.slice(3, 5), 16) / 255);
@@ -33,7 +30,7 @@ export function parseHexColor(hex: string): FigmaColor | null {
     return { r, g, b };
   }
   
-  // #RRGGBBAA 형식 처리
+  
   if (hex.length === 9) {
     const r = round(parseInt(hex.slice(1, 3), 16) / 255);
     const g = round(parseInt(hex.slice(3, 5), 16) / 255);
@@ -45,9 +42,6 @@ export function parseHexColor(hex: string): FigmaColor | null {
   return null;
 }
 
-/**
- * RGB/RGBA 색상 문자열을 Figma 색상 객체로 변환합니다.
- */
 export function parseRgbColor(rgb: string): FigmaColor | null {
   const rgbaMatch = rgb.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
   if (!rgbaMatch) {
@@ -72,12 +66,6 @@ export function parseRgbColor(rgb: string): FigmaColor | null {
   return { r: values[0], g: values[1], b: values[2] };
 }
 
-/**
- * 다양한 형식의 색상 문자열을 Figma 색상 객체로 변환합니다.
- * - HEX 색상 (#RGB, #RGBA, #RRGGBB, #RRGGBBAA)
- * - RGB/RGBA 색상
- * - Tailwind 프리셋 색상
- */
 export function parseColor(color: string): FigmaColor | null {
   if (color.startsWith('#')) {
     return parseHexColor(color);
@@ -88,16 +76,10 @@ export function parseColor(color: string): FigmaColor | null {
   return COLORS[color] || null;
 }
 
-/**
- * HEX 색상 문자열이 유효한지 검사합니다.
- */
 export function isValidHexColor(value: string): boolean {
   return /^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$/.test(value);
 }
 
-/**
- * RGB/RGBA 색상 문자열이 유효한지 검사합니다.
- */
 export function isValidRgbColor(value: string): boolean {
   const rgbRegex = /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/;
   const rgbaRegex = /^rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(0|1|0?\.\d+)\s*\)$/;

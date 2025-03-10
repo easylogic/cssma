@@ -1,4 +1,4 @@
-// 기본 스타일 속성들
+
 export interface FigmaStyleProperties {
   // Layout properties
   layoutMode?: 'HORIZONTAL' | 'VERTICAL';
@@ -62,20 +62,20 @@ export interface FigmaStyleProperties {
   };
 }
 
-// Figma 변수 바인딩 타입
+
 export interface FigmaVariableBinding {
   type: 'VARIABLE_ALIAS';
   id: string;
 }
 
-// 변수 바인딩을 포함한 확장된 스타일 객체
+
 export interface FigmaStyleObject extends FigmaStyleProperties {
   boundVariables?: {
     [K in keyof FigmaStyleProperties]?: FigmaVariableBinding;
   };
 }
 
-// 파싱된 스타일 결과
+
 export interface ParsedStyle {
   property: string;
   value: any;
@@ -84,7 +84,7 @@ export interface ParsedStyle {
   opacity?: number;
 }
 
-// Paint 관련 변수 바인딩
+
 export interface FigmaVariablePaint extends GradientPaint {
   boundVariables?: {
     color?: FigmaVariableBinding;
@@ -92,14 +92,14 @@ export interface FigmaVariablePaint extends GradientPaint {
   gradientStops: readonly FigmaVariableGradientStop[];
 }
 
-// Gradient Stop 관련 변수 바인딩
+
 export interface FigmaVariableGradientStop extends ColorStop {
   boundVariables?: {
     color?: FigmaVariableBinding;
   };
 }
 
-// Paint 기본 타입
+
 export interface BasePaint {
   type: string;
   visible?: boolean;

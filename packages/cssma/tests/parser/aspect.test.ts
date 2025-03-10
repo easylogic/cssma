@@ -40,14 +40,14 @@ describe('Aspect Style Parser', () => {
         'aspect-',
         'aspect-[]',
         'aspect-[invalid]',
-        'aspect-[4]',      // 분모 없음
-        'aspect-[4/]',     // 분모 없음
-        'aspect-[/3]',     // 분자 없음
-        'aspect-[4/0]',    // 0으로 나누기
-        'aspect-[-4/3]',   // 음수 분자
-        'aspect-[4/-3]',   // 음수 분모
-        'aspect-[0/3]',    // 0 분자
-        'aspect-[abc/def]' // 숫자가 아님
+        'aspect-[4]',      
+        'aspect-[4/]',     
+        'aspect-[/3]',     
+        'aspect-[4/0]',    
+        'aspect-[-4/3]',   
+        'aspect-[4/-3]',   
+        'aspect-[0/3]',    
+        'aspect-[abc/def]' 
       ];
 
       invalidCases.forEach(input => {

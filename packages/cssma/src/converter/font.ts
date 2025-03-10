@@ -29,18 +29,15 @@ function combineFontStyle(weight: string, isItalic: boolean): string {
   return `${weight}${isItalic ? ' Italic' : ''}`;
 }
 
-/**
- * Font 스타일을 Figma 스타일로 변환합니다.
- */
 export function convertFontToFigma(styles: ParsedStyle | ParsedStyle[]): Partial<FigmaStyleProperties> {
   const result: Partial<FigmaStyleProperties> = {};
   const styleArray = Array.isArray(styles) ? styles : [styles];
 
-  // 단일 속성 처리
+  
   if (styleArray.length === 1) {
     const style = styleArray[0];
     
-    // fontName 단독 처리
+    
     if (style.property === 'fontName') {
       if (typeof style.value === 'object' && style.value !== null) {
         const { family, style: fontStyle } = style.value as { family: string; style: string };
@@ -51,7 +48,7 @@ export function convertFontToFigma(styles: ParsedStyle | ParsedStyle[]): Partial
       return {};
     }
 
-    // fontWeight 단독 처리
+    
     if (style.property === 'fontWeight') {
       if (typeof style.value === 'number' && isValidNumber(style.value, { min: 100, max: 900 })) {
         return { fontWeight: style.value };
@@ -59,7 +56,7 @@ export function convertFontToFigma(styles: ParsedStyle | ParsedStyle[]): Partial
       return {};
     }
     
-    // fontStyle 단독 처리
+    
     if (style.property === 'fontStyle') {
       if (typeof style.value === 'string') {
         const normalizedStyle = style.value.toLowerCase();
@@ -79,13 +76,12 @@ export function convertFontToFigma(styles: ParsedStyle | ParsedStyle[]): Partial
     isItalic: false
   };
 
-  // 먼저 fontSize를 처리 (결합이 필요없는 속성)
   const fontSize = styleArray.find(s => s.property === 'fontSize');
   if (fontSize && typeof fontSize.value === 'number' && fontSize.value > 0) {
     result.fontSize = fontSize.value;
   }
 
-  // fontName 속성이 있는지 먼저 확인
+  
   const fontName = styleArray.find(s => s.property === 'fontName');
   if (fontName && typeof fontName.value === 'object' && fontName.value !== null) {
     const { family, style: fontStyle } = fontName.value as { family: string; style: string };
@@ -93,7 +89,7 @@ export function convertFontToFigma(styles: ParsedStyle | ParsedStyle[]): Partial
     return result;
   }
 
-  // 폰트 관련 속성들을 상태에 수집
+  
   for (const style of styleArray) {
     switch (style.property) {
       case 'fontFamily':
@@ -118,7 +114,7 @@ export function convertFontToFigma(styles: ParsedStyle | ParsedStyle[]): Partial
     }
   }
 
-  // 수집된 상태를 바탕으로 fontName 객체 생성
+  
   result.fontName = {
     family: fontState.family,
     style: combineFontStyle(fontState.weight, fontState.isItalic)

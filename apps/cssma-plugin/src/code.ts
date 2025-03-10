@@ -1,4 +1,4 @@
-import { figmaToStyle, processStyles, createNodeForData, applyStyles } from '@easylogic/cssma';
+import { figmaToCss, processCssStyles, createNodeForData, applyCssStyles } from '@easylogic/cssma';
 
 // RGB 색상을 16진수 문자열로 변환하는 함수
 function colorToHex(color: { r: number, g: number, b: number }): string {
@@ -50,7 +50,7 @@ function updateSelectionInfo() {
           id: node.id,
           name: node.name,
           type: node.type,
-          styles: figmaToStyle(node)
+          styles: figmaToCss(node)
         }
       });
     } else if (selection.length > 1) {
@@ -137,7 +137,7 @@ async function applyStylesToSelection(cssInput: string) {
     ]);
     
     // 스타일 처리 (한 번만 처리)
-    const styles = processStyles(cssInput);
+    const styles = processCssStyles(cssInput);
     
     // 모든 선택 노드에 스타일 적용
     for (const node of selection) {
@@ -145,7 +145,7 @@ async function applyStylesToSelection(cssInput: string) {
       figma.skipInvisibleInstanceChildren = true;
       
       // applyStyles 함수 사용
-      await applyStyles(node, cssInput);
+      await applyCssStyles(node, cssInput);
     }
     
     figma.notify('스타일이 적용되었습니다');
@@ -202,7 +202,7 @@ function analyzeNodeTree(node: SceneNode, depth: number = 0): any {
     id: node.id,
     name: node.name,
     type: node.type,
-    styles: figmaToStyle(node),
+    styles: figmaToCss(node),
     children: []
   };
 

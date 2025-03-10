@@ -30,16 +30,13 @@ type FigmaVariableGradientPaint = (
 
 type FigmaVariablePaint = FigmaVariableSolidPaint | FigmaVariableGradientPaint;
 
-/**
- * Background 스타일을 Figma 스타일로 변환합니다.
- */
 export function convertBackgroundToFigma(style: ParsedStyle): FigmaVariablePaint[] {
   const result: FigmaVariablePaint[] = [];
 
   switch (style.property) {
     case 'backgroundColor':
       if (style.variant === 'figma-variable' && style.variableId) {
-        // Figma 변수 처리
+        
         const paint: FigmaVariableSolidPaint = {
           type: 'SOLID',
           color: { r: 0, g: 0, b: 0 },
@@ -53,7 +50,7 @@ export function convertBackgroundToFigma(style: ParsedStyle): FigmaVariablePaint
         };
         result.push(paint);
       } else if (typeof style.value === 'string') {
-        // 일반 배경색 처리
+        
         let colorStr: string | FigmaColor | undefined;
         if (style.variant === 'preset') {
           colorStr = typeof COLORS[style.value] === 'string' ? COLORS[style.value] : undefined;
@@ -113,12 +110,12 @@ export function convertGradientListToFigma(styles: ParsedStyle[]): FigmaVariable
 
 export function convertGradientToFigma(styles: ParsedStyle[]): FigmaVariablePaint[] {
   const result: FigmaVariablePaint[] = [];
-  // 그라디언트 타입 확인
+  
   const gradientRoot = styles.find(s => s.property === 'backgroundColor');
   const gradientType = gradientRoot?.value;
   const gradientDirection = gradientRoot?.direction;
 
-  // 기본 선형 그라디언트 설정
+  
   let gradientPaint: FigmaVariableGradientPaint = {
     type: 'GRADIENT_LINEAR',
     gradientStops: [],
@@ -150,7 +147,7 @@ export function convertGradientToFigma(styles: ParsedStyle[]): FigmaVariablePain
     };
   }
 
-  // 그라디언트 색상 스톱 추가
+  
   const colorStops = styles.filter(s => 
     s.property === 'gradientFrom' || 
     s.property === 'gradientVia' || 
@@ -177,7 +174,7 @@ export function convertGradientToFigma(styles: ParsedStyle[]): FigmaVariablePain
     }
 
     if (stop.variant === 'figma-variable' && stop.variableId) {
-      // Figma 변수 처리
+      
       const gradientStop: FigmaVariableGradientStop = {
         position,
         color: {
@@ -221,7 +218,7 @@ export function convertGradientToFigma(styles: ParsedStyle[]): FigmaVariablePain
     }
   }
 
-  // 스톱이 있는 경우에만 결과에 추가
+  
   if (gradientPaint.gradientStops.length > 0) {
     result.push(gradientPaint);
   }

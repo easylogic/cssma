@@ -94,7 +94,7 @@ export function parseStyles(classNames: string): ParsedStyle[] {
   const fontState = new FontState();
   const styles: ParsedStyle[] = [];
 
-  // Position 관련 클래스들 먼저 처리
+  
   const positionClasses = allClasses.filter(cls => 
     cls === 'absolute' || 
     cls === 'relative' ||
@@ -111,7 +111,7 @@ export function parseStyles(classNames: string): ParsedStyle[] {
     if (positionStyle) {
       styles.push(positionStyle);
     }
-    // 처리된 클래스들 제외하고 나머지 처리
+    
     allClasses = allClasses.filter(cls => !positionClasses.includes(cls));
   }
 

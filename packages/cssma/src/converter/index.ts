@@ -17,9 +17,6 @@ import { convertTransformToFigma } from './transform';
 const FONT_PROPERTIES = ['fontSize', 'fontFamily', 'fontWeight', 'fontStyle'];
 const TEXT_PROPERTIES = ['color', 'textAlign', 'textDecoration', 'letterSpacing', 'lineHeight'];
 
-/**
- * 파싱된 스타일들을 Figma 스타일로 변환합니다.
- */
 export function convertStylesToFigma(
   styles: ParsedStyle[],
   context: { parentLayoutMode?: 'NONE' | 'HORIZONTAL' | 'VERTICAL' } = {}
@@ -30,22 +27,21 @@ export function convertStylesToFigma(
   let textStyles: ParsedStyle[] = [];
   let positionStyles: ParsedStyle[] = [];
 
-  // 스타일들을 분류
+  
   for (const style of styles) {
-    // 그라디언트와 배경색 처리
+    
     if (style.property.startsWith('gradient') || 
         (style.property === 'backgroundColor' && !style.property.startsWith('text'))) {
       gradientStyles.push(style);
       continue;
     }
 
-    // 폰트 속성 처리
+    
     if (FONT_PROPERTIES.includes(style.property)) {
       fontStyles.push(style);
       continue;
     }
-
-    // 텍스트 속성 처리 (색상 포함)
+ 
     if (TEXT_PROPERTIES.includes(style.property) || 
         style.property.startsWith('text') || 
         style.property === 'color') {
@@ -53,7 +49,7 @@ export function convertStylesToFigma(
       continue;
     }
 
-    // 위치 속성 처리
+    
     if (style.property === 'position') {
       positionStyles.push(style);
       continue;
@@ -61,7 +57,7 @@ export function convertStylesToFigma(
 
     let converted: Partial<FigmaStyleProperties> = {};
 
-    // 나머지 스타일 처리
+    
     if (style.property.startsWith('aspect')) {
       converted = convertAspectToFigma(style);
     } else if (style.property.includes('blendMode')) {
@@ -104,23 +100,23 @@ export function convertStylesToFigma(
       converted = convertTransformToFigma(style);
     }
 
-    // 변환된 스타일을 결과에 병합
+    
     Object.assign(result, converted);
   }
 
-  // 위치 속성 처리
+  
   if (positionStyles.length > 0) {
     const positionResult = convertPositionToFigma(positionStyles);
     Object.assign(result, positionResult);
   }
 
-  // 폰트 스타일 처리
+  
   if (fontStyles.length > 0) {
     const fontResult = convertFontToFigma(fontStyles);
     Object.assign(result, fontResult);
   }
 
-  // 텍스트 스타일 처리
+  
   if (textStyles.length > 0) {
     for (const style of textStyles) {
       const textResult = convertTextToFigma(style);
@@ -128,7 +124,7 @@ export function convertStylesToFigma(
     }
   }
 
-  // 그라디언트 스타일 처리
+  
   const fills: FigmaPaint[] = [];
   if (gradientStyles.length > 0) {
     if (gradientStyles[0].property === 'backgroundColor') {

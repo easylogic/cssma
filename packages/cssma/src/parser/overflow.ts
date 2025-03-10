@@ -8,7 +8,7 @@ const OVERFLOW_MAP = {
 } as const;
 
 export function parseOverflowStyleValue(className: string): ParsedStyle | null {
-  // Overflow 처리
+  
   if (className.startsWith('overflow-')) {
     const value = className.replace('overflow-', '');
     const config = OVERFLOW_MAP[value as keyof typeof OVERFLOW_MAP];

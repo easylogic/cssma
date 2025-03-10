@@ -1,5 +1,5 @@
 import { ComponentDefinition, ComponentVariantProps, NodeData } from '../types';
-import { processStyles } from '../style/processStyles';
+import { processCssStyles } from '../style/processCssStyles';
 
 /**
  * Creates a Figma component set from a component definition
@@ -14,7 +14,7 @@ export function createComponentSet(definition: ComponentDefinition): ComponentSe
 
       // Apply styles
       if (variant.styles) {
-        const styles = processStyles(variant.styles);
+        const styles = processCssStyles(variant.styles);
         Object.assign(component, styles);
       }
 
@@ -84,7 +84,7 @@ function createNode(data: NodeData): SceneNode {
 
   // Apply styles
   if (data.styles) {
-    const styles = processStyles(data.styles);
+    const styles = processCssStyles(data.styles);
     Object.assign(node, styles);
   }
 

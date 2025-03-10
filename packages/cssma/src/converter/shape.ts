@@ -1,9 +1,6 @@
 import { ParsedStyle, FigmaStyleProperties } from '../types';
 import { isValidNumber } from '../utils/validators';
 
-/**
- * Shape 스타일을 Figma 스타일로 변환합니다.
- */
 export function convertShapeToFigma(style: ParsedStyle): Partial<FigmaStyleProperties> {
   const result: Partial<FigmaStyleProperties> = {};
 

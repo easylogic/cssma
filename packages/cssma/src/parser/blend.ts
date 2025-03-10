@@ -10,7 +10,7 @@ const BLEND_MODE_MAP = {
 } as const;
 
 export function parseBlendStyleValue(className: string): ParsedStyle | null {
-  // Blend mode 처리
+  
   if (className.startsWith('mix-blend-')) {
     const mode = className.replace('mix-blend-', '');
     const blendMode = BLEND_MODE_MAP[mode as keyof typeof BLEND_MODE_MAP];

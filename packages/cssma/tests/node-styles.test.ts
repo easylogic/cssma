@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { processStyles } from '../src';
+import { processCssStyles } from '../src';
 import { round } from '../src/utils/math';
 
 interface FigmaNode {
@@ -19,7 +19,7 @@ describe('Figma Node Style Processor', () => {
         styles: 'flex-col w-[390] h-[844] bg-[#F9FAFB] gap-[16]'
       };
 
-      const styles = processStyles(node.styles);
+      const styles = processCssStyles(node.styles);
       expect(styles).toMatchObject({
         width: 390,
         height: 844,
@@ -35,15 +35,15 @@ describe('Figma Node Style Processor', () => {
       });
     });
 
-    it.only('should process TEXT node styles', () => {
+    it('should process TEXT node styles', () => {
       const node: FigmaNode = {
         type: 'TEXT',
         name: 'Title',
         styles: 'text-[#111827] font-bold text-xl w-full',
-        text: '제목'
+        text: 'Title'
       };
 
-      const styles = processStyles(node.styles);
+      const styles = processCssStyles(node.styles);
       expect(styles).toMatchObject({
         layoutSizingHorizontal: 'FILL',
         fills: [{
@@ -61,7 +61,7 @@ describe('Figma Node Style Processor', () => {
         styles: 'w-[48] h-[48] bg-[#E5E7EB] rounded-full'
       };
 
-      const styles = processStyles(node.styles);
+      const styles = processCssStyles(node.styles);
       expect(styles).toMatchObject({
         layoutSizingHorizontal: 'FIXED',
         layoutSizingVertical: 'FIXED',
@@ -85,7 +85,7 @@ describe('Figma Node Style Processor', () => {
         children: []
       };
 
-      const styles = processStyles(node.styles);
+      const styles = processCssStyles(node.styles);
       expect(styles).toMatchObject({
         layoutMode: 'HORIZONTAL',
         layoutSizingHorizontal: 'FILL',
@@ -120,7 +120,7 @@ describe('Figma Node Style Processor', () => {
         children: []
       };
 
-      const styles = processStyles(node.styles);
+      const styles = processCssStyles(node.styles);
       expect(styles).toMatchObject({
         layoutMode: 'VERTICAL',
         layoutSizingHorizontal: 'FIXED',
@@ -159,7 +159,7 @@ describe('Figma Node Style Processor', () => {
         children: []
       };
 
-      const styles = processStyles(node.styles);
+      const styles = processCssStyles(node.styles);
       expect(styles).toMatchObject({
         layoutMode: 'VERTICAL',
         layoutSizingHorizontal: 'FIXED',
@@ -216,7 +216,7 @@ describe('Figma Node Style Processor', () => {
         children: []
       };
 
-      const styles = processStyles(node.styles);
+      const styles = processCssStyles(node.styles);
       expect(styles).toMatchObject({
         layoutMode: 'HORIZONTAL',
         layoutSizingHorizontal: 'FIXED',
@@ -243,7 +243,7 @@ describe('Figma Node Style Processor', () => {
         children: []
       };
 
-      const styles = processStyles(node.styles, {
+      const styles = processCssStyles(node.styles, {
         parentLayoutMode: 'VERTICAL'
       });
       expect(styles).toMatchObject({
@@ -264,7 +264,7 @@ describe('Figma Node Style Processor', () => {
         children: []
       };
 
-      const styles = processStyles(node.styles, {
+      const styles = processCssStyles(node.styles, {
         parentLayoutMode: 'HORIZONTAL'
       });
       expect(styles).toMatchObject({
@@ -292,7 +292,7 @@ describe('Figma Node Style Processor', () => {
         styles: 'flex flex-col w-full flex-row w-[100]'
       };
 
-      const styles = processStyles(node.styles);
+      const styles = processCssStyles(node.styles);
       expect(styles).toMatchObject({
         layoutMode: 'HORIZONTAL',
         layoutSizingHorizontal: 'FIXED',
@@ -307,7 +307,7 @@ describe('Figma Node Style Processor', () => {
         styles: 'unsupported-property-[value]'
       };
 
-      const styles = processStyles(node.styles);
+      const styles = processCssStyles(node.styles);
       expect(styles).toEqual({
         fills: []
       });
@@ -320,7 +320,7 @@ describe('Figma Node Style Processor', () => {
         styles: 'rotate-[invalid]'
       };
 
-      const styles = processStyles(node.styles);
+      const styles = processCssStyles(node.styles);
       expect(styles).toEqual({
         fills: []
       });
@@ -333,7 +333,7 @@ describe('Figma Node Style Processor', () => {
         styles: ''
       };
 
-      const styles = processStyles(node.styles);
+      const styles = processCssStyles(node.styles);
       expect(styles).toEqual({});
     });
 
@@ -344,7 +344,7 @@ describe('Figma Node Style Processor', () => {
         styles: undefined
       };
 
-      const styles = processStyles(node.styles);
+      const styles = processCssStyles(node.styles);
       expect(styles).toEqual({});
     });
   });

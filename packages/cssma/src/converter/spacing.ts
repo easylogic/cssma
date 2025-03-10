@@ -26,14 +26,13 @@ const SPACING_MAP: Record<string, number> = {
 };
 
 function parseSpacingValue(value: string): number | null {
-  // 임의값 처리 (예: [20])
   if (value.startsWith('[') && value.endsWith(']')) {
     return parseArbitraryValue(value, {
       allowNegative: true,
     });
   }
 
-  // 표준 값 처리
+  
   return SPACING_MAP[value] ?? null;
 }
 
@@ -42,7 +41,7 @@ export function convertSpacing(value: string): SpacingResult {
   const result: SpacingResult = {};
 
   for (const cls of classes) {
-    // Gap 처리
+    
     if (cls === 'gap-0') {
       result.itemSpacing = 0;
       result.counterAxisSpacing = 0;
@@ -72,7 +71,7 @@ export function convertSpacing(value: string): SpacingResult {
       }
     }
 
-    // Padding 처리
+    
     if (cls === 'p-0') {
       result.paddingTop = 0;
       result.paddingRight = 0;
@@ -148,9 +147,6 @@ export function convertSpacing(value: string): SpacingResult {
   return result;
 }
 
-/**
- * Spacing 스타일을 Figma 스타일로 변환합니다.
- */
 export function convertSpacingToFigma(style: ParsedStyle): Partial<FigmaStyleProperties> {
   const result: Partial<FigmaStyleProperties> = {};
 

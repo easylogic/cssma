@@ -14,7 +14,7 @@ describe('Transform Converter', () => {
             variant: 'preset'
           },
           expected: {
-            rotation: round(Math.PI / 2) // 90도는 π/2 라디안
+            rotation: round(Math.PI / 2) 
           }
         },
         {
@@ -24,7 +24,7 @@ describe('Transform Converter', () => {
             variant: 'preset'
           },
           expected: {
-            rotation: round(Math.PI) // 180도는 π 라디안
+            rotation: round(Math.PI) 
           }
         },
         {
@@ -34,7 +34,7 @@ describe('Transform Converter', () => {
             variant: 'arbitrary'
           },
           expected: {
-            rotation: round(Math.PI / 4) // 45도는 π/4 라디안
+            rotation: round(Math.PI / 4) 
           }
         },
         {
@@ -44,7 +44,7 @@ describe('Transform Converter', () => {
             variant: 'preset'
           },
           expected: {
-            rotation: round(-Math.PI / 2) // -90도는 -π/2 라디안
+            rotation: round(-Math.PI / 2) 
           }
         }
       ];
@@ -63,7 +63,7 @@ describe('Transform Converter', () => {
             variant: 'arbitrary'
           },
           expected: {
-            rotation: Math.PI / 8 // 22.5도는 π/8 라디안
+            rotation: Math.PI / 8 
           }
         },
         {
@@ -73,7 +73,7 @@ describe('Transform Converter', () => {
             variant: 'arbitrary'
           },
           expected: {
-            rotation: -Math.PI * 0.25277777777778 // -45.5도를 라디안으로 변환
+            rotation: -Math.PI * 0.25277777777778 
           }
         }
       ];

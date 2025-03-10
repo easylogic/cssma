@@ -46,7 +46,7 @@ describe('Filter Style Parser', () => {
         'blur-[]',
         'blur-[invalid]',
         'blur-[abc]',
-        'blur-[-4]'  // 음수는 허용되지 않음
+        'blur-[-4]'  
       ];
 
       invalidCases.forEach(input => {

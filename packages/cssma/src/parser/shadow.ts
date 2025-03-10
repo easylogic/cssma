@@ -73,7 +73,6 @@ const SHADOW_PRESETS: Record<string, ShadowConfig[]> = {
   }]
 };
 
-// 기본적인 변수 경로 유효성 검사 (슬래시 형식)
 const isValidVariablePath = (path: string) => {
   return path !== '' && 
          !path.startsWith('/') && 
@@ -82,17 +81,17 @@ const isValidVariablePath = (path: string) => {
 };
 
 export function parseShadowStyleValue(className: string): ParsedStyle | null {
-  // opacity 처리를 위한 분리
+  
   let opacity: number | undefined;
   let prefix = className;
   
-  // Figma 변수가 아닌 부분에서 마지막 '/'를 찾아 opacity 처리
+  
   const lastSlashIndex = className.lastIndexOf('/');
   if (lastSlashIndex !== -1) {
     const potentialOpacity = className.slice(lastSlashIndex + 1);
     const beforeSlash = className.slice(0, lastSlashIndex);
     
-    // Figma 변수 내부의 '/'가 아닌지 확인
+    
     const isInsideVariable = (
       beforeSlash.includes('$[') && 
       !beforeSlash.endsWith(']') && 
@@ -108,7 +107,7 @@ export function parseShadowStyleValue(className: string): ParsedStyle | null {
     }
   }
 
-  // Figma 변수 처리
+  
   if (prefix.includes('$[')) {
     const match = prefix.match(/^shadow(?:-color)?-\$\[(.*?)\]$/);
     if (!match) return null;
@@ -179,7 +178,7 @@ export function parseShadowStyleValue(className: string): ParsedStyle | null {
     };
   }
 
-  // 컬러 그림자 처리
+  
   if (prefix.startsWith('shadow-')) {
     const colorName = prefix.replace('shadow-', '');
     if (COLORS[colorName]) {

@@ -45,12 +45,12 @@ const shadowMap: Record<string, string> = {
 };
 
 function colorToHex(color: FigmaColor): string {
-  // RGB 값을 0-255 범위로 변환하고 반올림
+  
   const r = Math.round(color.r * 255);
   const g = Math.round(color.g * 255);
   const b = Math.round(color.b * 255);
 
-  // 16진수로 변환하고 2자리로 패딩
+  
   const toHex = (n: number) => n.toString(16).padStart(2, '0');
   
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
@@ -73,7 +73,7 @@ function getGradientDirection(transform: number[][]): string {
       return direction;
     }
   }
-  return 'to-r'; // 기본값
+  return 'to-r'; 
 }
 
 function convertGradientStops(stops: FigmaGradientStop[]): string[] {
@@ -83,13 +83,11 @@ function convertGradientStops(stops: FigmaGradientStop[]): string[] {
     const firstStop = stops[0];
     classes.push(`from-[${colorToHex(firstStop.color)}]`);
     
-    // via colors (중간 색상들)
     const middleStops = stops.slice(1, -1);
     middleStops.forEach(stop => {
       classes.push(`via-[${colorToHex(stop.color)}]`);
     });
     
-    // to color (마지막 색상)
     if (stops.length > 1) {
       const lastStop = stops[stops.length - 1];
       classes.push(`to-[${colorToHex(lastStop.color)}]`);
@@ -102,10 +100,10 @@ function convertGradientStops(stops: FigmaGradientStop[]): string[] {
 function convertLayout(styles: Record<string, any>): string[] {
   const classes: string[] = [];
 
-  // Layout Mode와 Flex 속성
+  
   if (styles.layoutMode === 'HORIZONTAL') {
     classes.push('flex-row');
-    // Flex 속성 추가
+    
     if (styles.layoutGrow === 1) classes.push('flex-grow');
     if (styles.layoutShrink === 1) classes.push('flex-shrink');
     if (styles.layoutWrap === 'WRAP') classes.push('wrap');
@@ -116,7 +114,7 @@ function convertLayout(styles: Record<string, any>): string[] {
   }
   if (styles.layoutMode === 'VERTICAL') {
     classes.push('flex-col');
-    // Flex 속성 추가
+    
     if (styles.layoutGrow === 1) classes.push('flex-grow');
     if (styles.layoutShrink === 1) classes.push('flex-shrink');
     if (styles.layoutWrap === 'WRAP') classes.push('wrap');
@@ -331,7 +329,7 @@ function convertTypography(styles: Record<string, any>): string[] {
 
     // Text decoration color
     if (!isMixedValue(styles.textDecorationColor) && styles.textDecorationColor) {
-        // RGB 객체를 색상 코드로 변환
+        
         const colorHex = colorToHex(styles.textDecorationColor);
         classes.push(`decoration-[${colorHex}]`);
     }
@@ -599,14 +597,14 @@ function convertShadow(styles: Record<string, any>): string[] {
             if (effect.type === 'DROP_SHADOW') {
                 const { radius, spread } = effect;
                 
-                // 미리 정의된 그림자 매핑 확인
+                
                 if (radius === 2 && spread === 0) classes.push(shadowMap.sm);
                 else if (radius === 6 && spread === -2) classes.push(shadowMap.md);
                 else if (radius === 10 && spread === -3) classes.push(shadowMap.lg);
                 else if (radius === 20 && spread === -5) classes.push(shadowMap.xl);
                 else if (radius === 25 && spread === -8) classes.push(shadowMap['2xl']);
                 else {
-                    // 커스텀 그림자
+                    
                     const color = effect.color ? colorToHex(effect.color) : '#000000';
                     const opacity = effect.color?.a ?? 1;
                     classes.push(`shadow-[0_${effect.offset?.y ?? 0}px_${radius}px_${spread}px_${color}${opacity < 1 ? Math.round(opacity * 100) : ''}]`);
@@ -640,138 +638,138 @@ function convertSpacing(styles: Record<string, any>): string[] {
 function convertPosition(styles: Record<string, any>): string[] {
   const classes: string[] = [];
   
-  // 절대 위치 처리
+  
   if (styles.layoutPositioning === 'ABSOLUTE') {
     classes.push('absolute');
   }
   
-  // constraints 처리
+  
   if (styles.constraints) {
     const { horizontal, vertical } = styles.constraints;
 
-    // 수평(horizontal) 제약조건 처리
+    
     if (horizontal === 'MIN') {
       classes.push(`left-[${styles.x ?? 0}px]`);
     } else if (horizontal === 'MAX') {
       classes.push(`right-[${styles.x ?? 0}px]`);
     } else if (horizontal === 'CENTER') {
-      // CENTER 처리 - center-x 클래스와 left/right 값 계산
+      
       classes.push('center-x');
       
-      // 부모 너비와 요소 너비가 있는 경우 정확한 left/right 계산
+      
       if (styles.parent?.width !== undefined && styles.width !== undefined) {
-        // 중앙 정렬 시 양쪽 여백 계산
+        
         const offset = Math.max(0, (styles.parent.width - styles.width) / 2);
         
-        // x 좌표가 있으면 오프셋에 추가
+        
         const leftOffset = offset + (styles.x ?? 0);
         const rightOffset = offset - (styles.x ?? 0);
         
-        // 항상 left/right 값 추가 (테스트 케이스와 일치하도록)
+        
         classes.push(`left-[${leftOffset}px]`, `right-[${rightOffset}px]`);
       } else if (styles.x !== undefined) {
-        // 부모 정보가 없지만 x 좌표가 있는 경우
+        
         classes.push(`left-[${styles.x}px]`);
       }
     } else if (horizontal === 'STRETCH') {
-      // STRETCH 처리 - stretch-x 클래스와 left/right 값 계산
+      
       classes.push('stretch-x');
       
-      // left와 right 값 계산
+      
       const leftValue = styles.x ?? 0;
       
-      // right 값 계산 (부모 너비가 있는 경우)
+        
       let rightValue = leftValue;
       if (styles.parent?.width !== undefined && styles.width !== undefined) {
         rightValue = styles.parent.width - (leftValue + styles.width);
         if (rightValue < 0) rightValue = 0;
       }
       
-      // left, right 클래스 추가 (항상 추가하여 테스트 케이스와 일치하도록)
+      
       classes.push(`left-[${leftValue}px]`, `right-[${rightValue}px]`);
     } else if (horizontal === 'SCALE') {
-      // SCALE 처리 - scale-x 클래스와 left/right 값 계산
+      
       classes.push('scale-x');
       
-      // left와 right 값 계산
+      
       const leftValue = styles.x ?? 0;
       
-      // right 값 계산 (부모 너비가 있는 경우)
+      
       let rightValue = leftValue;
       if (styles.parent?.width !== undefined && styles.width !== undefined) {
         rightValue = styles.parent.width - (leftValue + styles.width);
         if (rightValue < 0) rightValue = 0;
       }
       
-      // left, right 클래스 추가 (항상 추가하여 테스트 케이스와 일치하도록)
+      
       classes.push(`left-[${leftValue}px]`, `right-[${rightValue}px]`);
     } else if (styles.x !== undefined) {
-      // 다른 제약 조건이 없는 경우 기본 위치 처리
+      
       classes.push(`left-[${styles.x}px]`);
     }
     
-    // 수직(vertical) 제약조건 처리
+    
     if (vertical === 'MIN') {
       classes.push(`top-[${styles.y ?? 0}px]`);
     } else if (vertical === 'MAX') {
       classes.push(`bottom-[${styles.y ?? 0}px]`);
     } else if (vertical === 'CENTER') {
-      // CENTER 처리 - center-y 클래스와 top/bottom 값 계산
+      
       classes.push('center-y');
       
-      // 부모 높이와 요소 높이가 있는 경우 정확한 top/bottom 계산
+      
       if (styles.parent?.height !== undefined && styles.height !== undefined) {
-        // 중앙 정렬 시 위아래 여백 계산
+        
         const offset = Math.max(0, (styles.parent.height - styles.height) / 2);
         
-        // y 좌표가 있으면 오프셋에 추가
+        
         const topOffset = offset + (styles.y ?? 0);
         const bottomOffset = offset - (styles.y ?? 0);
         
-        // 항상 top/bottom 값 추가 (테스트 케이스와 일치하도록)
+        
         classes.push(`top-[${topOffset}px]`, `bottom-[${bottomOffset}px]`);
       } else if (styles.y !== undefined) {
-        // 부모 정보가 없지만 y 좌표가 있는 경우
+        
         classes.push(`top-[${styles.y}px]`);
       }
     } else if (vertical === 'STRETCH') {
-      // STRETCH 처리 - stretch-y 클래스와 top/bottom 값 계산
+      
       classes.push('stretch-y');
       
-      // top과 bottom 값 계산
+      
       const topValue = styles.y ?? 0;
       
-      // bottom 값 계산 (부모 높이가 있는 경우)
+      
       let bottomValue = topValue;
       if (styles.parent?.height !== undefined && styles.height !== undefined) {
         bottomValue = styles.parent.height - (topValue + styles.height);
         if (bottomValue < 0) bottomValue = 0;
       }
       
-      // top, bottom 클래스 추가 (항상 추가하여 테스트 케이스와 일치하도록)
+      
       classes.push(`top-[${topValue}px]`, `bottom-[${bottomValue}px]`);
     } else if (vertical === 'SCALE') {
-      // SCALE 처리 - scale-y 클래스와 top/bottom 값 계산
+      
       classes.push('scale-y');
       
-      // top과 bottom 값 계산
+      
       const topValue = styles.y ?? 0;
       
-      // bottom 값 계산 (부모 높이가 있는 경우)
+      
       let bottomValue = topValue;
       if (styles.parent?.height !== undefined && styles.height !== undefined) {
         bottomValue = styles.parent.height - (topValue + styles.height);
         if (bottomValue < 0) bottomValue = 0;
       }
       
-      // top, bottom 클래스 추가 (항상 추가하여 테스트 케이스와 일치하도록)
+      
       classes.push(`top-[${topValue}px]`, `bottom-[${bottomValue}px]`);
     } else if (styles.y !== undefined) {
-      // 다른 제약 조건이 없는 경우 기본 위치 처리
+      
       classes.push(`top-[${styles.y}px]`);
     }
   } else if (styles.x !== undefined || styles.y !== undefined) {
-    // constraints가 없는 경우 기본 위치 처리
+    
     if (styles.x !== undefined) {
       classes.push(`left-[${styles.x}px]`);
     }
@@ -780,7 +778,7 @@ function convertPosition(styles: Record<string, any>): string[] {
     }
   }
   
-  // z-index 처리
+  
   if (typeof styles.order === 'number') {
     classes.push(`z-[${styles.order}]`);
   }
@@ -800,10 +798,7 @@ function convertSize(styles: Record<string, any>): string[] {
     return classes;
 }
 
-/**
- * Figma 스타일을 Tailwind CSS 클래스로 변환합니다.
- */
-export function figmaToStyle(styles: Record<string, any>): string {
+export function figmaToCss(styles: Record<string, any>): string {
     const classes: string[] = [
         ...convertLayout(styles),
         ...convertColors(styles),

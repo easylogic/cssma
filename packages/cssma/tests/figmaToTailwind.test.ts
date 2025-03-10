@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { figmaToStyle } from '../src/core/figmaToTailwind';
+import { figmaToCss } from '../src/core/figmaToCss';
 
 export function normalizeClasses(classString: string): string[] {
   return classString.split(' ').sort();
@@ -12,34 +12,34 @@ export function expectClassesEqual(received: string, expected: string) {
   expect(normalizedReceived).toEqual(normalizedExpected);
 }
 
-describe('figmaToStyle', () => {
+describe('figmaToCss', () => {
   describe('Layout', () => {
     it('should convert layout mode', () => {
-      expectClassesEqual(figmaToStyle({ layoutMode: 'HORIZONTAL' }), 'flex-row');
-      expectClassesEqual(figmaToStyle({ layoutMode: 'VERTICAL' }), 'flex-col');
+      expectClassesEqual(figmaToCss({ layoutMode: 'HORIZONTAL' }), 'flex-row');
+      expectClassesEqual(figmaToCss({ layoutMode: 'VERTICAL' }), 'flex-col');
     });
 
     it('should convert sizing', () => {
-      expectClassesEqual(figmaToStyle({ 
+      expectClassesEqual(figmaToCss({ 
         layoutSizingHorizontal: 'FILL',
         layoutSizingVertical: 'HUG'
       }), 'w-full h-auto');
 
-      expectClassesEqual(figmaToStyle({ 
+      expectClassesEqual(figmaToCss({ 
         width: 100,
         height: 200
       }), 'w-[100] h-[200]');
     });
 
     it('should convert alignment', () => {
-      expectClassesEqual(figmaToStyle({
+      expectClassesEqual(figmaToCss({
         primaryAxisAlignItems: 'CENTER',
         counterAxisAlignItems: 'CENTER'
       }), 'justify-center items-center');
     });
 
     it('should convert spacing', () => {
-      expectClassesEqual(figmaToStyle({
+      expectClassesEqual(figmaToCss({
         itemSpacing: 16,
         paddingTop: 24,
         paddingRight: 24,
@@ -47,7 +47,7 @@ describe('figmaToStyle', () => {
         paddingLeft: 24
       }), 'gap-[16] p-[24]');
 
-      expectClassesEqual(figmaToStyle({
+      expectClassesEqual(figmaToCss({
         paddingTop: 8,
         paddingRight: 16,
         paddingBottom: 8,
@@ -58,14 +58,14 @@ describe('figmaToStyle', () => {
 
   describe('Colors', () => {
     it('should convert solid colors', () => {
-      expectClassesEqual(figmaToStyle({
+      expectClassesEqual(figmaToCss({
         fills: [{
           type: 'SOLID',
           color: { r: 1, g: 0, b: 0 }
         }]
       }), 'bg-[#ff0000]');
 
-      expectClassesEqual(figmaToStyle({
+      expectClassesEqual(figmaToCss({
         fills: [{
           type: 'SOLID',
           color: { r: 1, g: 0, b: 0 },
@@ -75,7 +75,7 @@ describe('figmaToStyle', () => {
     });
 
     it('should convert gradients', () => {
-      expectClassesEqual(figmaToStyle({
+      expectClassesEqual(figmaToCss({
         fills: [{
           type: 'GRADIENT_LINEAR',
           gradientStops: [
@@ -89,26 +89,26 @@ describe('figmaToStyle', () => {
 
   describe('Typography', () => {
     it('should convert font size', () => {
-      expectClassesEqual(figmaToStyle({ fontSize: 20 }), 'text-xl');
-      expectClassesEqual(figmaToStyle({ fontSize: 15 }), 'text-[15]');
+      expectClassesEqual(figmaToCss({ fontSize: 20 }), 'text-xl');
+      expectClassesEqual(figmaToCss({ fontSize: 15 }), 'text-[15]');
     });
 
     it('should convert font weight', () => {
-      expectClassesEqual(figmaToStyle({
+      expectClassesEqual(figmaToCss({
         fontName: { family: 'Inter', style: 'Bold' }
       }), 'font-bold');
     });
 
     it('should convert font style', () => {
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           fontName: { family: 'Inter', style: 'Italic' }
         }),
         'italic'
       );
 
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           fontName: { family: 'Inter', style: 'Regular' }
         }),
         ''
@@ -118,7 +118,7 @@ describe('figmaToStyle', () => {
 
   describe('Effects', () => {
     it('should convert shadows', () => {
-      expectClassesEqual(figmaToStyle({
+      expectClassesEqual(figmaToCss({
         effects: [{
           type: 'DROP_SHADOW',
           radius: 6,
@@ -128,15 +128,15 @@ describe('figmaToStyle', () => {
     });
 
     it('should convert opacity', () => {
-      expectClassesEqual(figmaToStyle({ opacity: 0.5 }), 'opacity-50');
+      expectClassesEqual(figmaToCss({ opacity: 0.5 }), 'opacity-50');
     });
   });
 
   describe('Geometry', () => {
     it('should convert border radius', () => {
-      expectClassesEqual(figmaToStyle({ cornerRadius: 8 }), 'rounded-lg');
-      expectClassesEqual(figmaToStyle({ cornerRadius: 9999 }), 'rounded-full');
-      expectClassesEqual(figmaToStyle({ cornerRadius: 10 }), 'rounded-[10]');
+      expectClassesEqual(figmaToCss({ cornerRadius: 8 }), 'rounded-lg');
+      expectClassesEqual(figmaToCss({ cornerRadius: 9999 }), 'rounded-full');
+      expectClassesEqual(figmaToCss({ cornerRadius: 10 }), 'rounded-[10]');
     });
   });
 
@@ -164,7 +164,7 @@ describe('figmaToStyle', () => {
         cornerRadius: 8
       };
 
-      expectClassesEqual(figmaToStyle(styles),
+      expectClassesEqual(figmaToCss(styles),
         'flex-col w-[280] h-auto gap-[16] p-[24] bg-[#ffffff] shadow-md rounded-lg'
       );
     });
@@ -194,7 +194,7 @@ describe('figmaToStyle', () => {
         cornerRadius: 8
       };
 
-      expectClassesEqual(figmaToStyle(styles),
+      expectClassesEqual(figmaToCss(styles),
         'flex-col w-[320] h-auto gap-[16] p-[24] bg-[#ffffff] shadow-md rounded-lg'
       );
     });
@@ -218,7 +218,7 @@ describe('figmaToStyle', () => {
         itemSpacing: 8
       };
 
-      expectClassesEqual(figmaToStyle(styles),
+      expectClassesEqual(figmaToCss(styles),
         'flex-row w-auto h-auto justify-center items-center gap-[8] pt-[12] pr-[20] pb-[12] pl-[20] bg-[#3d78f2] rounded-md'
       );
     });
@@ -239,7 +239,7 @@ describe('figmaToStyle', () => {
         }]
       };
 
-      expectClassesEqual(figmaToStyle(styles),
+      expectClassesEqual(figmaToCss(styles),
         'text-2xl font-bold bg-linear-to-r from-[#3d78f2] to-[#6633cc]'
       );
     });
@@ -263,7 +263,7 @@ describe('figmaToStyle', () => {
         }]
       };
 
-      expectClassesEqual(figmaToStyle(styles),
+      expectClassesEqual(figmaToCss(styles),
         'text-2xl font-bold bg-radial from-[#3d78f2] to-[#6633cc]'
       );
     });
@@ -291,7 +291,7 @@ describe('figmaToStyle', () => {
         }]
       };
 
-      expectClassesEqual(figmaToStyle(styles),
+      expectClassesEqual(figmaToCss(styles),
         'flex-row w-full h-auto justify-between items-center p-[16] bg-[#ffffff] shadow-sm'
       );
     });
@@ -312,7 +312,7 @@ describe('figmaToStyle', () => {
         counterAxisAlignItems: 'CENTER'
       };
 
-      expectClassesEqual(figmaToStyle(styles),
+      expectClassesEqual(figmaToCss(styles),
         'flex-row w-[40] h-[40] justify-center items-center bg-[#f2f7ff] rounded-full'
       );
     });
@@ -337,7 +337,7 @@ describe('figmaToStyle', () => {
         }]
       };
 
-      expectClassesEqual(figmaToStyle(styles),
+      expectClassesEqual(figmaToCss(styles),
         'flex-row w-full h-auto pt-[12] pr-[16] pb-[12] pl-[16] bg-[#f5f7fa] border-[#dee3e8] rounded-md'
       );
     });
@@ -367,7 +367,7 @@ describe('figmaToStyle', () => {
         cornerRadius: 16
       };
 
-      expectClassesEqual(figmaToStyle(styles),
+      expectClassesEqual(figmaToCss(styles),
         'flex-col w-full h-auto gap-[24] p-[32] bg-linear-to-r from-[#f2f7ff] to-[#ffffff] shadow-lg rounded-2xl'
       );
     });
@@ -376,19 +376,19 @@ describe('figmaToStyle', () => {
   describe('Border', () => {
     it('should convert border weight', () => {
       expectClassesEqual(
-        figmaToStyle({ strokeWeight: 2 }),
+        figmaToCss({ strokeWeight: 2 }),
         'border-[2]'
       );
 
       expectClassesEqual(
-        figmaToStyle({ strokeWeight: 0 }),
+        figmaToCss({ strokeWeight: 0 }),
         'border-0'
       );
     });
 
     it('should convert individual border weights', () => {
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           strokeTopWeight: 1,
           strokeRightWeight: 2,
           strokeBottomWeight: 3,
@@ -398,7 +398,7 @@ describe('figmaToStyle', () => {
       );
 
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           strokeWeight: 1,
           strokeTopWeight: 1,
           strokeRightWeight: 1,
@@ -411,12 +411,12 @@ describe('figmaToStyle', () => {
 
     it('should convert border alignment', () => {
       expectClassesEqual(
-        figmaToStyle({ strokeAlign: 'INSIDE' }),
+        figmaToCss({ strokeAlign: 'INSIDE' }),
         'border-inset'
       );
 
       expectClassesEqual(
-        figmaToStyle({ strokeAlign: 'OUTSIDE' }),
+        figmaToCss({ strokeAlign: 'OUTSIDE' }),
         'border-outset'
       );
     });
@@ -425,7 +425,7 @@ describe('figmaToStyle', () => {
   describe('Shadow', () => {
     it('should convert predefined shadows', () => {
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           effects: [{
             type: 'DROP_SHADOW',
             radius: 2,
@@ -436,7 +436,7 @@ describe('figmaToStyle', () => {
       );
 
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           effects: [{
             type: 'DROP_SHADOW',
             radius: 10,
@@ -449,7 +449,7 @@ describe('figmaToStyle', () => {
 
     it('should convert custom shadows', () => {
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           effects: [{
             type: 'DROP_SHADOW',
             radius: 15,
@@ -466,19 +466,19 @@ describe('figmaToStyle', () => {
   describe('Position', () => {
     it('should convert layout positioning', () => {
       expectClassesEqual(
-        figmaToStyle({ layoutPositioning: 'ABSOLUTE' }),
+        figmaToCss({ layoutPositioning: 'ABSOLUTE' }),
         'absolute'
       );
 
       expectClassesEqual(
-        figmaToStyle({ layoutPositioning: 'AUTO' }),
+        figmaToCss({ layoutPositioning: 'AUTO' }),
         ''
       );
     });
 
     it('should convert x and y coordinates with constraints', () => {
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           layoutPositioning: 'ABSOLUTE',
           x: 100,
           y: 200,
@@ -488,7 +488,7 @@ describe('figmaToStyle', () => {
       );
 
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           layoutPositioning: 'ABSOLUTE',
           x: 100,
           y: 200,
@@ -500,7 +500,7 @@ describe('figmaToStyle', () => {
 
     it('should convert center constraints', () => {
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           layoutPositioning: 'ABSOLUTE',
           x: 0,
           y: 0,
@@ -511,7 +511,7 @@ describe('figmaToStyle', () => {
 
       // With offset
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           layoutPositioning: 'ABSOLUTE',
           x: 20,
           y: 10,
@@ -523,7 +523,7 @@ describe('figmaToStyle', () => {
 
     it('should convert stretch constraints', () => {
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           layoutPositioning: 'ABSOLUTE',
           constraints: { horizontal: 'STRETCH', vertical: 'STRETCH' }
         }),
@@ -532,7 +532,7 @@ describe('figmaToStyle', () => {
 
       // With offset
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           layoutPositioning: 'ABSOLUTE',
           x: 20,
           y: 20,
@@ -544,7 +544,7 @@ describe('figmaToStyle', () => {
 
     it('should convert mixed constraints', () => {
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           layoutPositioning: 'ABSOLUTE',
           x: 100,
           y: 0,
@@ -554,7 +554,7 @@ describe('figmaToStyle', () => {
       );
 
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           layoutPositioning: 'ABSOLUTE',
           x: 0,
           y: 200,
@@ -566,7 +566,7 @@ describe('figmaToStyle', () => {
 
     it('should handle z-index (order)', () => {
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           layoutPositioning: 'ABSOLUTE',
           x: 100,
           y: 100,
@@ -580,7 +580,7 @@ describe('figmaToStyle', () => {
     it('should handle auto layout positioning', () => {
       // Auto layout (default) should not generate position classes
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           layoutMode: 'HORIZONTAL',
           x: 100,
           y: 100
@@ -590,7 +590,7 @@ describe('figmaToStyle', () => {
 
       // Only absolute positioning should generate position classes
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           layoutMode: 'HORIZONTAL',
           layoutPositioning: 'ABSOLUTE',
           x: 100,
@@ -605,7 +605,7 @@ describe('figmaToStyle', () => {
   describe('Size Constraints', () => {
     it('should convert min/max constraints', () => {
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           minWidth: 100,
           maxWidth: 500,
           minHeight: 50,
@@ -615,7 +615,7 @@ describe('figmaToStyle', () => {
       );
 
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           minWidth: null,
           maxWidth: null,
           minHeight: null,
@@ -629,7 +629,7 @@ describe('figmaToStyle', () => {
   describe('Flex', () => {
     it('should convert flex properties', () => {
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           layoutMode: 'HORIZONTAL',
           layoutGrow: 1,
           layoutShrink: 1,
@@ -669,7 +669,7 @@ describe('figmaToStyle', () => {
       };
 
       expectClassesEqual(
-        figmaToStyle(styles),
+        figmaToCss(styles),
         'flex-col w-[480] h-auto left-[0px] top-[0px] p-[24] bg-[#ffffff] shadow-xl rounded-2xl gap-[20]'
       );
     });
@@ -702,7 +702,7 @@ describe('figmaToStyle', () => {
       };
 
       expectClassesEqual(
-        figmaToStyle(styles),
+        figmaToCss(styles),
         'flex-row w-full h-auto pt-[12] pr-[16] pb-[12] pl-[16] rounded-md bg-[#fafafa] border-[#e6e6e6] shadow-sm'
       );
     });
@@ -711,127 +711,127 @@ describe('figmaToStyle', () => {
   describe('Typography Extended', () => {
     it('should convert text alignment', () => {
       expectClassesEqual(
-        figmaToStyle({ textAlignHorizontal: 'LEFT' }),
+        figmaToCss({ textAlignHorizontal: 'LEFT' }),
         'text-left'
       );
       expectClassesEqual(
-        figmaToStyle({ textAlignHorizontal: 'CENTER' }),
+        figmaToCss({ textAlignHorizontal: 'CENTER' }),
         'text-center'
       );
       expectClassesEqual(
-        figmaToStyle({ textAlignHorizontal: 'RIGHT' }),
+        figmaToCss({ textAlignHorizontal: 'RIGHT' }),
         'text-right'
       );
       expectClassesEqual(
-        figmaToStyle({ textAlignHorizontal: 'JUSTIFIED' }),
+        figmaToCss({ textAlignHorizontal: 'JUSTIFIED' }),
         'text-justify'
       );
     });
 
     it('should convert text transform', () => {
       expectClassesEqual(
-        figmaToStyle({ textCase: 'UPPER' }),
+        figmaToCss({ textCase: 'UPPER' }),
         'uppercase'
       );
       expectClassesEqual(
-        figmaToStyle({ textCase: 'LOWER' }),
+        figmaToCss({ textCase: 'LOWER' }),
         'lowercase'
       );
       expectClassesEqual(
-        figmaToStyle({ textCase: 'TITLE' }),
+        figmaToCss({ textCase: 'TITLE' }),
         'capitalize'
       );
       expectClassesEqual(
-        figmaToStyle({ textCase: 'ORIGINAL' }),
+        figmaToCss({ textCase: 'ORIGINAL' }),
         ''
       );
     });
 
     it('should convert text vertical alignment', () => {
       expectClassesEqual(
-        figmaToStyle({ textAlignVertical: 'TOP' }),
+        figmaToCss({ textAlignVertical: 'TOP' }),
         'align-top'
       );
       expectClassesEqual(
-        figmaToStyle({ textAlignVertical: 'CENTER' }),
+        figmaToCss({ textAlignVertical: 'CENTER' }),
         'align-middle'
       );
       expectClassesEqual(
-        figmaToStyle({ textAlignVertical: 'BOTTOM' }),
+        figmaToCss({ textAlignVertical: 'BOTTOM' }),
         'align-bottom'
       );
     });
 
     it('should convert text auto-size', () => {
       expectClassesEqual(
-        figmaToStyle({ textAutoSize: 'NONE' }),
+        figmaToCss({ textAutoSize: 'NONE' }),
         'text-auto-none'
       );
       expectClassesEqual(
-        figmaToStyle({ textAutoSize: 'WIDTH_AND_HEIGHT' }),
+        figmaToCss({ textAutoSize: 'WIDTH_AND_HEIGHT' }),
         'text-auto-wh'
       );
       expectClassesEqual(
-        figmaToStyle({ textAutoSize: 'TRUNCATE' }),
+        figmaToCss({ textAutoSize: 'TRUNCATE' }),
         'text-truncate'
       );
       expectClassesEqual(
-        figmaToStyle({ textAutoSize: 'HEIGHT' }),
+        figmaToCss({ textAutoSize: 'HEIGHT' }),
         'text-auto-h'
       );
     });
 
     it('should convert text wrap', () => {
       expectClassesEqual(
-        figmaToStyle({ textWrap: 'BALANCE' }),
+        figmaToCss({ textWrap: 'BALANCE' }),
         'text-wrap-balance'
       );
       expectClassesEqual(
-        figmaToStyle({ textWrap: 'WRAP' }),
+        figmaToCss({ textWrap: 'WRAP' }),
         'text-wrap'
       );
       expectClassesEqual(
-        figmaToStyle({ textWrap: 'TRUNCATE' }),
+        figmaToCss({ textWrap: 'TRUNCATE' }),
         'text-wrap-truncate'
       );
     });
 
     it('should convert text decoration', () => {
       expectClassesEqual(
-        figmaToStyle({ textDecoration: 'UNDERLINE' }),
+        figmaToCss({ textDecoration: 'UNDERLINE' }),
         'underline'
       );
       expectClassesEqual(
-        figmaToStyle({ textDecoration: 'STRIKETHROUGH' }),
+        figmaToCss({ textDecoration: 'STRIKETHROUGH' }),
         'line-through'
       );
       expectClassesEqual(
-        figmaToStyle({ textDecoration: 'NONE' }),
+        figmaToCss({ textDecoration: 'NONE' }),
         ''
       );
     });
 
     it('should convert line height', () => {
       expectClassesEqual(
-        figmaToStyle({ 
+        figmaToCss({ 
           lineHeight: { value: 100, unit: 'PERCENT' }
         }),
         'leading-none'
       );
       expectClassesEqual(
-        figmaToStyle({ 
+        figmaToCss({ 
           lineHeight: { value: 125, unit: 'PERCENT' }
         }),
         'leading-tight'
       );
       expectClassesEqual(
-        figmaToStyle({ 
+        figmaToCss({ 
           lineHeight: { value: 150, unit: 'PERCENT' }
         }),
         'leading-normal'
       );
       expectClassesEqual(
-        figmaToStyle({ 
+        figmaToCss({ 
           lineHeight: { value: 24, unit: 'PIXELS' }
         }),
         'leading-[24px]'
@@ -840,22 +840,22 @@ describe('figmaToStyle', () => {
 
     it('should convert letter spacing', () => {
       expectClassesEqual(
-        figmaToStyle({ letterSpacing: -0.4 }),
+        figmaToCss({ letterSpacing: -0.4 }),
         'tracking-tight'
       );
 
       expectClassesEqual(
-        figmaToStyle({ letterSpacing: 0 }),
+        figmaToCss({ letterSpacing: 0 }),
         'tracking-normal'
       );
 
       expectClassesEqual(
-        figmaToStyle({ letterSpacing: 0.4 }),
+        figmaToCss({ letterSpacing: 0.4 }),
         'tracking-wide'
       );
 
       expectClassesEqual(
-        figmaToStyle({ letterSpacing: 0.8 }),
+        figmaToCss({ letterSpacing: 0.8 }),
         'tracking-[0.8]'
       );
     });
@@ -864,46 +864,46 @@ describe('figmaToStyle', () => {
   describe('Border Extended', () => {
     it('should convert border style', () => {
       expectClassesEqual(
-        figmaToStyle({ borderStyle: 'SOLID' }),
+        figmaToCss({ borderStyle: 'SOLID' }),
         'border-solid'
       );
 
       expectClassesEqual(
-        figmaToStyle({ borderStyle: 'DASHED' }),
+        figmaToCss({ borderStyle: 'DASHED' }),
         'border-dashed'
       );
 
       expectClassesEqual(
-        figmaToStyle({ borderStyle: '' }),
+        figmaToCss({ borderStyle: '' }),
         ''
       );      
 
       expectClassesEqual(
-        figmaToStyle({ borderStyle: 'DOTTED' }),
+        figmaToCss({ borderStyle: 'DOTTED' }),
         'border-dotted'
       );
     });
 
     it('should convert border dash pattern', () => {
       expectClassesEqual(
-        figmaToStyle({ dashPattern: [4, 2] }),
+        figmaToCss({ dashPattern: [4, 2] }),
         'border-dashed-[4,2]'
       );
 
       expectClassesEqual(
-        figmaToStyle({ dashPattern: [5, 3, 2] }),
+        figmaToCss({ dashPattern: [5, 3, 2] }),
         'border-dashed-[5,3,2]'
       );
 
       expectClassesEqual(
-        figmaToStyle({ dashPattern: [] }),
+        figmaToCss({ dashPattern: [] }),
         ''
       );
     });
 
     it('should convert border with opacity', () => {
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           strokes: [{
             type: 'SOLID',
             color: { r: 1, g: 0, b: 0 },
@@ -918,7 +918,7 @@ describe('figmaToStyle', () => {
   describe('Gradient Fills', () => {
     it('should convert linear gradient', () => {
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           fills: [{
             type: 'GRADIENT_LINEAR',
             gradientStops: [
@@ -934,7 +934,7 @@ describe('figmaToStyle', () => {
 
     it('should convert multi-stop gradient', () => {
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           fills: [{
             type: 'GRADIENT_LINEAR',
             gradientStops: [
@@ -951,7 +951,7 @@ describe('figmaToStyle', () => {
 
     it('should convert radial gradient', () => {
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           fills: [{
             type: 'GRADIENT_RADIAL',
             gradientStops: [
@@ -966,7 +966,7 @@ describe('figmaToStyle', () => {
 
     it('should convert angular gradient', () => {
       expectClassesEqual(
-        figmaToStyle({
+        figmaToCss({
           fills: [{
             type: 'GRADIENT_ANGULAR',
             gradientStops: [

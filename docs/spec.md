@@ -5,7 +5,7 @@ CSS-to-Figma is a library that converts Tailwind CSS styles to Figma styles and 
 
 ## Core Features
 
-### 1. Tailwind CSS → Figma Conversion (`processStyles`)
+### 1. Tailwind CSS → Figma Conversion (`processCssStyles`)
 
 #### Layout Properties
 ```typescript
@@ -204,7 +204,7 @@ border-{number} → Vector stroke width
 - Border (`border-`) controls the stroke color and width
 
 
-### 2. Figma → Tailwind CSS Conversion (`figmaToStyle`)
+### 2. Figma → Tailwind CSS Conversion (`figmaToCss`)
 
 Converts Figma node styles to Tailwind CSS classes:
 
@@ -228,18 +228,18 @@ Converts Figma node styles to Tailwind CSS classes:
 
 ```typescript
 // Tailwind CSS → Figma
-import { processStyles } from 'css-to-figma';
+import { processCssStyles } from 'css-to-figma';
 
-const styles = processStyles('flex-col w-full bg-[#FF0000] rounded-lg');
+const styles = processCssStyles('flex-col w-full bg-[#FF0000] rounded-lg');
 // Apply the result to a Figma node
 node.layoutMode = styles.layout.layoutMode;
 node.fills = styles.fills;
 node.cornerRadius = styles.geometry.cornerRadius;
 
 // Figma → Tailwind CSS
-import { figmaToStyle } from 'css-to-figma';
+import { figmaToCss } from 'css-to-figma';
 
-const tailwindClasses = figmaToStyle({
+const tailwindClasses = figmaToCss({
   layoutMode: "VERTICAL",
   fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }],
   cornerRadius: 8

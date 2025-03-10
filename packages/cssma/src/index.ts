@@ -9,10 +9,9 @@ import type {
   ParsedStyle
 } from './types';
 
-// processStyles 함수 import
-export { processStyles, type StyleProcessorOptions } from './style/processStyles';
+export { processCssStyles, type StyleProcessorOptions } from './style/processCssStyles';
 
-// 타입 내보내기
+
 export type {
   FigmaColor,
   FigmaPaint,
@@ -27,14 +26,16 @@ export type {
 export * from './parser';
 export * from './converter';
 
-// apply 디렉토리의 함수들 내보내기
+
 export * from './apply/applyStyles';
 
-// createElement 함수들 내보내기 - 아직 구현되지 않음
+
 // export * from './createElement';
 
-// createNodeForData 함수들 내보내기
+
 export * from './core/createNodeForData';
 
-// figmaToTailwind 함수 내보내기
-export * from './core/figmaToTailwind';
+export * from './core/updateNodeForData';
+
+
+export * from './core/figmaToCss';

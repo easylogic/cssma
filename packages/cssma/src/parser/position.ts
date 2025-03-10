@@ -44,7 +44,7 @@ function parsePositionValue(value: string): { value: number; unit: 'px' | '%' } 
 }
 
 export function parsePositionStyleValue(className: string): ParsedStyle | null {
-  // Position type 처리
+  
   if (POSITION_TYPE_MAP[className as keyof typeof POSITION_TYPE_MAP]) {
     resetPositionState();
     return {
@@ -54,7 +54,7 @@ export function parsePositionStyleValue(className: string): ParsedStyle | null {
     };
   }
 
-  // Center without offset 처리
+  
   if (className === 'center-x') {
     positionState.constraints = {
       ...positionState.constraints,
@@ -79,7 +79,7 @@ export function parsePositionStyleValue(className: string): ParsedStyle | null {
     };
   }
 
-  // Stretch without offset 처리
+  
   if (className === 'stretch-x') {
     positionState.constraints = {
       ...positionState.constraints,
@@ -104,7 +104,7 @@ export function parsePositionStyleValue(className: string): ParsedStyle | null {
     };
   }
 
-  // Scale 처리
+  
   if (className === 'scale-x') {
     positionState.constraints = {
       ...positionState.constraints,
@@ -129,12 +129,12 @@ export function parsePositionStyleValue(className: string): ParsedStyle | null {
     };
   }
 
-  // Position values 처리
+  
   const positionMatch = className.match(/^(left|right|top|bottom)-(.+)$/);
   if (positionMatch) {
     const [, direction, rawValue] = positionMatch;
 
-    // Figma 변수 처리
+    
     if (rawValue.startsWith('$[')) {
       const variableId = extractFigmaVariableId(rawValue);
       if (!variableId) return null;
@@ -165,7 +165,7 @@ export function parsePositionStyleValue(className: string): ParsedStyle | null {
     const parsedValue = parsePositionValue(rawValue);
     if (!parsedValue) return null;
 
-    // Constraints 설정
+    
     if (direction.startsWith('center-')) {
       if (direction === 'center-x') {
         positionState.constraints = {
@@ -219,18 +219,18 @@ export function parsePositionStyleValue(className: string): ParsedStyle | null {
 }
 
 export function parsePositionStyles(classNames: string[]): ParsedStyle | null {
-  // 유효한 position 클래스가 없으면 null 반환
+  
   const positionStyles = classNames
     .map(cls => parsePositionStyleValue(cls))
     .filter((style): style is ParsedStyle => style !== null);
 
   if (positionStyles.length === 0) return null;
 
-  // layoutPositioning이 있으면 먼저 처리
+  
   const layoutPositioning = positionStyles.find(s => s.property === 'layoutPositioning');
   if (layoutPositioning) return layoutPositioning;
 
-  // 방향별 값 수집
+  
   const directions: Record<string, number> = {};
   const constraints: Constraints = {};
   let unit: 'px' | '%' = 'px';
@@ -257,17 +257,17 @@ export function parsePositionStyles(classNames: string[]): ParsedStyle | null {
     }
   });
 
-  // left와 right가 동시에 있으면 STRETCH
+   STRETCH
   if ('left' in directions && 'right' in directions) {
     constraints.horizontal = 'STRETCH';
   }
 
-  // top과 bottom이 동시에 있으면 STRETCH
+   STRETCH
   if ('top' in directions && 'bottom' in directions) {
     constraints.vertical = 'STRETCH';
   }
 
-  // 결과 반환
+  
   if (Object.keys(directions).length > 0) {
     return {
       property: 'position',
@@ -278,7 +278,7 @@ export function parsePositionStyles(classNames: string[]): ParsedStyle | null {
     };
   }
 
-  // constraints만 있는 경우
+  
   if (Object.keys(constraints).length > 0) {
     return {
       property: 'constraints',

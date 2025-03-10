@@ -11,9 +11,6 @@ interface ShadowValue {
   color: string;
 }
 
-/**
- * Shadow 스타일을 Figma 스타일로 변환합니다.
- */
 export function convertShadowToFigma(style: ParsedStyle): Partial<FigmaStyleProperties> {
   const result: Partial<FigmaStyleProperties> = {};
 

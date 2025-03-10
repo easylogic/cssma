@@ -29,9 +29,6 @@ const VALID_PRIMARY_AXIS_VALUES: readonly PrimaryAxisAlignValue[] = ['MIN', 'CEN
 const VALID_COUNTER_AXIS_VALUES: readonly CounterAxisAlignValue[] = ['MIN', 'CENTER', 'MAX', 'BASELINE'];
 const VALID_SIZING_VALUES: readonly SizingValue[] = ['FIXED', 'FILL', 'HUG'];
 
-/**
- * Layout 스타일을 Figma 스타일로 변환합니다.
- */
 export function convertLayoutToFigma(style: ParsedStyle): Partial<FigmaStyleProperties> {
   const result: Partial<FigmaStyleProperties> = {};
 

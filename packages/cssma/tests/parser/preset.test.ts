@@ -108,14 +108,14 @@ describe('parseStyleValue', () => {
       it('should combine font family and weight correctly', () => {
         const styles = parseStyles('font-roboto font-bold');
         
-        // 마지막 스타일이 이전 스타일들과 결합된 결과여야 함
+        
         expect(styles[styles.length - 1]).toEqual({
           property: 'fontWeight',
           value: 700,
           variant: 'preset'
         });
 
-        // 다른 조합도 테스트
+        
         const styles2 = parseStyles('font-mono font-bold italic');
         expect(styles2[styles2.length - 1]).toEqual({
           property: 'fontStyle',
@@ -163,7 +163,7 @@ describe('parseStyleValue', () => {
       });
 
       it('should parse gap values correctly', () => {
-        // 프리셋 gap 값 테스트
+        
         expect(parseStyleValue('gap-4')).toEqual({
           property: 'gap',
           value: 16,
@@ -182,7 +182,7 @@ describe('parseStyleValue', () => {
           variant: 'preset'
         });
 
-        // 임의 gap 값 테스트
+        
         expect(parseStyleValue('gap-[16]')).toEqual({
           property: 'gap',
           value: 16,

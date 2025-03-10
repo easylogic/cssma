@@ -6,10 +6,10 @@ export interface ParsedStyle {
     vertical?: 'MIN' | 'MAX' | 'SCALE' | 'CENTER' | 'STRETCH';
   };
   unit?: string;
-  variant?: string;  // 예: 'arbitrary' | 'preset' | 'figma-variable'
-  variableId?: string;  // Figma 변수 ID
-  angle?: number;   // 예: 45
-  direction?: string; // 예: 'to-r'
+  variant?: string; 
+  variableId?: string;  
+  angle?: number;  
+  direction?: string; 
   opacity?: number;
   constraints?: {
     horizontal?: 'MIN' | 'MAX' | 'SCALE' | 'CENTER' | 'STRETCH';
@@ -221,12 +221,13 @@ export interface FigmaStyleProperties {
   bottomRightRadius?: number;
   strokeWeight?: number;
   strokeAlign?: 'INSIDE' | 'OUTSIDE' | 'CENTER';
-  dashPattern?: number[];  // 점선 패턴 (예: [4, 2])
-  paths?: string[];        // 벡터 경로 데이터 (이전 버전 호환용)
-  vectorPaths?: VectorPath[]; // 벡터 경로 데이터
+  dashPattern?: number[]; 
+  paths?: string[];
+  vectorPaths?: VectorPath[]; 
   position?: FigmaPosition;
   constraints?: Constraints;
   order?: number;
+  rotation?: number;
 }
 
 export interface ProcessOptions {
@@ -255,7 +256,7 @@ export interface Binding {
 
 export interface NodeData {
   type: string;
-  id?: string;         // 명시적 ID 지원
+  id?: string;         
   name?: string;
   styles?: string;
   text?: string;

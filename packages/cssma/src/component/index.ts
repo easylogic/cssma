@@ -1,5 +1,5 @@
 import { ComponentDefinition, NodeData, ComponentInstance } from '../types';
-import { processStyles } from '../style/processStyles';
+import { processCssStyles } from '../style/processCssStyles';
 
 /**
  * Creates a Figma component set from a component definition
@@ -14,7 +14,7 @@ export function createComponentSet(definition: ComponentDefinition): ComponentSe
 
       // Apply styles
       if (variant.styles) {
-        const styles = processStyles(variant.styles);
+        const styles = processCssStyles(variant.styles);
         Object.assign(component, styles);
       }
 
@@ -28,7 +28,7 @@ export function createComponentSet(definition: ComponentDefinition): ComponentSe
 
       // Set variant properties
       if (variant.variant) {
-        // @ts-ignore: Figma API 타입 정의 문제 우회
+        
         component.setProperties(variant.variant);
       }
 
@@ -63,7 +63,7 @@ function createNode(data: NodeData): SceneNode {
       if (data.text) {
         node.characters = data.text;
       }
-      // 텍스트 바인딩 설정
+      
       if (data.bind?.text) {
         node.name = `text-bind:${data.bind.text}`;
       }
@@ -94,11 +94,11 @@ function createNode(data: NodeData): SceneNode {
 
   // Apply styles
   if (data.styles) {
-    const styles = processStyles(data.styles);
+    const styles = processCssStyles(data.styles);
     Object.assign(node, styles);
   }
 
-  // 가시성 바인딩 설정
+  
   if (data.bind?.visible) {
     node.name = `${node.name}${node.name ? ' ' : ''}visible-bind:${data.bind.visible}`;
   }
@@ -132,7 +132,7 @@ export function createComponentInstance(
     const instance = defaultComponent.createInstance();
     
     // Set variant properties
-    // @ts-ignore: Figma API 타입 정의 문제 우회
+    
     instance.setProperties(variantProps);
 
     return instance;
@@ -154,11 +154,11 @@ export function updateBindings(
   }
 ): void {
   try {
-    // 모든 자식 노드를 순회하며 바인딩 업데이트
+    
     function updateNodeBindings(node: SceneNode) {
       const nodeName = node.name;
 
-      // 텍스트 바인딩 업데이트
+      
       const textBindMatch = nodeName.match(/text-bind:(\w+)/);
       if (textBindMatch && bindings.text?.[textBindMatch[1]] !== undefined) {
         if (node.type === 'TEXT') {
@@ -166,19 +166,19 @@ export function updateBindings(
         }
       }
 
-      // 가시성 바인딩 업데이트
+      
       const visibleBindMatch = nodeName.match(/visible-bind:(\w+)/);
       if (visibleBindMatch && bindings.visible?.[visibleBindMatch[1]] !== undefined) {
         node.visible = bindings.visible[visibleBindMatch[1]];
       }
 
-      // 자식 노드들에 대해서도 바인딩 업데이트 수행
+      
       if ('children' in node) {
         node.children.forEach(child => updateNodeBindings(child));
       }
     }
 
-    // 인스턴스의 모든 자식 노드에 대해 바인딩 업데이트 수행
+    
     updateNodeBindings(instance);
 
   } catch (error) {
@@ -187,7 +187,7 @@ export function updateBindings(
   }
 }
 
-// 사용 예시:
+:
 // const buttonInstance = createComponentInstance(buttonComponentSet, {
 //   size: 'md',
 //   style: 'primary'
@@ -195,8 +195,8 @@ export function updateBindings(
 //
 // updateBindings(buttonInstance, {
 //   text: {
-//     label: '클릭하세요',
-//     description: '이 버튼을 클릭하면 작업이 시작됩니다.'
+',
+.'
 //   },
 //   visible: {
 //     icon: true,

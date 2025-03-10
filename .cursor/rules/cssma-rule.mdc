@@ -16,30 +16,30 @@ globs: ["**/*.{ts,tsx,js,jsx,css}"]
 
 ## 주요 기능
 
-### 1. Tailwind CSS → Figma 변환 (`processStyles`)
+### 1. Tailwind CSS → Figma 변환 (`processCssStyles`)
 
 Tailwind CSS 클래스 문자열을 Figma 스타일 객체로 변환합니다.
 
 ```typescript
 // 예시
-import { processStyles } from '@easylogic/cssma';
+import { processCssStyles } from '@easylogic/cssma';
 
-const styles = processStyles('flex-col w-full bg-[#FF0000] rounded-lg');
+const styles = processCssStyles('flex-col w-full bg-[#FF0000] rounded-lg');
 // Figma 노드에 적용
 node.layoutMode = styles.layout.layoutMode;
 node.fills = styles.fills;
 node.cornerRadius = styles.geometry.cornerRadius;
 ```
 
-### 2. Figma → Tailwind CSS 변환 (`figmaToStyle`)
+### 2. Figma → Tailwind CSS 변환 (`figmaToCss`)
 
 Figma 스타일 객체를 Tailwind CSS 클래스 문자열로 변환합니다.
 
 ```typescript
 // 예시
-import { figmaToStyle } from '@easylogic/cssma';
+import { figmaToCss } from '@easylogic/cssma';
 
-const tailwindClasses = figmaToStyle({
+const tailwindClasses = figmaToCss({
   layoutMode: "VERTICAL",
   fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }],
   cornerRadius: 8

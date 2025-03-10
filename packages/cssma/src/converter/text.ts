@@ -43,9 +43,6 @@ type FigmaVariableText = {
 
 type FigmaVariableStyleProperties = Omit<FigmaStyleProperties, 'fills'> & FigmaVariableText;
 
-/**
- * Text 스타일을 Figma 스타일로 변환합니다.
- */
 export function convertTextToFigma(style: ParsedStyle): Partial<FigmaVariableStyleProperties> {
   const result: Partial<FigmaVariableStyleProperties> = {};
 

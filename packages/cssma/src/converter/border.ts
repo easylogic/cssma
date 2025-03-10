@@ -4,9 +4,6 @@ import { isValidNumber } from '../utils/validators';
 import { VALID_BORDER_STYLES, VALID_STROKE_ALIGN } from '../constants';
 import { parseColor } from '../utils/colors';
 
-/**
- * Border 스타일을 Figma 스타일로 변환합니다.
- */
 export function convertBorderToFigma(style: ParsedStyle): Partial<FigmaStyleProperties> {
   const result: Partial<FigmaStyleProperties> = {};
   const { property, value, variant, variableId } = style;

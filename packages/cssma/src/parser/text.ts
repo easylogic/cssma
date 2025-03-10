@@ -134,7 +134,7 @@ function handleTextProperty(value: string): ParsedStyle | null {
 }
 
 export function parseTextStyleValue(className: string): ParsedStyle | null {
-  // Leading Trim 처리
+  
   if (LEADING_TRIM_MAP[className as keyof typeof LEADING_TRIM_MAP]) {
     return {
       property: 'leadingTrim',
@@ -143,7 +143,7 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
     };
   }
 
-  // opacity 처리를 위한 분리
+  
   let opacity: number | undefined;
   let prefix = className;
   
@@ -156,13 +156,13 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
     };
   }
 
-  // Figma 변수가 아닌 부분에서 마지막 '/'를 찾아 opacity 처리
+  
   const lastSlashIndex = className.lastIndexOf('/');
   if (lastSlashIndex !== -1) {
     const potentialOpacity = className.slice(lastSlashIndex + 1);
     const beforeSlash = className.slice(0, lastSlashIndex);
     
-    // Figma 변수 내부의 '/'가 아닌지 확인
+    
     const isInsideVariable = (
       beforeSlash.includes('$[') && 
       !beforeSlash.endsWith(']') && 
@@ -217,7 +217,6 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
     return null;
   }
 
-  // 임의값 처리 ([...] 형식)
   if (prefix.includes('[') && prefix.includes(']')) {
     const match = prefix.match(/^([a-z-]+)-\[(.*?)\]$/);
     if (!match) return null;
@@ -226,10 +225,10 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
     
     // Handle text color
     if (type === 'text') {
-      // 대괄호 제거
+      
       const cleanValue = value.replace(/^\[|\]$/g, '');
 
-      // 텍스트 크기 처리 (숫자만 있는 경우)
+      
       const size = parseFloat(cleanValue);
       if (!isNaN(size) && cleanValue === size.toString()) {
         return {
@@ -239,7 +238,7 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
         };
       }
 
-      // 일반 색상 처리
+      
       if (cleanValue.startsWith('#') || cleanValue.startsWith('rgb')) {
         if (!isValidHexColor(cleanValue) && !isValidRgbColor(cleanValue)) {
           return null;
@@ -279,7 +278,7 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
       }
     }
 
-    // 행간 처리
+    
     if (type === 'leading') {
       const cleanValue = value.replace(/^\[|\]$/g, '');
       if (cleanValue.endsWith('px')) {
@@ -305,12 +304,12 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
       }
     }
 
-    // 자간 처리
+    
     if (type === 'tracking') {
       const cleanValue = value.replace(/^\[|\]$/g, '');
       const spacing = parseFloat(cleanValue);
       if (!isNaN(spacing)) {
-        // 단위가 있는 경우 (예: px, em)
+        
         if (cleanValue.endsWith('px')) {
           return {
             property: 'letterSpacing',
@@ -324,7 +323,7 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
             variant: 'arbitrary'
           };
         } else {
-          // 단위가 없는 경우 기본값으로 픽셀 사용
+          
           return {
             property: 'letterSpacing',
             value: spacing,
@@ -430,7 +429,7 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
   if (prefix.startsWith('leading-')) {
     const value = prefix.replace('leading-', '');
     
-    // AUTO 처리
+    
     if (value === 'auto') {
       return {
         property: 'lineHeight',
@@ -440,7 +439,7 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
       };
     }
     
-    // 프리셋 값 처리
+    
     if (LINE_HEIGHT_MAP[value as keyof typeof LINE_HEIGHT_MAP] !== undefined) {
       return {
         property: 'lineHeight',
@@ -450,11 +449,11 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
       };
     }
 
-    // 임의값 처리
+    
     if (value.startsWith('[') && value.endsWith(']')) {
       const arbitraryValue = value.slice(1, -1);
       
-      // 퍼센트 값 처리
+      
       if (arbitraryValue.endsWith('%')) {
         const percent = parseFloat(arbitraryValue);
         if (!isNaN(percent)) {
@@ -467,7 +466,7 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
         }
       }
       
-      // 픽셀 값 처리
+      
       if (arbitraryValue.endsWith('px')) {
         const pixels = parseFloat(arbitraryValue);
         if (!isNaN(pixels)) {
@@ -480,7 +479,7 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
         }
       }
       
-      // 일반 숫자 값 처리 (배수)
+      
       const number = parseFloat(arbitraryValue);
       if (!isNaN(number)) {
         return {
@@ -497,7 +496,7 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
   if (prefix.startsWith('tracking-')) {
     const value = prefix.replace('tracking-', '');
     
-    // 프리셋 값 처리
+    
     if (LETTER_SPACING_MAP[value as keyof typeof LETTER_SPACING_MAP] !== undefined) {
       return {
         property: 'letterSpacing',
@@ -506,11 +505,11 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
       };
     }
 
-    // 임의값 처리
+    
     if (value.startsWith('[') && value.endsWith(']')) {
       const arbitraryValue = value.slice(1, -1);
       
-      // 퍼센트 값 처리
+      
       if (arbitraryValue.endsWith('%')) {
         const percent = parseFloat(arbitraryValue);
         if (!isNaN(percent)) {
@@ -523,7 +522,7 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
         }
       }
       
-      // 픽셀 값 처리
+      
       if (arbitraryValue.endsWith('px')) {
         const pixels = parseFloat(arbitraryValue);
         if (!isNaN(pixels)) {
@@ -536,7 +535,7 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
         }
       }
       
-      // 일반 숫자 값 처리
+      
       const number = parseFloat(arbitraryValue);
       if (!isNaN(number)) {
         return {
