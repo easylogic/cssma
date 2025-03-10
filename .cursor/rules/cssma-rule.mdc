@@ -354,7 +354,7 @@ fills: [{
 
 ## 추가 리소스
 
-- [Tailwind CSS 공식 문서](https://tailwindcss.com/docs)
-- [Figma API 참조](https://www.figma.com/developers/api)
-- [Figma Plugin 개발 가이드](https://www.figma.com/plugin-docs/)
-- [@easylogic/cssma GitHub 저장소](https://github.com/figmaikr/@easylogic/cssma)
+- [Tailwind CSS 공식 문서](mdc:https:/tailwindcss.com/docs)
+- [Figma API 참조](mdc:https:/www.figma.com/developers/api)
+- [Figma Plugin 개발 가이드](mdc:https:/www.figma.com/plugin-docs)
+- [@easylogic/cssma GitHub 저장소](mdc:https:/github.com/figmaikr/@easylogic/cssma)

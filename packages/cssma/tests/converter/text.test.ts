@@ -101,7 +101,8 @@ describe('Text Converter', () => {
         {
           input: {
             property: 'lineHeight',
-            value: { value: 100, unit: 'PERCENT' },
+            value: 100,
+            unit: 'PERCENT',
             variant: 'preset'
           },
           expected: {
@@ -111,7 +112,8 @@ describe('Text Converter', () => {
         {
           input: {
             property: 'lineHeight',
-            value: { value: 150, unit: 'PERCENT' },
+            value: 150,
+            unit: 'PERCENT',
             variant: 'preset'
           },
           expected: {
@@ -121,7 +123,8 @@ describe('Text Converter', () => {
         {
           input: {
             property: 'lineHeight',
-            value: { value: 24, unit: 'PIXELS' },
+            value: 24,
+            unit: 'PIXELS',
             variant: 'arbitrary'
           },
           expected: {
@@ -323,7 +326,10 @@ describe('Text Converter', () => {
       };
 
       expect(convertTextToFigma(input)).toEqual({
-        letterSpacing: 0,
+        letterSpacing: {
+          value: 0,
+          unit: 'PIXELS'
+        },
         boundVariables: {
           letterSpacing: {
             type: 'VARIABLE_ALIAS',

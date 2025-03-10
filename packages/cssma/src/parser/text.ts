@@ -86,6 +86,12 @@ const TEXT_WRAP_MAP = {
   'wrap-truncate': 'TRUNCATE'
 } as const;
 
+const LEADING_TRIM_MAP = {
+  'leading-trim': 'CAP_HEIGHT',
+  'leading-trim-cap': 'CAP_HEIGHT',
+  'leading-trim-none': 'NONE'
+} as const;
+
 // Helper function to handle text properties
 function handleTextProperty(value: string): ParsedStyle | null {
   // Text Auto Resize
@@ -128,6 +134,15 @@ function handleTextProperty(value: string): ParsedStyle | null {
 }
 
 export function parseTextStyleValue(className: string): ParsedStyle | null {
+  // Leading Trim 처리
+  if (LEADING_TRIM_MAP[className as keyof typeof LEADING_TRIM_MAP]) {
+    return {
+      property: 'leadingTrim',
+      value: LEADING_TRIM_MAP[className as keyof typeof LEADING_TRIM_MAP],
+      variant: 'preset'
+    };
+  }
+
   // opacity 처리를 위한 분리
   let opacity: number | undefined;
   let prefix = className;
@@ -272,7 +287,8 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
         if (!isNaN(size)) {
           return {
             property: 'lineHeight',
-            value: { value: size, unit: 'PIXELS' },
+            value: size,
+            unit: 'PIXELS',
             variant: 'arbitrary'
           };
         }
@@ -281,7 +297,8 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
         if (!isNaN(ratio)) {
           return {
             property: 'lineHeight',
-            value: { value: ratio * 100, unit: 'PERCENT' },
+            value: ratio * 100,
+            unit: 'PERCENT',
             variant: 'arbitrary'
           };
         }
@@ -412,26 +429,122 @@ export function parseTextStyleValue(className: string): ParsedStyle | null {
   // Line height
   if (prefix.startsWith('leading-')) {
     const value = prefix.replace('leading-', '');
-    const preset = LINE_HEIGHT_MAP[value as keyof typeof LINE_HEIGHT_MAP];
-    if (preset) {
+    
+    // AUTO 처리
+    if (value === 'auto') {
       return {
         property: 'lineHeight',
-        value: { value: preset, unit: 'PERCENT' },
+        value: 0,
+        unit: 'AUTO',
         variant: 'preset'
       };
+    }
+    
+    // 프리셋 값 처리
+    if (LINE_HEIGHT_MAP[value as keyof typeof LINE_HEIGHT_MAP] !== undefined) {
+      return {
+        property: 'lineHeight',
+        value: LINE_HEIGHT_MAP[value as keyof typeof LINE_HEIGHT_MAP],
+        unit: 'PERCENT',
+        variant: 'preset'
+      };
+    }
+
+    // 임의값 처리
+    if (value.startsWith('[') && value.endsWith(']')) {
+      const arbitraryValue = value.slice(1, -1);
+      
+      // 퍼센트 값 처리
+      if (arbitraryValue.endsWith('%')) {
+        const percent = parseFloat(arbitraryValue);
+        if (!isNaN(percent)) {
+          return {
+            property: 'lineHeight',
+            value: percent,
+            unit: 'PERCENT',
+            variant: 'arbitrary'
+          };
+        }
+      }
+      
+      // 픽셀 값 처리
+      if (arbitraryValue.endsWith('px')) {
+        const pixels = parseFloat(arbitraryValue);
+        if (!isNaN(pixels)) {
+          return {
+            property: 'lineHeight',
+            value: pixels,
+            unit: 'PIXELS',
+            variant: 'arbitrary'
+          };
+        }
+      }
+      
+      // 일반 숫자 값 처리 (배수)
+      const number = parseFloat(arbitraryValue);
+      if (!isNaN(number)) {
+        return {
+          property: 'lineHeight',
+          value: number * 100,
+          unit: 'PERCENT',
+          variant: 'arbitrary'
+        };
+      }
     }
   }
 
   // Letter spacing
   if (prefix.startsWith('tracking-')) {
     const value = prefix.replace('tracking-', '');
-    const preset = LETTER_SPACING_MAP[value as keyof typeof LETTER_SPACING_MAP];
-    if (preset !== undefined) {
+    
+    // 프리셋 값 처리
+    if (LETTER_SPACING_MAP[value as keyof typeof LETTER_SPACING_MAP] !== undefined) {
       return {
         property: 'letterSpacing',
-        value: preset,
+        value: LETTER_SPACING_MAP[value as keyof typeof LETTER_SPACING_MAP],
         variant: 'preset'
       };
+    }
+
+    // 임의값 처리
+    if (value.startsWith('[') && value.endsWith(']')) {
+      const arbitraryValue = value.slice(1, -1);
+      
+      // 퍼센트 값 처리
+      if (arbitraryValue.endsWith('%')) {
+        const percent = parseFloat(arbitraryValue);
+        if (!isNaN(percent)) {
+          return {
+            property: 'letterSpacing',
+            value: percent,
+            unit: 'PERCENT',
+            variant: 'arbitrary'
+          };
+        }
+      }
+      
+      // 픽셀 값 처리
+      if (arbitraryValue.endsWith('px')) {
+        const pixels = parseFloat(arbitraryValue);
+        if (!isNaN(pixels)) {
+          return {
+            property: 'letterSpacing',
+            value: pixels,
+            unit: 'PIXELS',
+            variant: 'arbitrary'
+          };
+        }
+      }
+      
+      // 일반 숫자 값 처리
+      const number = parseFloat(arbitraryValue);
+      if (!isNaN(number)) {
+        return {
+          property: 'letterSpacing',
+          value: number,
+          variant: 'arbitrary'
+        };
+      }
     }
   }
 

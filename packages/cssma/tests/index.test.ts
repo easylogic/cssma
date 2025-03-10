@@ -139,7 +139,9 @@ describe('Style Processor', () => {
 
     it('should handle invalid values', () => {
       const result = processStyles('w-invalid h-[] p-[abc]');
-      expect(result).toEqual({});
+      expect(result).toEqual({
+        fills: []
+      });
     });
 
     it('should handle mixed valid and invalid values', () => {

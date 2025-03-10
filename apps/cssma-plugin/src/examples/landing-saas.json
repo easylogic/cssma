@@ -1,0 +1,182 @@
+{
+  "type": "FRAME",
+  "name": "SaaS Landing Page",
+  "styles": "flex-col w-auto",
+  "children": [
+    {
+      "type": "FRAME",
+      "name": "Hero Section",
+      "styles": "flex-col items-center w-full px-[24] py-[80] bg-[#0F172A]",
+      "children": [
+        {
+          "type": "FRAME",
+          "name": "Hero Content",
+          "styles": "flex-col items-center text-center max-w-[720] gap-[24]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Hero Eyebrow",
+              "styles": "text-sm font-medium text-[#3B82F6]",
+              "text": "INTRODUCING OUR PLATFORM"
+            },
+            {
+              "type": "TEXT",
+              "name": "Hero Title",
+              "styles": "text-5xl font-bold text-white",
+              "text": "Scale Your SaaS Business with Confidence"
+            },
+            {
+              "type": "TEXT",
+              "name": "Hero Description",
+              "styles": "text-xl text-[#94A3B8]",
+              "text": "All-in-one platform to manage your SaaS business. Analytics, customer management, and billing in one place."
+            },
+            {
+              "type": "FRAME",
+              "name": "Hero Actions",
+              "styles": "flex-row items-center gap-[16] mt-[16]",
+              "children": [
+                {
+                  "type": "FRAME",
+                  "name": "Primary CTA",
+                  "styles": "w-auto px-[24] py-[14] bg-[#3B82F6] hover:bg-[#2563EB] rounded-md",
+                  "children": [
+                    {
+                      "type": "TEXT",
+                      "name": "Button Text",
+                      "styles": "text-base font-medium text-white",
+                      "text": "Start Free Trial"
+                    }
+                  ]
+                },
+                {
+                  "type": "FRAME",
+                  "name": "Secondary CTA",
+                  "styles": "w-auto px-[24] py-[14] border border-[#334155] hover:border-[#94A3B8] rounded-md",
+                  "children": [
+                    {
+                      "type": "TEXT",
+                      "name": "Button Text",
+                      "styles": "text-base font-medium text-white",
+                      "text": "Schedule Demo"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "FRAME",
+          "name": "Stats Section",
+          "styles": "flex-row justify-center items-center w-full gap-[64] mt-[64] p-[32] bg-[#1E293B] rounded-lg",
+          "children": [
+            {
+              "type": "FRAME",
+              "name": "Stat Item",
+              "styles": "flex-col items-center gap-[8]",
+              "children": [
+                {
+                  "type": "TEXT",
+                  "name": "Stat Number",
+                  "styles": "text-4xl font-bold text-white",
+                  "text": "10k+"
+                },
+                {
+                  "type": "TEXT",
+                  "name": "Stat Label",
+                  "styles": "text-sm text-[#94A3B8]",
+                  "text": "Active Users"
+                }
+              ]
+            },
+            {
+              "type": "FRAME",
+              "name": "Stat Item",
+              "styles": "flex-col items-center gap-[8]",
+              "children": [
+                {
+                  "type": "TEXT",
+                  "name": "Stat Number",
+                  "styles": "text-4xl font-bold text-white",
+                  "text": "99.9%"
+                },
+                {
+                  "type": "TEXT",
+                  "name": "Stat Label",
+                  "styles": "text-sm text-[#94A3B8]",
+                  "text": "Uptime"
+                }
+              ]
+            },
+            {
+              "type": "FRAME",
+              "name": "Stat Item",
+              "styles": "flex-col items-center gap-[8]",
+              "children": [
+                {
+                  "type": "TEXT",
+                  "name": "Stat Number",
+                  "styles": "text-4xl font-bold text-white",
+                  "text": "24/7"
+                },
+                {
+                  "type": "TEXT",
+                  "name": "Stat Label",
+                  "styles": "text-sm text-[#94A3B8]",
+                  "text": "Support"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "FRAME",
+      "name": "Features Section",
+      "styles": "flex-col w-full px-[48] py-[80] bg-white",
+      "children": [
+        {
+          "type": "FRAME",
+          "name": "Feature Grid",
+          "styles": "grid grid-cols-3 w-full gap-[32]",
+          "children": [
+            {
+              "type": "FRAME",
+              "name": "Feature Card",
+              "styles": "flex-col gap-[16] p-[24]",
+              "children": [
+                {
+                  "type": "RECTANGLE",
+                  "name": "Feature Icon",
+                  "styles": "w-[40] h-[40] bg-[#EFF6FF] rounded-lg",
+                  "children": [
+                    {
+                      "type": "TEXT",
+                      "name": "Icon",
+                      "styles": "flex items-center justify-center w-full h-full text-[#3B82F6]",
+                      "text": "📊"
+                    }
+                  ]
+                },
+                {
+                  "type": "TEXT",
+                  "name": "Feature Title",
+                  "styles": "text-lg font-semibold text-[#111827]",
+                  "text": "Advanced Analytics"
+                },
+                {
+                  "type": "TEXT",
+                  "name": "Feature Description",
+                  "styles": "text-base text-[#4B5563]",
+                  "text": "Get deep insights into your business with real-time analytics and custom reports."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 

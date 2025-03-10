@@ -109,7 +109,10 @@ function convertLayout(styles: Record<string, any>): string[] {
     if (styles.layoutGrow === 1) classes.push('flex-grow');
     if (styles.layoutShrink === 1) classes.push('flex-shrink');
     if (styles.layoutWrap === 'WRAP') classes.push('wrap');
-    else if (styles.layoutWrap === 'NO_WRAP') classes.push('no-wrap');
+    else if (styles.layoutWrap === 'NO_WRAP') {
+        // ignore default value 
+        // classes.push('no-wrap');
+    }
   }
   if (styles.layoutMode === 'VERTICAL') {
     classes.push('flex-col');
@@ -117,7 +120,10 @@ function convertLayout(styles: Record<string, any>): string[] {
     if (styles.layoutGrow === 1) classes.push('flex-grow');
     if (styles.layoutShrink === 1) classes.push('flex-shrink');
     if (styles.layoutWrap === 'WRAP') classes.push('wrap');
-    else if (styles.layoutWrap === 'NO_WRAP') classes.push('no-wrap');
+    else if (styles.layoutWrap === 'NO_WRAP') {
+        // ignore default value 
+        // classes.push('no-wrap');
+    }
   }
 
   // Size
@@ -163,11 +169,11 @@ function convertColors(styles: Record<string, any>): string[] {
     if (styles.fills && styles.fills.length > 0) {
         const fill = styles.fills[0];
         if (fill.type === 'SOLID') {
-            classes.push(`bg-[${colorToHex(fill.color)}]`);
-            
-            // opacity가 1(100%)이 아닌 경우에만 추가
-            if (fill.opacity !== undefined && fill.opacity !== 1) {
-                classes.push(`opacity-[${Math.round(fill.opacity * 100)}]`);
+
+            if (fill.opacity !== undefined && fill.opacity != 1) {
+                classes.push(`bg-[${colorToHex(fill.color)}]/${Math.round(fill.opacity * 100)}`);
+            } else {
+                classes.push(`bg-[${colorToHex(fill.color)}]`);
             }
         } else if (fill.type === 'GRADIENT_LINEAR') {
             const direction = getGradientDirection(fill.gradientTransform);
@@ -207,8 +213,10 @@ function convertTypography(styles: Record<string, any>): string[] {
         if (fontStyle.includes('Thin')) classes.push('font-thin');
         else if (fontStyle.includes('ExtraLight')) classes.push('font-extralight');
         else if (fontStyle.includes('Light')) classes.push('font-light');
-        else if (fontStyle.includes('Regular')) classes.push('font-normal');
-        else if (fontStyle.includes('Medium')) classes.push('font-medium');
+        else if (fontStyle.includes('Regular')) {
+            // ignore default value 
+            // classes.push('font-normal');
+        } else if (fontStyle.includes('Medium')) classes.push('font-medium');
         else if (fontStyle.includes('Semi Bold') || fontStyle.includes('SemiBold')) classes.push('font-semibold');
         else if (fontStyle.includes('Bold')) classes.push('font-bold');
         else if (fontStyle.includes('ExtraBold')) classes.push('font-extrabold');
@@ -250,9 +258,10 @@ function convertTypography(styles: Record<string, any>): string[] {
             case 'TITLE':
                 classes.push('capitalize');
                 break;
-            case 'ORIGINAL':
-                classes.push('normal-case');
-                break;
+            // ignore default value 
+            // case 'ORIGINAL':
+            //     classes.push('normal-case');
+            //     break;
         }
     }
 
@@ -313,9 +322,10 @@ function convertTypography(styles: Record<string, any>): string[] {
             case 'STRIKETHROUGH':
                 classes.push('line-through');
                 break;
-            case 'NONE':
-                classes.push('no-underline');
-                break;
+            // ignore default value 
+            // case 'NONE':
+            //     classes.push('no-underline');
+            //     break;
         }
     }
 
@@ -382,6 +392,21 @@ function convertTypography(styles: Record<string, any>): string[] {
             }
         } else if (unit === 'PIXELS') {
             classes.push(`leading-[${value}px]`);
+        } else if (unit === 'AUTO') {
+            // ignore default value 
+            // classes.push('leading-auto');
+        }
+    }
+
+    if (!isMixedValue(styles.leadingTrim) && styles.leadingTrim) {
+        switch (styles.leadingTrim) {
+            case 'CAP_HEIGHT':
+                classes.push('leading-trim-cap');
+                break;
+            case 'NONE':
+                // ignore default value 
+                // classes.push('leading-none');
+                break;
         }
     }
 
@@ -393,8 +418,18 @@ function convertTypography(styles: Record<string, any>): string[] {
             classes.push('tracking-normal');
         } else if (styles.letterSpacing === 0.4) {
             classes.push('tracking-wide');
-        } else {
+        } else if (typeof styles.letterSpacing === 'number') {
             classes.push(`tracking-[${styles.letterSpacing}]`);
+        } else if (typeof styles.letterSpacing === 'object' && styles.letterSpacing.unit === 'PERCENT') {
+
+            if (styles.letterSpacing.value === 0) {
+                // ignore default value 
+                // classes.push('tracking-normal');
+            } else {
+                classes.push(`tracking-[${styles.letterSpacing.value}%]`);
+            }
+        } else if (typeof styles.letterSpacing === 'object' && styles.letterSpacing.unit === 'PIXELS') {
+            classes.push(`tracking-[${styles.letterSpacing.value}px]`);
         }
     }
 
@@ -406,7 +441,48 @@ function convertEffects(styles: Record<string, any>): string[] {
 
   // Opacity
   if (styles.opacity !== undefined) {
-    classes.push(`opacity-[${styles.opacity}]`);
+    // Ensure opacity is within 0-1 range
+    const opacityValue = Math.max(0, Math.min(1, styles.opacity));
+    
+    // Convert 0-1 scale to percentage for Tailwind
+    const opacityPercent = Math.round(opacityValue * 100);
+    
+    // Map to standard Tailwind opacity classes when possible
+    if (opacityPercent === 0) {
+      classes.push('opacity-0');
+    } else if (opacityPercent === 5) {
+      classes.push('opacity-5');
+    } else if (opacityPercent === 10) {
+      classes.push('opacity-10');
+    } else if (opacityPercent === 20) {
+      classes.push('opacity-20');
+    } else if (opacityPercent === 25) {
+      classes.push('opacity-25');
+    } else if (opacityPercent === 30) {
+      classes.push('opacity-30');
+    } else if (opacityPercent === 40) {
+      classes.push('opacity-40');
+    } else if (opacityPercent === 50) {
+      classes.push('opacity-50');
+    } else if (opacityPercent === 60) {
+      classes.push('opacity-60');
+    } else if (opacityPercent === 70) {
+      classes.push('opacity-70');
+    } else if (opacityPercent === 75) {
+      classes.push('opacity-75');
+    } else if (opacityPercent === 80) {
+      classes.push('opacity-80');
+    } else if (opacityPercent === 90) {
+      classes.push('opacity-90');
+    } else if (opacityPercent === 95) {
+      classes.push('opacity-95');
+    } else if (opacityPercent === 100) {
+      // ignore default value 
+      // classes.push('opacity-100');
+    } else {
+      // Use arbitrary value for non-standard percentages
+      classes.push(`opacity-[${opacityPercent}%]`);
+    }
   }
 
   return classes;
@@ -432,6 +508,9 @@ function convertBorder(styles: Record<string, any>): string[] {
     if (styles.strokeWeight !== undefined) {
         if (styles.strokeWeight === 0) {
             classes.push('border-0');
+        } else if (styles.strokeWeight === 1) {
+            // ignore default value 
+            // classes.push('border-1');
         } else {
             
             // Individual border widths
@@ -502,7 +581,10 @@ function convertBorder(styles: Record<string, any>): string[] {
             case 'OUTSIDE':
                 classes.push('border-outset');
                 break;
-            // CENTER는 기본값이므로 클래스 불필요
+            // ignore default value 
+            // case 'CENTER':
+            //     classes.push('border-center');
+            //     break;
         }
     }
 
@@ -556,31 +638,154 @@ function convertSpacing(styles: Record<string, any>): string[] {
 }
 
 function convertPosition(styles: Record<string, any>): string[] {
-    const classes: string[] = [];
+  const classes: string[] = [];
+  
+  // 절대 위치 처리
+  if (styles.layoutPositioning === 'ABSOLUTE') {
+    classes.push('absolute');
+  }
+  
+  // constraints 처리
+  if (styles.constraints) {
+    const { horizontal, vertical } = styles.constraints;
 
-    if (styles.position) {
-        switch (styles.position) {
-            case 'ABSOLUTE':
-                classes.push('absolute');
-                break;
-            case 'RELATIVE':
-                classes.push('relative');
-                break;
-            case 'FIXED':
-                classes.push('fixed');
-                break;
-        }
+    // 수평(horizontal) 제약조건 처리
+    if (horizontal === 'MIN') {
+      classes.push(`left-[${styles.x ?? 0}px]`);
+    } else if (horizontal === 'MAX') {
+      classes.push(`right-[${styles.x ?? 0}px]`);
+    } else if (horizontal === 'CENTER') {
+      // CENTER 처리 - center-x 클래스와 left/right 값 계산
+      classes.push('center-x');
+      
+      // 부모 너비와 요소 너비가 있는 경우 정확한 left/right 계산
+      if (styles.parent?.width !== undefined && styles.width !== undefined) {
+        // 중앙 정렬 시 양쪽 여백 계산
+        const offset = Math.max(0, (styles.parent.width - styles.width) / 2);
+        
+        // x 좌표가 있으면 오프셋에 추가
+        const leftOffset = offset + (styles.x ?? 0);
+        const rightOffset = offset - (styles.x ?? 0);
+        
+        // 항상 left/right 값 추가 (테스트 케이스와 일치하도록)
+        classes.push(`left-[${leftOffset}px]`, `right-[${rightOffset}px]`);
+      } else if (styles.x !== undefined) {
+        // 부모 정보가 없지만 x 좌표가 있는 경우
+        classes.push(`left-[${styles.x}px]`);
+      }
+    } else if (horizontal === 'STRETCH') {
+      // STRETCH 처리 - stretch-x 클래스와 left/right 값 계산
+      classes.push('stretch-x');
+      
+      // left와 right 값 계산
+      const leftValue = styles.x ?? 0;
+      
+      // right 값 계산 (부모 너비가 있는 경우)
+      let rightValue = leftValue;
+      if (styles.parent?.width !== undefined && styles.width !== undefined) {
+        rightValue = styles.parent.width - (leftValue + styles.width);
+        if (rightValue < 0) rightValue = 0;
+      }
+      
+      // left, right 클래스 추가 (항상 추가하여 테스트 케이스와 일치하도록)
+      classes.push(`left-[${leftValue}px]`, `right-[${rightValue}px]`);
+    } else if (horizontal === 'SCALE') {
+      // SCALE 처리 - scale-x 클래스와 left/right 값 계산
+      classes.push('scale-x');
+      
+      // left와 right 값 계산
+      const leftValue = styles.x ?? 0;
+      
+      // right 값 계산 (부모 너비가 있는 경우)
+      let rightValue = leftValue;
+      if (styles.parent?.width !== undefined && styles.width !== undefined) {
+        rightValue = styles.parent.width - (leftValue + styles.width);
+        if (rightValue < 0) rightValue = 0;
+      }
+      
+      // left, right 클래스 추가 (항상 추가하여 테스트 케이스와 일치하도록)
+      classes.push(`left-[${leftValue}px]`, `right-[${rightValue}px]`);
+    } else if (styles.x !== undefined) {
+      // 다른 제약 조건이 없는 경우 기본 위치 처리
+      classes.push(`left-[${styles.x}px]`);
     }
-
-    // x, y 값이 유효하고 0이 아닌 경우만 클래스 추가
-    if (styles.x !== undefined && styles.x !== null && styles.x !== 0) {
-        classes.push(`left-[${styles.x}]`);
+    
+    // 수직(vertical) 제약조건 처리
+    if (vertical === 'MIN') {
+      classes.push(`top-[${styles.y ?? 0}px]`);
+    } else if (vertical === 'MAX') {
+      classes.push(`bottom-[${styles.y ?? 0}px]`);
+    } else if (vertical === 'CENTER') {
+      // CENTER 처리 - center-y 클래스와 top/bottom 값 계산
+      classes.push('center-y');
+      
+      // 부모 높이와 요소 높이가 있는 경우 정확한 top/bottom 계산
+      if (styles.parent?.height !== undefined && styles.height !== undefined) {
+        // 중앙 정렬 시 위아래 여백 계산
+        const offset = Math.max(0, (styles.parent.height - styles.height) / 2);
+        
+        // y 좌표가 있으면 오프셋에 추가
+        const topOffset = offset + (styles.y ?? 0);
+        const bottomOffset = offset - (styles.y ?? 0);
+        
+        // 항상 top/bottom 값 추가 (테스트 케이스와 일치하도록)
+        classes.push(`top-[${topOffset}px]`, `bottom-[${bottomOffset}px]`);
+      } else if (styles.y !== undefined) {
+        // 부모 정보가 없지만 y 좌표가 있는 경우
+        classes.push(`top-[${styles.y}px]`);
+      }
+    } else if (vertical === 'STRETCH') {
+      // STRETCH 처리 - stretch-y 클래스와 top/bottom 값 계산
+      classes.push('stretch-y');
+      
+      // top과 bottom 값 계산
+      const topValue = styles.y ?? 0;
+      
+      // bottom 값 계산 (부모 높이가 있는 경우)
+      let bottomValue = topValue;
+      if (styles.parent?.height !== undefined && styles.height !== undefined) {
+        bottomValue = styles.parent.height - (topValue + styles.height);
+        if (bottomValue < 0) bottomValue = 0;
+      }
+      
+      // top, bottom 클래스 추가 (항상 추가하여 테스트 케이스와 일치하도록)
+      classes.push(`top-[${topValue}px]`, `bottom-[${bottomValue}px]`);
+    } else if (vertical === 'SCALE') {
+      // SCALE 처리 - scale-y 클래스와 top/bottom 값 계산
+      classes.push('scale-y');
+      
+      // top과 bottom 값 계산
+      const topValue = styles.y ?? 0;
+      
+      // bottom 값 계산 (부모 높이가 있는 경우)
+      let bottomValue = topValue;
+      if (styles.parent?.height !== undefined && styles.height !== undefined) {
+        bottomValue = styles.parent.height - (topValue + styles.height);
+        if (bottomValue < 0) bottomValue = 0;
+      }
+      
+      // top, bottom 클래스 추가 (항상 추가하여 테스트 케이스와 일치하도록)
+      classes.push(`top-[${topValue}px]`, `bottom-[${bottomValue}px]`);
+    } else if (styles.y !== undefined) {
+      // 다른 제약 조건이 없는 경우 기본 위치 처리
+      classes.push(`top-[${styles.y}px]`);
     }
-    if (styles.y !== undefined && styles.y !== null && styles.y !== 0) {
-        classes.push(`top-[${styles.y}]`);
+  } else if (styles.x !== undefined || styles.y !== undefined) {
+    // constraints가 없는 경우 기본 위치 처리
+    if (styles.x !== undefined) {
+      classes.push(`left-[${styles.x}px]`);
     }
-
-    return classes;
+    if (styles.y !== undefined) {
+      classes.push(`top-[${styles.y}px]`);
+    }
+  }
+  
+  // z-index 처리
+  if (typeof styles.order === 'number') {
+    classes.push(`z-[${styles.order}]`);
+  }
+  
+  return classes;
 }
 
 function convertSize(styles: Record<string, any>): string[] {

@@ -12,41 +12,30 @@ import { parseBlendStyleValue } from './blend';
 import { parseFilterStyleValue } from './filter';
 import { parseAspectStyleValue } from './aspect';
 import { parseOverflowStyleValue } from './overflow';
-import { parsePositionStyleValue } from './position';
+import { parsePositionStyleValue, parsePositionStyles } from './position';
 
-// 폰트 상태를 저장하는 클래스 import
 import { FontState } from './font';
 
-/**
- * Tailwind CSS 스타일 값을 파싱합니다.
- * 프리셋 값과 임의 값 모두 처리합니다.
- */
 export function parseStyleValue(className: string, fontState?: FontState): ParsedStyle | null {
-  // Position 관련 스타일
+
   const positionStyle = parsePositionStyleValue(className);
   if (positionStyle) return positionStyle;
 
-  // Transform 관련 스타일
   const transformStyle = parseTransformStyleValue(className);
   if (transformStyle) return transformStyle;
 
-  // Blend mode 관련 스타일
   const blendStyle = parseBlendStyleValue(className);
   if (blendStyle) return blendStyle;
 
-  // Filter 관련 스타일
   const filterStyle = parseFilterStyleValue(className);
   if (filterStyle) return filterStyle;
 
-  // Aspect ratio 관련 스타일
   const aspectStyle = parseAspectStyleValue(className);
   if (aspectStyle) return aspectStyle;
 
-  // Overflow 관련 스타일
   const overflowStyle = parseOverflowStyleValue(className);
   if (overflowStyle) return overflowStyle;
 
-  // Background 관련 스타일
   if (className.startsWith('bg-') || 
       className.startsWith('from-') || 
       className.startsWith('via-') || 
@@ -54,7 +43,6 @@ export function parseStyleValue(className: string, fontState?: FontState): Parse
     return parseBackgroundStyleValue(className);
   }
 
-  // Text 관련 스타일
   if (className.startsWith('text-') || 
       className.startsWith('text-wrap') ||
       className.startsWith('align-') ||
@@ -68,19 +56,16 @@ export function parseStyleValue(className: string, fontState?: FontState): Parse
     return parseTextStyleValue(className);
   }
 
-  // Font 관련 스타일
   if (className.startsWith('font-') || 
       className === 'italic' || 
       className === 'not-italic') {
     return parseFontStyleValue(className);
   }
 
-  // Border 관련 스타일
   if (className.startsWith('border') || className.startsWith('rounded')) {
     return parseBorderStyleValue(className);
   }
 
-  // Layout 관련 스타일
   if (className.startsWith('flex-') || 
       className.startsWith('items-') || 
       className.startsWith('justify-') || 
@@ -89,17 +74,14 @@ export function parseStyleValue(className: string, fontState?: FontState): Parse
     return parseLayoutValue(className);
   }
 
-  // Spacing 관련 스타일
   if (className.startsWith('gap-') || className.startsWith('p')) {
     return parseSpacingValue(className);
   }
 
-  // Shape 관련 스타일
   if (className.startsWith('opacity-')) {
     return parseShapeStyleValue(className);
   }
 
-  // Shadow 관련 스타일
   if (className.startsWith('shadow')) {
     return parseShadowStyleValue(className);
   }
@@ -107,15 +89,34 @@ export function parseStyleValue(className: string, fontState?: FontState): Parse
   return null;
 }
 
-/**
- * 여러 Tailwind CSS 클래스를 파싱합니다.
- */
 export function parseStyles(classNames: string): ParsedStyle[] {
-  const classes = classNames.split(' ').filter(Boolean);
+  let allClasses = classNames.split(' ').filter(Boolean);
   const fontState = new FontState();
   const styles: ParsedStyle[] = [];
 
-  for (const className of classes) {
+  // Position 관련 클래스들 먼저 처리
+  const positionClasses = allClasses.filter(cls => 
+    cls === 'absolute' || 
+    cls === 'relative' ||
+    cls.startsWith('left-') || 
+    cls.startsWith('right-') || 
+    cls.startsWith('top-') || 
+    cls.startsWith('bottom-') ||
+    cls.startsWith('center-') ||
+    cls.startsWith('stretch-')
+  );
+
+  if (positionClasses.length > 0) {
+    const positionStyle = parsePositionStyles(positionClasses);
+    if (positionStyle) {
+      styles.push(positionStyle);
+    }
+    // 처리된 클래스들 제외하고 나머지 처리
+    allClasses = allClasses.filter(cls => !positionClasses.includes(cls));
+  }
+
+  // all classes processed
+  for (const className of allClasses) {
     const style = parseStyleValue(className, fontState);
     if (style) {
       styles.push(style);

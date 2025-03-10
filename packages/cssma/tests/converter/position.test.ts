@@ -4,36 +4,28 @@ import { ParsedStyle } from '../../src/types';
 
 describe('Position Converter', () => {
   describe('Position Type', () => {
-    it('should convert position type values', () => {
-      const testCases: { input: ParsedStyle; expected: any }[] = [
+    it('should convert layoutPositioning values', () => {
+      const testCases: { input: ParsedStyle[]; expected: any }[] = [
         {
-          input: {
-            property: 'position',
+          input: [{
+            property: 'layoutPositioning',
             value: 'ABSOLUTE',
             variant: 'preset'
-          },
+          }],
           expected: {
-            position: 'ABSOLUTE'
+            layoutPositioning: 'ABSOLUTE',
+            constraints: {}
           }
         },
         {
-          input: {
-            property: 'position',
-            value: 'RELATIVE',
+          input: [{
+            property: 'layoutPositioning',
+            value: 'AUTO',
             variant: 'preset'
-          },
+          }],
           expected: {
-            position: 'RELATIVE'
-          }
-        },
-        {
-          input: {
-            property: 'position',
-            value: 'FIXED',
-            variant: 'preset'
-          },
-          expected: {
-            position: 'FIXED'
+            layoutPositioning: 'AUTO',
+            constraints: {}
           }
         }
       ];
@@ -45,26 +37,42 @@ describe('Position Converter', () => {
   });
 
   describe('Position Values', () => {
-    it('should convert x and y position values', () => {
-      const testCases: { input: ParsedStyle; expected: any }[] = [
+    it('should convert basic position values', () => {
+      const testCases: { input: ParsedStyle[]; expected: any }[] = [
         {
-          input: {
-            property: 'x',
+          input: [{
+            property: 'position',
+            direction: 'left',
             value: 100,
-            variant: 'arbitrary'
-          },
+            unit: 'px',
+            variant: 'arbitrary',
+            constraints: { horizontal: 'MIN' }
+          }],
           expected: {
-            x: 100
+            position: {
+              direction: 'left',
+              value: 100,
+              unit: 'px'
+            },
+            constraints: { horizontal: 'MIN' }
           }
         },
         {
-          input: {
-            property: 'y',
+          input: [{
+            property: 'position',
+            direction: 'right',
             value: 200,
-            variant: 'arbitrary'
-          },
+            unit: '%',
+            variant: 'arbitrary',
+            constraints: { horizontal: 'MAX' }
+          }],
           expected: {
-            y: 200
+            position: {
+              direction: 'right',
+              value: 200,
+              unit: '%'
+            },
+            constraints: { horizontal: 'MAX' }
           }
         }
       ];
@@ -73,29 +81,121 @@ describe('Position Converter', () => {
         expect(convertPositionToFigma(input)).toEqual(expected);
       });
     });
-  });
 
-  describe('Z-Index', () => {
-    it('should convert z-index values', () => {
-      const testCases: { input: ParsedStyle; expected: any }[] = [
+    it('should merge multiple position values', () => {
+      const input: ParsedStyle[] = [
         {
-          input: {
-            property: 'zIndex',
-            value: 1,
-            variant: 'preset'
-          },
+          property: 'position',
+          direction: 'left',
+          value: 100,
+          unit: 'px',
+          variant: 'arbitrary',
+          constraints: { horizontal: 'MIN' }
+        },
+        {
+          property: 'position',
+          direction: 'top',
+          value: 200,
+          unit: 'px',
+          variant: 'arbitrary',
+          constraints: { vertical: 'MIN' }
+        }
+      ];
+
+      expect(convertPositionToFigma(input)).toEqual({
+        position: {
+          direction: 'top',
+          value: 200,
+          unit: 'px'
+        },
+        constraints: {
+          horizontal: 'MIN',
+          vertical: 'MIN'
+        }
+      });
+    });
+
+    it('should convert center position values', () => {
+      const testCases: { input: ParsedStyle[]; expected: any }[] = [
+        {
+          input: [{
+            property: 'position',
+            direction: 'center-x',
+            value: 10,
+            unit: 'px',
+            variant: 'arbitrary',
+            constraints: { horizontal: 'CENTER' }
+          }],
           expected: {
-            order: 1
+            position: {
+              direction: 'center-x',
+              value: 10,
+              unit: 'px'
+            },
+            constraints: { horizontal: 'CENTER' }
           }
         },
         {
-          input: {
-            property: 'zIndex',
-            value: 10,
-            variant: 'arbitrary'
-          },
+          input: [{
+            property: 'position',
+            direction: 'center-y',
+            value: 20,
+            unit: '%',
+            variant: 'arbitrary',
+            constraints: { vertical: 'CENTER' }
+          }],
           expected: {
-            order: 10
+            position: {
+              direction: 'center-y',
+              value: 20,
+              unit: '%'
+            },
+            constraints: { vertical: 'CENTER' }
+          }
+        }
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        expect(convertPositionToFigma(input)).toEqual(expected);
+      });
+    });
+
+    it('should convert stretch position values', () => {
+      const testCases: { input: ParsedStyle[]; expected: any }[] = [
+        {
+          input: [{
+            property: 'position',
+            direction: 'stretch-x',
+            value: 10,
+            unit: 'px',
+            variant: 'arbitrary',
+            constraints: { horizontal: 'STRETCH' }
+          }],
+          expected: {
+            position: {
+              direction: 'stretch-x',
+              value: 10,
+              unit: 'px'
+            },
+            constraints: { horizontal: 'STRETCH' }
+          }
+        },
+        {
+          input: [{
+            property: 'position',
+            direction: 'stretch-y',
+            value: 20,
+            unit: '%',
+            variant: 'arbitrary',
+            constraints: { vertical: 'STRETCH' }
+          }],
+          expected: {
+            position: {
+              direction: 'stretch-y',
+              value: 20,
+              unit: '%'
+            },
+            constraints: { vertical: 'STRETCH' }
           }
         }
       ];
@@ -107,29 +207,25 @@ describe('Position Converter', () => {
   });
 
   describe('Constraints', () => {
-    it('should handle position with constraints', () => {
-      const testCases: { input: ParsedStyle; expected: any }[] = [
+    it('should convert explicit constraints', () => {
+      const testCases: { input: ParsedStyle[]; expected: any }[] = [
         {
-          input: {
-            property: 'x',
-            value: 100,
-            variant: 'arbitrary',
-            constraints: { horizontal: 'MIN' }
-          },
+          input: [{
+            property: 'constraints',
+            value: { horizontal: 'MIN' },
+            variant: 'preset'
+          }],
           expected: {
-            x: 100,
             constraints: { horizontal: 'MIN' }
           }
         },
         {
-          input: {
-            property: 'y',
-            value: 200,
-            variant: 'arbitrary',
-            constraints: { vertical: 'MAX' }
-          },
+          input: [{
+            property: 'constraints',
+            value: { vertical: 'MAX' },
+            variant: 'preset'
+          }],
           expected: {
-            y: 200,
             constraints: { vertical: 'MAX' }
           }
         }
@@ -139,31 +235,67 @@ describe('Position Converter', () => {
         expect(convertPositionToFigma(input)).toEqual(expected);
       });
     });
-  });
 
-  describe('Invalid Values', () => {
-    it('should handle invalid values gracefully', () => {
-      const testCases: { input: ParsedStyle; expected: any }[] = [
+    it('should merge multiple constraints', () => {
+      const input: ParsedStyle[] = [
         {
-          input: {
-            property: 'position',
-            value: 'INVALID',
-            variant: 'preset'
-          },
-          expected: {}
+          property: 'constraints',
+          value: { horizontal: 'MIN' },
+          variant: 'preset'
         },
         {
-          input: {
-            property: 'x',
-            value: 'invalid',
-            variant: 'arbitrary'
-          },
-          expected: {}
+          property: 'constraints',
+          value: { vertical: 'MAX' },
+          variant: 'preset'
         }
       ];
 
-      testCases.forEach(({ input, expected }) => {
-        expect(convertPositionToFigma(input)).toEqual(expected);
+      expect(convertPositionToFigma(input)).toEqual({
+        constraints: {
+          horizontal: 'MIN',
+          vertical: 'MAX'
+        }
+      });
+    });
+  });
+
+  describe('Z-Index', () => {
+    it('should convert z-index to order', () => {
+      const input: ParsedStyle[] = [
+        {
+          property: 'zIndex',
+          value: 100,
+          variant: 'arbitrary'
+        }
+      ];
+
+      expect(convertPositionToFigma(input)).toEqual({
+        order: 100,
+        constraints: {}
+      });
+    });
+  });
+
+  describe('Figma Variables', () => {
+    it('should convert Figma variable references', () => {
+      const input: ParsedStyle[] = [
+        {
+          property: 'position',
+          direction: 'left',
+          value: 'spacing/position',
+          variant: 'figma-variable',
+          variableId: 'spacing/position',
+          constraints: { horizontal: 'MIN' }
+        }
+      ];
+
+      expect(convertPositionToFigma(input)).toEqual({
+        position: {
+          direction: 'left',
+          value: 'spacing/position',
+          variableId: 'spacing/position'
+        },
+        constraints: { horizontal: 'MIN' }
       });
     });
   });

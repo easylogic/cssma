@@ -7,6 +7,7 @@ import { convertFilterToFigma } from './filter';
 import { convertFontToFigma } from './font';
 import { convertLayoutToFigma } from './layout';
 import { convertOverflowToFigma } from './overflow';
+import { convertPositionToFigma } from './position';
 import { convertShadowToFigma } from './shadow';
 import { convertShapeToFigma } from './shape';
 import { convertSpacingToFigma } from './spacing';
@@ -27,6 +28,7 @@ export function convertStylesToFigma(
   let gradientStyles: ParsedStyle[] = [];
   let fontStyles: ParsedStyle[] = [];
   let textStyles: ParsedStyle[] = [];
+  let positionStyles: ParsedStyle[] = [];
 
   // 스타일들을 분류
   for (const style of styles) {
@@ -48,6 +50,12 @@ export function convertStylesToFigma(
         style.property.startsWith('text') || 
         style.property === 'color') {
       textStyles.push(style);
+      continue;
+    }
+
+    // 위치 속성 처리
+    if (style.property === 'position') {
+      positionStyles.push(style);
       continue;
     }
 
@@ -100,6 +108,12 @@ export function convertStylesToFigma(
     Object.assign(result, converted);
   }
 
+  // 위치 속성 처리
+  if (positionStyles.length > 0) {
+    const positionResult = convertPositionToFigma(positionStyles);
+    Object.assign(result, positionResult);
+  }
+
   // 폰트 스타일 처리
   if (fontStyles.length > 0) {
     const fontResult = convertFontToFigma(fontStyles);
@@ -126,7 +140,12 @@ export function convertStylesToFigma(
     }
   }
 
-  if (fills.length > 0) {
+  // Always set fills even when fills.length > 0
+  // Because figma.createFrame() automatically adds fills,
+  // which could result in unintended colors being added
+  if (Array.isArray(result.fills)) {
+    result.fills = [...result.fills, ...fills];
+  } else {
     result.fills = fills;
   }
 

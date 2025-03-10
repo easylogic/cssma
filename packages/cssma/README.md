@@ -1426,6 +1426,154 @@ rounded-br-lg  → borderRadiusBottomRight: 8
 rounded-bl-lg  → borderRadiusBottomLeft: 8
 ```
 
+
+### Position and Layout
+
+```typescript
+// Position Type
+absolute       → layoutPositioning: "ABSOLUTE"
+relative       → layoutPositioning: "AUTO"
+
+// Position Values with Constraints
+left-[10px]    → x: 10, constraints: { horizontal: "MIN" }
+right-[20px]   → x: 20, constraints: { horizontal: "MAX" }
+top-[30px]     → y: 30, constraints: { vertical: "MIN" }
+bottom-[40px]  → y: 40, constraints: { vertical: "MAX" }
+
+// Center Constraints
+center-x       → constraints: { horizontal: "CENTER" }
+center-y       → constraints: { vertical: "CENTER" }
+
+// Stretch Constraints
+stretch-x      → constraints: { horizontal: "STRETCH" }
+stretch-y      → constraints: { vertical: "STRETCH" }
+
+// Scale Constraints
+scale-x        → constraints: { horizontal: "SCALE" }
+scale-y        → constraints: { vertical: "SCALE" }
+
+// Z-index
+z-[10]         → order: 10
+```
+
+#### Examples:
+
+```typescript
+// Basic positioning
+"absolute left-[10px] top-[20px]"
+→ {
+  layoutPositioning: "ABSOLUTE",
+  x: 10,
+  y: 20,
+  constraints: { 
+    horizontal: "MIN",
+    vertical: "MIN"
+  }
+}
+
+// Center positioning
+"absolute center-x center-y"
+→ {
+  layoutPositioning: "ABSOLUTE",
+  constraints: { 
+    horizontal: "CENTER",
+    vertical: "CENTER"
+  }
+}
+
+// Center with coordinates
+"absolute center-x left-[10px] center-y top-[20px]"
+→ {
+  layoutPositioning: "ABSOLUTE",
+  x: 10,
+  y: 20,
+  constraints: { 
+    horizontal: "CENTER",
+    vertical: "CENTER"
+  }
+}
+
+// Stretch positioning
+"absolute stretch-x stretch-y"
+→ {
+  layoutPositioning: "ABSOLUTE",
+  constraints: { 
+    horizontal: "STRETCH",
+    vertical: "STRETCH"
+  }
+}
+
+// Stretch with coordinates
+"absolute stretch-x left-[10px] right-[10px] stretch-y top-[20px] bottom-[20px]"
+→ {
+  layoutPositioning: "ABSOLUTE",
+  x: 10,
+  y: 20,
+  constraints: { 
+    horizontal: "STRETCH",
+    vertical: "STRETCH"
+  }
+}
+
+// Scale positioning
+"absolute scale-x scale-y"
+→ {
+  layoutPositioning: "ABSOLUTE",
+  constraints: { 
+    horizontal: "SCALE",
+    vertical: "SCALE"
+  }
+}
+
+// Scale with coordinates
+"absolute scale-x left-[0px] right-[100px] scale-y top-[0px] bottom-[100px]"
+→ {
+  layoutPositioning: "ABSOLUTE",
+  x: 0,
+  y: 0,
+  width: 100,
+  height: 100,
+  parent: {
+    width: 200,
+    height: 200
+  },
+  constraints: { 
+    horizontal: "SCALE",
+    vertical: "SCALE"
+  }
+}
+
+// Mixed positioning
+"absolute left-[10px] center-y"
+→ {
+  layoutPositioning: "ABSOLUTE",
+  x: 10,
+  constraints: { 
+    horizontal: "MIN",
+    vertical: "CENTER"
+  }
+}
+```
+
+#### Constraint Behavior:
+
+1. **MIN (left/top)**: Element is positioned relative to the parent's left/top edge.
+2. **MAX (right/bottom)**: Element is positioned relative to the parent's right/bottom edge.
+3. **CENTER**: Element is centered along the horizontal/vertical axis, with optional offset.
+4. **STRETCH**: Element stretches to fill the parent container, with optional margins on both sides.
+5. **SCALE**: Element maintains its aspect ratio while scaling to fit the parent container.
+
+#### Important Notes:
+
+1. When using `CENTER` constraints, both `center-x`/`center-y` classes and corresponding position values (`left`/`top`) can be specified.
+2. When using `STRETCH` constraints, both `stretch-x`/`stretch-y` classes and corresponding position values (`left`/`right` or `top`/`bottom`) can be specified.
+3. When using `SCALE` constraints, both `scale-x`/`scale-y` classes and corresponding position values are used to determine the element's position and size relative to its parent.
+4. Position values are always specified in pixels.
+5. The `layoutPositioning` property must be set to `"ABSOLUTE"` for constraints to take effect.
+6. Multiple constraint types can be combined (e.g., `horizontal: "CENTER"` with `vertical: "STRETCH"`).
+
+
+
 ## Value Parsing Rules
 
 ### Unit Handling
@@ -1445,6 +1593,8 @@ gap-[16]       → itemSpacing: 16
 gap-4          → itemSpacing: 16  // preset values are multiplied by 4
 p-4            → padding: 16
 ```
+
+
 
 ## Figma Variables System
 
@@ -1555,5 +1705,4 @@ MIT License
 ---
 
 For more detailed usage and examples, please refer to the [documentation](../docs/spec.md).
-
 

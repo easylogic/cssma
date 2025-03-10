@@ -1,7 +1,10 @@
 // Parser Types
 export interface ParsedStyle {
   property: string;
-  value: number | number[] | string | FigmaColor | FigmaFontName | FigmaLineHeight | Shadow[];
+  value: number | number[] | string | FigmaColor | FigmaFontName | FigmaLineHeight | Shadow[] | {
+    horizontal?: 'MIN' | 'MAX' | 'SCALE' | 'CENTER' | 'STRETCH';
+    vertical?: 'MIN' | 'MAX' | 'SCALE' | 'CENTER' | 'STRETCH';
+  };
   unit?: string;
   variant?: string;  // 예: 'arbitrary' | 'preset' | 'figma-variable'
   variableId?: string;  // Figma 변수 ID
@@ -159,6 +162,20 @@ export interface FigmaGeometryProps {
   strokeAlign?: 'INSIDE' | 'OUTSIDE' | 'CENTER';
 }
 
+export type ConstraintValue = 'MIN' | 'MAX' | 'CENTER' | 'STRETCH' | 'SCALE';
+
+export type Constraints = {
+  horizontal?: ConstraintValue;
+  vertical?: ConstraintValue;
+};
+
+export type FigmaPosition = {
+  direction: 'left' | 'right' | 'top' | 'bottom' | 'center-x' | 'center-y' | 'stretch-x' | 'stretch-y';
+  value: number | string;
+  unit?: 'px' | '%';
+  variableId?: string;
+};
+
 export interface FigmaStyleProperties {
   fills?: FigmaPaint[];
   strokes?: FigmaPaint[];
@@ -190,10 +207,12 @@ export interface FigmaStyleProperties {
   textTransform?: 'NONE' | 'UPPER' | 'LOWER' | 'TITLE';
   textOverflow?: 'ELLIPSIS' | 'TRUNCATE';
   textWrap?: 'WRAP' | 'NO_WRAP';
+  leadingTrim?: 'NONE' | 'CAP_HEIGHT';
   width?: number;
   height?: number;
   layoutSizingHorizontal?: 'FIXED' | 'FILL' | 'HUG';
   layoutSizingVertical?: 'FIXED' | 'FILL' | 'HUG';
+  layoutPositioning?: 'ABSOLUTE' | 'AUTO';
   cornerRadius?: number;
   opacity?: number;
   topLeftRadius?: number;
@@ -205,23 +224,9 @@ export interface FigmaStyleProperties {
   dashPattern?: number[];  // 점선 패턴 (예: [4, 2])
   paths?: string[];        // 벡터 경로 데이터 (이전 버전 호환용)
   vectorPaths?: VectorPath[]; // 벡터 경로 데이터
-  // Position-related properties
-  position?: 'ABSOLUTE' | 'RELATIVE' | 'FIXED';
-  x?: number;
-  y?: number;
+  position?: FigmaPosition;
+  constraints?: Constraints;
   order?: number;
-  constraints?: {
-    horizontal?: 'MIN' | 'MAX' | 'SCALE' | 'CENTER' | 'STRETCH';
-    vertical?: 'MIN' | 'MAX' | 'SCALE' | 'CENTER' | 'STRETCH';
-  };
-  // Transform properties
-  rotation?: number;
-  scaleX?: number;
-  scaleY?: number;
-  skewX?: number;
-  skewY?: number;
-  transformOriginX?: number;
-  transformOriginY?: number;
 }
 
 export interface ProcessOptions {

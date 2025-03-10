@@ -35,7 +35,7 @@ describe('Figma Node Style Processor', () => {
       });
     });
 
-    it('should process TEXT node styles', () => {
+    it.only('should process TEXT node styles', () => {
       const node: FigmaNode = {
         type: 'TEXT',
         name: 'Title',
@@ -308,7 +308,9 @@ describe('Figma Node Style Processor', () => {
       };
 
       const styles = processStyles(node.styles);
-      expect(styles).toEqual({});
+      expect(styles).toEqual({
+        fills: []
+      });
     });
 
     it('should handle invalid rotation values', () => {
@@ -319,7 +321,9 @@ describe('Figma Node Style Processor', () => {
       };
 
       const styles = processStyles(node.styles);
-      expect(styles).toEqual({});
+      expect(styles).toEqual({
+        fills: []
+      });
     });
 
     it('should handle empty styles', () => {

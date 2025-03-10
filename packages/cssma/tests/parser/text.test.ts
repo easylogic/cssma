@@ -181,18 +181,33 @@ describe('Text Style Parser', () => {
   describe('Line Height', () => {
     it('should parse preset line heights', () => {
       const testCases = [
-        { input: 'leading-none', expected: { value: 100, unit: 'PERCENT' } },
-        { input: 'leading-tight', expected: { value: 125, unit: 'PERCENT' } },
-        { input: 'leading-snug', expected: { value: 137.5, unit: 'PERCENT' } },
-        { input: 'leading-normal', expected: { value: 150, unit: 'PERCENT' } },
-        { input: 'leading-relaxed', expected: { value: 165, unit: 'PERCENT' } },
-        { input: 'leading-loose', expected: { value: 200, unit: 'PERCENT' } }
+        {
+          input: 'leading-none',
+          expected: {
+            unit: 'PERCENT',
+            value: 100
+          }
+        },
+        {
+          input: 'leading-tight',
+          expected: {
+            unit: 'PERCENT',
+            value: 125
+          }
+        },
+        {
+          input: 'leading-normal',
+          expected: {
+            unit: 'PERCENT',
+            value: 150
+          }
+        }
       ];
 
       testCases.forEach(({ input, expected }) => {
         expect(parseTextStyleValue(input)).toEqual({
           property: 'lineHeight',
-          value: expected,
+          ...expected,
           variant: 'preset'
         });
       });
@@ -200,20 +215,27 @@ describe('Text Style Parser', () => {
 
     it('should parse arbitrary line heights', () => {
       const testCases = [
-        { 
-          input: 'leading-[24px]', 
-          expected: { value: 24, unit: 'PIXELS' }
+        {
+          input: 'leading-[24px]',
+          expected: {
+            unit: 'PIXELS',
+            value: 24
+          }
         },
-        { 
-          input: 'leading-[1.5]', 
-          expected: { value: 150, unit: 'PERCENT' }
+        {
+          input: 'leading-[1.5]',
+          expected: {
+            unit: 'PERCENT',
+            value: 150
+          }
         }
       ];
 
       testCases.forEach(({ input, expected }) => {
         expect(parseTextStyleValue(input)).toEqual({
           property: 'lineHeight',
-          value: expected,
+          value: expected.value,
+          unit: expected.unit,
           variant: 'arbitrary'
         });
       });

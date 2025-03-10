@@ -1,0 +1,32 @@
+{
+  "type": "FRAME",
+  "name": "Input Field",
+  "styles": "flex-col gap-[4]",
+  "children": [
+    {
+      "type": "TEXT",
+      "name": "Input Label",
+      "styles": "text-sm font-medium text-[#374151]",
+      "text": "Email address"
+    },
+    {
+      "type": "FRAME",
+      "name": "Input Container",
+      "styles": "flex-row items-center w-full px-[12] py-[8] bg-white border border-[#D1D5DB] rounded-md focus-within:ring-2 focus-within:ring-[#3B82F6] focus-within:border-transparent",
+      "children": [
+        {
+          "type": "TEXT",
+          "name": "Input Text",
+          "styles": "w-full text-base text-[#111827] placeholder-[#9CA3AF]",
+          "text": "you@example.com"
+        }
+      ]
+    },
+    {
+      "type": "TEXT",
+      "name": "Helper Text",
+      "styles": "text-sm text-[#6B7280]",
+      "text": "We'll never share your email with anyone else."
+    }
+  ]
+} 

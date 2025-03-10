@@ -1,0 +1,488 @@
+{
+  "type": "FRAME",
+  "name": "Presentation Slides",
+  "styles": "flex-col w-[1920] gap-[40]",
+  "children": [
+    {
+      "type": "FRAME",
+      "name": "Slide 1 - Hero",
+      "styles": "w-[1920] h-[1080] justify-start items-start bg-[#1a1a2e] border-inset",
+      "children": [
+        {
+          "type": "RECTANGLE",
+          "name": "Background Pattern",
+          "styles": "w-[1920] h-[1080] bg-[#29293d] border-inset fixed-left fixed-right fixed-top fixed-bottom",
+          "constraints": {
+            "horizontal": "STRETCH",
+            "vertical": "STRETCH"
+          }
+        },
+        {
+          "type": "FRAME",
+          "name": "Content",
+          "styles": "flex-col w-[1920] h-[1080] justify-center items-center p-[120] border-inset fixed-left fixed-right fixed-top fixed-bottom",
+          "constraints": {
+            "horizontal": "STRETCH",
+            "vertical": "STRETCH"
+          },
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Title",
+              "styles": "w-auto h-auto text-[140] text-white text-left align-top border-outset",
+              "text": "Future Vision"
+            },
+            {
+              "type": "TEXT",
+              "name": "Subtitle",
+              "styles": "w-[800] h-auto text-[48] text-[#e5e8eb] text-center align-top border-outset",
+              "text": "Shaping Tomorrow's Technology"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "FRAME",
+      "name": "Slide 2 - Introduction",
+      "styles": "flex-row w-[1920] h-[1080] bg-white",
+      "children": [
+        {
+          "type": "FRAME",
+          "name": "Left Panel",
+          "styles": "flex-col w-[960] h-[1080] bg-[#6366F1] p-[120] justify-center",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Section Title",
+              "styles": "w-[720] h-auto text-[80] font-bold text-white",
+              "text": "Who We Are"
+            },
+            {
+              "type": "TEXT",
+              "name": "Description",
+              "styles": "w-[720] h-auto text-[32] text-[#E5E7EB]",
+              "text": "A team of innovators dedicated to transforming ideas into reality"
+            }
+          ]
+        },
+        {
+          "type": "FRAME",
+          "name": "Right Panel",
+          "styles": "w-[960] h-[1080] bg-[#F3F4F6]"
+        }
+      ]
+    },
+    {
+      "type": "FRAME",
+      "name": "Slide 3 - Problem Statement",
+      "styles": "flex-col w-[1920] h-[1080] bg-[#111827]",
+      "children": [
+        {
+          "type": "FRAME",
+          "name": "Content",
+          "styles": "flex-col w-[1920] h-[1080] items-center justify-center p-[120]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Title",
+              "styles": "w-[1200] h-auto text-[80] font-bold text-white text-center",
+              "text": "The Challenge"
+            },
+            {
+              "type": "FRAME",
+              "name": "Problem Grid",
+              "styles": "flex-col w-[1200] gap-[40]",
+              "children": [
+                {
+                  "type": "FRAME",
+                  "name": "Problem Item",
+                  "styles": "flex-row w-[1200] h-[120] bg-[#1F2937] p-[40] items-center gap-[40]",
+                  "children": [
+                    {
+                      "type": "TEXT",
+                      "name": "Number",
+                      "styles": "w-[80] h-auto text-[48] font-bold text-[#6366F1]",
+                      "text": "01"
+                    },
+                    {
+                      "type": "TEXT",
+                      "name": "Description",
+                      "styles": "w-[960] h-auto text-[32] text-[#E5E7EB]",
+                      "text": "Current market solutions lack innovation"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "FRAME",
+      "name": "Slide 4 - Solution",
+      "styles": "flex-col w-[1920] h-[1080] bg-[#F9FAFB]",
+      "children": [
+        {
+          "type": "FRAME",
+          "name": "Content",
+          "styles": "flex-col w-[1920] h-[1080] items-center justify-center p-[120] gap-[80]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Title",
+              "styles": "w-[1200] h-auto text-[80] font-bold text-[#111827] text-center",
+              "text": "Our Solution"
+            },
+            {
+              "type": "FRAME",
+              "name": "Solution Cards",
+              "styles": "flex-row w-[1600] gap-[40] justify-center",
+              "children": [
+                {
+                  "type": "FRAME",
+                  "name": "Card",
+                  "styles": "flex-col w-[480] h-[400] bg-white p-[40] gap-[24]",
+                  "children": [
+                    {
+                      "type": "TEXT",
+                      "name": "Card Title",
+                      "styles": "w-[400] h-auto text-[32] font-bold text-[#111827]",
+                      "text": "Innovation"
+                    },
+                    {
+                      "type": "TEXT",
+                      "name": "Card Description",
+                      "styles": "w-[400] h-auto text-[24] text-[#4B5563]",
+                      "text": "Cutting-edge technology solutions"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "FRAME",
+      "name": "Slide 5 - Features",
+      "styles": "flex-col w-[1920] h-[1080] bg-[#6366F1]",
+      "children": [
+        {
+          "type": "FRAME",
+          "name": "Content",
+          "styles": "flex-col w-[1920] h-[1080] items-center justify-center p-[120] gap-[80]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Title",
+              "styles": "w-[1200] h-auto text-[80] font-bold text-white text-center",
+              "text": "Key Features"
+            },
+            {
+              "type": "FRAME",
+              "name": "Feature Grid",
+              "styles": "flex-row w-[1600] gap-[40] flex-wrap justify-center",
+              "children": [
+                {
+                  "type": "FRAME",
+                  "name": "Feature",
+                  "styles": "flex-col w-[360] h-[360] bg-white p-[40] gap-[24] items-center justify-center",
+                  "children": [
+                    {
+                      "type": "TEXT",
+                      "name": "Feature Title",
+                      "styles": "w-[280] h-auto text-[24] font-bold text-[#111827] text-center",
+                      "text": "Smart Analytics"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "FRAME",
+      "name": "Slide 6 - Statistics",
+      "styles": "flex-col w-[1920] h-[1080] bg-[#0F172A]",
+      "children": [
+        {
+          "type": "FRAME",
+          "name": "Content",
+          "styles": "flex-col w-[1920] h-[1080] items-center justify-center p-[120] gap-[80]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Title",
+              "styles": "w-[1200] h-auto text-[80] font-bold text-white text-center",
+              "text": "Impact & Results"
+            },
+            {
+              "type": "FRAME",
+              "name": "Stats Grid",
+              "styles": "flex-row w-[1600] gap-[80] justify-center",
+              "children": [
+                {
+                  "type": "FRAME",
+                  "name": "Stat Item",
+                  "styles": "flex-col w-[320] h-[320] bg-[#1F2937] p-[40] items-center justify-center gap-[24]",
+                  "children": [
+                    {
+                      "type": "TEXT",
+                      "name": "Number",
+                      "styles": "w-[240] h-auto text-[80] font-bold text-[#6366F1] text-center",
+                      "text": "98%"
+                    },
+                    {
+                      "type": "TEXT",
+                      "name": "Label",
+                      "styles": "w-[240] h-auto text-[24] text-white text-center",
+                      "text": "Customer Satisfaction"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "FRAME",
+      "name": "Slide 7 - Case Study",
+      "styles": "flex-row w-[1920] h-[1080] bg-white",
+      "children": [
+        {
+          "type": "FRAME",
+          "name": "Left Content",
+          "styles": "flex-col w-[960] h-[1080] p-[120] justify-center gap-[40]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Title",
+              "styles": "w-[720] h-auto text-[80] font-bold text-[#111827]",
+              "text": "Success Story"
+            },
+            {
+              "type": "TEXT",
+              "name": "Description",
+              "styles": "w-[720] h-auto text-[32] text-[#4B5563]",
+              "text": "How we transformed Enterprise Co.'s workflow"
+            }
+          ]
+        },
+        {
+          "type": "FRAME",
+          "name": "Right Content",
+          "styles": "w-[960] h-[1080] bg-[#F3F4F6]"
+        }
+      ]
+    },
+    {
+      "type": "FRAME",
+      "name": "Slide 8 - Team",
+      "styles": "flex-col w-[1920] h-[1080] bg-[#F3F4F6]",
+      "children": [
+        {
+          "type": "FRAME",
+          "name": "Content",
+          "styles": "flex-col w-[1920] h-[1080] items-center justify-center p-[120] gap-[80]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Title",
+              "styles": "w-[1200] h-auto text-[80] font-bold text-[#111827] text-center",
+              "text": "Meet Our Team"
+            },
+            {
+              "type": "FRAME",
+              "name": "Team Grid",
+              "styles": "flex-row w-[1600] gap-[40] justify-center",
+              "children": [
+                {
+                  "type": "FRAME",
+                  "name": "Team Member",
+                  "styles": "flex-col w-[360] h-[480] bg-white p-[40] items-center gap-[24]",
+                  "children": [
+                    {
+                      "type": "RECTANGLE",
+                      "name": "Photo",
+                      "styles": "w-[280] h-[280] bg-[#E5E7EB] rounded-full"
+                    },
+                    {
+                      "type": "TEXT",
+                      "name": "Name",
+                      "styles": "w-[280] h-auto text-[24] font-bold text-[#111827] text-center",
+                      "text": "John Smith"
+                    },
+                    {
+                      "type": "TEXT",
+                      "name": "Role",
+                      "styles": "w-[280] h-auto text-[20] text-[#4B5563] text-center",
+                      "text": "CEO & Founder"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "FRAME",
+      "name": "Slide 9 - Roadmap",
+      "styles": "w-[1920] h-[1080] bg-[#111827]",
+      "children": [
+        {
+          "type": "TEXT",
+          "name": "Title",
+          "styles": "w-[1200] h-auto text-[80] font-bold text-white text-center absolute left-[360] top-[120]",
+          "text": "Our Roadmap"
+        },
+        {
+          "type": "FRAME",
+          "name": "Timeline Line",
+          "styles": "w-[1440] h-[4] bg-[#374151] absolute left-[240] top-[540]",
+          "children": []
+        },
+        {
+          "type": "FRAME",
+          "name": "Milestone 1",
+          "styles": "w-[320] h-[240] bg-[#1F2937] p-[40] absolute left-[240] top-[320]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Date",
+              "styles": "w-[240] h-auto text-[24] font-bold text-[#6366F1] text-center",
+              "text": "Q1 2024"
+            },
+            {
+              "type": "TEXT",
+              "name": "Milestone Text",
+              "styles": "w-[240] h-auto text-[20] text-white text-center",
+              "text": "Platform Launch"
+            }
+          ]
+        },
+        {
+          "type": "FRAME",
+          "name": "Milestone 2",
+          "styles": "w-[320] h-[240] bg-[#1F2937] p-[40] absolute left-[640] top-[600]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Date",
+              "styles": "w-[240] h-auto text-[24] font-bold text-[#6366F1] text-center",
+              "text": "Q2 2024"
+            },
+            {
+              "type": "TEXT",
+              "name": "Milestone Text",
+              "styles": "w-[240] h-auto text-[20] text-white text-center",
+              "text": "Global Expansion"
+            }
+          ]
+        },
+        {
+          "type": "FRAME",
+          "name": "Milestone 3",
+          "styles": "w-[320] h-[240] bg-[#1F2937] p-[40] absolute left-[1040] top-[320]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Date",
+              "styles": "w-[240] h-auto text-[24] font-bold text-[#6366F1] text-center",
+              "text": "Q3 2024"
+            },
+            {
+              "type": "TEXT",
+              "name": "Milestone Text",
+              "styles": "w-[240] h-auto text-[20] text-white text-center",
+              "text": "New Features"
+            }
+          ]
+        },
+        {
+          "type": "FRAME",
+          "name": "Milestone 4",
+          "styles": "w-[320] h-[240] bg-[#1F2937] p-[40] absolute left-[1360] top-[600]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Date",
+              "styles": "w-[240] h-auto text-[24] font-bold text-[#6366F1] text-center",
+              "text": "Q4 2024"
+            },
+            {
+              "type": "TEXT",
+              "name": "Milestone Text",
+              "styles": "w-[240] h-auto text-[20] text-white text-center",
+              "text": "Enterprise Solutions"
+            }
+          ]
+        },
+        {
+          "type": "FRAME",
+          "name": "Connection Line 1",
+          "styles": "w-[2] h-[80] bg-[#374151] absolute left-[399] top-[540]",
+          "children": []
+        },
+        {
+          "type": "FRAME",
+          "name": "Connection Line 2",
+          "styles": "w-[2] h-[80] bg-[#374151] absolute left-[799] top-[540]",
+          "children": []
+        },
+        {
+          "type": "FRAME",
+          "name": "Connection Line 3",
+          "styles": "w-[2] h-[80] bg-[#374151] absolute left-[1199] top-[540]",
+          "children": []
+        },
+        {
+          "type": "FRAME",
+          "name": "Connection Line 4",
+          "styles": "w-[2] h-[80] bg-[#374151] absolute left-[1519] top-[540]",
+          "children": []
+        }
+      ]
+    },
+    {
+      "type": "FRAME",
+      "name": "Slide 10 - Closing",
+      "styles": "flex-col w-[1920] h-[1080] bg-[#6366F1]",
+      "children": [
+        {
+          "type": "FRAME",
+          "name": "Content",
+          "styles": "flex-col w-[1920] h-[1080] items-center justify-center p-[120] gap-[48]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Title",
+              "styles": "w-[1200] h-auto text-[140] font-bold text-white text-center",
+              "text": "Let's Connect"
+            },
+            {
+              "type": "TEXT",
+              "name": "Contact",
+              "styles": "w-[800] h-auto text-[48] text-[#E5E7EB] text-center",
+              "text": "contact@company.com"
+            },
+            {
+              "type": "TEXT",
+              "name": "Website",
+              "styles": "w-[800] h-auto text-[32] text-[#E5E7EB] text-center",
+              "text": "www.company.com"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 

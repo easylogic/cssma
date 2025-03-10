@@ -1,0 +1,106 @@
+{
+  "type": "FRAME",
+  "name": "Tooltip Examples",
+  "styles": "flex-col gap-[32]",
+  "children": [
+    {
+      "type": "FRAME",
+      "name": "Top Tooltip",
+      "styles": "flex-col items-center",
+      "children": [
+        {
+          "type": "FRAME",
+          "name": "Tooltip Content",
+          "styles": "flex-row items-center px-[12] py-[6] bg-[#1F2937] rounded-md mb-[8]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Tooltip Text",
+              "styles": "text-sm text-white",
+              "text": "This is a tooltip"
+            }
+          ]
+        },
+        {
+          "type": "FRAME",
+          "name": "Trigger",
+          "styles": "flex-row items-center px-[12] py-[6] bg-white border border-[#D1D5DB] rounded-md",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Trigger Text",
+              "styles": "text-sm text-[#374151]",
+              "text": "Hover me"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "FRAME",
+      "name": "Right Tooltip",
+      "styles": "flex-row items-center",
+      "children": [
+        {
+          "type": "FRAME",
+          "name": "Trigger",
+          "styles": "flex-row items-center px-[12] py-[6] bg-white border border-[#D1D5DB] rounded-md",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Trigger Text",
+              "styles": "text-sm text-[#374151]",
+              "text": "Hover me"
+            }
+          ]
+        },
+        {
+          "type": "FRAME",
+          "name": "Tooltip Content",
+          "styles": "flex-row items-center px-[12] py-[6] bg-[#1F2937] rounded-md ml-[8]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Tooltip Text",
+              "styles": "text-sm text-white",
+              "text": "Right tooltip"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "FRAME",
+      "name": "Bottom Tooltip",
+      "styles": "flex-col items-center",
+      "children": [
+        {
+          "type": "FRAME",
+          "name": "Trigger",
+          "styles": "flex-row items-center px-[12] py-[6] bg-white border border-[#D1D5DB] rounded-md",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Trigger Text",
+              "styles": "text-sm text-[#374151]",
+              "text": "Hover me"
+            }
+          ]
+        },
+        {
+          "type": "FRAME",
+          "name": "Tooltip Content",
+          "styles": "flex-row items-center px-[12] py-[6] bg-[#1F2937] rounded-md mt-[8]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Tooltip Text",
+              "styles": "text-sm text-white",
+              "text": "Bottom tooltip"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 

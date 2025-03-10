@@ -18,7 +18,7 @@ function colorToHex(color: { r: number, g: number, b: number }): string {
 
 // 플러그인 UI 표시
 figma.showUI(__html__, {
-  width: 480,
+    width: 480,
   height: 700,
 });
 
@@ -43,7 +43,6 @@ function updateSelectionInfo() {
     
     if (selection.length === 1) {
       const node = selection[0];
-      const tailwindStyles = figmaToStyle(node);
       
       figma.ui.postMessage({
         type: 'selection-change',
@@ -51,7 +50,7 @@ function updateSelectionInfo() {
           id: node.id,
           name: node.name,
           type: node.type,
-          tailwindStyles
+          styles: figmaToStyle(node)
         }
       });
     } else if (selection.length > 1) {
@@ -79,7 +78,7 @@ function updateSelectionInfo() {
 // 메시지 핸들러
 figma.ui.onmessage = async (msg) => {
   try {
-    switch (msg.type) {
+  switch (msg.type) {
       case 'init':
         // 초기 선택 정보 전송
         updateSelectionInfo();
@@ -97,10 +96,10 @@ figma.ui.onmessage = async (msg) => {
         analyzeSelection();
         break;
 
-      case 'create-design-system':
+    case 'create-design-system':
         createDesignSystem();
-        break;
-        
+      break;
+
       default:
         console.log('알 수 없는 메시지 타입:', msg.type);
         break;
@@ -253,52 +252,50 @@ function analyzeNodeTree(node: SceneNode, depth: number = 0): any {
           'letterSpacing',
           'paragraphIndent',
           'paragraphSpacing',
-          'fills',
-          'indentation',
-          'hyperlink'
+          'fills'
         ]);
         
-        // 항상 richText 배열 생성
-        nodeInfo.richText = fontStyles.map(segment => {
-          const styles: any = {};
-          
-          // 스타일 속성 추출
-          if (segment.fontSize) styles.fontSize = segment.fontSize;
-          if (segment.fontName) styles.fontName = segment.fontName;
-          if (segment.fontWeight) styles.fontWeight = segment.fontWeight;
-          if (segment.textDecoration) styles.textDecoration = segment.textDecoration;
-          if (segment.textDecorationColor) styles.textDecorationColor = segment.textDecorationColor;
-          if (segment.textDecorationOffset) styles.textDecorationOffset = segment.textDecorationOffset;
-          if (segment.textDecorationSkipInk) styles.textDecorationSkipInk = segment.textDecorationSkipInk;
-          if (segment.textDecorationStyle) styles.textDecorationStyle = segment.textDecorationStyle;
-          if (segment.textDecorationThickness) styles.textDecorationThickness = segment.textDecorationThickness;
-          if (segment.textCase) styles.textCase = segment.textCase;
-          if (segment.lineHeight) styles.lineHeight = segment.lineHeight;
-          if (segment.letterSpacing) styles.letterSpacing = segment.letterSpacing;
-          if (segment.paragraphIndent) styles.paragraphIndent = segment.paragraphIndent;
-          if (segment.paragraphSpacing) styles.paragraphSpacing = segment.paragraphSpacing;
-          if (segment.indentation) styles.indentation = segment.indentation;
-          if (segment.hyperlink) styles.hyperlink = segment.hyperlink;
-          
-          // 색상 정보 추가
-          if (segment.fills && segment.fills.length > 0) {
-            const fill = segment.fills[0];
-            if (fill.type === 'SOLID') {
-              styles.color = colorToHex(fill.color);
-              if (fill.opacity !== undefined && fill.opacity !== 1) {
-                styles.opacity = fill.opacity;
+        // 여러 스타일 세그먼트가 있을 때만 richText 배열 생성
+        if (fontStyles.length > 1) {
+          nodeInfo.richText = fontStyles.map(segment => {
+            const styles: any = {};
+            
+            // 스타일 속성 추출
+            if (segment.fontSize) styles.fontSize = segment.fontSize;
+            if (segment.fontName) styles.fontName = segment.fontName;
+            if (segment.fontWeight) styles.fontWeight = segment.fontWeight;
+            if (segment.textDecoration) styles.textDecoration = segment.textDecoration;
+            if (segment.textDecorationColor) styles.textDecorationColor = segment.textDecorationColor;
+            if (segment.textDecorationOffset) styles.textDecorationOffset = segment.textDecorationOffset;
+            if (segment.textDecorationSkipInk) styles.textDecorationSkipInk = segment.textDecorationSkipInk;
+            if (segment.textDecorationStyle) styles.textDecorationStyle = segment.textDecorationStyle;
+            if (segment.textDecorationThickness) styles.textDecorationThickness = segment.textDecorationThickness;
+            if (segment.textCase) styles.textCase = segment.textCase;
+            if (segment.lineHeight) styles.lineHeight = segment.lineHeight;
+            if (segment.letterSpacing) styles.letterSpacing = segment.letterSpacing;
+            if (segment.paragraphIndent) styles.paragraphIndent = segment.paragraphIndent;
+            if (segment.paragraphSpacing) styles.paragraphSpacing = segment.paragraphSpacing;
+            
+            // 색상 정보 추가
+            if (segment.fills && segment.fills.length > 0) {
+              const fill = segment.fills[0];
+              if (fill.type === 'SOLID') {
+                styles.color = colorToHex(fill.color);
+                if (fill.opacity !== undefined && fill.opacity !== 1) {
+                  styles.opacity = fill.opacity;
+                }
               }
             }
-          }
-          
-          return {
-            type: 'TEXT',
-            text: segment.characters,
-            start: segment.start,
-            end: segment.end,
-            styles
-          };
-        });
+            
+            return {
+              type: 'TEXT',
+              text: segment.characters,
+              start: segment.start,
+              end: segment.end,
+              styles
+            };
+          });
+        }
         
       } catch (error) {
         // getStyledTextSegments 메서드가 없는 경우 fallback
@@ -356,23 +353,7 @@ function analyzeSelection() {
     } else {
       // 다중 선택 시 각 노드만 분석 (이전 방식 유지)
       result = selection.map(node => {
-        const tailwind = figmaToStyle(node);
-        
-        return {
-          id: node.id,
-          name: node.name,
-          type: node.type,
-          tailwind,
-          // 추가 정보
-          size: {
-            width: Math.round(node.width),
-            height: Math.round(node.height)
-          },
-          position: {
-            x: Math.round(node.x),
-            y: Math.round(node.y)
-          }
-        };
+        return analyzeNodeTree(node);
       });
     }
     

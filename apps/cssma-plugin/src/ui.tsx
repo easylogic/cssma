@@ -222,8 +222,24 @@ function App() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="custom">직접 입력</SelectItem>
+                      <SelectItem value="alert">알림</SelectItem>
+                      <SelectItem value="avatar">아바타</SelectItem>
                       <SelectItem value="button">버튼</SelectItem>
                       <SelectItem value="card">카드</SelectItem>
+                      <SelectItem value="dropdown">드롭다운</SelectItem>
+                      <SelectItem value="form">폼</SelectItem>
+                      <SelectItem value="input">인풋</SelectItem>
+                      <SelectItem value="modal">모달</SelectItem>
+                      <SelectItem value="navbar">네비바</SelectItem>
+                      <SelectItem value="table">테이블</SelectItem>
+                      <SelectItem value="tabs">탭</SelectItem>
+                      <SelectItem value="tooltip">툴팁</SelectItem>
+                      <hr />
+                      <SelectItem value="landingSlides">랜딩 슬라이드</SelectItem>
+                      <SelectItem value="landingHero">랜딩 히어로</SelectItem>
+                      <SelectItem value="landingProduct">랜딩 프로덕트</SelectItem>
+                      <SelectItem value="landingSaas">랜딩 사스</SelectItem>
+
                     </SelectContent>
                   </Select>
                 </div>

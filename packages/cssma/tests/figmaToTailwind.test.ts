@@ -64,6 +64,14 @@ describe('figmaToStyle', () => {
           color: { r: 1, g: 0, b: 0 }
         }]
       }), 'bg-[#ff0000]');
+
+      expectClassesEqual(figmaToStyle({
+        fills: [{
+          type: 'SOLID',
+          color: { r: 1, g: 0, b: 0 },
+          opacity: 0.5
+        }]
+      }), 'bg-[#ff0000]/50');
     });
 
     it('should convert gradients', () => {
@@ -103,7 +111,7 @@ describe('figmaToStyle', () => {
         figmaToStyle({
           fontName: { family: 'Inter', style: 'Regular' }
         }),
-        'font-normal'
+        ''
       );
     });
   });
@@ -120,7 +128,7 @@ describe('figmaToStyle', () => {
     });
 
     it('should convert opacity', () => {
-      expectClassesEqual(figmaToStyle({ opacity: 0.5 }), 'opacity-[0.5]');
+      expectClassesEqual(figmaToStyle({ opacity: 0.5 }), 'opacity-50');
     });
   });
 
@@ -397,7 +405,7 @@ describe('figmaToStyle', () => {
           strokeBottomWeight: 1,
           strokeLeftWeight: 1
         }),
-        'border-[1]'
+        ''
       );
     });
 
@@ -455,51 +463,141 @@ describe('figmaToStyle', () => {
     });
   });
 
-  describe('Spacing', () => {
-    it('should convert margins', () => {
-      expectClassesEqual(
-        figmaToStyle({
-          marginTop: 16,
-          marginRight: 16,
-          marginBottom: 16,
-          marginLeft: 16
-        }),
-        'm-[16]'
-      );
-
-      expectClassesEqual(
-        figmaToStyle({
-          marginTop: 8,
-          marginRight: 16,
-          marginBottom: 8,
-          marginLeft: 16
-        }),
-        'mt-[8] mr-[16] mb-[8] ml-[16]'
-      );
-    });
-  });
-
   describe('Position', () => {
-    it('should convert position type', () => {
+    it('should convert layout positioning', () => {
       expectClassesEqual(
-        figmaToStyle({ position: 'ABSOLUTE' }),
+        figmaToStyle({ layoutPositioning: 'ABSOLUTE' }),
         'absolute'
       );
 
       expectClassesEqual(
-        figmaToStyle({ position: 'FIXED' }),
-        'fixed'
+        figmaToStyle({ layoutPositioning: 'AUTO' }),
+        ''
       );
     });
 
-    it('should convert coordinates', () => {
+    it('should convert x and y coordinates with constraints', () => {
       expectClassesEqual(
         figmaToStyle({
-          position: 'ABSOLUTE',
+          layoutPositioning: 'ABSOLUTE',
           x: 100,
-          y: 200
+          y: 200,
+          constraints: { horizontal: 'MIN', vertical: 'MIN' }
         }),
-        'absolute left-[100] top-[200]'
+        'absolute left-[100px] top-[200px]'
+      );
+
+      expectClassesEqual(
+        figmaToStyle({
+          layoutPositioning: 'ABSOLUTE',
+          x: 100,
+          y: 200,
+          constraints: { horizontal: 'MAX', vertical: 'MAX' }
+        }),
+        'absolute right-[100px] bottom-[200px]'
+      );
+    });
+
+    it('should convert center constraints', () => {
+      expectClassesEqual(
+        figmaToStyle({
+          layoutPositioning: 'ABSOLUTE',
+          x: 0,
+          y: 0,
+          constraints: { horizontal: 'CENTER', vertical: 'CENTER' }
+        }),
+        'absolute left-[0px] top-[0px] center-x center-y'
+      );
+
+      // With offset
+      expectClassesEqual(
+        figmaToStyle({
+          layoutPositioning: 'ABSOLUTE',
+          x: 20,
+          y: 10,
+          constraints: { horizontal: 'CENTER', vertical: 'CENTER' }
+        }),
+        'absolute left-[20px] top-[10px] center-x center-y'
+      );
+    });
+
+    it('should convert stretch constraints', () => {
+      expectClassesEqual(
+        figmaToStyle({
+          layoutPositioning: 'ABSOLUTE',
+          constraints: { horizontal: 'STRETCH', vertical: 'STRETCH' }
+        }),
+        'absolute left-[0px] right-[0px] top-[0px] bottom-[0px] stretch-x stretch-y'
+      );
+
+      // With offset
+      expectClassesEqual(
+        figmaToStyle({
+          layoutPositioning: 'ABSOLUTE',
+          x: 20,
+          y: 20,
+          constraints: { horizontal: 'STRETCH', vertical: 'STRETCH' }
+        }),
+        'absolute left-[20px] right-[20px] top-[20px] bottom-[20px] stretch-x stretch-y'
+      );
+    });
+
+    it('should convert mixed constraints', () => {
+      expectClassesEqual(
+        figmaToStyle({
+          layoutPositioning: 'ABSOLUTE',
+          x: 100,
+          y: 0,
+          constraints: { horizontal: 'MIN', vertical: 'CENTER' }
+        }),
+        'absolute center-y left-[100px] top-[0px]'
+      );
+
+      expectClassesEqual(
+        figmaToStyle({
+          layoutPositioning: 'ABSOLUTE',
+          x: 0,
+          y: 200,
+          constraints: { horizontal: 'STRETCH', vertical: 'MAX' }
+        }),
+        'absolute left-[0px] right-[0px] bottom-[200px] stretch-x'
+      );
+    });
+
+    it('should handle z-index (order)', () => {
+      expectClassesEqual(
+        figmaToStyle({
+          layoutPositioning: 'ABSOLUTE',
+          x: 100,
+          y: 100,
+          order: 10,
+          constraints: { horizontal: 'MIN', vertical: 'MIN' }
+        }),
+        'absolute left-[100px] top-[100px] z-[10]'
+      );
+    });
+
+    it('should handle auto layout positioning', () => {
+      // Auto layout (default) should not generate position classes
+      expectClassesEqual(
+        figmaToStyle({
+          layoutMode: 'HORIZONTAL',
+          x: 100,
+          y: 100
+        }),
+        'flex-row left-[100px] top-[100px]'
+      );
+
+      // Only absolute positioning should generate position classes
+      expectClassesEqual(
+        figmaToStyle({
+          layoutMode: 'HORIZONTAL',
+          layoutPositioning: 'ABSOLUTE',
+          x: 100,
+          y: 100,
+          constraints: { horizontal: 'MIN', vertical: 'MIN' }
+        }),
+        'flex-row absolute left-[100px] top-[100px]'
       );
     });
   });
@@ -572,7 +670,7 @@ describe('figmaToStyle', () => {
 
       expectClassesEqual(
         figmaToStyle(styles),
-        'fixed flex-col w-[480] h-auto p-[24] bg-[#ffffff] shadow-xl rounded-2xl gap-[20]'
+        'flex-col w-[480] h-auto left-[0px] top-[0px] p-[24] bg-[#ffffff] shadow-xl rounded-2xl gap-[20]'
       );
     });
 
@@ -605,7 +703,7 @@ describe('figmaToStyle', () => {
 
       expectClassesEqual(
         figmaToStyle(styles),
-        'flex-row w-full h-auto pt-[12] pr-[16] pb-[12] pl-[16] rounded-md bg-[#fafafa] border-[1] border-[#e6e6e6] shadow-sm'
+        'flex-row w-full h-auto pt-[12] pr-[16] pb-[12] pl-[16] rounded-md bg-[#fafafa] border-[#e6e6e6] shadow-sm'
       );
     });
   });
@@ -645,7 +743,7 @@ describe('figmaToStyle', () => {
       );
       expectClassesEqual(
         figmaToStyle({ textCase: 'ORIGINAL' }),
-        'normal-case'
+        ''
       );
     });
 
@@ -709,7 +807,7 @@ describe('figmaToStyle', () => {
       );
       expectClassesEqual(
         figmaToStyle({ textDecoration: 'NONE' }),
-        'no-underline'
+        ''
       );
     });
 

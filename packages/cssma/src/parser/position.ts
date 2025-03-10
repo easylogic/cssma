@@ -1,171 +1,291 @@
 import { ParsedStyle } from '../types';
-import { extractFigmaVariableId, createFigmaVariableStyle } from '../utils/variables';
+import { extractFigmaVariableId } from '../utils/variables';
 
 const POSITION_TYPE_MAP = {
   'absolute': 'ABSOLUTE',
-  'relative': 'RELATIVE',
-  'fixed': 'FIXED'
+  'relative': 'AUTO'
 } as const;
 
-const Z_INDEX_MAP = {
-  '0': 0,
-  '10': 10,
-  '20': 20,
-  '30': 30,
-  '40': 40,
-  '50': 50
-} as const;
-
-// 소수점 3자리까지 반올림
-function round(value: number): number {
-  return Math.round(value * 1000) / 1000;
-}
-
-function parsePositionValue(value: string): { value: number; isPercent: boolean } | null {
-  // 퍼센트 값 처리
-  if (value.endsWith('%')) {
-    const num = parseFloat(value.slice(0, -1));
-    return !isNaN(num) ? { value: round(num / 100), isPercent: true } : null;
-  }
-  
-  // 픽셀 값 처리
-  if (value.endsWith('px')) {
-    value = value.slice(0, -2);
-  }
-  const num = parseFloat(value);
-  return !isNaN(num) ? { value: round(num), isPercent: false } : null;
-}
-
-function parseMixedPositionValues(value: string): (number | null)[] {
-  return value.split('_').map(part => {
-    const parsed = parsePositionValue(part);
-    if (!parsed) return null;
-    return parsed.value;
-  });
-}
-
-type ConstraintValue = 'SCALE' | 'MIN' | 'MAX' | 'CENTER' | 'STRETCH';
+type ConstraintValue = 'MIN' | 'MAX' | 'CENTER' | 'STRETCH' | 'SCALE';
 type Constraints = {
   horizontal?: ConstraintValue;
   vertical?: ConstraintValue;
 };
 
-function getPositionConstraints(direction: string, isPercent: boolean = false): Constraints {
-  switch (direction) {
-    case 'left':
-      return { horizontal: isPercent ? 'SCALE' : 'MIN' };
-    case 'right':
-      return { horizontal: isPercent ? 'SCALE' : 'MAX' };
-    case 'top':
-      return { vertical: isPercent ? 'SCALE' : 'MIN' };
-    case 'bottom':
-      return { vertical: isPercent ? 'SCALE' : 'MAX' };
-    case 'inset':
-      return { horizontal: 'SCALE', vertical: 'SCALE' };
-    default:
-      return {};
+interface PositionState {
+  constraints: Constraints;
+}
+
+let positionState: PositionState = {
+  constraints: {}
+};
+
+export function resetPositionState() {
+  positionState = {
+    constraints: {}
+  };
+}
+
+function parsePositionValue(value: string): { value: number; unit: 'px' | '%' } | null {
+  if (value.startsWith('[') && value.endsWith(']')) {
+    value = value.slice(1, -1);
   }
+
+  if (value.endsWith('%')) {
+    const num = parseFloat(value.slice(0, -1));
+    return !isNaN(num) ? { value: num, unit: '%' } : null;
+  }
+
+  if (value.endsWith('px')) {
+    value = value.slice(0, -2);
+  }
+  const num = parseFloat(value);
+  return !isNaN(num) ? { value: num, unit: 'px' } : null;
 }
 
 export function parsePositionStyleValue(className: string): ParsedStyle | null {
   // Position type 처리
   if (POSITION_TYPE_MAP[className as keyof typeof POSITION_TYPE_MAP]) {
+    resetPositionState();
     return {
-      property: 'position',
+      property: 'layoutPositioning',
       value: POSITION_TYPE_MAP[className as keyof typeof POSITION_TYPE_MAP],
       variant: 'preset'
     };
   }
 
-  // Z-index 처리
-  if (className.startsWith('z-')) {
-    const value = className.replace('z-', '');
-    
-    // 임의값 처리
-    if (value.startsWith('[') && value.endsWith(']')) {
-      const zIndex = parseInt(value.slice(1, -1));
-      if (!isNaN(zIndex) && zIndex >= 0) {
-        return {
-          property: 'zIndex',
-          value: zIndex,
-          variant: 'arbitrary'
-        };
-      }
-      return null;
-    }
+  // Center without offset 처리
+  if (className === 'center-x') {
+    positionState.constraints = {
+      ...positionState.constraints,
+      horizontal: 'CENTER'
+    };
+    return {
+      property: 'constraints',
+      value: { horizontal: 'CENTER' },
+      variant: 'preset'
+    };
+  }
 
-    // 프리셋 값 처리
-    const preset = Z_INDEX_MAP[value as keyof typeof Z_INDEX_MAP];
-    if (preset !== undefined) {
-      return {
-        property: 'zIndex',
-        value: preset,
-        variant: 'preset'
-      };
-    }
+  if (className === 'center-y') {
+    positionState.constraints = {
+      ...positionState.constraints,
+      vertical: 'CENTER'
+    };
+    return {
+      property: 'constraints',
+      value: { vertical: 'CENTER' },
+      variant: 'preset'
+    };
+  }
+
+  // Stretch without offset 처리
+  if (className === 'stretch-x') {
+    positionState.constraints = {
+      ...positionState.constraints,
+      horizontal: 'STRETCH'
+    };
+    return {
+      property: 'constraints',
+      value: { horizontal: 'STRETCH' },
+      variant: 'preset'
+    };
+  }
+
+  if (className === 'stretch-y') {
+    positionState.constraints = {
+      ...positionState.constraints,
+      vertical: 'STRETCH'
+    };
+    return {
+      property: 'constraints',
+      value: { vertical: 'STRETCH' },
+      variant: 'preset'
+    };
+  }
+
+  // Scale 처리
+  if (className === 'scale-x') {
+    positionState.constraints = {
+      ...positionState.constraints,
+      horizontal: 'SCALE'
+    };
+    return {
+      property: 'constraints',
+      value: { horizontal: 'SCALE' },
+      variant: 'preset'
+    };
+  }
+
+  if (className === 'scale-y') {
+    positionState.constraints = {
+      ...positionState.constraints,
+      vertical: 'SCALE'
+    };
+    return {
+      property: 'constraints',
+      value: { vertical: 'SCALE' },
+      variant: 'preset'
+    };
   }
 
   // Position values 처리
-  const positionMatch = className.match(/^(top|right|bottom|left|inset)-(.+)$/);
+  const positionMatch = className.match(/^(left|right|top|bottom)-(.+)$/);
   if (positionMatch) {
-    const [, direction, value] = positionMatch;
+    const [, direction, rawValue] = positionMatch;
 
     // Figma 변수 처리
-    if (value.startsWith('$[')) {
-      const variableId = extractFigmaVariableId(value);
+    if (rawValue.startsWith('$[')) {
+      const variableId = extractFigmaVariableId(rawValue);
       if (!variableId) return null;
 
-      const style = createFigmaVariableStyle(
-        direction === 'inset' ? 'position' : direction,
-        variableId
-      );
-
-      return {
-        ...style,
-        constraints: getPositionConstraints(direction)
-      };
-    }
-
-    // 프리셋 값 처리 (0)
-    if (value === '0') {
-      return {
-        property: direction === 'inset' ? 'position' : direction,
-        value: 0,
-        variant: 'preset',
-        constraints: getPositionConstraints(direction)
-      };
-    }
-
-    // 임의값 처리
-    if (value.startsWith('[') && value.endsWith(']')) {
-      const innerValue = value.slice(1, -1);
-
-      // Mixed position values 처리 (inset의 경우)
-      if (direction === 'inset' && innerValue.includes('_')) {
-        const values = parseMixedPositionValues(innerValue);
-        if (values.every(v => v !== null)) {
-          return {
-            property: 'position',
-            value: values as number[],
-            variant: 'arbitrary',
-            constraints: { horizontal: 'SCALE', vertical: 'SCALE' }
-          };
+      const constraints: Constraints = {};
+      if (direction.startsWith('center-')) {
+        constraints[direction === 'center-x' ? 'horizontal' : 'vertical'] = 'CENTER';
+      } else if (direction.startsWith('stretch-')) {
+        constraints[direction === 'stretch-x' ? 'horizontal' : 'vertical'] = 'STRETCH';
+      } else {
+        const isHorizontal = direction === 'left' || direction === 'right';
+        if (isHorizontal) {
+          constraints.horizontal = direction === 'left' ? 'MIN' : 'MAX';
+        } else {
+          constraints.vertical = direction === 'top' ? 'MIN' : 'MAX';
         }
-        return null;
       }
 
-      // 단일 값 처리
-      const posValue = parsePositionValue(innerValue);
-      if (posValue) {
-        return {
-          property: direction === 'inset' ? 'position' : direction,
-          value: posValue.value,
-          variant: 'arbitrary',
-          constraints: getPositionConstraints(direction, posValue.isPercent)
+      return {
+        property: 'position',
+        value: variableId,
+        variant: 'figma-variable',
+        variableId,
+        constraints
+      };
+    }
+
+    const parsedValue = parsePositionValue(rawValue);
+    if (!parsedValue) return null;
+
+    // Constraints 설정
+    if (direction.startsWith('center-')) {
+      if (direction === 'center-x') {
+        positionState.constraints = {
+          ...positionState.constraints,
+          horizontal: 'CENTER'
+        };
+      } else {
+        positionState.constraints = {
+          ...positionState.constraints,
+          vertical: 'CENTER'
+        };
+      }
+    } else if (direction.startsWith('stretch-')) {
+      if (direction === 'stretch-x') {
+        positionState.constraints = {
+          ...positionState.constraints,
+          horizontal: 'STRETCH'
+        };
+      } else {
+        positionState.constraints = {
+          ...positionState.constraints,
+          vertical: 'STRETCH'
+        };
+      }
+    } else {
+      const isHorizontal = direction === 'left' || direction === 'right';
+      if (isHorizontal) {
+        positionState.constraints = {
+          ...positionState.constraints,
+          horizontal: direction === 'left' ? 'MIN' : 'MAX'
+        };
+      } else {
+        positionState.constraints = {
+          ...positionState.constraints,
+          vertical: direction === 'top' ? 'MIN' : 'MAX'
         };
       }
     }
+
+    return {
+      property: 'position',
+      direction: direction,
+      value: parsedValue.value,
+      unit: parsedValue.unit,
+      variant: 'arbitrary',
+      constraints: positionState.constraints
+    };
   }
 
   return null;
-} 
+}
+
+export function parsePositionStyles(classNames: string[]): ParsedStyle | null {
+  // 유효한 position 클래스가 없으면 null 반환
+  const positionStyles = classNames
+    .map(cls => parsePositionStyleValue(cls))
+    .filter((style): style is ParsedStyle => style !== null);
+
+  if (positionStyles.length === 0) return null;
+
+  // layoutPositioning이 있으면 먼저 처리
+  const layoutPositioning = positionStyles.find(s => s.property === 'layoutPositioning');
+  if (layoutPositioning) return layoutPositioning;
+
+  // 방향별 값 수집
+  const directions: Record<string, number> = {};
+  const constraints: Constraints = {};
+  let unit: 'px' | '%' = 'px';
+
+  positionStyles.forEach(style => {
+    if (style.property === 'position' && 
+        'direction' in style && 
+        typeof style.direction === 'string' &&
+        'value' in style && 
+        typeof style.value === 'number') {
+      directions[style.direction] = style.value;
+      if ('unit' in style && (style.unit === 'px' || style.unit === '%')) {
+        unit = style.unit;
+      }
+    }
+    if (style.property === 'constraints' && 'value' in style) {
+      const constraintValue = style.value as Partial<Constraints>;
+      if (constraintValue.horizontal) {
+        constraints.horizontal = constraintValue.horizontal;
+      }
+      if (constraintValue.vertical) {
+        constraints.vertical = constraintValue.vertical;
+      }
+    }
+  });
+
+  // left와 right가 동시에 있으면 STRETCH
+  if ('left' in directions && 'right' in directions) {
+    constraints.horizontal = 'STRETCH';
+  }
+
+  // top과 bottom이 동시에 있으면 STRETCH
+  if ('top' in directions && 'bottom' in directions) {
+    constraints.vertical = 'STRETCH';
+  }
+
+  // 결과 반환
+  if (Object.keys(directions).length > 0) {
+    return {
+      property: 'position',
+      value: directions,
+      unit,
+      variant: 'arbitrary',
+      constraints
+    };
+  }
+
+  // constraints만 있는 경우
+  if (Object.keys(constraints).length > 0) {
+    return {
+      property: 'constraints',
+      value: constraints,
+      variant: 'preset'
+    };
+  }
+
+  return null;
+}

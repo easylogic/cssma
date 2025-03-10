@@ -1,415 +1,330 @@
-import { describe, it, expect } from 'vitest';
-import { parsePositionStyleValue } from '../../src/parser/position';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { parsePositionStyleValue, resetPositionState } from '../../src/parser/position';
 
-describe('Position Style Parser', () => {
+describe('Position Parser', () => {
+  beforeEach(() => {
+    resetPositionState();
+  });
+
   describe('Position Type', () => {
-    it('should parse position type values', () => {
-      const testCases = [
-        { input: 'absolute', expected: 'ABSOLUTE' },
-        { input: 'relative', expected: 'RELATIVE' },
-        { input: 'fixed', expected: 'FIXED' }
-      ];
+    it('should parse absolute positioning', () => {
+      const result = parsePositionStyleValue('absolute');
+      expect(result).toEqual({
+        property: 'layoutPositioning',
+        value: 'ABSOLUTE',
+        variant: 'preset'
+      });
+    });
 
-      testCases.forEach(({ input, expected }) => {
-        expect(parsePositionStyleValue(input)).toEqual({
-          property: 'position',
-          value: expected,
-          variant: 'preset'
-        });
+    it('should parse auto positioning', () => {
+      const result = parsePositionStyleValue('relative');
+      expect(result).toEqual({
+        property: 'layoutPositioning',
+        value: 'AUTO',
+        variant: 'preset'
       });
     });
   });
 
-  describe('Z-Index', () => {
-    it('should parse preset z-index values', () => {
-      const testCases = [
-        { input: 'z-0', expected: 0 },
-        { input: 'z-10', expected: 10 },
-        { input: 'z-20', expected: 20 },
-        { input: 'z-30', expected: 30 },
-        { input: 'z-40', expected: 40 },
-        { input: 'z-50', expected: 50 }
-      ];
-
-      testCases.forEach(({ input, expected }) => {
-        expect(parsePositionStyleValue(input)).toEqual({
-          property: 'zIndex',
-          value: expected,
-          variant: 'preset'
-        });
-      });
-    });
-
-    it('should parse arbitrary z-index values', () => {
-      expect(parsePositionStyleValue('z-[100]')).toEqual({
-        property: 'zIndex',
-        value: 100,
-        variant: 'arbitrary'
-      });
-    });
-
-    it('should handle invalid z-index values', () => {
-      const invalidCases = [
-        'z-',
-        'z-[]',
-        'z-[invalid]',
-        'z-[-1]'  // 음수는 허용되지 않음
-      ];
-
-      invalidCases.forEach(input => {
-        expect(parsePositionStyleValue(input)).toBeNull();
-      });
-    });
-  });
-
-  describe('Position Values', () => {
-    it('should parse zero position values', () => {
-      const testCases = [
-        { 
-          input: 'top-0',
+  describe('Basic Position Values', () => {
+    it('should parse pixel values', () => {
+      const cases = [
+        {
+          input: 'left-[10px]',
           expected: {
-            property: 'top',
-            value: 0,
-            variant: 'preset',
-            constraints: { vertical: 'MIN' }
-          }
-        },
-        { 
-          input: 'right-0',
-          expected: {
-            property: 'right',
-            value: 0,
-            variant: 'preset',
-            constraints: { horizontal: 'MAX' }
-          }
-        },
-        { 
-          input: 'bottom-0',
-          expected: {
-            property: 'bottom',
-            value: 0,
-            variant: 'preset',
-            constraints: { vertical: 'MAX' }
-          }
-        },
-        { 
-          input: 'left-0',
-          expected: {
-            property: 'left',
-            value: 0,
-            variant: 'preset',
+            property: 'position',
+            direction: 'left',
+            value: 10,
+            unit: 'px',
+            variant: 'arbitrary',
             constraints: { horizontal: 'MIN' }
           }
         },
-        { 
-          input: 'inset-0',
+        {
+          input: 'right-[20px]',
           expected: {
             property: 'position',
-            value: 0,
-            variant: 'preset',
-            constraints: { horizontal: 'SCALE', vertical: 'SCALE' }
-          }
-        }
-      ];
-
-      testCases.forEach(({ input, expected }) => {
-        expect(parsePositionStyleValue(input)).toEqual(expected);
-      });
-    });
-
-    it('should parse arbitrary pixel values', () => {
-      const testCases = [
-        { 
-          input: 'top-[20px]',
-          expected: {
-            property: 'top',
+            direction: 'right',
             value: 20,
-            variant: 'arbitrary',
-            constraints: { vertical: 'MIN' }
-          }
-        },
-        { 
-          input: 'right-[30px]',
-          expected: {
-            property: 'right',
-            value: 30,
+            unit: 'px',
             variant: 'arbitrary',
             constraints: { horizontal: 'MAX' }
           }
         },
-        { 
+        {
+          input: 'top-[30px]',
+          expected: {
+            property: 'position',
+            direction: 'top',
+            value: 30,
+            unit: 'px',
+            variant: 'arbitrary',
+            constraints: { vertical: 'MIN' }
+          }
+        },
+        {
           input: 'bottom-[40px]',
           expected: {
-            property: 'bottom',
+            property: 'position',
+            direction: 'bottom',
             value: 40,
+            unit: 'px',
             variant: 'arbitrary',
             constraints: { vertical: 'MAX' }
           }
-        },
-        { 
-          input: 'left-[50px]',
+        }
+      ];
+
+      cases.forEach(({ input, expected }) => {
+        resetPositionState();
+        const result = parsePositionStyleValue(input);
+        expect(result).toEqual(expected);
+      });
+    });
+
+    it('should parse percentage values', () => {
+      const cases = [
+        {
+          input: 'left-[10%]',
           expected: {
-            property: 'left',
-            value: 50,
+            property: 'position',
+            direction: 'left',
+            value: 10,
+            unit: '%',
             variant: 'arbitrary',
             constraints: { horizontal: 'MIN' }
           }
         },
-        { 
-          input: 'inset-[10px]',
+        {
+          input: 'right-[20%]',
           expected: {
             property: 'position',
-            value: 10,
+            direction: 'right',
+            value: 20,
+            unit: '%',
             variant: 'arbitrary',
-            constraints: { horizontal: 'SCALE', vertical: 'SCALE' }
-          }
-        }
-      ];
-
-      testCases.forEach(({ input, expected }) => {
-        expect(parsePositionStyleValue(input)).toEqual(expected);
-      });
-    });
-
-    it('should parse arbitrary percentage values', () => {
-      const testCases = [
-        { 
-          input: 'top-[50%]',
-          expected: {
-            property: 'top',
-            value: 0.5,
-            variant: 'arbitrary',
-            constraints: { vertical: 'SCALE' }
+            constraints: { horizontal: 'MAX' }
           }
         },
-        { 
-          input: 'right-[75%]',
-          expected: {
-            property: 'right',
-            value: 0.75,
-            variant: 'arbitrary',
-            constraints: { horizontal: 'SCALE' }
-          }
-        },
-        { 
-          input: 'bottom-[25%]',
-          expected: {
-            property: 'bottom',
-            value: 0.25,
-            variant: 'arbitrary',
-            constraints: { vertical: 'SCALE' }
-          }
-        },
-        { 
-          input: 'left-[25%]',
-          expected: {
-            property: 'left',
-            value: 0.25,
-            variant: 'arbitrary',
-            constraints: { horizontal: 'SCALE' }
-          }
-        },
-        { 
-          input: 'inset-[10%]',
+        {
+          input: 'top-[30%]',
           expected: {
             property: 'position',
-            value: 0.1,
-            variant: 'arbitrary',
-            constraints: { horizontal: 'SCALE', vertical: 'SCALE' }
-          }
-        }
-      ];
-
-      testCases.forEach(({ input, expected }) => {
-        expect(parsePositionStyleValue(input)).toEqual(expected);
-      });
-    });
-
-    it('should parse decimal values', () => {
-      const testCases = [
-        { 
-          input: 'top-[20.5px]',
-          expected: {
-            property: 'top',
-            value: 20.5,
+            direction: 'top',
+            value: 30,
+            unit: '%',
             variant: 'arbitrary',
             constraints: { vertical: 'MIN' }
           }
         },
-        { 
-          input: 'left-[33.3%]',
+        {
+          input: 'bottom-[40%]',
           expected: {
-            property: 'left',
-            value: 0.333,
-            variant: 'arbitrary',
-            constraints: { horizontal: 'SCALE' }
-          }
-        }
-      ];
-
-      testCases.forEach(({ input, expected }) => {
-        expect(parsePositionStyleValue(input)).toEqual(expected);
-      });
-    });
-
-    it('should parse negative values', () => {
-      const testCases = [
-        { 
-          input: 'top-[-20px]',
-          expected: {
-            property: 'top',
-            value: -20,
-            variant: 'arbitrary',
-            constraints: { vertical: 'MIN' }
-          }
-        },
-        { 
-          input: 'right-[-30%]',
-          expected: {
-            property: 'right',
-            value: -0.3,
-            variant: 'arbitrary',
-            constraints: { horizontal: 'SCALE' }
-          }
-        },
-        { 
-          input: 'bottom-[-40px]',
-          expected: {
-            property: 'bottom',
-            value: -40,
+            property: 'position',
+            direction: 'bottom',
+            value: 40,
+            unit: '%',
             variant: 'arbitrary',
             constraints: { vertical: 'MAX' }
           }
+        }
+      ];
+
+      cases.forEach(({ input, expected }) => {
+        resetPositionState();
+        const result = parsePositionStyleValue(input);
+        expect(result).toEqual(expected);
+      });
+    });
+  });
+
+  describe('Center Position', () => {
+    it('should parse center without offset', () => {
+      const cases = [
+        {
+          input: 'center-x',
+          expected: {
+            property: 'constraints',
+            value: { horizontal: 'CENTER' },
+            variant: 'preset'
+          }
         },
-        { 
-          input: 'left-[-50%]',
+        {
+          input: 'center-y',
           expected: {
-            property: 'left',
-            value: -0.5,
-            variant: 'arbitrary',
-            constraints: { horizontal: 'SCALE' }
+            property: 'constraints',
+            value: { vertical: 'CENTER' },
+            variant: 'preset'
           }
         }
       ];
 
-      testCases.forEach(({ input, expected }) => {
-        expect(parsePositionStyleValue(input)).toEqual(expected);
+      cases.forEach(({ input, expected }) => {
+        const result = parsePositionStyleValue(input);
+        expect(result).toEqual(expected);
       });
     });
 
-    it('should handle invalid position values', () => {
-      const invalidCases = [
-        'top-',
-        'right-[]',
-        'bottom-[invalid]',
-        'left-[abc]',
-        'inset-[%]',
-        'top-[px]',
-        'right-[%px]',
-        'bottom-[px%]',
-        'left-[.]',
-        'inset-[.%]',
-        'top-[.px]'
-      ];
+  });
 
-      invalidCases.forEach(input => {
-        expect(parsePositionStyleValue(input)).toBeNull();
-      });
-    });
-
-    it('should handle mixed position and unit types', () => {
-      const testCases = [
-        { 
-          input: 'inset-[10px_20%_30px_40%]',
+  describe('Stretch Position', () => {
+    it('should parse stretch without offset', () => {
+      const cases = [
+        {
+          input: 'stretch-x',
           expected: {
-            property: 'position',
-            value: [10, 0.2, 30, 0.4],
-            variant: 'arbitrary',
-            constraints: { horizontal: 'SCALE', vertical: 'SCALE' }
+            property: 'constraints',
+            value: { horizontal: 'STRETCH' },
+            variant: 'preset'
+          }
+        },
+        {
+          input: 'stretch-y',
+          expected: {
+            property: 'constraints',
+            value: { vertical: 'STRETCH' },
+            variant: 'preset'
           }
         }
       ];
 
-      testCases.forEach(({ input, expected }) => {
-        expect(parsePositionStyleValue(input)).toEqual(expected);
+      cases.forEach(({ input, expected }) => {
+        const result = parsePositionStyleValue(input);
+        expect(result).toEqual(expected);
       });
+    });
+  });
+
+  describe('Stretch and Scale Constraints', () => {
+    it('should parse left position with stretch', () => {
+      const result = parsePositionStyleValue('left-[0px]');
+      expect(result).toEqual({
+        property: 'position',
+        direction: 'left',
+        value: 0,
+        unit: 'px',
+        variant: 'arbitrary',
+        constraints: { horizontal: 'MIN' }
+      });
+    });
+
+    it('should parse right position with stretch', () => {
+      const result = parsePositionStyleValue('right-[0px]');
+      expect(result).toEqual({
+        property: 'position',
+        direction: 'right',
+        value: 0,
+        unit: 'px',
+        variant: 'arbitrary',
+        constraints: { horizontal: 'MAX' }
+      });
+    });
+
+    it('should parse top position with stretch', () => {
+      const result = parsePositionStyleValue('top-[0px]');
+      expect(result).toEqual({
+        property: 'position',
+        direction: 'top',
+        value: 0,
+        unit: 'px',
+        variant: 'arbitrary',
+        constraints: { vertical: 'MIN' }
+      });
+    });
+
+    it('should parse bottom position with stretch', () => {
+      const result = parsePositionStyleValue('bottom-[0px]');
+      expect(result).toEqual({
+        property: 'position',
+        direction: 'bottom',
+        value: 0,
+        unit: 'px',
+        variant: 'arbitrary',
+        constraints: { vertical: 'MAX' }
+      });
+    });
+
+    it('should parse non-zero position values with stretch', () => {
+      const result = parsePositionStyleValue('left-[10px]');
+      expect(result).toEqual({
+        property: 'position',
+        direction: 'left',
+        value: 10,
+        unit: 'px',
+        variant: 'arbitrary',
+        constraints: { horizontal: 'MIN' }
+      });
+    });
+
+    it('should parse stretch-x constraint', () => {
+      const result = parsePositionStyleValue('stretch-x');
+      expect(result).toEqual({
+        property: 'constraints',
+        value: { horizontal: 'STRETCH' },
+        variant: 'preset'
+      });
+    });
+
+    it('should parse stretch-y constraint', () => {
+      const result = parsePositionStyleValue('stretch-y');
+      expect(result).toEqual({
+        property: 'constraints',
+        value: { vertical: 'STRETCH' },
+        variant: 'preset'
+      });
+    });
+  });
+
+  describe('State Management', () => {
+    it('should maintain constraints state', () => {
+      parsePositionStyleValue('center-x');
+      const result = parsePositionStyleValue('top-[10px]');
+      expect(result).toEqual({
+        property: 'position',
+        direction: 'top',
+        value: 10,
+        unit: 'px',
+        variant: 'arbitrary',
+        constraints: { 
+          horizontal: 'CENTER',
+          vertical: 'MIN'
+        }
+      });
+    });
+
+    it('should reset state on position type change', () => {
+      parsePositionStyleValue('center-x');
+      parsePositionStyleValue('absolute');
+      const result = parsePositionStyleValue('left-[10px]');
+      expect(result).toEqual({
+        property: 'position',
+        direction: 'left',
+        value: 10,
+        unit: 'px',
+        variant: 'arbitrary',
+        constraints: { horizontal: 'MIN' }
+      });
+    });
+  });
+
+  describe('Error Handling', () => {
+    it('should handle invalid values', () => {
+      expect(parsePositionStyleValue('left-[invalid]')).toBeNull();
+      expect(parsePositionStyleValue('center-x-[abc]')).toBeNull();
+      expect(parsePositionStyleValue('top-[]')).toBeNull();
     });
   });
 
   describe('Figma Variables', () => {
-    describe('Position Values', () => {
-      it('should parse position variables', () => {
-        const testCases = [
-          { 
-            input: 'top-$[spacing/position/top]', 
-            expected: {
-              property: 'top',
-              value: 'spacing/position/top',
-              variant: 'figma-variable',
-              variableId: 'spacing/position/top',
-              constraints: { vertical: 'MIN' }
-            }
-          },
-          { 
-            input: 'right-$[spacing/position/right]', 
-            expected: {
-              property: 'right',
-              value: 'spacing/position/right',
-              variant: 'figma-variable',
-              variableId: 'spacing/position/right',
-              constraints: { horizontal: 'MAX' }
-            }
-          },
-          { 
-            input: 'bottom-$[spacing/position/bottom]', 
-            expected: {
-              property: 'bottom',
-              value: 'spacing/position/bottom',
-              variant: 'figma-variable',
-              variableId: 'spacing/position/bottom',
-              constraints: { vertical: 'MAX' }
-            }
-          },
-          { 
-            input: 'left-$[spacing/position/left]', 
-            expected: {
-              property: 'left',
-              value: 'spacing/position/left',
-              variant: 'figma-variable',
-              variableId: 'spacing/position/left',
-              constraints: { horizontal: 'MIN' }
-            }
-          },
-          { 
-            input: 'inset-$[spacing/position/all]', 
-            expected: {
-              property: 'position',
-              value: 'spacing/position/all',
-              variant: 'figma-variable',
-              variableId: 'spacing/position/all',
-              constraints: { horizontal: 'SCALE', vertical: 'SCALE' }
-            }
-          }
-        ];
-
-        testCases.forEach(({ input, expected }) => {
-          expect(parsePositionStyleValue(input)).toEqual(expected);
-        });
-      });
-
-      it('should reject invalid position variable paths', () => {
-        const invalidCases = [
-          'top-$[]',
-          'right-$[/spacing/position]',
-          'bottom-$[spacing/position/]',
-          'left-$[spacing//position]',
-          'inset-$[/]'
-        ];
-
-        invalidCases.forEach(input => {
-          expect(parsePositionStyleValue(input)).toBeNull();
-        });
+    it('should parse Figma variable references', () => {
+      const result = parsePositionStyleValue('left-$[spacing/position]');
+      expect(result).toEqual({
+        property: 'position',
+        value: 'spacing/position',
+        variant: 'figma-variable',
+        variableId: 'spacing/position',
+        constraints: { horizontal: 'MIN' }
       });
     });
   });
-}); 
+});

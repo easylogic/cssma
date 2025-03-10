@@ -1,0 +1,86 @@
+{
+  "type": "FRAME",
+  "name": "Tabs",
+  "styles": "flex-col w-full",
+  "children": [
+    {
+      "type": "FRAME",
+      "name": "Tab List",
+      "styles": "flex-row border-b border-[#E5E7EB]",
+      "children": [
+        {
+          "type": "FRAME",
+          "name": "Active Tab",
+          "styles": "flex-row items-center px-[16] py-[12] border-b-2 border-[#3B82F6]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Tab Text",
+              "styles": "text-sm font-medium text-[#3B82F6]",
+              "text": "Account"
+            }
+          ]
+        },
+        {
+          "type": "FRAME",
+          "name": "Tab",
+          "styles": "flex-row items-center px-[16] py-[12] hover:text-[#4B5563] hover:border-b-2 hover:border-[#E5E7EB]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Tab Text",
+              "styles": "text-sm font-medium text-[#6B7280]",
+              "text": "Password"
+            }
+          ]
+        },
+        {
+          "type": "FRAME",
+          "name": "Tab",
+          "styles": "flex-row items-center px-[16] py-[12] hover:text-[#4B5563] hover:border-b-2 hover:border-[#E5E7EB]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Tab Text",
+              "styles": "text-sm font-medium text-[#6B7280]",
+              "text": "Notifications"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "FRAME",
+      "name": "Tab Panel",
+      "styles": "flex-col gap-[16] p-[16]",
+      "children": [
+        {
+          "type": "FRAME",
+          "name": "Form Group",
+          "styles": "flex-col gap-[4]",
+          "children": [
+            {
+              "type": "TEXT",
+              "name": "Label",
+              "styles": "text-sm font-medium text-[#374151]",
+              "text": "Email"
+            },
+            {
+              "type": "FRAME",
+              "name": "Input",
+              "styles": "flex-row items-center w-full px-[12] py-[8] bg-white border border-[#D1D5DB] rounded-md",
+              "children": [
+                {
+                  "type": "TEXT",
+                  "name": "Input Text",
+                  "styles": "text-sm text-[#111827]",
+                  "text": "johndoe@example.com"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 

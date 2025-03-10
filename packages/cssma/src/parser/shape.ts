@@ -4,31 +4,60 @@ import { extractFigmaVariableId, createFigmaVariableStyle } from '../utils/varia
 
 const OPACITY_MAP = {
   '0': 0,
+  '5': 0.05,
+  '10': 0.1,
+  '20': 0.2,
   '25': 0.25,
+  '30': 0.3,
+  '40': 0.4,
   '50': 0.5,
+  '60': 0.6,
+  '70': 0.7,
   '75': 0.75,
+  '80': 0.8,
+  '90': 0.9,
+  '95': 0.95,
   '100': 1
 } as const;
 
 /**
  * 불투명도 값을 파싱합니다.
  * 1. 퍼센트 값인 경우 0-1 사이의 소수로 변환
- * 2. 일반 숫자인 경우 그대로 사용
+ * 2. 일반 숫자인 경우 0-1 범위로 정규화
  */
 function parseOpacityValue(value: string): number | null {
   // 퍼센트 값 처리
   if (value.endsWith('%')) {
     const percent = parseFloat(value.slice(0, -1));
-    if (!isNaN(percent) && percent >= 0 && percent <= 100) {
-      return percent / 100;
+    if (!isNaN(percent)) {
+      if (percent < 0) {
+        return null;
+      }
+
+      if (percent > 100) {
+        return null;
+      }
+
+      // 퍼센트를 0-1 사이 값으로 변환하고 범위 제한
+      return Math.max(0, Math.min(1, percent / 100));
     }
     return null;
   }
 
   // 일반 숫자 처리
   const opacity = parseFloat(value);
-  if (!isNaN(opacity) && opacity >= 0 && opacity <= 1) {
-    return opacity;
+  if (!isNaN(opacity)) {
+
+    if (opacity < 0) {
+      return null;
+    }
+
+    // 값이 0-1보다 크면 0-100 스케일로 간주하고 변환
+    if (opacity > 1 && opacity <= 100) {
+      return opacity / 100;
+    }
+    // 항상 0-1 범위로 제한
+    return Math.max(0, Math.min(1, opacity));
   }
   return null;
 }
@@ -71,10 +100,12 @@ export function parseShapeStyleValue(className: string): ParsedStyle | null {
     }
 
     // 임의값 처리
-    const arbitraryMatch = className.match(/^opacity-\[([\d.%]+)\]$/);
+    const arbitraryMatch = className.match(/^opacity-\[([\d.%]+(?:px)?)\]$/);
     if (arbitraryMatch) {
       const [, value] = arbitraryMatch;
-      const opacity = parseOpacityValue(value);
+      // px 단위 제거 (Tailwind에서 간혹 px 단위가 포함될 수 있음)
+      const cleanValue = value.replace('px', '');
+      const opacity = parseOpacityValue(cleanValue);
       
       if (opacity !== null) {
         return {

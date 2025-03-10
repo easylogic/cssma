@@ -1,48 +1,60 @@
 {
   "type": "FRAME",
   "name": "Card",
-  "styles": "flex-col bg-white p-[16] gap-[12] rounded-lg border border-[#E5E7EB]",
+  "styles": "flex-col w-auto max-w-[320] bg-white rounded-lg shadow-lg",
   "children": [
     {
-      "type": "TEXT",
-      "name": "Card Title",
-      "styles": "text-lg font-semibold text-[#111827]",
-      "text": "Card Title"
-    },
-    {
-      "type": "TEXT",
-      "name": "Card Description",
-      "styles": "text-base text-[#4B5563]",
-      "text": "This is a description of the card content."
+      "type": "RECTANGLE",
+      "name": "Card Image",
+      "styles": "w-full aspect-video bg-[#F3F4F6]"
     },
     {
       "type": "FRAME",
-      "name": "Card Footer",
-      "styles": "flex-row justify-end gap-[8] mt-[16]",
+      "name": "Card Content",
+      "styles": "flex-col w-full gap-[12] p-[16]",
       "children": [
         {
-          "type": "FRAME",
-          "name": "Cancel Button",
-          "styles": "flex-row justify-center items-center bg-[#F3F4F6] px-[16] py-[8] rounded-md",
-          "children": [
-            {
-              "type": "TEXT",
-              "name": "Cancel Text",
-              "styles": "text-sm font-medium text-[#374151]",
-              "text": "Cancel"
-            }
-          ]
+          "type": "TEXT",
+          "name": "Card Title",
+          "styles": "w-full text-xl font-semibold text-[#111827]",
+          "text": "Card Title"
+        },
+        {
+          "type": "TEXT",
+          "name": "Card Description",
+          "styles": "w-full text-sm text-[#6B7280]",
+          "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
         },
         {
           "type": "FRAME",
-          "name": "Submit Button",
-          "styles": "flex-row justify-center items-center bg-[#3B82F6] px-[16] py-[8] rounded-md",
+          "name": "Card Actions",
+          "styles": "flex-row w-full gap-[8] mt-[8]",
           "children": [
             {
-              "type": "TEXT",
-              "name": "Submit Text",
-              "styles": "text-sm font-medium text-white",
-              "text": "Submit"
+              "type": "FRAME",
+              "name": "Primary Action",
+              "styles": "w-auto px-[12] py-[6] bg-[#3B82F6] hover:bg-[#2563EB] rounded-md",
+              "children": [
+                {
+                  "type": "TEXT",
+                  "name": "Action Text",
+                  "styles": "text-sm font-medium text-white",
+                  "text": "Learn More"
+                }
+              ]
+            },
+            {
+              "type": "FRAME",
+              "name": "Secondary Action",
+              "styles": "w-auto px-[12] py-[6] bg-white border border-[#D1D5DB] hover:bg-[#F3F4F6] rounded-md",
+              "children": [
+                {
+                  "type": "TEXT",
+                  "name": "Action Text",
+                  "styles": "text-sm font-medium text-[#374151]",
+                  "text": "Share"
+                }
+              ]
             }
           ]
         }

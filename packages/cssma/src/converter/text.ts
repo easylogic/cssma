@@ -11,6 +11,9 @@ type TextAlignVerticalValue = typeof TEXT_ALIGN_VERTICAL_VALUES[number];
 const TEXT_DECORATION_VALUES = ['UNDERLINE', 'STRIKETHROUGH', 'NONE'] as const;
 type TextDecorationValue = typeof TEXT_DECORATION_VALUES[number];
 
+const LEADING_TRIM_VALUES = ['NONE', 'CAP_HEIGHT'] as const;
+type LeadingTrimValue = typeof LEADING_TRIM_VALUES[number];
+
 type BoundVariable = {
   type: 'VARIABLE_ALIAS';
   id: string;
@@ -33,6 +36,7 @@ type FigmaVariableText = {
     textAlignVertical?: BoundVariable;
     paragraphSpacing?: BoundVariable;
     paragraphIndent?: BoundVariable;
+    leadingTrim?: BoundVariable;
   };
   fills?: FigmaVariableSolidPaint[];
 };
@@ -129,7 +133,7 @@ export function convertTextToFigma(style: ParsedStyle): Partial<FigmaVariableSty
 
     case 'letterSpacing':
       if (style.variant === 'figma-variable' && style.variableId) {
-        result.letterSpacing = 0;
+        result.letterSpacing = { value: 0, unit: 'PIXELS' };
         result.boundVariables = {
           letterSpacing: {
             type: 'VARIABLE_ALIAS',
@@ -137,13 +141,23 @@ export function convertTextToFigma(style: ParsedStyle): Partial<FigmaVariableSty
           }
         };
       } else if (typeof style.value === 'number') {
-        result.letterSpacing = style.value;
-      } else if (typeof style.value === 'object' && 'value' in style.value && 'unit' in style.value) {
-        result.letterSpacing = style.value;
+        if (style.unit === 'PERCENT' && style.value === 0) {
+          break;
+        }
+        
+        if (style.unit) {
+          result.letterSpacing = {
+            value: style.value,
+            unit: style.unit as 'PIXELS' | 'PERCENT'
+          };
+        } else {
+          result.letterSpacing = style.value;
+        }
       }
       break;
 
     case 'lineHeight':
+        console.log(style);
       if (style.variant === 'figma-variable' && style.variableId) {
         result.lineHeight = { value: 0, unit: 'PIXELS' };
         result.boundVariables = {
@@ -152,8 +166,13 @@ export function convertTextToFigma(style: ParsedStyle): Partial<FigmaVariableSty
             id: style.variableId
           }
         };
-      } else if (typeof style.value === 'object' && 'value' in style.value && 'unit' in style.value) {
-        result.lineHeight = style.value;
+      } else if (style.unit === 'AUTO') {
+        result.lineHeight = { value: 0, unit: 'AUTO' };
+      } else if (typeof style.value === 'number') {
+        result.lineHeight = {
+          value: style.value,
+          unit: style.unit || 'PIXELS'
+        };
       }
       break;
 
@@ -212,6 +231,20 @@ export function convertTextToFigma(style: ParsedStyle): Partial<FigmaVariableSty
         };
       } else if (typeof style.value === 'number') {
         result.paragraphIndent = style.value;
+      }
+      break;
+
+    case 'leadingTrim':
+      if (style.variant === 'figma-variable' && style.variableId) {
+        result.leadingTrim = 'NONE';
+        result.boundVariables = {
+          leadingTrim: {
+            type: 'VARIABLE_ALIAS',
+            id: style.variableId
+          }
+        };
+      } else if (typeof style.value === 'string' && LEADING_TRIM_VALUES.includes(style.value as LeadingTrimValue)) {
+        result.leadingTrim = style.value as LeadingTrimValue;
       }
       break;
   }
