@@ -27,7 +27,7 @@ export * from './parser';
 export * from './converter';
 
 
-export * from './apply/applyStyles';
+export * from './apply/applyCssStyles';
 
 
 // export * from './createElement';

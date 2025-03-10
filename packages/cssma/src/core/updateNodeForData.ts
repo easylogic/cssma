@@ -1,5 +1,5 @@
 import { createNodeForData, NodeData } from "./createNodeForData";
-import { applyCssStyles } from "src/apply/applyStyles";
+import { applyCssStyles } from "src/apply/applyCssStyles";
 
 interface UpdateOptions {
   preserveChildren?: boolean;  // 기존 자식 노드 유지 여부

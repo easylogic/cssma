@@ -1,4 +1,4 @@
-import { applyCssStyles } from '../apply/applyStyles';
+import { applyCssStyles } from '../apply/applyCssStyles';
 import { findVariableByName } from '../utils/figma-variable';
 
 /**

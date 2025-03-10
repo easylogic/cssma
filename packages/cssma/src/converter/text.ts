@@ -154,7 +154,6 @@ export function convertTextToFigma(style: ParsedStyle): Partial<FigmaVariableSty
       break;
 
     case 'lineHeight':
-        console.log(style);
       if (style.variant === 'figma-variable' && style.variableId) {
         result.lineHeight = { value: 0, unit: 'PIXELS' };
         result.boundVariables = {
