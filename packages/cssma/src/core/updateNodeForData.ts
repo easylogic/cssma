@@ -6,21 +6,8 @@ interface UpdateOptions {
   updateMode?: 'replace' | 'merge' | 'update';  // 자식 노드 업데이트 모드
 }
 
-// Type Guards
-function isFrameNode(node: SceneNode): node is FrameNode {
-  return node.type === "FRAME";
-}
-
 function isTextNode(node: SceneNode): node is TextNode {
   return node.type === "TEXT";
-}
-
-function isComponentNode(node: SceneNode): node is ComponentNode {
-  return node.type === "COMPONENT";
-}
-
-function isInstanceNode(node: SceneNode): node is InstanceNode {
-  return node.type === "INSTANCE";
 }
 
 function hasChildren(node: SceneNode): node is FrameNode | ComponentNode | InstanceNode {
@@ -120,40 +107,6 @@ async function updateChildren(
       });
     }
   }
-}
-
-function needsRecreation(existingChild: SceneNode, newData: NodeData): boolean {
-    if (existingChild.type !== newData.type) {
-        return true;
-    }
-    switch (existingChild.type) {
-        case 'INSTANCE':
-            return (newData.props?.componentId !== undefined && (existingChild as InstanceNode).mainComponent?.id !== newData.props?.componentId);
-        case 'VECTOR':
-            return newData.props?.paths !== undefined;
-        case 'TEXT':
-            return newData.props?.textAutoResize !== undefined && (existingChild as TextNode).textAutoResize !== newData.props?.textAutoResize;
-        default:
-            return false;
-    }
-}
-
-function updateNodeOrder(
-    parent: (FrameNode | ComponentNode | InstanceNode), 
-    nodes: SceneNode[],
-    startIndex: number = 0
-) {
-  // 노드들을 순서대로 재배치
-  nodes.forEach((node, i) => {
-    const targetIndex = startIndex + i;
-    // 현재 노드의 위치가 목표 위치와 다른 경우에만 이동
-    if (parent.children.indexOf(node) !== targetIndex) {
-      // 노드를 일단 제거했다가
-      node.remove();
-      // 원하는 위치에 다시 삽입
-      parent.insertChild(targetIndex, node);
-    }
-  });
 }
 
 /**
