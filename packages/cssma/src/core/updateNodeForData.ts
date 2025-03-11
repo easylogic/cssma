@@ -1,5 +1,5 @@
 import { createNodeForData, NodeData } from "./createNodeForData";
-import { applyCssStyles } from "src/apply/applyCssStyles";
+import { applyCssStyles } from "../apply/applyCssStyles";
 
 interface UpdateOptions {
   preserveChildren?: boolean;  // 기존 자식 노드 유지 여부
@@ -47,46 +47,69 @@ async function updateChildren(
   const { children = [] } = data;
   const { preserveChildren = true, updateMode = 'update' } = options;
 
+  // replace 모드인 경우 모든 자식 제거
   if (updateMode === 'replace') {
     [...node.children].forEach(child => child.remove());
+    // replace 모드에서는 기존 노드를 재사용하지 않음
+    const updatedChildren: SceneNode[] = [];
+    
+    for(let i = 0; i < children.length; i++) {
+      const childData = children[i];
+      const childNode = await createNodeForData(childData, node);
+      updatedChildren.push(childNode);
+    }
+
+    // 순서대로 추가
+    updatedChildren.forEach((child, index) => {
+      node.insertChild(index, child);
+    });
+    return;
   }
 
-  const updatedChildren: SceneNode[] = [];
+  // 현재 자식 노드들의 맵 생성 (update/merge 모드)
+  const existingChildrenMap = new Map();
+  node.children.forEach(child => {
+    existingChildrenMap.set(child, child);
+  });
 
+  // 새로운 순서로 자식 노드 업데이트
+  const updatedChildren: SceneNode[] = [];
+  
   for(let i = 0; i < children.length; i++) {
     const childData = children[i];
-    const existingChild = i < node.children.length ? node.children[i] : null;
+    let childNode: SceneNode | undefined;
 
-    let childNode: SceneNode;
-
-    const needsNewNode = (
-        !existingChild || 
-        existingChild.type !== childData.type ||
-        updateMode === 'replace'
-    );
-
-    if (needsNewNode) {
-      childNode = await createNodeForData(childData, node);
-
-
-      if (existingChild) {
-       const index = node.children.indexOf(existingChild);
-       existingChild.remove();
-       node.insertChild(index, childNode);
-      } else {
-        node.appendChild(childNode);
+    // 기존 노드 중에서 매칭되는 노드 찾기
+    for (const [existing] of existingChildrenMap) {
+      if (existing.type === childData.type) {
+        childNode = existing;
+        existingChildrenMap.delete(existing);
+        break;
       }
+    }
+
+    if (childNode) {
+      // 기존 노드 업데이트
+      await updateNodeForData(childNode, childData, {
+        ...options,
+        updateMode: childData.children ? 'update' : options.updateMode
+      });
     } else {
-      childNode = existingChild;
-      await updateNodeForData(childNode, childData, options);
+      // 새 노드 생성
+      childNode = await createNodeForData(childData, node);
     }
 
     updatedChildren.push(childNode);
   }
 
-  if (updateMode !== 'merge') {
-    const remainingChildren = node.children.slice(children.length);
+  // 순서 재배치
+  updatedChildren.forEach((child, index) => {
+    node.insertChild(index, child);
+  });
 
+  // 남은 자식 노드 처리
+  if (updateMode !== 'merge') {
+    const remainingChildren = Array.from(existingChildrenMap.keys());
     if (!preserveChildren) {
       remainingChildren.forEach(child => child.remove());
     } else {
@@ -97,15 +120,6 @@ async function updateChildren(
       });
     }
   }
-
-
-  const finalOrder = updatedChildren.filter(child => node.children.includes(child));
-  finalOrder.forEach((child, index) => {
-    if (node.children.indexOf(child) !== index) {
-      node.insertChild(index, child);
-    }
-  });
-
 }
 
 function needsRecreation(existingChild: SceneNode, newData: NodeData): boolean {
@@ -129,51 +143,15 @@ function updateNodeOrder(
     nodes: SceneNode[],
     startIndex: number = 0
 ) {
+  // 노드들을 순서대로 재배치
   nodes.forEach((node, i) => {
     const targetIndex = startIndex + i;
-    const currentIndex = parent.children.indexOf(node);
-    if (currentIndex !== targetIndex) {
+    // 현재 노드의 위치가 목표 위치와 다른 경우에만 이동
+    if (parent.children.indexOf(node) !== targetIndex) {
+      // 노드를 일단 제거했다가
+      node.remove();
+      // 원하는 위치에 다시 삽입
       parent.insertChild(targetIndex, node);
-    }
-  });
-}
-
-/**
- * Updates properties of a node
- */
-function updateProperties(node: SceneNode, data: NodeData) {
-  const { props } = data;
-  
-  if (!props) return;
-
-  // Update basic properties
-  if (props.width !== undefined && 'resize' in node) {
-    node.resize(props.width, node.height);
-  }
-  
-  if (props.height !== undefined && 'resize' in node) {
-    node.resize(node.width, props.height);
-  }
-
-  // Update instance properties
-  if (isInstanceNode(node) && props.componentProperties) {
-    Object.entries(props.componentProperties).forEach(([key, value]) => {
-      if (node.componentProperties && key in node.componentProperties) {
-        const prop = node.componentProperties[key];
-        if (typeof value === typeof prop.value) {
-          node.componentProperties[key] = {
-            ...prop,
-            value: value as string | boolean
-          };
-        }
-      }
-    });
-  }
-
-  // Update other properties
-  Object.entries(props).forEach(([key, value]) => {
-    if (key in node && !['width', 'height', 'componentProperties'].includes(key)) {
-      (node as any)[key] = value;
     }
   });
 }
@@ -187,6 +165,12 @@ export async function updateNodeForData(
   options: UpdateOptions = {}
 ) {
   try {
+    // Type validation
+    if (data.type && data.type !== node.type) {
+      console.warn(`Type mismatch: Cannot update ${node.type} node with ${data.type} data. Node structure will be preserved.`);
+      return node;  // 타입이 다른 경우 노드를 그대로 유지
+    }
+
     // 1. Update name if provided
     if (data.name) {
       node.name = data.name;
@@ -197,19 +181,17 @@ export async function updateNodeForData(
       await applyCssStyles(node, data.styles);
     }
 
-    // 3. Update properties
-    updateProperties(node, data);
-
-    // 4. Update text content for text nodes
+    // 3. Update text content for text nodes
     if (isTextNode(node)) {
       updateText(node, data);
     }
 
-    // 5. Update children for container nodes
+    // 4. Update children for container nodes
     if (hasChildren(node) && data.children) {
       await updateChildren(node, data, options);
     }
 
+    return node;
   } catch (error) {
     console.error('Error updating node:', {
       nodeType: node.type,
