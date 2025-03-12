@@ -163,11 +163,11 @@ export function convertTextToFigma(style: ParsedStyle): Partial<FigmaVariableSty
           }
         };
       } else if (style.unit === 'AUTO') {
-        result.lineHeight = { value: 0, unit: 'AUTO' };
+        result.lineHeight = { value: 0, unit: 'PIXELS' };
       } else if (typeof style.value === 'number') {
         result.lineHeight = {
           value: style.value,
-          unit: style.unit || 'PIXELS'
+          unit: (style.unit || 'PIXELS') as 'PIXELS' | 'PERCENT'
         };
       }
       break;

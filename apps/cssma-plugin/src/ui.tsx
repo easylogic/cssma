@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ComponentEditor } from './components/ComponentEditor';
+import { CssConverter } from './components/CssConverter';
 import examples from './examples';
 import './index.css';
 
@@ -24,20 +20,16 @@ function App() {
 
   // 예제 로드
   const loadExample = (exampleKey: string) => {
-    // 'custom'은 직접 입력 옵션
     if (exampleKey === 'custom') {
-      // 기존 컴포넌트 스펙 유지 또는 초기화
       setComponentSpec('');
       return;
     }
     
-    // 예제 컴포넌트 로드
     if (exampleKey && (examples as ExampleComponents)[exampleKey]) {
       setComponentSpec(JSON.stringify((examples as ExampleComponents)[exampleKey], null, 2));
     }
   };
 
-  // 예제 선택 변경 시 로드
   useEffect(() => {
     if (selectedExample) {
       loadExample(selectedExample);
@@ -60,33 +52,25 @@ function App() {
       } else if (message.type === 'selection-change') {
         setSelectedElement(message.message);
       } else if (message.type === 'analysis-result') {
-        // 트리 모드인지 확인
         const isTreeMode = message.isTreeMode;
         
-        // 결과 포맷 처리
         if (isTreeMode) {
-          // 트리 구조 결과 처리
           const formattedResult = formatTreeResult(message.message);
           setComponentSpec(formattedResult);
         } else {
-          // 일반 결과 처리 (여러 노드)
           setComponentSpec(JSON.stringify(message.message, null, 2));
         }
         
-        // 컴포넌트 탭으로 전환
         setActiveTab('component');
       }
     };
     
-    // 초기 선택 정보 요청
     parent.postMessage({ pluginMessage: { type: 'init' } }, '*');
     
     return () => { window.onmessage = null; };
   }, []);
   
-  // 트리 구조 결과를 보기 좋게 포맷팅
   const formatTreeResult = (node: any) => {
-    // 노드 정보를 정리 (불필요한 depth 정보 등 제거)
     const cleanNode = (node: any) => {
       const { depth, children, ...rest } = node;
       const cleanedNode = { ...rest };
@@ -98,7 +82,6 @@ function App() {
       return cleanedNode;
     };
     
-    // 결과 포맷팅
     return JSON.stringify(cleanNode(node), null, 2);
   };
 
@@ -133,7 +116,7 @@ function App() {
       }, '*');
     } catch (error) {
       console.error('Invalid JSON:', error);
-      alert('JSON 형식이 올바르지 않습니다.');
+      alert('JSON format is incorrect.');
     }
   };
 
@@ -146,124 +129,38 @@ function App() {
               value="converter" 
               className="h-9 px-4 text-sm data-[state=active]:bg-[#F5F5F5] rounded-md"
             >
-              CSS 변환기
+              CSS Converter
             </TabsTrigger>
             <TabsTrigger 
               value="component" 
               className="h-9 px-4 text-sm data-[state=active]:bg-[#F5F5F5] rounded-md"
             >
-              컴포넌트 생성
+              Component Creator
             </TabsTrigger>
           </TabsList>
         </div>
 
         {/* CSS 변환기 탭 */}
         <TabsContent value="converter" className="flex-1 overflow-auto p-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">CSS-to-Figma 변환</CardTitle>
-              <CardDescription>
-                Tailwind CSS 또는 일반 CSS를 Figma 스타일로 변환합니다.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {selectedElement ? (
-                <div className="space-y-4">
-                  <div>
-                    <Label>선택된 요소</Label>
-                    <div className="p-2 bg-slate-100 rounded text-sm">
-                      {selectedElement.name} ({selectedElement.type})
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="css-input">Tailwind CSS 또는 CSS 코드</Label>
-                    <Textarea
-                      id="css-input"
-                      value={cssInput}
-                      onChange={(e) => setCssInput(e.target.value)}
-                      placeholder="예: flex-col bg-white p-4 rounded-lg"
-                      className="min-h-[150px]"
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="p-4 text-center border border-dashed rounded-lg">
-                  Figma 캔버스에서 요소를 선택해주세요
-                </div>
-              )}
-            </CardContent>
-            <CardFooter className="justify-between">
-              <Button variant="outline" onClick={analyzeSelection}>
-                선택 요소 분석
-              </Button>
-              <Button onClick={applyStyles} disabled={!selectedElement || !cssInput || cssInput.trim() === ''}>
-                스타일 적용
-              </Button>
-            </CardFooter>
-          </Card>
+          <CssConverter
+            selectedElement={selectedElement}
+            cssInput={cssInput}
+            onCssInputChange={setCssInput}
+            onAnalyzeSelection={analyzeSelection}
+            onApplyStyles={applyStyles}
+          />
         </TabsContent>
 
         {/* 컴포넌트 생성 탭 */}
         <TabsContent value="component" className="flex-1 overflow-auto p-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">컴포넌트 생성</CardTitle>
-              <CardDescription>
-                JSON 스펙으로 Figma 컴포넌트를 생성합니다.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="example-select">예제 컴포넌트</Label>
-                  <Select value={selectedExample} onValueChange={setSelectedExample}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="예제 선택..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="custom">직접 입력</SelectItem>
-                      <SelectItem value="alert">알림</SelectItem>
-                      <SelectItem value="avatar">아바타</SelectItem>
-                      <SelectItem value="button">버튼</SelectItem>
-                      <SelectItem value="card">카드</SelectItem>
-                      <SelectItem value="dropdown">드롭다운</SelectItem>
-                      <SelectItem value="form">폼</SelectItem>
-                      <SelectItem value="input">인풋</SelectItem>
-                      <SelectItem value="modal">모달</SelectItem>
-                      <SelectItem value="navbar">네비바</SelectItem>
-                      <SelectItem value="table">테이블</SelectItem>
-                      <SelectItem value="tabs">탭</SelectItem>
-                      <SelectItem value="tooltip">툴팁</SelectItem>
-                      <hr />
-                      <SelectItem value="landingSlides">랜딩 슬라이드</SelectItem>
-                      <SelectItem value="landingHero">랜딩 히어로</SelectItem>
-                      <SelectItem value="landingProduct">랜딩 프로덕트</SelectItem>
-                      <SelectItem value="landingSaas">랜딩 사스</SelectItem>
-
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="component-spec">컴포넌트 JSON 스펙</Label>
-                  <Textarea
-                    id="component-spec"
-                    value={componentSpec}
-                    onChange={(e) => setComponentSpec(e.target.value)}
-                    placeholder='{"type": "FRAME", "name": "Button", "styles": "flex-row bg-blue-500 p-[16] rounded-lg", ...}'
-                    className="min-h-[250px] font-mono text-xs"
-                  />
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="justify-between">
-              <Button variant="outline" onClick={analyzeSelection}>
-                선택 요소에서 JSON 생성
-              </Button>
-              <Button onClick={createComponent} disabled={!componentSpec.trim()}>
-                컴포넌트 생성
-              </Button>
-            </CardFooter>
-          </Card>
+          <ComponentEditor
+            selectedExample={selectedExample}
+            componentSpec={componentSpec}
+            onExampleChange={setSelectedExample}
+            onSpecChange={setComponentSpec}
+            onAnalyzeSelection={analyzeSelection}
+            onCreateComponent={createComponent}
+          />
         </TabsContent>
       </Tabs>
     </div>

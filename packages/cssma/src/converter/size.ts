@@ -1,6 +1,6 @@
-import { FigmaStyleObject, ParsedStyle } from '../types';
+import { FigmaStyleProperties, ParsedStyle } from '../types';
 
-export function convertSizeToFigma(style: ParsedStyle): Partial<FigmaStyleObject> {
+export function convertSizeToFigma(style: ParsedStyle): Partial<FigmaStyleProperties> {
   const { property, value, variant } = style;
 
   // Handle size constraints
@@ -8,11 +8,11 @@ export function convertSizeToFigma(style: ParsedStyle): Partial<FigmaStyleObject
     case 'minWidth':
       return { minWidth: typeof value === 'number' ? value : undefined };
     case 'maxWidth':
-      return { maxWidth: value === Infinity ? undefined : value };
+      return { maxWidth: typeof value === 'number' && value !== Infinity ? value : undefined };
     case 'minHeight':
       return { minHeight: typeof value === 'number' ? value : undefined };
     case 'maxHeight':
-      return { maxHeight: value === Infinity ? undefined : value };
+      return { maxHeight: typeof value === 'number' && value !== Infinity ? value : undefined };
     default:
       return {};
   }

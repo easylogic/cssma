@@ -16,7 +16,9 @@ export function parseOverflowStyleValue(className: string): ParsedStyle | null {
     if (config) {
       return {
         property: 'overflow',
-        value: config,
+        value: value,
+        clipsContent: config.clipsContent,
+        scrollingEnabled: config.scrollingEnabled,
         variant: 'preset'
       };
     }

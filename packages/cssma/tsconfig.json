@@ -12,7 +12,8 @@
     "baseUrl": "./",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": ["../../node_modules/@types", "../../node_modules/@figma"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "tests"]

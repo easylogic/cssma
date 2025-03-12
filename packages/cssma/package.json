@@ -25,6 +25,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "watch": "tsc --watch",
     "test": "vitest",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",

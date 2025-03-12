@@ -257,12 +257,10 @@ export function parsePositionStyles(classNames: string[]): ParsedStyle | null {
     }
   });
 
-   STRETCH
   if ('left' in directions && 'right' in directions) {
     constraints.horizontal = 'STRETCH';
   }
 
-   STRETCH
   if ('top' in directions && 'bottom' in directions) {
     constraints.vertical = 'STRETCH';
   }

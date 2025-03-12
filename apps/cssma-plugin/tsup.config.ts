@@ -18,6 +18,10 @@ const postcssProcessor = postcss([
   autoprefixer,
 ]);
 
+// 감시할 파일 패턴
+const watchPatterns = true 
+
+
 export default defineConfig([
   {
     entry: ['src/ui.tsx'],
@@ -29,6 +33,7 @@ export default defineConfig([
     treeshake: true,
     splitting: false,
     clean: false,
+    watch: watchPatterns,
     env: {
       NODE_ENV: 'production',
       ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY!,
@@ -50,14 +55,6 @@ export default defineConfig([
       options.ignoreAnnotations = true;
       options.bundle = true;
       options.metafile = true;
-      
-      // 외부 모듈 문제 해결
-      options.external = [
-        'src/utils/figma-variable',
-        'src/config/tokens',
-        'src/utils/converters',
-        'src/utils/colors'
-      ];
     },
     async onSuccess() {
       // CSS 처리
@@ -97,11 +94,6 @@ export default defineConfig([
     target: 'es6',
     minify: true,
     clean: false,
-    external: [
-      'src/utils/figma-variable',
-      'src/config/tokens',
-      'src/utils/converters',
-      'src/utils/colors'
-    ]
+    watch: watchPatterns,
   },
 ]); 

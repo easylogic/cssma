@@ -3,9 +3,10 @@ import { ParsedStyle, FigmaStyleProperties } from '../types';
 export function convertOverflowToFigma(style: ParsedStyle): Partial<FigmaStyleProperties> {
   const result: Partial<FigmaStyleProperties> = {};
 
-  if (style.property === 'overflow' && typeof style.value === 'object') {
-    const { clipsContent, scrollingEnabled } = style.value as { clipsContent: boolean; scrollingEnabled: boolean };
+  if (style.property === 'overflow') {
+    const { clipsContent, scrollingEnabled } = style;
     result.clipsContent = clipsContent;
+    result.scrollingEnabled = scrollingEnabled;
   }
 
   return result;

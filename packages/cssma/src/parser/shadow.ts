@@ -2,7 +2,7 @@ import { parseArbitraryValue } from '../utils/converters';
 import { ParsedStyle } from '../types';
 import { COLORS } from '../config/tokens';
 import { parseColor } from '../utils/colors';
-import { isValidHexColor, isValidNumber, isValidRgbColor } from '../utils/validators';
+import { isValidHexColor, isValidRgbColor } from '../utils/validators';
 import { extractFigmaVariableId, createFigmaVariableStyle } from '../utils/variables';
 
 interface ShadowConfig {

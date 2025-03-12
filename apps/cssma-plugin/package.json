@@ -3,10 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsup --watch",
+    "dev": "watch 'tsup --watch' src/ ../../packages/cssma/src/",
     "build": "tsup"
   },
   "dependencies": {
+    "@easylogic/cssma": "workspace:*",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "^1.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.3",
@@ -38,7 +39,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",
-    "@easylogic/cssma": "workspace:*",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.5.1",
     "input-otp": "^1.4.1",
@@ -65,6 +65,7 @@
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "autoprefixer": "^10.4.16",
+    "concurrently": "^9.1.2",
     "dotenv": "^16.4.7",
     "postcss": "^8.4.32",
     "tailwindcss": "^3.4.0",

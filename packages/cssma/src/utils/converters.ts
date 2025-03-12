@@ -41,22 +41,20 @@ export function parseArbitraryValue(value: string, options: {
   allowColors?: boolean;
   requireValidColor?: boolean;
   allowFigmaVariables?: boolean;
+  allowNumbers?: boolean;
 } = {}): ParsedValue | null {
   const { 
     allowNegative = false, 
     allowUnits = true, 
     allowColors = true,
     requireValidColor = false,
-    allowFigmaVariables = false
+    allowFigmaVariables = false,
+    allowNumbers = true
   } = options;
 
   
   if (allowFigmaVariables && value.startsWith('$[') && value.endsWith(']')) {
     const variablePath = value.slice(2, -1);
-    
-    
-    
-    
     
     if (!variablePath || 
         variablePath.startsWith('/') || 
@@ -99,7 +97,7 @@ export function parseArbitraryValue(value: string, options: {
     }
     
     
-    if (allowUnits) {
+    if (allowUnits && allowNumbers) {
       const unitMatch = innerValue.match(/^(-?\d*\.?\d+)(px|rem|em)?$/);
       if (unitMatch) {
         const [, num, unit = 'px'] = unitMatch;

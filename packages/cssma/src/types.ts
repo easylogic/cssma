@@ -15,6 +15,8 @@ export interface ParsedStyle {
     horizontal?: 'MIN' | 'MAX' | 'SCALE' | 'CENTER' | 'STRETCH';
     vertical?: 'MIN' | 'MAX' | 'SCALE' | 'CENTER' | 'STRETCH';
   };
+  clipsContent?: boolean;
+  scrollingEnabled?: boolean;
 }
 
 export type FigmaNodeType = 
@@ -109,6 +111,10 @@ export interface FigmaSolidPaint {
   color: FigmaColor;
   variable?: string; // local variable name
   opacity?: number;
+  boundVariables?: Record<string, {
+    type: 'VARIABLE_ALIAS';
+    id: string;
+  }>;
 }
 
 export type FigmaPaint = FigmaSolidPaint | FigmaGradient;
@@ -228,6 +234,24 @@ export interface FigmaStyleProperties {
   constraints?: Constraints;
   order?: number;
   rotation?: number;
+  boundVariables?: Record<string, {
+    type: 'VARIABLE_ALIAS';
+    id: string;
+  }>;
+  clipsContent?: boolean;
+  scrollingEnabled?: boolean;
+  minWidth?: number | undefined;
+  maxWidth?: number | undefined;
+  minHeight?: number | undefined;
+  maxHeight?: number | undefined;
+  strokeTopWeight?: number | undefined;
+  strokeRightWeight?: number | undefined;
+  strokeBottomWeight?: number | undefined;
+  strokeLeftWeight?: number | undefined;
+  strokeTopColor?: FigmaColor;
+  strokeRightColor?: FigmaColor;
+  strokeBottomColor?: FigmaColor;
+  strokeLeftColor?: FigmaColor;
 }
 
 export interface ProcessOptions {

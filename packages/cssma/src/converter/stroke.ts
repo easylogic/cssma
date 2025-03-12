@@ -1,6 +1,6 @@
-import { FigmaStyleObject, ParsedStyle } from '../types';
+import { FigmaStyleProperties, ParsedStyle } from '../types';
 
-export function convertStrokeToFigma(style: ParsedStyle): Partial<FigmaStyleObject> {
+export function convertStrokeToFigma(style: ParsedStyle): Partial<FigmaStyleProperties> {
   const { property, value, variant, variableId } = style;
 
   // Handle individual stroke weights

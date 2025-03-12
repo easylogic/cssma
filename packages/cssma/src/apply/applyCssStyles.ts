@@ -1,6 +1,7 @@
+import { FontName, LetterSpacing, LineHeight, Paint } from '../types/figma';
 import { findVariableByName } from '../utils/figma-variable';
 import { processCssStyles } from '../index';
-import { FigmaStyleProperties, FigmaPaint } from '../types';
+import { FigmaStyleProperties, FigmaPaint, FigmaSolidPaint } from '../types';
 
 type TextVariableTypes = {
   fontSize: number;
@@ -46,12 +47,12 @@ async function processVariablePaint(paint: BoundVariablePaint): Promise<Paint> {
     const variable = await findVariableByName(paint.boundVariables.color.id);
     if (!variable) return paint as Paint;
 
-    const result = await figma.variables.setBoundVariableForPaint(
+    const result = await (figma as any).variables.setBoundVariableForPaint(
       {
         type: 'SOLID',
         color: { r: 0, g: 0, b: 0 },
         opacity: ('opacity' in paint) ? paint.opacity : undefined
-      } as SolidPaint,
+      } as FigmaSolidPaint,
       'color',
       variable
     );

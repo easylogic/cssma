@@ -27,9 +27,10 @@ const SPACING_MAP: Record<string, number> = {
 
 function parseSpacingValue(value: string): number | null {
   if (value.startsWith('[') && value.endsWith(']')) {
-    return parseArbitraryValue(value, {
+    const parsedValue = parseArbitraryValue(value, {
       allowNegative: true,
     });
+    return parsedValue?.value as number | null;
   }
 
   

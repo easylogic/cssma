@@ -1,22 +1,3 @@
-import type { BaseNode, SceneNode } from '@figma/plugin-typings';
-
-
-export function validateLayoutStyles(parent: BaseNode | null, child: SceneNode, styles: string[]): string[] {
-  
-  if (!parent || !('layoutMode' in parent)) {
-    return styles.map(style => {
-      
-      if (style === 'w-full' || style === 'h-full') {
-        return style.replace('full', 'auto');
-      }
-      return style;
-    });
-  }
-
-  
-  return styles;
-}
-
 
 export function isValidRotation(value: any): value is number {
   return typeof value === 'number' && !isNaN(value) && isFinite(value);

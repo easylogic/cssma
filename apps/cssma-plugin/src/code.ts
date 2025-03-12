@@ -78,7 +78,7 @@ function updateSelectionInfo() {
 // 메시지 핸들러
 figma.ui.onmessage = async (msg) => {
   try {
-  switch (msg.type) {
+    switch (msg.type) {
       case 'init':
         // 초기 선택 정보 전송
         updateSelectionInfo();
@@ -96,9 +96,9 @@ figma.ui.onmessage = async (msg) => {
         analyzeSelection();
         break;
 
-    case 'create-design-system':
+      case 'create-design-system':
         createDesignSystem();
-      break;
+        break;
 
       default:
         console.log('알 수 없는 메시지 타입:', msg.type);
