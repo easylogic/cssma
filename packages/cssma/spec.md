@@ -46,23 +46,125 @@ pl-[16]         → paddingLeft: 16
 absolute       → layoutPositioning: "ABSOLUTE"
 relative       → layoutPositioning: "AUTO"
 
-// Constraints
+// Basic Positioning
+// Omit when x=0 or y=0 (default values)
 left-[10]      → x: 10, constraints: { horizontal: "MIN" }
-right-[10]     → x: 10, constraints: { horizontal: "MAX" }
 top-[10]       → y: 10, constraints: { vertical: "MIN" }
+
+// Always include even when x=0 or y=0
+right-[10]     → x: 10, constraints: { horizontal: "MAX" }
 bottom-[10]    → y: 10, constraints: { vertical: "MAX" }
 
+// Center Positioning
 center-x       → constraints: { horizontal: "CENTER" }
 center-y       → constraints: { vertical: "CENTER" }
 
+// Center with Offset
+// Include left/right or top/bottom only when offset exists
+center-x left-[10]  → constraints: { horizontal: "CENTER" }, x: 10
+center-y top-[10]   → constraints: { vertical: "CENTER" }, y: 10
+
+// Stretch Positioning
 stretch-x      → constraints: { horizontal: "STRETCH" }
 stretch-y      → constraints: { vertical: "STRETCH" }
 
+// Stretch with Margins
+// Omit left/top when 0, always include right/bottom
+stretch-x left-[10]  → constraints: { horizontal: "STRETCH" }, x: 10
+stretch-y top-[10]   → constraints: { vertical: "STRETCH" }, y: 10
+
+// Scale Positioning
 scale-x        → constraints: { horizontal: "SCALE" }
 scale-y        → constraints: { vertical: "SCALE" }
 
-// Z-index
+// Scale with Margins
+// Omit left/top when 0, always include right/bottom
+scale-x left-[10]   → constraints: { horizontal: "SCALE" }, x: 10
+scale-y top-[10]    → constraints: { vertical: "SCALE" }, y: 10
+
+// Z-index (omit when 0)
 z-[10]         → order: 10
+```
+
+### Position Value Rules
+
+1. **Default Value Handling**
+   - `left`/`top`: Omit class when value is 0 (default)
+   - `right`/`bottom`: Always include class even when value is 0
+   - `z-index`: Omit class when value is 0
+
+2. **Center Alignment (CENTER)**
+   - Basic: Only include `center-x`, `center-y` classes
+   - With offset: Add `left`/`right` or `top`/`bottom` classes
+
+3. **Stretch Behavior (STRETCH)**
+   - Basic: Only include `stretch-x`, `stretch-y` classes
+   - With margins: 
+     - Omit `left`/`top` when value is 0
+     - Always include `right`/`bottom`
+
+4. **Scale Behavior (SCALE)**
+   - Basic: Only include `scale-x`, `scale-y` classes
+   - With margins:
+     - Omit `left`/`top` when value is 0
+     - Always include `right`/`bottom`
+
+### Examples
+
+```typescript
+// Basic positioning (omit left/top when 0)
+"absolute left-[10px] top-[20px]"
+→ {
+  layoutPositioning: "ABSOLUTE",
+  x: 10,
+  y: 20,
+  constraints: { 
+    horizontal: "MIN",
+    vertical: "MIN"
+  }
+}
+
+// Center alignment (no offset)
+"absolute center-x center-y"
+→ {
+  layoutPositioning: "ABSOLUTE",
+  constraints: { 
+    horizontal: "CENTER",
+    vertical: "CENTER"
+  }
+}
+
+// Center alignment (with offset)
+"absolute center-x left-[50px] right-[50px]"
+→ {
+  layoutPositioning: "ABSOLUTE",
+  x: 50,
+  constraints: { 
+    horizontal: "CENTER",
+    vertical: "AUTO"
+  }
+}
+
+// Stretch (no margins)
+"absolute stretch-x stretch-y"
+→ {
+  layoutPositioning: "ABSOLUTE",
+  constraints: { 
+    horizontal: "STRETCH",
+    vertical: "STRETCH"
+  }
+}
+
+// Stretch (with margins)
+"absolute stretch-x left-[10px] right-[10px]"
+→ {
+  layoutPositioning: "ABSOLUTE",
+  x: 10,
+  constraints: { 
+    horizontal: "STRETCH",
+    vertical: "AUTO"
+  }
+}
 ```
 
 ## Color Properties
