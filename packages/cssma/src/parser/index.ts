@@ -101,9 +101,6 @@ export function parseStyles(classNames: string): ParsedStyle[] {
   let allClasses = classNames.split(' ').filter(Boolean);
   const fontState = new FontState();
   const styles: ParsedStyle[] = [];
-
-  console.log('allClasses', allClasses);
-
   
   const positionClasses = allClasses.filter(cls => 
     cls === 'absolute' || 
@@ -117,9 +114,7 @@ export function parseStyles(classNames: string): ParsedStyle[] {
   );
 
   if (positionClasses.length > 0) {
-    console.log('positionClasses', positionClasses);
     const positionStyle = parsePositionStyles(positionClasses);
-    console.log('positionStyle', positionStyle);
     if (positionStyle) {
       styles.push(positionStyle);
     }

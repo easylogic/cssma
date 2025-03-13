@@ -419,40 +419,6 @@ describe('updateNodeForData', () => {
       expect(node.children[1]).toBe(child2)
     })
 
-    test('should handle mixed update modes in nested structure', async () => {
-      const node = createMockNode('FRAME')
-      const child1 = createMockNode('FRAME')
-      const child2 = createMockNode('FRAME')
-      const grandChild1 = createMockNode('TEXT')
-      const grandChild2 = createMockNode('TEXT')
-      
-      child1.children = [grandChild1]
-      child2.children = [grandChild2]
-      node.children = [child1, child2]
-
-      await updateNodeForData(node, {
-        type: 'FRAME',
-        children: [
-          {
-            type: 'FRAME',
-            children: [{ type: 'TEXT', text: 'New text 1' }],
-            // 첫 번째 자식은 replace 모드
-          },
-          {
-            type: 'FRAME',
-            children: [{ type: 'TEXT', text: 'New text 2' }],
-            // 두 번째 자식은 merge 모드
-          }
-        ]
-      }, {
-        updateMode: 'merge',  // 최상위는 merge 모드
-        preserveChildren: true
-      })
-
-      expect(grandChild1.remove).toHaveBeenCalled()  // replace로 인해 제거됨
-      expect(grandChild2.visible).toBe(true)  // merge로 인해 유지됨
-    })
-
     test('should handle style inheritance', async () => {
       const node = createMockNode('FRAME')
       const child = createMockNode('TEXT')

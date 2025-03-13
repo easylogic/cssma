@@ -167,11 +167,13 @@ function convertColors(styles: Record<string, any>): string[] {
     if (styles.fills && styles.fills.length > 0) {
         const fill = styles.fills[0];
         if (fill.type === 'SOLID') {
+            // TEXT 타입일 경우 text- 사용, 그 외에는 bg- 사용
+            const prefix = styles.type === 'TEXT' ? 'text' : 'bg';
 
             if (fill.opacity !== undefined && fill.opacity != 1) {
-                classes.push(`bg-[${colorToHex(fill.color)}]/${Math.round(fill.opacity * 100)}`);
+                classes.push(`${prefix}-[${colorToHex(fill.color)}]/${Math.round(fill.opacity * 100)}`);
             } else {
-                classes.push(`bg-[${colorToHex(fill.color)}]`);
+                classes.push(`${prefix}-[${colorToHex(fill.color)}]`);
             }
         } else if (fill.type === 'GRADIENT_LINEAR') {
             const direction = getGradientDirection(fill.gradientTransform);
@@ -638,62 +640,53 @@ function convertSpacing(styles: Record<string, any>): string[] {
 function convertPosition(styles: Record<string, any>): string[] {
   const classes: string[] = [];
   
-  
   if (styles.layoutPositioning === 'ABSOLUTE') {
     classes.push('absolute');
   }
   
-  
   if (styles.constraints) {
     const { horizontal, vertical } = styles.constraints;
 
-    
     if (horizontal === 'MIN') {
-      classes.push(`left-[${styles.x ?? 0}px]`);
+      if (styles.x !== undefined && styles.x !== 0) {
+        classes.push(`left-[${styles.x}px]`);
+      }
     } else if (horizontal === 'MAX') {
-      classes.push(`right-[${styles.x ?? 0}px]`);
+      if (styles.x !== undefined) {
+        classes.push(`right-[${styles.x}px]`);
+      }
     } else if (horizontal === 'CENTER') {
-      
       classes.push('center-x');
       
-      
       if (styles.parent?.width !== undefined && styles.width !== undefined) {
-        
         const offset = Math.max(0, (styles.parent.width - styles.width) / 2);
-        
-        
         const leftOffset = offset + (styles.x ?? 0);
         const rightOffset = offset - (styles.x ?? 0);
         
-        
         classes.push(`left-[${leftOffset}px]`, `right-[${rightOffset}px]`);
       } else if (styles.x !== undefined) {
-        
-        classes.push(`left-[${styles.x}px]`);
+        const offset = styles.x ?? 0;
+        classes.push(`left-[${offset}px]`, `right-[${offset}px]`);
       }
     } else if (horizontal === 'STRETCH') {
-      
       classes.push('stretch-x');
       
-      
       const leftValue = styles.x ?? 0;
       
-        
       let rightValue = leftValue;
       if (styles.parent?.width !== undefined && styles.width !== undefined) {
         rightValue = styles.parent.width - (leftValue + styles.width);
         if (rightValue < 0) rightValue = 0;
       }
       
-      
-      classes.push(`left-[${leftValue}px]`, `right-[${rightValue}px]`);
+      if (leftValue !== 0) {
+        classes.push(`left-[${leftValue}px]`);
+      }
+      classes.push(`right-[${rightValue}px]`);
     } else if (horizontal === 'SCALE') {
-      
       classes.push('scale-x');
       
-      
       const leftValue = styles.x ?? 0;
-      
       
       let rightValue = leftValue;
       if (styles.parent?.width !== undefined && styles.width !== undefined) {
@@ -701,44 +694,39 @@ function convertPosition(styles: Record<string, any>): string[] {
         if (rightValue < 0) rightValue = 0;
       }
       
-      
-      classes.push(`left-[${leftValue}px]`, `right-[${rightValue}px]`);
-    } else if (styles.x !== undefined) {
-      
+      if (leftValue !== 0) {
+        classes.push(`left-[${leftValue}px]`);
+      }
+      classes.push(`right-[${rightValue}px]`);
+    } else if (styles.x !== undefined && styles.x !== 0) {
       classes.push(`left-[${styles.x}px]`);
     }
     
-    
     if (vertical === 'MIN') {
-      classes.push(`top-[${styles.y ?? 0}px]`);
+      if (styles.y !== undefined && styles.y !== 0) {
+        classes.push(`top-[${styles.y}px]`);
+      }
     } else if (vertical === 'MAX') {
-      classes.push(`bottom-[${styles.y ?? 0}px]`);
+      if (styles.y !== undefined) {
+        classes.push(`bottom-[${styles.y}px]`);
+      }
     } else if (vertical === 'CENTER') {
-      
       classes.push('center-y');
       
-      
       if (styles.parent?.height !== undefined && styles.height !== undefined) {
-        
         const offset = Math.max(0, (styles.parent.height - styles.height) / 2);
-        
-        
         const topOffset = offset + (styles.y ?? 0);
         const bottomOffset = offset - (styles.y ?? 0);
         
-        
         classes.push(`top-[${topOffset}px]`, `bottom-[${bottomOffset}px]`);
       } else if (styles.y !== undefined) {
-        
-        classes.push(`top-[${styles.y}px]`);
+        const offset = styles.y ?? 0;
+        classes.push(`top-[${offset}px]`, `bottom-[${offset}px]`);
       }
     } else if (vertical === 'STRETCH') {
-      
       classes.push('stretch-y');
       
-      
       const topValue = styles.y ?? 0;
-      
       
       let bottomValue = topValue;
       if (styles.parent?.height !== undefined && styles.height !== undefined) {
@@ -746,15 +734,14 @@ function convertPosition(styles: Record<string, any>): string[] {
         if (bottomValue < 0) bottomValue = 0;
       }
       
-      
-      classes.push(`top-[${topValue}px]`, `bottom-[${bottomValue}px]`);
+      if (topValue !== 0) {
+        classes.push(`top-[${topValue}px]`);
+      }
+      classes.push(`bottom-[${bottomValue}px]`);
     } else if (vertical === 'SCALE') {
-      
       classes.push('scale-y');
       
-      
       const topValue = styles.y ?? 0;
-      
       
       let bottomValue = topValue;
       if (styles.parent?.height !== undefined && styles.height !== undefined) {
@@ -762,24 +749,23 @@ function convertPosition(styles: Record<string, any>): string[] {
         if (bottomValue < 0) bottomValue = 0;
       }
       
-      
-      classes.push(`top-[${topValue}px]`, `bottom-[${bottomValue}px]`);
-    } else if (styles.y !== undefined) {
-      
+      if (topValue !== 0) {
+        classes.push(`top-[${topValue}px]`);
+      }
+      classes.push(`bottom-[${bottomValue}px]`);
+    } else if (styles.y !== undefined && styles.y !== 0) {
       classes.push(`top-[${styles.y}px]`);
     }
   } else if (styles.x !== undefined || styles.y !== undefined) {
-    
-    if (styles.x !== undefined) {
+    if (styles.x !== undefined && styles.x !== 0) {
       classes.push(`left-[${styles.x}px]`);
     }
-    if (styles.y !== undefined) {
+    if (styles.y !== undefined && styles.y !== 0) {
       classes.push(`top-[${styles.y}px]`);
     }
   }
   
-  
-  if (typeof styles.order === 'number') {
+  if (typeof styles.order === 'number' && styles.order !== 0) {
     classes.push(`z-[${styles.order}]`);
   }
   

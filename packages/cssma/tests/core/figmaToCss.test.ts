@@ -33,7 +33,7 @@ describe('Figma to Css Converter', () => {
         layoutPositioning: 'ABSOLUTE',
         x: 0,
         y: 0,
-      })).toBe('w-[100] h-[100] absolute stretch-x left-[0px] right-[100px] stretch-y top-[0px] bottom-[100px]');
+      })).toBe('w-[100] h-[100] absolute stretch-x right-[100px] stretch-y bottom-[100px]');
 
       expect(figmaToCss({ 
         width: 100,
@@ -46,7 +46,7 @@ describe('Figma to Css Converter', () => {
         layoutPositioning: 'ABSOLUTE',
         x: 0,
         y: 0,
-      })).toBe('w-[100] h-[100] absolute scale-x left-[0px] right-[100px] scale-y top-[0px] bottom-[100px]');
+      })).toBe('w-[100] h-[100] absolute scale-x right-[100px] scale-y bottom-[100px]');
     });
 
     it('should convert horizontal constraints with coordinates', () => {
@@ -58,7 +58,7 @@ describe('Figma to Css Converter', () => {
             height: 200
         },
         constraints: { horizontal: 'MIN' }, x: 0 
-      })).toBe('w-[100] h-[100] left-[0px]');
+      })).toBe('w-[100] h-[100]');
 
       expect(figmaToCss({ 
         width: 100,
@@ -94,7 +94,7 @@ describe('Figma to Css Converter', () => {
     it('should convert vertical constraints with coordinates', () => {
       expect(figmaToCss({ 
         constraints: { vertical: 'MIN' }, y: 0 
-      })).toBe('top-[0px]');
+      })).toBe('');
 
       expect(figmaToCss({ 
         constraints: { vertical: 'MIN' }, y: 10 
@@ -132,7 +132,7 @@ describe('Figma to Css Converter', () => {
             height: 200
         },
         constraints: { horizontal: 'SCALE', vertical: 'SCALE' }, x: 0, y: 0 
-      })).toBe('w-[100] h-[100] scale-x left-[0px] right-[100px] scale-y top-[0px] bottom-[100px]');
+      })).toBe('w-[100] h-[100] scale-x right-[100px] scale-y bottom-[100px]');
 
       expect(figmaToCss({ 
         width: 100,
@@ -155,7 +155,7 @@ describe('Figma to Css Converter', () => {
           height: 200
         },
         constraints: { horizontal: 'MIN' } 
-      })).toBe('w-[100] h-[100] left-[0px]');
+      })).toBe('w-[100] h-[100]');
 
       expect(figmaToCss({ 
         x: 0,   
@@ -177,7 +177,7 @@ describe('Figma to Css Converter', () => {
           height: 200
         },
         constraints: { vertical: 'MIN' } 
-      })).toBe('w-[100] h-[100] top-[0px]');
+      })).toBe('w-[100] h-[100]');
 
       expect(figmaToCss({ 
         y: 0,   
@@ -222,7 +222,7 @@ describe('Figma to Css Converter', () => {
           width: 200,
           height: 200
         }
-      })).toBe('w-[100] h-[100] stretch-x left-[0px] right-[100px]');
+      })).toBe('w-[100] h-[100] stretch-x right-[100px]');
 
       expect(figmaToCss({ 
         constraints: { vertical: 'STRETCH' },
@@ -232,7 +232,7 @@ describe('Figma to Css Converter', () => {
           width: 200,
           height: 200
         }
-      })).toBe('w-[100] h-[100] stretch-y top-[0px] bottom-[100px]');
+      })).toBe('w-[100] h-[100] stretch-y bottom-[100px]');
     });
 
     it('should handle coordinates without constraints', () => {
@@ -242,7 +242,7 @@ describe('Figma to Css Converter', () => {
 
       expect(figmaToCss({ 
         parent: { layoutMode: 'NONE' }, x: 0, y: 0 
-      })).toBe('left-[0px] top-[0px]');
+      })).toBe('');
     });
 
     it('should combine position type with constraints', () => {

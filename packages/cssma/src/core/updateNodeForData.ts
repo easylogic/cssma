@@ -36,10 +36,12 @@ async function updateChildren(
 
   // replace 모드인 경우 모든 자식 제거
   if (updateMode === 'replace') {
-    [...node.children].forEach(child => child.remove());
-    // replace 모드에서는 기존 노드를 재사용하지 않음
-    const updatedChildren: SceneNode[] = [];
+    // 기존 자식 노드들을 배열로 복사한 후 제거
+    const existingChildren = [...node.children];
+    existingChildren.forEach(child => child.remove());
     
+    // 새로운 자식 노드 생성 및 추가
+    const updatedChildren: SceneNode[] = [];
     for(let i = 0; i < children.length; i++) {
       const childData = children[i];
       const childNode = await createNodeForData(childData, node);
@@ -54,9 +56,9 @@ async function updateChildren(
   }
 
   // 현재 자식 노드들의 맵 생성 (update/merge 모드)
-  const existingChildrenMap = new Map();
+  const existingChildrenMap = new Map<SceneNode, boolean>();
   node.children.forEach(child => {
-    existingChildrenMap.set(child, child);
+    existingChildrenMap.set(child, false); // false는 아직 매칭되지 않았음을 의미
   });
 
   // 새로운 순서로 자식 노드 업데이트
@@ -68,9 +70,9 @@ async function updateChildren(
 
     // 기존 노드 중에서 매칭되는 노드 찾기
     for (const [existing] of existingChildrenMap) {
-      if (existing.type === childData.type) {
+      if (existing.type === childData.type && !existingChildrenMap.get(existing)) {
         childNode = existing;
-        existingChildrenMap.delete(existing);
+        existingChildrenMap.set(existing, true); // 매칭되었음을 표시
         break;
       }
     }
@@ -79,7 +81,7 @@ async function updateChildren(
       // 기존 노드 업데이트
       await updateNodeForData(childNode, childData, {
         ...options,
-        updateMode: childData.children ? 'update' : options.updateMode
+        updateMode: childData.children ? updateMode : 'update'
       });
     } else {
       // 새 노드 생성
@@ -94,17 +96,18 @@ async function updateChildren(
     node.insertChild(index, child);
   });
 
-  // 남은 자식 노드 처리
+  // 매칭되지 않은 자식 노드 처리
   if (updateMode !== 'merge') {
-    const remainingChildren = Array.from(existingChildrenMap.keys());
-    if (!preserveChildren) {
-      remainingChildren.forEach(child => child.remove());
-    } else {
-      remainingChildren.forEach(child => {
-        if ('visible' in child) {
-          child.visible = false;
+    for (const [child, isMatched] of existingChildrenMap) {
+      if (!isMatched) {
+        if (!preserveChildren) {
+          child.remove();
+        } else {
+          if ('visible' in child) {
+            child.visible = false;
+          }
         }
-      });
+      }
     }
   }
 }

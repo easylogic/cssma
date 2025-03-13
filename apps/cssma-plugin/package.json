@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "watch 'tsup --watch' src/ ../../packages/cssma/src/",
+    "dev": "watch 'tsup' src/ ../../packages/cssma/src/",
     "build": "tsup"
   },
   "dependencies": {

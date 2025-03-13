@@ -12,12 +12,9 @@ export function processCssStyles(
 ): FigmaStyleProperties {
   if (!classNames) return {};
 
-  console.log('classNames', classNames);
-  
   const parsedStyles = parseStyles(classNames);
-  console.log('parsedStyles', parsedStyles);
   const result = convertStylesToFigma(parsedStyles, options);
-  console.log('result', result);
+  
 
   
   const hasArbitraryWidth = parsedStyles.some(
