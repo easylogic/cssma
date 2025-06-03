@@ -30,82 +30,72 @@ type FigmaVariableGradientPaint = (
 
 type FigmaVariablePaint = FigmaVariableSolidPaint | FigmaVariableGradientPaint;
 
-export function convertBackgroundToFigma(style: ParsedStyle): FigmaVariablePaint[] {
+export function convertBackgroundToFigma(styles: ParsedStyle[]): FigmaVariablePaint[] {
   const result: FigmaVariablePaint[] = [];
-
-  switch (style.property) {
-    case 'backgroundColor':
-      if (style.variant === 'figma-variable' && style.variableId) {
-        
-        const paint: FigmaVariableSolidPaint = {
-          type: 'SOLID',
-          color: { r: 0, g: 0, b: 0 },
-          opacity: style.opacity,
-          boundVariables: {
-            color: {
-              type: 'VARIABLE_ALIAS',
-              id: style.variableId
+  for (const style of styles) {
+    
+    switch (style.property) {
+      case 'backgroundBlendMode':
+        result[result.length - 1].blendMode = style.value as string;
+        break;
+      case 'backgroundColor':
+        if (style.variant === 'figma-variable' && style.variableId) {
+          
+          const paint: FigmaVariableSolidPaint = {
+            type: 'SOLID',
+            color: { r: 0, g: 0, b: 0 },
+            opacity: style.opacity,
+            boundVariables: {
+              color: {
+                type: 'VARIABLE_ALIAS',
+                id: style.variableId
+              }
+            }
+          };
+          result.push(paint);
+        } else if (typeof style.value === 'string') {
+          
+          let colorStr: string | FigmaColor | undefined;
+          if (style.variant === 'preset') {
+            colorStr = typeof COLORS[style.value] === 'string' ? COLORS[style.value] : undefined;
+          } else {
+            colorStr = style.value;
+          }
+          
+          if (colorStr) {
+            const color = parseColor(colorStr as string);
+            if (color) {
+              const fill: FigmaVariableSolidPaint = {
+                type: 'SOLID',
+                color: { 
+                  r: color.r,
+                  g: color.g,
+                  b: color.b
+                },
+                ...(isValidNumber(color.a) ? { opacity: color.a } : 
+                  style.opacity !== undefined ? { opacity: style.opacity } : {})
+              };
+              result.push(fill);
             }
           }
-        };
-        result.push(paint);
-      } else if (typeof style.value === 'string') {
-        
-        let colorStr: string | FigmaColor | undefined;
-        if (style.variant === 'preset') {
-          colorStr = typeof COLORS[style.value] === 'string' ? COLORS[style.value] : undefined;
-        } else {
-          colorStr = style.value;
+        } else if (typeof style.value === 'object') {
+          const fill: FigmaVariableSolidPaint = {
+            type: 'SOLID',
+            color: {
+              r: (style.value as FigmaColor).r,
+              g: (style.value as FigmaColor).g,
+              b: (style.value as FigmaColor).b,
+            },
+            ...(style.opacity !== undefined && { opacity: style.opacity })
+          };
+          result.push(fill);
         }
-        
-        if (colorStr) {
-          const color = parseColor(colorStr as string);
-          if (color) {
-            const fill: FigmaVariableSolidPaint = {
-              type: 'SOLID',
-              color: { 
-                r: color.r,
-                g: color.g,
-                b: color.b
-              },
-              ...(isValidNumber(color.a) ? { opacity: color.a } : 
-                 style.opacity !== undefined ? { opacity: style.opacity } : {})
-            };
-            result.push(fill);
-          }
-        }
-      } else if (typeof style.value === 'object') {
-        const fill: FigmaVariableSolidPaint = {
-          type: 'SOLID',
-          color: {
-            r: (style.value as FigmaColor).r,
-            g: (style.value as FigmaColor).g,
-            b: (style.value as FigmaColor).b,
-          },
-          ...(style.opacity !== undefined && { opacity: style.opacity })
-        };
-        result.push(fill);
-      }
-      break;
+        break;
+    }
   }
+
 
   return result;
-}
-
-export function convertGradientListToFigma(styles: ParsedStyle[]): FigmaVariablePaint[] {
-  const group: ParsedStyle[][] = [];
-  let groupIndex = -1;
-
-  for (const style of styles) {
-    if (style.property === 'backgroundColor') {
-      groupIndex++;
-      group.push([]);
-    }
-
-    group[groupIndex].push(style);
-  }
-
-  return group.map(convertGradientToFigma).flat();
 }
 
 export function convertGradientToFigma(styles: ParsedStyle[]): FigmaVariablePaint[] {
@@ -114,7 +104,6 @@ export function convertGradientToFigma(styles: ParsedStyle[]): FigmaVariablePain
   const gradientRoot = styles.find(s => s.property === 'backgroundColor');
   const gradientType = gradientRoot?.value;
   const gradientDirection = gradientRoot?.direction;
-
   
   let gradientPaint: FigmaVariableGradientPaint = {
     type: 'GRADIENT_LINEAR',
@@ -221,6 +210,12 @@ export function convertGradientToFigma(styles: ParsedStyle[]): FigmaVariablePain
   
   if (gradientPaint.gradientStops.length > 0) {
     result.push(gradientPaint);
+  }
+
+  // backgroundBlendMode 처리
+  const blendModeStyle = styles.find(s => s.property === 'backgroundBlendMode');
+  if (blendModeStyle && result.length > 0) {
+    (result[result.length - 1] as any).blendMode = blendModeStyle.value as string;
   }
 
   return result;

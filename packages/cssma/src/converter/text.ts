@@ -67,15 +67,17 @@ export function convertTextToFigma(style: ParsedStyle): Partial<FigmaVariableSty
         }];
       } else if (typeof style.value === 'string') {
         const color = COLORS[style.value as keyof typeof COLORS] || parseColor(style.value);
-        result.fills = [{
-          type: 'SOLID',
-          color: {
-            r: color.r,
-            g: color.g,
-            b: color.b,
-          },
-          opacity: color.a
-        }];
+        if (color) {
+          result.fills = [{
+            type: 'SOLID',
+            color: {
+              r: color.r,
+              g: color.g,
+              b: color.b,
+            },
+            opacity: color.a
+          }];
+        }
       }
       break;
 

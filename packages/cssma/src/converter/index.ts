@@ -1,6 +1,6 @@
 import { ParsedStyle, FigmaStyleProperties, FigmaPaint } from '../types';
 import { convertAspectToFigma } from './aspect';
-import { convertBackgroundToFigma, convertGradientListToFigma } from './background';
+import { convertBackgroundToFigma, convertGradientToFigma } from './background';
 import { convertBlendToFigma } from './blend';
 import { convertBorderToFigma } from './border';
 import { convertFilterToFigma } from './filter';
@@ -31,7 +31,8 @@ export function convertStylesToFigma(
   for (const style of styles) {
     
     if (style.property.startsWith('gradient') || 
-        (style.property === 'backgroundColor' && !style.property.startsWith('text'))) {
+        (style.property === 'backgroundColor' && !style.property.startsWith('text')) ||
+        style.property === 'backgroundBlendMode') {
       gradientStyles.push(style);
       continue;
     }
@@ -128,11 +129,39 @@ export function convertStylesToFigma(
   
   const fills: FigmaPaint[] = [];
   if (gradientStyles.length > 0) {
-    if (gradientStyles[0].property === 'backgroundColor') {
-      if (gradientStyles[0].value === 'linear' || gradientStyles[0].value === 'radial' || gradientStyles[0].value === 'conic') {
-        fills.push(...convertGradientListToFigma(gradientStyles));
+    // backgroundColor를 시작점으로 gradientStyles를 그룹화
+    const backgroundGroups: ParsedStyle[][] = [];
+    let currentGroup: ParsedStyle[] = [];
+
+    for (const style of gradientStyles) {
+      if (style.property === 'backgroundColor') {
+        // 새로운 background 그룹 시작
+        if (currentGroup.length > 0) {
+          backgroundGroups.push(currentGroup);
+        }
+        currentGroup = [style];
       } else {
-        fills.push(...convertBackgroundToFigma(gradientStyles[0]));
+        // 현재 그룹에 속성 추가
+        currentGroup.push(style);
+      }
+    }
+
+    // 마지막 그룹 추가
+    if (currentGroup.length > 0) {
+      backgroundGroups.push(currentGroup);
+    }
+
+    // 각 그룹을 개별적으로 처리
+    for (const group of backgroundGroups) {
+
+      if (group[0].property === 'backgroundColor') {  
+        if (group[0].value === 'linear' || group[0].value === 'radial' || group[0].value === 'conic') {
+          const groupFills = convertGradientToFigma(group);
+          fills.push(...groupFills);
+        } else {
+          const groupFills = convertBackgroundToFigma(group);
+          fills.push(...groupFills);
+        }
       }
     }
   }

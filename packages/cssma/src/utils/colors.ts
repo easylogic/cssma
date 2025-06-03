@@ -66,12 +66,62 @@ export function parseRgbColor(rgb: string): FigmaColor | null {
   return { r: values[0], g: values[1], b: values[2] };
 }
 
+export function parseHslColor(hsl: string): FigmaColor | null {
+  const hslMatch = hsl.match(/hsla?\((\d+),\s*(\d+)%,\s*(\d+)%(?:,\s*([\d.]+))?\)/);
+  if (!hslMatch) {
+    return null;
+  }
+
+  const [, h, s, l, a] = hslMatch;
+  const hue = parseInt(h);
+  const saturation = parseInt(s) / 100;
+  const lightness = parseInt(l) / 100;
+  
+  // Convert HSL to RGB
+  const c = (1 - Math.abs(2 * lightness - 1)) * saturation;
+  const x = c * (1 - Math.abs((hue / 60) % 2 - 1));
+  const m = lightness - c / 2;
+  
+  let r: number, g: number, b: number;
+  
+  if (hue >= 0 && hue < 60) {
+    [r, g, b] = [c, x, 0];
+  } else if (hue >= 60 && hue < 120) {
+    [r, g, b] = [x, c, 0];
+  } else if (hue >= 120 && hue < 180) {
+    [r, g, b] = [0, c, x];
+  } else if (hue >= 180 && hue < 240) {
+    [r, g, b] = [0, x, c];
+  } else if (hue >= 240 && hue < 300) {
+    [r, g, b] = [x, 0, c];
+  } else {
+    [r, g, b] = [c, 0, x];
+  }
+  
+  r = round((r + m));
+  g = round((g + m));
+  b = round((b + m));
+  
+  if (a !== undefined) {
+    const alpha = round(parseFloat(a));
+    if (isNaN(alpha) || alpha < 0 || alpha > 1) {
+      return null;
+    }
+    return { r, g, b, a: alpha };
+  }
+
+  return { r, g, b };
+}
+
 export function parseColor(color: string): FigmaColor | null {
   if (color.startsWith('#')) {
     return parseHexColor(color);
   }
   if (color.startsWith('rgb')) {
     return parseRgbColor(color);
+  }
+  if (color.startsWith('hsl')) {
+    return parseHslColor(color);
   }
   return COLORS[color] || null;
 }

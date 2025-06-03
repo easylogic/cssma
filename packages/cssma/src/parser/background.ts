@@ -205,7 +205,6 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
           property: 'backgroundBlendMode',
           value: BACKGROUND_BLEND_MODES[mode as keyof typeof BACKGROUND_BLEND_MODES],
           variant: 'preset',
-          ...(opacity !== undefined && { opacity })
         };
       }
       return null;

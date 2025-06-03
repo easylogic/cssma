@@ -74,6 +74,7 @@ export interface FigmaGradientLinear {
   type: 'GRADIENT_LINEAR';
   gradientStops: FigmaGradientStop[];
   gradientTransform: number[][];
+  blendMode?: string;
 }
 
 export interface FigmaGradientRadial {
@@ -82,6 +83,7 @@ export interface FigmaGradientRadial {
   centerX: number;
   centerY: number;
   radius: number;
+  blendMode?: string;
 }
 
 export interface FigmaGradientAngular {
@@ -90,6 +92,7 @@ export interface FigmaGradientAngular {
   centerX: number;
   centerY: number;
   rotation: number;
+  blendMode?: string;
 }
 
 export interface FigmaGradientDiamond {
@@ -98,6 +101,7 @@ export interface FigmaGradientDiamond {
   centerX: number;
   centerY: number;
   rotation: number;
+  blendMode?: string;
 }
 
 export type FigmaGradient = 
@@ -111,6 +115,7 @@ export interface FigmaSolidPaint {
   color: FigmaColor;
   variable?: string; // local variable name
   opacity?: number;
+  blendMode?: string;
   boundVariables?: Record<string, {
     type: 'VARIABLE_ALIAS';
     id: string;
@@ -186,6 +191,7 @@ export interface FigmaStyleProperties {
   fills?: FigmaPaint[];
   strokes?: FigmaPaint[];
   effects?: FigmaEffect[];
+  blendMode?: string;
   layoutMode?: 'NONE' | 'HORIZONTAL' | 'VERTICAL' | 'GRID';
   layoutWrap?: 'NO_WRAP' | 'WRAP';
   layoutAlign?: 'MIN' | 'CENTER' | 'MAX' | 'STRETCH';
