@@ -1,12 +1,12 @@
 {
   "type": "FRAME",
   "name": "Button Group",
-  "styles": "flex-row gap-[8]",
+  "styles": "flex-row gap-[8] w-auto h-auto",
   "children": [
     {
       "type": "FRAME",
       "name": "Primary Button",
-      "styles": "px-[16] py-[8] bg-[#3B82F6] hover:bg-[#2563EB] rounded-md shadow-sm",
+      "styles": "flex-row items-center justify-center px-[16] py-[8] bg-[#3B82F6] rounded-md shadow-sm w-auto h-auto",
       "children": [
         {
           "type": "TEXT",
@@ -19,7 +19,7 @@
     {
       "type": "FRAME",
       "name": "Secondary Button",
-      "styles": "px-[16] py-[8] bg-white border border-[#D1D5DB] hover:bg-[#F3F4F6] rounded-md shadow-sm",
+      "styles": "flex-row items-center justify-center px-[16] py-[8] bg-white border border-[#D1D5DB] rounded-md shadow-sm w-auto h-auto",
       "children": [
         {
           "type": "TEXT",

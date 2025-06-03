@@ -68,6 +68,7 @@ export function parseStyleValue(className: string, fontState?: FontState): Parse
   }
 
   if (className.startsWith('flex-') || 
+      className.startsWith('grid') ||
       className.startsWith('items-') || 
       className.startsWith('justify-') || 
       className.startsWith('w-') || 

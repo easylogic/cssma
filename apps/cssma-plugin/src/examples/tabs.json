@@ -1,21 +1,21 @@
 {
   "type": "FRAME",
   "name": "Tabs",
-  "styles": "flex-col w-full",
+  "styles": "flex-col w-[400] h-auto bg-white border border-[#E5E7EB]",
   "children": [
     {
       "type": "FRAME",
       "name": "Tab List",
-      "styles": "flex-row border-b border-[#E5E7EB]",
+      "styles": "flex-row w-[400] h-[48] border-b border-[#E5E7EB]",
       "children": [
         {
           "type": "FRAME",
           "name": "Active Tab",
-          "styles": "flex-row items-center px-[16] py-[12] border-b-2 border-[#3B82F6]",
+          "styles": "flex-row items-center justify-center w-[134] h-[48] border-b-2 border-[#3B82F6] bg-[#F8FAFC]",
           "children": [
             {
               "type": "TEXT",
-              "name": "Tab Text",
+              "name": "Active Tab Text",
               "styles": "text-sm font-medium text-[#3B82F6]",
               "text": "Account"
             }
@@ -23,12 +23,12 @@
         },
         {
           "type": "FRAME",
-          "name": "Tab",
-          "styles": "flex-row items-center px-[16] py-[12] hover:text-[#4B5563] hover:border-b-2 hover:border-[#E5E7EB]",
+          "name": "Inactive Tab 1",
+          "styles": "flex-row items-center justify-center w-[133] h-[48] bg-white",
           "children": [
             {
               "type": "TEXT",
-              "name": "Tab Text",
+              "name": "Tab Text 1",
               "styles": "text-sm font-medium text-[#6B7280]",
               "text": "Password"
             }
@@ -36,12 +36,12 @@
         },
         {
           "type": "FRAME",
-          "name": "Tab",
-          "styles": "flex-row items-center px-[16] py-[12] hover:text-[#4B5563] hover:border-b-2 hover:border-[#E5E7EB]",
+          "name": "Inactive Tab 2",
+          "styles": "flex-row items-center justify-center w-[133] h-[48] bg-white",
           "children": [
             {
               "type": "TEXT",
-              "name": "Tab Text",
+              "name": "Tab Text 2",
               "styles": "text-sm font-medium text-[#6B7280]",
               "text": "Notifications"
             }
@@ -52,28 +52,28 @@
     {
       "type": "FRAME",
       "name": "Tab Panel",
-      "styles": "flex-col gap-[16] p-[16]",
+      "styles": "flex-col w-[400] h-auto p-[24] gap-[16] bg-white",
       "children": [
         {
           "type": "FRAME",
           "name": "Form Group",
-          "styles": "flex-col gap-[4]",
+          "styles": "flex-col w-[352] h-auto gap-[8]",
           "children": [
             {
               "type": "TEXT",
-              "name": "Label",
-              "styles": "text-sm font-medium text-[#374151]",
+              "name": "Email Label",
+              "styles": "text-sm font-medium text-[#374151] w-[352] h-auto",
               "text": "Email"
             },
             {
               "type": "FRAME",
-              "name": "Input",
-              "styles": "flex-row items-center w-full px-[12] py-[8] bg-white border border-[#D1D5DB] rounded-md",
+              "name": "Email Input",
+              "styles": "flex-row items-center w-[352] h-[40] px-[12] py-[8] bg-white border border-[#D1D5DB] rounded-md",
               "children": [
                 {
-                  "type": "TEXT",
-                  "name": "Input Text",
-                  "styles": "text-sm text-[#111827]",
+                                "type": "TEXT",
+              "name": "Input Text",
+              "styles": "w-[328] text-sm text-[#111827]",
                   "text": "johndoe@example.com"
                 }
               ]

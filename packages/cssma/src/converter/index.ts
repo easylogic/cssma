@@ -19,7 +19,7 @@ const TEXT_PROPERTIES = ['color', 'textAlign', 'textDecoration', 'letterSpacing'
 
 export function convertStylesToFigma(
   styles: ParsedStyle[],
-  context: { parentLayoutMode?: 'NONE' | 'HORIZONTAL' | 'VERTICAL' } = {}
+  context: { parentLayoutMode?: 'NONE' | 'HORIZONTAL' | 'VERTICAL' | 'GRID' } = {}
 ): FigmaStyleProperties {
   const result: Partial<FigmaStyleProperties> = {};
   let gradientStyles: ParsedStyle[] = [];
@@ -79,6 +79,7 @@ export function convertStylesToFigma(
       || style.property === 'max-height'
       || style.property === 'flex-row'
       || style.property === 'flex-col'
+      || style.property === 'grid'
       || style.property === 'counterAxisAlignItems'
       || style.property === 'primaryAxisAlignItems'
     ) {

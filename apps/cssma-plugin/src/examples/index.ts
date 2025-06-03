@@ -14,6 +14,7 @@ import landingHeroExample from './landing-hero.json';
 import landingProductExample from './landing-product.json';
 import landingSaasExample from './landing-saas.json';
 import landingSlidesExample from './landing-slides.json';
+import simpleTestExample from './simple-test.json';
 
 export const examples = {
   button: buttonExample,
@@ -32,6 +33,7 @@ export const examples = {
   landingProduct: landingProductExample,
   landingSaas: landingSaasExample,
   landingSlides: landingSlidesExample,
+  simpleTest: simpleTestExample,
 } as const;
 
 export type ExampleType = keyof typeof examples;

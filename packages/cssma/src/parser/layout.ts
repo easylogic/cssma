@@ -43,6 +43,15 @@ function parseArbitraryNumericValue(value: string, allowNegative: boolean = fals
  * Parse layout-related style values
  */
 export function parseLayoutValue(className: string): ParsedStyle | null {
+
+  if (className === 'grid') {
+    return {
+      property: 'layoutMode',
+      value: 'GRID',
+      variant: 'preset'
+    };
+  }
+
   // Handle Flex direction
   if (className === 'flex-row') {
     return {

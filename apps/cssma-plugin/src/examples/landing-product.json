@@ -1,44 +1,44 @@
 {
   "type": "FRAME",
   "name": "Product Landing Page",
-  "styles": "flex-col w-auto",
+  "styles": "flex-col w-[1200] h-auto",
   "children": [
     {
       "type": "FRAME",
       "name": "Hero Section",
-      "styles": "flex-row justify-between items-center w-full px-[48] py-[80] bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6]",
+      "styles": "flex-row justify-between items-center w-full h-auto gap-[48] px-[48] py-[80] bg-[#3B82F6]",
       "children": [
         {
           "type": "FRAME",
           "name": "Hero Content",
-          "styles": "flex-col w-full max-w-[480] gap-[24]",
+          "styles": "flex-col w-[480] h-auto gap-[24]",
           "children": [
             {
               "type": "TEXT",
               "name": "Hero Title",
-              "styles": "text-5xl font-bold text-white",
+              "styles": "w-full text-5xl font-bold text-white",
               "text": "The Future of Design"
             },
             {
               "type": "TEXT",
               "name": "Hero Description",
-              "styles": "text-xl text-[#E5E7EB]",
+              "styles": "w-full text-xl text-[#E5E7EB]",
               "text": "Transform your design workflow with AI-powered tools. Create stunning visuals in minutes, not hours."
             },
             {
               "type": "FRAME",
               "name": "Hero Actions",
-              "styles": "flex-row items-center gap-[16] mt-[16]",
+              "styles": "flex-row items-center w-full h-auto gap-[16]",
               "children": [
                 {
                   "type": "FRAME",
                   "name": "Primary CTA",
-                  "styles": "w-auto px-[24] py-[14] bg-white hover:bg-[#F3F4F6] rounded-md",
+                  "styles": "flex-row justify-center items-center w-auto h-auto px-[24] py-[14] bg-white rounded-md",
                   "children": [
                     {
                       "type": "TEXT",
                       "name": "Button Text",
-                      "styles": "text-base font-medium text-[#3B82F6]",
+                      "styles": "w-auto text-base font-medium text-[#3B82F6]",
                       "text": "Try for Free"
                     }
                   ]
@@ -46,12 +46,12 @@
                 {
                   "type": "FRAME",
                   "name": "Secondary CTA",
-                  "styles": "w-auto px-[24] py-[14] border border-white hover:bg-white/10 rounded-md",
+                  "styles": "flex-row justify-center items-center w-auto h-auto px-[24] py-[14] border border-white rounded-md",
                   "children": [
                     {
                       "type": "TEXT",
                       "name": "Button Text",
-                      "styles": "text-base font-medium text-white",
+                      "styles": "w-auto text-base font-medium text-white",
                       "text": "Watch Demo"
                     }
                   ]
@@ -63,12 +63,12 @@
         {
           "type": "FRAME",
           "name": "Hero Image",
-          "styles": "w-full max-w-[560]",
+          "styles": "flex-col w-[560] h-auto",
           "children": [
             {
-              "type": "RECTANGLE",
+              "type": "FRAME",
               "name": "Product Preview",
-              "styles": "w-full aspect-square bg-white/10 rounded-lg backdrop-blur-lg"
+              "styles": "w-full h-[560] bg-[#FFFFFF20] rounded-lg"
             }
           ]
         }
@@ -77,23 +77,23 @@
     {
       "type": "FRAME",
       "name": "Features Section",
-      "styles": "flex-col items-center w-full px-[48] py-[80] bg-white",
+      "styles": "flex-col items-center w-full h-auto gap-[64] px-[48] py-[80] bg-white",
       "children": [
         {
           "type": "FRAME",
           "name": "Section Header",
-          "styles": "flex-col items-center text-center max-w-[640] gap-[16] mb-[64]",
+          "styles": "flex-col items-center w-[640] h-auto gap-[16]",
           "children": [
             {
               "type": "TEXT",
               "name": "Section Title",
-              "styles": "text-3xl font-bold text-[#111827]",
+              "styles": "w-full text-3xl font-bold text-center text-[#111827]",
               "text": "Why Choose Us"
             },
             {
               "type": "TEXT",
               "name": "Section Description",
-              "styles": "text-lg text-[#4B5563]",
+              "styles": "w-full text-lg text-center text-[#4B5563]",
               "text": "Experience the power of next-generation design tools that help you work smarter, not harder."
             }
           ]
@@ -101,28 +101,28 @@
         {
           "type": "FRAME",
           "name": "Feature Grid",
-          "styles": "grid grid-cols-3 w-full gap-[32]",
+          "styles": "flex-row justify-center w-full h-auto gap-[32]",
           "children": [
             {
               "type": "FRAME",
               "name": "Feature Card",
-              "styles": "flex-col gap-[16] p-[24] bg-[#F9FAFB] rounded-lg",
+              "styles": "flex-col w-[300] h-auto gap-[16] p-[24] bg-[#F9FAFB] rounded-lg",
               "children": [
                 {
-                  "type": "RECTANGLE",
+                  "type": "FRAME",
                   "name": "Feature Icon",
                   "styles": "w-[48] h-[48] bg-[#3B82F6] rounded-lg"
                 },
                 {
                   "type": "TEXT",
                   "name": "Feature Title",
-                  "styles": "text-xl font-semibold text-[#111827]",
+                  "styles": "w-full text-xl font-bold text-[#111827]",
                   "text": "AI-Powered Design"
                 },
                 {
                   "type": "TEXT",
                   "name": "Feature Description",
-                  "styles": "text-base text-[#4B5563]",
+                  "styles": "w-full text-base text-[#4B5563]",
                   "text": "Let AI handle the heavy lifting while you focus on creativity."
                 }
               ]

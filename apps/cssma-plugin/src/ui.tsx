@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ComponentEditor } from './components/ComponentEditor';
 import { CssConverter } from './components/CssConverter';
+import { AITab } from './components/tool/ai-tab';
 import examples from './examples';
 import './index.css';
 
@@ -137,6 +138,12 @@ function App() {
             >
               Component Creator
             </TabsTrigger>
+            <TabsTrigger 
+              value="ai" 
+              className="h-9 px-4 text-sm data-[state=active]:bg-[#F5F5F5] rounded-md"
+            >
+              AI Generator
+            </TabsTrigger>
           </TabsList>
         </div>
 
@@ -161,6 +168,11 @@ function App() {
             onAnalyzeSelection={analyzeSelection}
             onCreateComponent={createComponent}
           />
+        </TabsContent>
+
+        {/* AI 생성 탭 */}
+        <TabsContent value="ai" className="flex-1 overflow-hidden">
+          <AITab />
         </TabsContent>
       </Tabs>
     </div>

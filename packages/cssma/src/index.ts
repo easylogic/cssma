@@ -39,3 +39,6 @@ export * from './core/updateNodeForData';
 
 
 export * from './core/figmaToCss';
+
+// Functional Pattern Builders - JSON NodeData creators
+export * from './builders/nodeBuilders';

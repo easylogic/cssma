@@ -91,6 +91,14 @@ figma.ui.onmessage = async (msg) => {
       case 'create-component':
         await createComponentFromSpec(msg.componentSpec);
         break;
+
+      case 'create-design':
+        await createDesignFromSpecs(msg.designSpec);
+        break;
+
+      case 'analyze-design':
+        await analyzeCurrentDesign();
+        break;
         
       case 'analyze-selection':
         analyzeSelection();
@@ -616,4 +624,101 @@ function createComponentSection(page: PageNode, selection: readonly SceneNode[])
       }
     }
   });
+}
+
+// AI에서 생성된 디자인 스펙들로 컴포넌트 생성
+async function createDesignFromSpecs(designSpecs: any[]) {
+  if (!designSpecs || designSpecs.length === 0) {
+    figma.notify('유효한 디자인 스펙을 입력해주세요');
+    return;
+  }
+  
+  // 로딩 표시
+  figma.notify('AI 디자인 생성 중...', { timeout: 1000 });
+  
+  try {
+    // 필요한 글꼴 로드
+    await Promise.all([
+      figma.loadFontAsync({ family: "Inter", style: "Regular" }),
+      figma.loadFontAsync({ family: "Inter", style: "Medium" }),
+      figma.loadFontAsync({ family: "Inter", style: "Bold" })
+    ]);
+    
+    const createdNodes: SceneNode[] = [];
+    let yOffset = 0;
+    
+    // 각 디자인 스펙에 대해 노드 생성
+    for (const spec of designSpecs) {
+      try {
+        // 디자인 스펙에서 실제 프레임 데이터 추출
+        const frameData = spec.frame || spec;
+        const node = await createNodeForData(frameData);
+        
+        // 노드 위치 설정 (세로로 배치)
+        node.x = figma.viewport.center.x - node.width / 2;
+        node.y = figma.viewport.center.y + yOffset;
+        
+        // 현재 페이지에 추가
+        figma.currentPage.appendChild(node);
+        createdNodes.push(node);
+        
+        // 다음 노드를 위한 Y 오프셋 업데이트
+        yOffset += node.height + 40;
+        
+      } catch (error) {
+        console.error('디자인 스펙 생성 중 오류:', error);
+        figma.notify(`디자인 "${spec.name || 'unknown'}" 생성 중 오류: ${(error as Error).message}`, { error: true });
+      }
+    }
+    
+    if (createdNodes.length > 0) {
+      // 생성된 모든 노드를 뷰포트에 맞추기
+      figma.viewport.scrollAndZoomIntoView(createdNodes);
+      
+      // 첫 번째 노드 선택
+      figma.currentPage.selection = [createdNodes[0]];
+      
+      figma.notify(`${createdNodes.length}개의 AI 디자인이 생성되었습니다`);
+    } else {
+      figma.notify('디자인 생성에 실패했습니다', { error: true });
+    }
+    
+  } catch (error) {
+    console.error('AI 디자인 생성 중 오류:', error);
+    figma.notify('AI 디자인 생성 중 오류가 발생했습니다: ' + (error as Error).message, { error: true });
+  }
+}
+
+// 현재 선택된 디자인을 분석하여 UI로 전송
+async function analyzeCurrentDesign() {
+  const selection = figma.currentPage.selection;
+  
+  if (selection.length === 0) {
+    figma.notify('분석할 요소를 선택해주세요');
+    return;
+  }
+  
+  try {
+    figma.notify('디자인 분석 중...', { timeout: 500 });
+    
+    const analysisData = [];
+    
+    // 선택된 각 노드 분석
+    for (const node of selection) {
+      const nodeData = analyzeNodeTree(node);
+      analysisData.push(nodeData);
+    }
+    
+    // UI로 분석 결과 전송
+    figma.ui.postMessage({
+      type: 'design-analysis',
+      data: analysisData
+    });
+    
+    figma.notify('디자인 분석이 완료되었습니다');
+    
+  } catch (error) {
+    console.error('디자인 분석 중 오류:', error);
+    figma.notify('디자인 분석 중 오류가 발생했습니다: ' + (error as Error).message, { error: true });
+  }
 }

@@ -15,8 +15,6 @@ export function processCssStyles(
   const parsedStyles = parseStyles(classNames);
   const result = convertStylesToFigma(parsedStyles, options);
   
-
-  
   const hasArbitraryWidth = parsedStyles.some(
     style => style.property === 'width' && style.variant === 'arbitrary'
   );

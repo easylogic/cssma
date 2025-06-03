@@ -10,6 +10,7 @@ This document explains how to implement a Figma node styling system using syntax
 |------------|-----------|------|
 | `flex-col` | `layoutMode: "VERTICAL"` | Vertical layout |
 | `flex-row` | `layoutMode: "HORIZONTAL"` | Horizontal layout |
+| `grid` | `layoutMode: "GRID"` | Grid layout |
 | `wrap` | `layoutWrap: "WRAP"` | Wraps elements to the next line |
 | `no-wrap` | `layoutWrap: "NO_WRAP"` | Prevents wrapping |
 
@@ -185,7 +186,7 @@ border-[10]          /* Border width in pixels (divided by 10) */
 1. **Layout Mode Required Styles**
    - `w-full`, `h-full`, `w-auto`, `h-auto` styles require the parent frame to have a layout mode applied.
    - If the parent doesn't have a layout mode, a warning will be displayed and the style will automatically change to `w-auto` or `h-auto`.
-   - It's recommended to add `flex-row` or `flex-col` style to all frames.
+   - It's recommended to add `flex-row` or `flex-col` or `grid` style to all frames.
 
 2. **Using Transparent Backgrounds**
    - Apply `bg-transparent` to frames that don't need a background color, especially for nested frames.
@@ -216,7 +217,7 @@ border-[10]          /* Border width in pixels (divided by 10) */
    - Therefore, `p-4` means 16px padding.
 
 7. **Setting Layout Direction**
-   - Apply `flex-row` or `flex-col` style to frames to set the layout direction.
+   - Apply `flex-row` or `flex-col` or `grid` style to frames to set the layout direction.
    - `w-full`, `h-full`, `w-auto`, `h-auto` styles only work properly in frames with a layout direction set.
    - The `gap` property only applies in frames with a layout direction set.
 

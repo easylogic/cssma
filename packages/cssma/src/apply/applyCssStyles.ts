@@ -179,32 +179,73 @@ export async function applyCssStyles<T extends SceneNode>(node: T, styles: strin
     if (isFrameLike) {
       const frameNode = node as FrameNode;
       
+      console.log('🔧 Layout Debug - Node:', frameNode.name, 'Type:', frameNode.type);
+      console.log('📍 Node ID:', frameNode.id);
+      console.log('🎯 Parent:', frameNode.parent ? `${frameNode.parent.name} (${frameNode.parent.type})` : 'None');
+      console.log('👶 Children count:', frameNode.children?.length || 0);
+      console.log('📐 Style Object:', JSON.stringify(styleObject, null, 2));
+      console.log('🎯 Current layoutMode:', frameNode.layoutMode);
+      console.log('🔧 Current sizing - H:', frameNode.layoutSizingHorizontal, 'V:', frameNode.layoutSizingVertical);
+      
       // Layout mode and direction
       if (styleObject.layoutMode !== undefined) {
+        console.log('📱 Setting layoutMode:', styleObject.layoutMode);
         frameNode.layoutMode = styleObject.layoutMode;
+        console.log('✅ layoutMode set to:', frameNode.layoutMode);
       }
       
       // Alignment properties
       if (styleObject.primaryAxisAlignItems !== undefined) {
+        console.log('🎪 Setting primaryAxisAlignItems:', styleObject.primaryAxisAlignItems);
         frameNode.primaryAxisAlignItems = styleObject.primaryAxisAlignItems;
       }
       
       if (styleObject.counterAxisAlignItems !== undefined) {
+        console.log('🎭 Setting counterAxisAlignItems:', styleObject.counterAxisAlignItems);
         frameNode.counterAxisAlignItems = styleObject.counterAxisAlignItems;
       }
       
       // Layout wrap (line break)
       if (styleObject.layoutWrap !== undefined) {
+        console.log('🌯 Setting layoutWrap:', styleObject.layoutWrap);
         frameNode.layoutWrap = styleObject.layoutWrap;
       }
       
       // Sizing properties
       if (styleObject.layoutSizingHorizontal !== undefined) {
-        frameNode.layoutSizingHorizontal = styleObject.layoutSizingHorizontal;
+        console.log('↔️ Attempting to set layoutSizingHorizontal:', styleObject.layoutSizingHorizontal);
+        console.log('🔍 Pre-check - Node:', frameNode.name, 'ID:', frameNode.id);
+        console.log('🔍 Pre-check - layoutMode:', frameNode.layoutMode);
+        console.log('🔍 Pre-check - Parent layoutMode:', frameNode.parent && 'layoutMode' in frameNode.parent ? frameNode.parent.layoutMode : 'N/A');
+        try {
+          frameNode.layoutSizingHorizontal = styleObject.layoutSizingHorizontal;
+          console.log('✅ layoutSizingHorizontal set successfully for:', frameNode.name);
+        } catch (error) {
+          console.error('❌ Error setting layoutSizingHorizontal for node:', frameNode.name);
+          console.error('❌ Node ID:', frameNode.id);
+          console.error('❌ Node type:', frameNode.type);
+          console.error('❌ Current layoutMode:', frameNode.layoutMode);
+          console.error('❌ Parent info:', frameNode.parent ? `${frameNode.parent.name} (${frameNode.parent.type})` : 'None');
+          console.error('❌ Error details:', error);
+        }
       }
       
       if (styleObject.layoutSizingVertical !== undefined) {
-        frameNode.layoutSizingVertical = styleObject.layoutSizingVertical;
+        console.log('↕️ Attempting to set layoutSizingVertical:', styleObject.layoutSizingVertical);
+        console.log('🔍 Pre-check - Node:', frameNode.name, 'ID:', frameNode.id);
+        console.log('🔍 Pre-check - layoutMode:', frameNode.layoutMode);
+        console.log('🔍 Pre-check - Parent layoutMode:', frameNode.parent && 'layoutMode' in frameNode.parent ? frameNode.parent.layoutMode : 'N/A');
+        try {
+          frameNode.layoutSizingVertical = styleObject.layoutSizingVertical;
+          console.log('✅ layoutSizingVertical set successfully for:', frameNode.name);
+        } catch (error) {
+          console.error('❌ Error setting layoutSizingVertical for node:', frameNode.name);
+          console.error('❌ Node ID:', frameNode.id);
+          console.error('❌ Node type:', frameNode.type);
+          console.error('❌ Current layoutMode:', frameNode.layoutMode);
+          console.error('❌ Parent info:', frameNode.parent ? `${frameNode.parent.name} (${frameNode.parent.type})` : 'None');
+          console.error('❌ Error details:', error);
+        }
       }
       
       // Spacing properties
@@ -325,6 +366,34 @@ export async function applyCssStyles<T extends SceneNode>(node: T, styles: strin
     if (isTextNode) {
       const textNode = node as TextNode;
       
+      console.log('📝 Text node debug:', textNode.name);
+      console.log('📝 styleObject layoutSizing:', {
+        horizontal: styleObject.layoutSizingHorizontal,
+        vertical: styleObject.layoutSizingVertical
+      });
+      
+      // Apply layoutSizing properties for text nodes
+      if (styleObject.layoutSizingHorizontal !== undefined) {
+        textNode.layoutSizingHorizontal = styleObject.layoutSizingHorizontal;
+        console.log('📝 Text node layoutSizingHorizontal set to:', styleObject.layoutSizingHorizontal);
+      }
+      
+      if (styleObject.layoutSizingVertical !== undefined) {
+        textNode.layoutSizingVertical = styleObject.layoutSizingVertical;
+        console.log('📝 Text node layoutSizingVertical set to:', styleObject.layoutSizingVertical);
+      }
+      
+      // Handle textAutoResize based on layoutSizing
+      if (styleObject.layoutSizingHorizontal === 'FILL') {
+        // When w-full is applied, set textAutoResize to HEIGHT so width can fill
+        textNode.textAutoResize = 'HEIGHT';
+        console.log('📝 Text node textAutoResize set to HEIGHT for w-full:', textNode.name);
+      } else if (styleObject.layoutSizingHorizontal === 'HUG' && styleObject.layoutSizingVertical === 'HUG') {
+        // When w-auto h-auto, use WIDTH_AND_HEIGHT (default behavior)
+        textNode.textAutoResize = 'WIDTH_AND_HEIGHT';
+        console.log('📝 Text node textAutoResize set to WIDTH_AND_HEIGHT for w-auto h-auto:', textNode.name);
+      }
+      
       // Font size
       if (styleObject.fontSize !== undefined) {
         if (typeof styleObject.fontSize === 'object' && 'variableId' in styleObject.fontSize) {
@@ -347,7 +416,19 @@ export async function applyCssStyles<T extends SceneNode>(node: T, styles: strin
             'fontName'
           );
         } else {
-          textNode.fontName = styleObject.fontName as FontName;
+          try {
+            textNode.fontName = styleObject.fontName as FontName;
+            console.log('✅ FontName set successfully:', styleObject.fontName);
+          } catch (error) {
+            console.warn('⚠️ Failed to set fontName:', styleObject.fontName, 'Falling back to Inter Regular');
+            console.warn('⚠️ Error details:', error);
+            // Fallback to a safe default font
+            try {
+              textNode.fontName = { family: 'Inter', style: 'Regular' };
+            } catch (fallbackError) {
+              console.error('❌ Even fallback font failed:', fallbackError);
+            }
+          }
         }
       }
       

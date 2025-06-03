@@ -24,7 +24,7 @@ function parseSpacing(value: string): number {
   return size ? (SPACING_MAP[size] || parseInt(size) * 4) : 0;
 }
 
-const VALID_LAYOUT_MODES: readonly LayoutMode[] = ['HORIZONTAL', 'VERTICAL'];
+const VALID_LAYOUT_MODES: readonly LayoutMode[] = ['HORIZONTAL', 'VERTICAL', 'GRID'];
 const VALID_PRIMARY_AXIS_VALUES: readonly PrimaryAxisAlignValue[] = ['MIN', 'CENTER', 'MAX', 'SPACE_BETWEEN'];
 const VALID_COUNTER_AXIS_VALUES: readonly CounterAxisAlignValue[] = ['MIN', 'CENTER', 'MAX', 'BASELINE'];
 const VALID_SIZING_VALUES: readonly SizingValue[] = ['FIXED', 'FILL', 'HUG'];

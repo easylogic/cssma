@@ -1,12 +1,12 @@
 {
   "type": "FRAME",
   "name": "Alert Examples",
-  "styles": "flex-col gap-[16]",
+  "styles": "flex-col w-auto h-auto gap-[16] p-[24]",
   "children": [
     {
       "type": "FRAME",
       "name": "Success Alert",
-      "styles": "flex-row items-start gap-[12] p-[16] bg-[#F0FDF4] border border-[#BBF7D0] rounded-lg",
+      "styles": "flex-row items-start w-[400] h-auto gap-[12] p-[16] bg-[#F0FDF4] border border-[#BBF7D0] rounded-lg",
       "children": [
         {
           "type": "TEXT",
@@ -17,18 +17,18 @@
         {
           "type": "FRAME",
           "name": "Content",
-          "styles": "flex-col gap-[4]",
+          "styles": "flex-col w-[356] h-auto gap-[4]",
           "children": [
             {
               "type": "TEXT",
               "name": "Title",
-              "styles": "text-sm font-medium text-[#15803D]",
+              "styles": "w-[356] text-sm font-medium text-[#15803D]",
               "text": "Successfully saved!"
             },
             {
               "type": "TEXT",
               "name": "Description",
-              "styles": "text-sm text-[#16A34A]",
+              "styles": "w-[356] text-sm text-[#16A34A]",
               "text": "Your changes have been saved successfully."
             }
           ]
@@ -38,7 +38,7 @@
     {
       "type": "FRAME",
       "name": "Error Alert",
-      "styles": "flex-row items-start gap-[12] p-[16] bg-[#FEF2F2] border border-[#FECACA] rounded-lg",
+      "styles": "flex-row items-start w-[400] h-auto gap-[12] p-[16] bg-[#FEF2F2] border border-[#FECACA] rounded-lg",
       "children": [
         {
           "type": "TEXT",
@@ -49,18 +49,18 @@
         {
           "type": "FRAME",
           "name": "Content",
-          "styles": "flex-col gap-[4]",
+          "styles": "flex-col w-[356] h-auto gap-[4]",
           "children": [
             {
               "type": "TEXT",
               "name": "Title",
-              "styles": "text-sm font-medium text-[#991B1B]",
+              "styles": "w-[356] text-sm font-medium text-[#991B1B]",
               "text": "Error occurred"
             },
             {
               "type": "TEXT",
               "name": "Description",
-              "styles": "text-sm text-[#DC2626]",
+              "styles": "w-[356] text-sm text-[#DC2626]",
               "text": "There was a problem with your request."
             }
           ]
@@ -70,7 +70,7 @@
     {
       "type": "FRAME",
       "name": "Warning Alert",
-      "styles": "flex-row items-start gap-[12] p-[16] bg-[#FFFBEB] border border-[#FEF3C7] rounded-lg",
+      "styles": "flex-row items-start w-[400] h-auto gap-[12] p-[16] bg-[#FFFBEB] border border-[#FEF3C7] rounded-lg",
       "children": [
         {
           "type": "TEXT",
@@ -81,18 +81,18 @@
         {
           "type": "FRAME",
           "name": "Content",
-          "styles": "flex-col gap-[4]",
+          "styles": "flex-col w-[356] h-auto gap-[4]",
           "children": [
             {
               "type": "TEXT",
               "name": "Title",
-              "styles": "text-sm font-medium text-[#92400E]",
+              "styles": "w-[356] text-sm font-medium text-[#92400E]",
               "text": "Attention needed"
             },
             {
               "type": "TEXT",
               "name": "Description",
-              "styles": "text-sm text-[#D97706]",
+              "styles": "w-[356] text-sm text-[#D97706]",
               "text": "Please review your information before proceeding."
             }
           ]

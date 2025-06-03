@@ -6,10 +6,10 @@
     {
       "type": "FRAME",
       "name": "Logo Section",
-      "styles": "flex-row items-center gap-[8]",
+      "styles": "flex-row items-center w-auto h-auto gap-[8]",
       "children": [
         {
-          "type": "RECTANGLE",
+          "type": "FRAME",
           "name": "Logo",
           "styles": "w-[32] h-[32] bg-[#3B82F6] rounded-md"
         },
@@ -24,7 +24,7 @@
     {
       "type": "FRAME",
       "name": "Menu Items",
-      "styles": "flex-row items-center gap-[32]",
+      "styles": "flex-row items-center w-auto h-auto gap-[32]",
       "children": [
         {
           "type": "TEXT",
@@ -35,19 +35,19 @@
         {
           "type": "TEXT",
           "name": "Menu Item",
-          "styles": "text-sm font-medium text-[#6B7280] hover:text-[#111827]",
+          "styles": "text-sm font-medium text-[#6B7280]",
           "text": "Products"
         },
         {
           "type": "TEXT",
           "name": "Menu Item",
-          "styles": "text-sm font-medium text-[#6B7280] hover:text-[#111827]",
+          "styles": "text-sm font-medium text-[#6B7280]",
           "text": "About"
         },
         {
           "type": "TEXT",
           "name": "Menu Item",
-          "styles": "text-sm font-medium text-[#6B7280] hover:text-[#111827]",
+          "styles": "text-sm font-medium text-[#6B7280]",
           "text": "Contact"
         }
       ]
@@ -55,12 +55,12 @@
     {
       "type": "FRAME",
       "name": "Action Buttons",
-      "styles": "flex-row items-center gap-[12]",
+      "styles": "flex-row items-center w-auto h-auto gap-[12]",
       "children": [
         {
           "type": "FRAME",
           "name": "Sign In",
-          "styles": "px-[16] py-[8] bg-white border border-[#D1D5DB] hover:bg-[#F3F4F6] rounded-md",
+          "styles": "flex-row items-center justify-center px-[16] py-[8] bg-white border border-[#D1D5DB] rounded-md w-auto h-auto",
           "children": [
             {
               "type": "TEXT",
@@ -73,7 +73,7 @@
         {
           "type": "FRAME",
           "name": "Sign Up",
-          "styles": "px-[16] py-[8] bg-[#3B82F6] hover:bg-[#2563EB] rounded-md",
+          "styles": "flex-row items-center justify-center px-[16] py-[8] bg-[#3B82F6] rounded-md w-auto h-auto",
           "children": [
             {
               "type": "TEXT",

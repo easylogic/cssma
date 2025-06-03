@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { Markdown } from 'tiptap-markdown';
 import Placeholder from '@tiptap/extension-placeholder';
 import ReactMarkdown from 'react-markdown';
 import rehypeSanitize from 'rehype-sanitize';
@@ -141,7 +140,6 @@ export const ChatUI: React.FC<ChatUIProps> = ({ onSendMessage }) => {
           levels: [1, 2, 3]
         }
       }),
-      Markdown,
       Placeholder.configure({
         placeholder: 'Type your message here... (Markdown supported)'
       })
@@ -161,15 +159,76 @@ export const ChatUI: React.FC<ChatUIProps> = ({ onSendMessage }) => {
     scrollToBottom();
   }, [messages]);
 
+  // Figma에서 오는 메시지 처리
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.pluginMessage?.type === 'design-analysis') {
+        const analysisData = event.data.pluginMessage.data;
+        
+        // 분석 결과를 마크다운 형식으로 포맷팅
+        const formattedAnalysis = formatAnalysisData(analysisData);
+        
+        const newMessage: Message = {
+          id: Date.now().toString(),
+          type: 'assistant',
+          content: formattedAnalysis,
+          timestamp: Date.now(),
+          status: 'sent'
+        };
+        
+        setMessages(prev => [...prev, newMessage]);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  // 분석 데이터를 마크다운으로 포맷팅
+  const formatAnalysisData = (analysisData: any[]): string => {
+    if (!analysisData || analysisData.length === 0) {
+      return "선택된 요소가 없습니다.";
+    }
+
+    let markdown = "# 🔍 디자인 분석 결과\n\n";
+    
+    analysisData.forEach((node, index) => {
+      markdown += `## ${index + 1}. ${node.name || 'Unnamed'} (${node.type})\n\n`;
+      
+      if (node.styles) {
+        markdown += `**스타일:** \`${node.styles}\`\n\n`;
+      }
+      
+      if (node.text) {
+        markdown += `**텍스트:** "${node.text}"\n\n`;
+      }
+      
+      if (node.children && node.children.length > 0) {
+        markdown += `**자식 요소:** ${node.children.length}개\n\n`;
+        
+        // 자식 요소들 요약
+        const childSummary = node.children.map((child: any) => 
+          `- ${child.name || 'Unnamed'} (${child.type})`
+        ).join('\n');
+        
+        markdown += `${childSummary}\n\n`;
+      }
+      
+      markdown += "---\n\n";
+    });
+    
+    return markdown;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editor || !editor.getText().trim() || isLoading) return;
 
-    const markdown = editor.storage.markdown.getMarkdown();
+    const messageText = editor.getText();
     const newMessage: Message = {
       id: Date.now().toString(),
       type: 'user',
-      content: markdown,
+      content: messageText,
       timestamp: Date.now(),
       status: 'sending'
     };
@@ -179,7 +238,7 @@ export const ChatUI: React.FC<ChatUIProps> = ({ onSendMessage }) => {
     setIsLoading(true);
 
     try {
-      await onSendMessage(markdown);
+      await onSendMessage(messageText);
       setMessages(prev => 
         prev.map(msg => 
           msg.id === newMessage.id ? { ...msg, status: 'sent' } : msg

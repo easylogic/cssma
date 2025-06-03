@@ -1,12 +1,12 @@
 {
   "type": "FRAME",
   "name": "Avatar Examples",
-  "styles": "flex-col gap-[24]",
+  "styles": "flex-col w-auto h-auto gap-[24]",
   "children": [
     {
       "type": "FRAME",
       "name": "Image Avatars",
-      "styles": "flex-row items-center gap-[16]",
+      "styles": "flex-row items-center w-auto h-auto gap-[16]",
       "children": [
         {
           "type": "FRAME",
@@ -14,9 +14,9 @@
           "styles": "w-[32] h-[32] rounded-full overflow-hidden",
           "children": [
             {
-              "type": "RECTANGLE",
+              "type": "FRAME",
               "name": "Avatar Image",
-              "styles": "w-full h-full bg-[#E5E7EB]"
+              "styles": "w-[32] h-[32] bg-[#E5E7EB]"
             }
           ]
         },
@@ -26,9 +26,9 @@
           "styles": "w-[40] h-[40] rounded-full overflow-hidden",
           "children": [
             {
-              "type": "RECTANGLE",
+              "type": "FRAME",
               "name": "Avatar Image",
-              "styles": "w-full h-full bg-[#E5E7EB]"
+              "styles": "w-[40] h-[40] bg-[#E5E7EB]"
             }
           ]
         },
@@ -38,9 +38,9 @@
           "styles": "w-[48] h-[48] rounded-full overflow-hidden",
           "children": [
             {
-              "type": "RECTANGLE",
+              "type": "FRAME",
               "name": "Avatar Image",
-              "styles": "w-full h-full bg-[#E5E7EB]"
+              "styles": "w-[48] h-[48] bg-[#E5E7EB]"
             }
           ]
         }
@@ -49,7 +49,7 @@
     {
       "type": "FRAME",
       "name": "Initial Avatars",
-      "styles": "flex-row items-center gap-[16]",
+      "styles": "flex-row items-center w-auto h-auto gap-[16]",
       "children": [
         {
           "type": "FRAME",
@@ -95,12 +95,12 @@
     {
       "type": "FRAME",
       "name": "Avatar with Badge",
-      "styles": "flex-row items-center gap-[16]",
+      "styles": "flex-row items-center w-auto h-auto gap-[16]",
       "children": [
         {
           "type": "FRAME",
           "name": "Avatar Container",
-          "styles": "relative",
+          "styles": "flex-col w-auto h-auto",
           "children": [
             {
               "type": "FRAME",
@@ -108,23 +108,23 @@
               "styles": "w-[40] h-[40] rounded-full overflow-hidden",
               "children": [
                 {
-                  "type": "RECTANGLE",
+                  "type": "FRAME",
                   "name": "Avatar Image",
-                  "styles": "w-full h-full bg-[#E5E7EB]"
+                  "styles": "w-[40] h-[40] bg-[#E5E7EB]"
                 }
               ]
             },
             {
               "type": "FRAME",
               "name": "Status Badge",
-              "styles": "absolute bottom-0 right-0 w-[10] h-[10] bg-[#10B981] border-2 border-white rounded-full"
+              "styles": "w-[10] h-[10] bg-[#10B981] border-2 border-white rounded-full"
             }
           ]
         },
         {
           "type": "FRAME",
           "name": "Avatar Container",
-          "styles": "relative",
+          "styles": "flex-col w-auto h-auto",
           "children": [
             {
               "type": "FRAME",
@@ -132,16 +132,16 @@
               "styles": "w-[40] h-[40] rounded-full overflow-hidden",
               "children": [
                 {
-                  "type": "RECTANGLE",
+                  "type": "FRAME",
                   "name": "Avatar Image",
-                  "styles": "w-full h-full bg-[#E5E7EB]"
+                  "styles": "w-[40] h-[40] bg-[#E5E7EB]"
                 }
               ]
             },
             {
               "type": "FRAME",
               "name": "Status Badge",
-              "styles": "absolute bottom-0 right-0 w-[10] h-[10] bg-[#EF4444] border-2 border-white rounded-full"
+              "styles": "w-[10] h-[10] bg-[#EF4444] border-2 border-white rounded-full"
             }
           ]
         }
