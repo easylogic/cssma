@@ -1,6 +1,6 @@
 import { ParsedStyle, FigmaStyleProperties, FigmaPaint } from '../types';
 import { convertAspectToFigma } from './aspect';
-import { convertBackgroundToFigma, convertGradientToFigma } from './background';
+import { convertBackgroundToFigma, convertGradientToFigma, convertImageToFigma } from './background';
 import { convertBlendToFigma } from './blend';
 import { convertBorderToFigma } from './border';
 import { convertFilterToFigma } from './filter';
@@ -32,11 +32,14 @@ export function convertStylesToFigma(
     
     if (style.property.startsWith('gradient') || 
         (style.property === 'backgroundColor' && !style.property.startsWith('text')) ||
-        style.property === 'backgroundBlendMode') {
+        style.property === 'backgroundBlendMode' || 
+        style.property === 'backgroundImage' ||
+        style.property === 'backgroundSize' ||
+        style.property === 'backgroundRepeat' ||
+        style.property === 'backgroundPosition') {
       gradientStyles.push(style);
       continue;
     }
-
     
     if (FONT_PROPERTIES.includes(style.property)) {
       fontStyles.push(style);
@@ -134,7 +137,7 @@ export function convertStylesToFigma(
     let currentGroup: ParsedStyle[] = [];
 
     for (const style of gradientStyles) {
-      if (style.property === 'backgroundColor') {
+      if (style.property === 'backgroundColor' || style.property === 'backgroundImage') {
         // 새로운 background 그룹 시작
         if (currentGroup.length > 0) {
           backgroundGroups.push(currentGroup);
@@ -162,6 +165,9 @@ export function convertStylesToFigma(
           const groupFills = convertBackgroundToFigma(group);
           fills.push(...groupFills);
         }
+      } else if (group[0].property === 'backgroundImage') {
+        const groupFills = convertImageToFigma(group);
+        fills.push(...groupFills);
       }
     }
   }

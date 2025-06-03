@@ -191,6 +191,26 @@ fills: [{
   ],
   gradientTransform: [[1, 0, 0], [0, 1, 0]]
 }]
+
+// Background Images
+bg-[url("/image.jpg")]     → fills: [{ type: "IMAGE", imageUrl: "/image.jpg", scaleMode: "FILL" }]
+bg-[url("data:image/...")] → fills: [{ type: "IMAGE", imageUrl: "data:image/...", scaleMode: "FILL" }]
+
+// Background Size
+bg-cover     → fills: [{ type: "IMAGE", scaleMode: "FILL" }]
+bg-contain   → fills: [{ type: "IMAGE", scaleMode: "FIT" }]
+bg-auto      → fills: [{ type: "IMAGE", scaleMode: "CROP" }]
+
+// Background Repeat
+bg-repeat    → fills: [{ type: "IMAGE", scaleMode: "TILE" }]
+bg-no-repeat → fills: [{ type: "IMAGE", scaleMode: "FILL" }]
+
+// Background Position
+bg-center    → fills: [{ type: "IMAGE", imageTransform: "center" }]
+bg-top       → fills: [{ type: "IMAGE", imageTransform: "top" }]
+bg-bottom    → fills: [{ type: "IMAGE", imageTransform: "bottom" }]
+bg-left      → fills: [{ type: "IMAGE", imageTransform: "left" }]
+bg-right     → fills: [{ type: "IMAGE", imageTransform: "right" }]
 ```
 
 ## Typography Properties

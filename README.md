@@ -19,6 +19,7 @@ Core library for CSS/Tailwind to Figma conversion and vice versa.
 - [x] Spacing (padding, margin, gap)
 - [x] Border (border width, border radius, border color)
 - [x] Shadow (shadow color, shadow offset, shadow blur)
+- [x] Background Images (url, scale modes, positioning)
 
 #### TODO
 - [ ] Animation (transition, keyframes)

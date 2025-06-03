@@ -29,7 +29,7 @@ type ExtendedFigmaStyleProperties = FigmaStyleProperties & {
   strokeLeftWeight?: number;
 };
 
-type BoundVariablePaint = FigmaPaint & {
+type BoundVariablePaint = (FigmaPaint | any) & {
   boundVariables?: {
     color?: {
       type: "VARIABLE_ALIAS";
@@ -37,6 +37,52 @@ type BoundVariablePaint = FigmaPaint & {
     };
   };
 };
+
+/**
+ * Convert CSS background-position strings to Figma transform matrix
+ */
+function convertImageTransformToMatrix(position: string): [[number, number, number], [number, number, number]] | null {
+  const transforms: { [key: string]: [[number, number, number], [number, number, number]] } = {
+    'center': [[1, 0, 0], [0, 1, 0]],
+    'top': [[1, 0, 0], [0, 1, -0.5]],
+    'bottom': [[1, 0, 0], [0, 1, 0.5]],
+    'left': [[1, 0, -0.5], [0, 1, 0]],
+    'right': [[1, 0, 0.5], [0, 1, 0]],
+    'top-left': [[1, 0, -0.5], [0, 1, -0.5]],
+    'top-right': [[1, 0, 0.5], [0, 1, -0.5]],
+    'bottom-left': [[1, 0, -0.5], [0, 1, 0.5]],
+    'bottom-right': [[1, 0, 0.5], [0, 1, 0.5]]
+  };
+  
+  return transforms[position] || null;
+}
+
+/**
+ * Upload image from URL to Figma and return imageHash
+ */
+async function uploadImageToFigma(imageUrl: string): Promise<string | null> {
+  try {
+    // Fetch the image from URL
+    const response = await fetch(imageUrl);
+    if (!response.ok) {
+      console.warn(`Failed to fetch image from ${imageUrl}: ${response.status}`);
+      return null;
+    }
+    
+    // Get image data as Uint8Array
+    const arrayBuffer = await response.arrayBuffer();
+    const imageData = new Uint8Array(arrayBuffer);
+    
+    // Create image in Figma
+    const imageHash = figma.createImage(imageData).hash;
+    console.log(`✅ Successfully uploaded image: ${imageUrl} → ${imageHash}`);
+    
+    return imageHash;
+  } catch (error) {
+    console.error(`❌ Failed to upload image from ${imageUrl}:`, error);
+    return null;
+  }
+}
 
 /**
  * Process Paint objects with Figma variables.
@@ -92,6 +138,80 @@ async function processVariablePaint(paint: BoundVariablePaint): Promise<Paint> {
       gradientStops: stops,
       gradientTransform: gradientPaint.gradientTransform || [[1, 0, 0], [0, 1, 0]]
     } as Paint;
+  }
+
+  // Handle image paint
+  if (paint.type === 'IMAGE') {
+    const imagePaint = paint as any;
+    
+    const result: any = {
+      type: 'IMAGE',
+      scaleMode: imagePaint.scaleMode || 'FILL',
+      visible: imagePaint.visible !== false,
+      opacity: imagePaint.opacity || 1
+    };
+
+    // Handle imageHash vs imageUrl
+    if (imagePaint.imageHash) {
+      // Already have imageHash, use it directly
+      result.imageHash = imagePaint.imageHash;
+    } else if (imagePaint.imageUrl) {
+      // Try to upload image from URL
+      try {
+        const uploadedHash = await uploadImageToFigma(imagePaint.imageUrl);
+        if (uploadedHash) {
+          result.imageHash = uploadedHash;
+          console.log(`🖼️ Image uploaded successfully: ${imagePaint.imageUrl}`);
+        } else {
+          // Upload failed, return transparent fallback
+          console.warn(`⚠️ Failed to upload image: ${imagePaint.imageUrl}, using transparent fallback`);
+          return {
+            type: 'SOLID',
+            color: { r: 0, g: 0, b: 0 },
+            opacity: 0,
+            visible: false
+          } as Paint;
+        }
+      } catch (error) {
+        console.error(`❌ Error uploading image ${imagePaint.imageUrl}:`, error);
+        return {
+          type: 'SOLID',
+          color: { r: 0, g: 0, b: 0 },
+          opacity: 0,
+          visible: false
+        } as Paint;
+      }
+    } else {
+      // No image source provided
+      console.warn('⚠️ IMAGE paint has no imageHash or imageUrl, using transparent fallback');
+      return {
+        type: 'SOLID',
+        color: { r: 0, g: 0, b: 0 },
+        opacity: 0,
+        visible: false
+      } as Paint;
+    }
+
+    // Convert imageTransform from string to matrix if needed
+    if (imagePaint.imageTransform && typeof imagePaint.imageTransform === 'string') {
+      const transformMatrix = convertImageTransformToMatrix(imagePaint.imageTransform);
+      if (transformMatrix) {
+        result.imageTransform = transformMatrix;
+      }
+    } else if (imagePaint.imageTransform) {
+      result.imageTransform = imagePaint.imageTransform;
+    }
+
+    // Add other properties
+    if (imagePaint.scalingFactor !== undefined) {
+      result.scalingFactor = imagePaint.scalingFactor;
+    }
+    
+    if (imagePaint.blendMode) {
+      result.blendMode = imagePaint.blendMode;
+    }
+
+    return result as Paint;
   }
 
   return paint as Paint;

@@ -134,7 +134,18 @@ export interface FigmaGradientPaint extends BasePaint {
   };
 }
 
+// Image Paint
+export interface FigmaImagePaint extends BasePaint {
+  type: 'IMAGE';
+  imageUrl?: string;
+  imageHash?: string;
+  scaleMode?: 'FILL' | 'FIT' | 'CROP' | 'TILE';
+  imageTransform?: 'center' | 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+  scalingFactor?: number;
+  rotation?: number;
+}
+
 // Paint Union Type
-export type FigmaPaint = FigmaSolidPaint | FigmaGradientPaint;
+export type FigmaPaint = FigmaSolidPaint | FigmaGradientPaint | FigmaImagePaint;
 
 // ... rest of the existing types ... 

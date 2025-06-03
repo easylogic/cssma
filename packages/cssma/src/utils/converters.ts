@@ -39,6 +39,7 @@ export function parseArbitraryValue(value: string, options: {
   allowNegative?: boolean;
   allowUnits?: boolean;
   allowColors?: boolean;
+  allowUrls?: boolean;
   requireValidColor?: boolean;
   allowFigmaVariables?: boolean;
   allowNumbers?: boolean;
@@ -47,6 +48,7 @@ export function parseArbitraryValue(value: string, options: {
     allowNegative = false, 
     allowUnits = true, 
     allowColors = true,
+    allowUrls = false,
     requireValidColor = false,
     allowFigmaVariables = false,
     allowNumbers = true
@@ -73,6 +75,38 @@ export function parseArbitraryValue(value: string, options: {
   
   if (value.startsWith('[') && value.endsWith(']')) {
     const innerValue = value.slice(1, -1);
+    
+    // Return null for empty values
+    if (!innerValue.trim()) {
+      return null;
+    }
+    
+    // Handle URLs first (before colors)
+    if (allowUrls) {
+      // Check for URL patterns
+      if (innerValue.startsWith('url(') && innerValue.endsWith(')')) {
+        return {
+          value: innerValue,
+          variant: 'arbitrary'
+        };
+      }
+      
+      // Check for direct URLs (http://, https://, data:, etc.)
+      if (innerValue.includes('://') || innerValue.startsWith('data:')) {
+        return {
+          value: innerValue,
+          variant: 'arbitrary'
+        };
+      }
+      
+      // Check for relative paths that might be images
+      if (innerValue.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i)) {
+        return {
+          value: innerValue,
+          variant: 'arbitrary'
+        };
+      }
+    }
     
     
     if (allowColors) {

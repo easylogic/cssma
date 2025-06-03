@@ -31,7 +31,7 @@ describe('Background Converter', () => {
       ];
 
       testCases.forEach(({ input, expected }) => {
-        expect(convertBackgroundToFigma(input)).toEqual(expected);
+        expect(convertBackgroundToFigma([input])).toEqual(expected);
       });
     });
 
@@ -43,7 +43,7 @@ describe('Background Converter', () => {
         opacity: 0.5
       };
 
-      expect(convertBackgroundToFigma(input)).toEqual([{
+      expect(convertBackgroundToFigma([input])).toEqual([{
         type: 'SOLID',
         color: { r: 1, g: 0, b: 0 },
         opacity: 0.5
@@ -95,7 +95,7 @@ describe('Background Converter', () => {
       ];
 
       testCases.forEach(({ input, expected }) => {
-        expect(convertBackgroundToFigma(input)).toEqual(expected);
+        expect(convertBackgroundToFigma([input])).toEqual(expected);
       });
     });
 
@@ -301,7 +301,7 @@ describe('Background Converter', () => {
       ];
 
       testCases.forEach(({ input, expected }) => {
-        expect(convertBackgroundToFigma(input)).toEqual(expected);
+        expect(convertBackgroundToFigma([input])).toEqual(expected);
       });
     });
   });

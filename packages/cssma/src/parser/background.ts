@@ -85,7 +85,7 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
 
     const [, type, value] = match;
     
-    // Handle background color
+    // Handle background color and images
     if (type === 'bg') { 
       // Handle Figma variables
       if (value.startsWith('$[') && value.endsWith(']')) {
@@ -95,14 +95,38 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
         return createFigmaVariableStyle('backgroundColor', variableId, { opacity });
       }
 
-      // Handle arbitrary values
+      // Handle arbitrary values - check for URL first
       const parsedValue = parseArbitraryValue(value, { 
         allowUnits: false,
         allowColors: true,
-        requireValidColor: true
+        allowUrls: true,
+        requireValidColor: false  // Allow URLs
       });
 
       if (parsedValue) {
+        // Check if it's a URL (image)
+        if (parsedValue.value && typeof parsedValue.value === 'string' && 
+            (parsedValue.value.startsWith('url(') || 
+             parsedValue.value.includes('://') || 
+             parsedValue.value.startsWith('data:') ||
+             parsedValue.value.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i))) {
+          
+          // Extract URL from url(...) format or keep as-is for direct URLs
+          let imageUrl = parsedValue.value;
+          const urlMatch = imageUrl.match(/^url\(['"]?([^'"]+)['"]?\)$/);
+          if (urlMatch) {
+            imageUrl = urlMatch[1];
+          }
+          
+          return {
+            property: 'backgroundImage',
+            value: imageUrl,
+            variant: 'arbitrary',
+            ...(opacity !== undefined && { opacity })
+          };
+        }
+        
+        // Handle color values
         const result: ParsedStyle = {
           property: 'backgroundColor',
           value: parsedValue.value,
@@ -210,11 +234,29 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
       return null;
     }
 
-    // Background size
-    if (BACKGROUND_SIZE_MAP[value as keyof typeof BACKGROUND_SIZE_MAP]) {
+    // Background size (maps to image scaleMode)
+    if (value === 'cover') {
       return {
         property: 'backgroundSize',
-        value: BACKGROUND_SIZE_MAP[value as keyof typeof BACKGROUND_SIZE_MAP],
+        value: 'FILL',
+        variant: 'preset',
+        ...(opacity !== undefined && { opacity })
+      };
+    }
+    
+    if (value === 'contain') {
+      return {
+        property: 'backgroundSize',
+        value: 'FIT',
+        variant: 'preset',
+        ...(opacity !== undefined && { opacity })
+      };
+    }
+    
+    if (value === 'auto') {
+      return {
+        property: 'backgroundSize',
+        value: 'CROP',
         variant: 'preset',
         ...(opacity !== undefined && { opacity })
       };
@@ -230,18 +272,23 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
       };
     }
 
-    // Background repeat
-    if (value === 'repeat' || value === 'no-repeat' || value.startsWith('repeat-')) {
-      const repeat = BACKGROUND_REPEAT_MAP[value as keyof typeof BACKGROUND_REPEAT_MAP];
-      if (repeat) {
-        return {
-          property: 'backgroundRepeat',
-          value: repeat,
-          variant: 'preset',
-          ...(opacity !== undefined && { opacity })
-        };
-      }
-      return null;
+    // Background repeat (maps to image scaleMode)
+    if (value === 'repeat') {
+      return {
+        property: 'backgroundRepeat',
+        value: 'TILE',
+        variant: 'preset',
+        ...(opacity !== undefined && { opacity })
+      };
+    }
+    
+    if (value === 'no-repeat') {
+      return {
+        property: 'backgroundRepeat',
+        value: 'FILL',
+        variant: 'preset',
+        ...(opacity !== undefined && { opacity })
+      };
     }
 
     // Background attachment
@@ -321,6 +368,11 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
         ...(opacity !== undefined && { opacity }),
         variant: 'preset'
       };
+    }
+    
+    // Return null for empty values or invalid patterns
+    if (!value) {
+      return null;
     }
   }
 

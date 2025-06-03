@@ -1,9 +1,66 @@
-import { ParsedStyle, FigmaPaint, FigmaColor, FigmaGradient, FigmaSolidPaint, FigmaGradientLinear, FigmaGradientRadial, FigmaGradientAngular } from '../types';
+import { ParsedStyle, FigmaPaint } from '../types';
 import { isValidNumber } from '../utils/validators';
 import { parseColor } from '../utils/colors';
 import { GRADIENT_TRANSFORMS } from '../config/constants';
 import { COLORS } from '../config/tokens';
 import { round } from '../utils/math';
+
+// Local type definitions
+type FigmaColor = { r: number; g: number; b: number; a?: number };
+
+interface BasePaint {
+  type: string;
+  visible?: boolean;
+  opacity?: number;
+  blendMode?: string;
+}
+
+interface FigmaSolidPaint extends BasePaint {
+  type: 'SOLID';
+  color: { r: number; g: number; b: number };
+}
+
+interface FigmaGradientPaint extends BasePaint {
+  type: 'GRADIENT_LINEAR' | 'GRADIENT_RADIAL' | 'GRADIENT_ANGULAR';
+  gradientStops: any[];
+  gradientTransform?: [[number, number, number], [number, number, number]];
+  centerX?: number;
+  centerY?: number;
+  radius?: number;
+  rotation?: number;
+}
+
+interface FigmaImagePaint extends BasePaint {
+  type: 'IMAGE';
+  imageUrl?: string;
+  imageHash?: string;
+  scaleMode?: 'FILL' | 'FIT' | 'CROP' | 'TILE';
+  imageTransform?: 'center' | 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+  scalingFactor?: number;
+  rotation?: number;
+}
+
+type FigmaGradientLinear = {
+  type: 'GRADIENT_LINEAR';
+  gradientStops: any[];
+  gradientTransform: [[number, number, number], [number, number, number]];
+};
+
+type FigmaGradientRadial = {
+  type: 'GRADIENT_RADIAL';
+  gradientStops: any[];
+  centerX: number;
+  centerY: number;
+  radius: number;
+};
+
+type FigmaGradientAngular = {
+  type: 'GRADIENT_ANGULAR';
+  gradientStops: any[];
+  centerX: number;
+  centerY: number;
+  rotation: number;
+};
 
 type BoundVariable = {
   type: 'VARIABLE_ALIAS';
@@ -28,10 +85,12 @@ type FigmaVariableGradientPaint = (
   | (Omit<FigmaGradientAngular, 'gradientStops'> & { gradientStops: FigmaVariableGradientStop[] })
 );
 
-type FigmaVariablePaint = FigmaVariableSolidPaint | FigmaVariableGradientPaint;
+type FigmaVariableImagePaint = FigmaImagePaint & FigmaVariableColor & { blendMode?: string };
 
-export function convertBackgroundToFigma(styles: ParsedStyle[]): FigmaVariablePaint[] {
-  const result: FigmaVariablePaint[] = [];
+type FigmaVariablePaint = (FigmaVariableSolidPaint | FigmaVariableGradientPaint | FigmaVariableImagePaint) & { blendMode?: string };
+
+export function convertBackgroundToFigma(styles: ParsedStyle[]): FigmaPaint[] {
+  const result: FigmaPaint[] = [];
   for (const style of styles) {
     
     switch (style.property) {
@@ -98,8 +157,8 @@ export function convertBackgroundToFigma(styles: ParsedStyle[]): FigmaVariablePa
   return result;
 }
 
-export function convertGradientToFigma(styles: ParsedStyle[]): FigmaVariablePaint[] {
-  const result: FigmaVariablePaint[] = [];
+export function convertGradientToFigma(styles: ParsedStyle[]): FigmaPaint[] {
+  const result: FigmaPaint[] = [];
   
   const gradientRoot = styles.find(s => s.property === 'backgroundColor');
   const gradientType = gradientRoot?.value;
@@ -216,6 +275,66 @@ export function convertGradientToFigma(styles: ParsedStyle[]): FigmaVariablePain
   const blendModeStyle = styles.find(s => s.property === 'backgroundBlendMode');
   if (blendModeStyle && result.length > 0) {
     (result[result.length - 1] as any).blendMode = blendModeStyle.value as string;
+  }
+
+  return result;
+}
+
+/**
+ * Convert background image styles to Figma ImagePaint
+ */
+export function convertImageToFigma(styles: ParsedStyle[]): FigmaPaint[] {
+  const result: FigmaPaint[] = [];
+  
+  let imagePaint: FigmaImagePaint = {
+    type: 'IMAGE',
+    scaleMode: 'FILL', // Default scale mode
+  };
+
+  for (const style of styles) {
+    switch (style.property) {
+      case 'backgroundImage':
+        imagePaint.imageUrl = style.value as string;
+        if (style.opacity !== undefined) {
+          imagePaint.opacity = style.opacity;
+        }
+        break;
+        
+      case 'backgroundSize':
+        // Map CSS background-size to Figma scaleMode
+        const scaleMode = style.value as string;
+        if (['FILL', 'FIT', 'CROP', 'TILE'].includes(scaleMode)) {
+          imagePaint.scaleMode = scaleMode as 'FILL' | 'FIT' | 'CROP' | 'TILE';
+        }
+        break;
+        
+      case 'backgroundRepeat':
+        // bg-repeat maps to TILE, bg-no-repeat maps to FILL
+        const repeatMode = style.value as string;
+        if (repeatMode === 'TILE') {
+          imagePaint.scaleMode = 'TILE';
+        } else if (repeatMode === 'FILL') {
+          imagePaint.scaleMode = 'FILL';
+        }
+        break;
+        
+      case 'backgroundPosition':
+        // Map CSS background-position to Figma imageTransform
+        const position = (style.value as string).toLowerCase();
+        if (['center', 'top', 'bottom', 'left', 'right', 'top-left', 'top-right', 'bottom-left', 'bottom-right'].includes(position)) {
+          imagePaint.imageTransform = position as FigmaImagePaint['imageTransform'];
+        }
+        break;
+        
+      case 'backgroundBlendMode':
+        imagePaint.blendMode = style.value as string;
+        break;
+    }
+  }
+
+  // Only add the image paint if we have a valid image URL
+  if (imagePaint.imageUrl) {
+    result.push(imagePaint as any);
   }
 
   return result;
