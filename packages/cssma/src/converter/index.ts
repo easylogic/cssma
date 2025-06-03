@@ -66,7 +66,7 @@ export function convertStylesToFigma(
       if ('blendMode' in blendResult) {
         converted = blendResult as Partial<FigmaStyleProperties>;
       }
-    } else if (style.property.startsWith('border') || style.property.startsWith('stroke')) {
+    } else if (style.property.startsWith('border') || style.property.startsWith('stroke') || style.property === 'dashPattern') {
       converted = convertBorderToFigma(style);
     } else if (style.property.includes('blur')) {
       converted = convertFilterToFigma(style);

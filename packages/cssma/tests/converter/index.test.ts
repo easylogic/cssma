@@ -1133,6 +1133,432 @@ describe('convertStylesToFigma Integration Tests', () => {
     });
   });
 
+  describe('Border and Stroke', () => {
+    it('should convert border properties', () => {
+      const styles: ParsedStyle[] = [
+        {
+          property: 'borderWidth',
+          value: 2,
+          variant: 'arbitrary'
+        },
+        {
+          property: 'borderColor',
+          value: '#E5E7EB',
+          variant: 'arbitrary'
+        },
+        {
+          property: 'borderRadius',
+          value: 8,
+          variant: 'arbitrary'
+        }
+      ];
+      
+      const result = convertStylesToFigma(styles);
+      
+      expect(result.strokeWeight).toBe(2);
+      expect(result.strokes).toHaveLength(1);
+             expect(result.strokes?.[0]).toEqual({
+         type: 'SOLID',
+         color: { r: 0.9, g: 0.91, b: 0.92 }
+       });
+      expect(result.cornerRadius).toBe(8);
+    });
+
+    it('should convert individual corner radius', () => {
+      const styles: ParsedStyle[] = [
+        {
+          property: 'borderRadiusTopLeft',
+          value: 4,
+          variant: 'arbitrary'
+        },
+        {
+          property: 'borderRadiusTopRight',
+          value: 8,
+          variant: 'arbitrary'
+        },
+        {
+          property: 'borderRadiusBottomRight',
+          value: 12,
+          variant: 'arbitrary'
+        },
+        {
+          property: 'borderRadiusBottomLeft',
+          value: 16,
+          variant: 'arbitrary'
+        }
+      ];
+      
+      const result = convertStylesToFigma(styles);
+      
+      expect(result.topLeftRadius).toBe(4);
+      expect(result.topRightRadius).toBe(8);
+      expect(result.bottomRightRadius).toBe(12);
+      expect(result.bottomLeftRadius).toBe(16);
+    });
+
+    it('should convert stroke align and dash pattern', () => {
+      const styles: ParsedStyle[] = [
+        {
+          property: 'strokeAlign',
+          value: 'OUTSIDE',
+          variant: 'preset'
+        },
+        {
+          property: 'dashPattern',
+          value: [5, 5],
+          variant: 'arbitrary'
+        }
+      ];
+      
+      const result = convertStylesToFigma(styles);
+      
+      expect(result.strokeAlign).toBe('OUTSIDE');
+      expect(result.dashPattern).toEqual([5, 5]);
+    });
+  });
+
+  describe('Transform and Rotation', () => {
+    it('should convert rotation', () => {
+      const styles: ParsedStyle[] = [
+        {
+          property: 'rotation',
+          value: 45,
+          variant: 'arbitrary'
+        }
+      ];
+      
+      const result = convertStylesToFigma(styles);
+      
+             // 45 degrees to radians ≈ 0.79
+       expect(result.rotation).toBeCloseTo(0.79, 2);
+    });
+  });
+
+  describe('Advanced Spacing', () => {
+    it('should convert gap variations', () => {
+      const styles: ParsedStyle[] = [
+        {
+          property: 'gap',
+          value: 16,
+          variant: 'arbitrary'
+        },
+        {
+          property: 'counterAxisSpacing',
+          value: 8,
+          variant: 'arbitrary'
+        }
+      ];
+      
+      const result = convertStylesToFigma(styles);
+      
+      expect(result.itemSpacing).toBe(16);
+      expect(result.counterAxisSpacing).toBe(8);
+    });
+
+    it('should convert padding shortcuts', () => {
+      const styles: ParsedStyle[] = [
+        {
+          property: 'paddingX',
+          value: 20,
+          variant: 'arbitrary'
+        },
+        {
+          property: 'paddingY',
+          value: 16,
+          variant: 'arbitrary'
+        }
+      ];
+      
+      const result = convertStylesToFigma(styles);
+      
+      expect(result.paddingLeft).toBe(20);
+      expect(result.paddingRight).toBe(20);
+      expect(result.paddingTop).toBe(16);
+      expect(result.paddingBottom).toBe(16);
+    });
+  });
+
+  describe('Position and Layout', () => {
+    it('should convert position properties', () => {
+      const styles: ParsedStyle[] = [
+        {
+          property: 'position',
+          value: 'absolute',
+          variant: 'preset'
+        }
+      ];
+      
+      const result = convertStylesToFigma(styles);
+      
+      // Position styles are handled by position converter
+      expect(result).toBeDefined();
+    });
+
+         it('should convert overflow properties', () => {
+       const styles: ParsedStyle[] = [
+         {
+           property: 'overflow',
+           value: 'hidden',
+           variant: 'preset',
+           clipsContent: true,
+           scrollingEnabled: false
+         }
+       ];
+       
+       const result = convertStylesToFigma(styles);
+       
+       expect(result.clipsContent).toBe(true);
+       expect(result.scrollingEnabled).toBe(false);
+     });
+  });
+
+  describe('Layout Sizing Modes', () => {
+    it('should convert layout sizing properties', () => {
+      const styles: ParsedStyle[] = [
+        {
+          property: 'layoutSizingHorizontal',
+          value: 'FILL',
+          variant: 'preset'
+        },
+        {
+          property: 'layoutSizingVertical',
+          value: 'HUG',
+          variant: 'preset'
+        }
+      ];
+      
+      const result = convertStylesToFigma(styles);
+      
+      expect(result.layoutSizingHorizontal).toBe('FILL');
+      expect(result.layoutSizingVertical).toBe('HUG');
+    });
+
+    it('should convert flex wrap', () => {
+      const styles: ParsedStyle[] = [
+        {
+          property: 'layoutWrap',
+          value: 'WRAP',
+          variant: 'preset'
+        }
+      ];
+      
+      const result = convertStylesToFigma(styles);
+      
+      expect(result.layoutWrap).toBe('WRAP');
+    });
+  });
+
+  describe('Complex Real-World Scenarios', () => {
+    it('should handle card component with all features', () => {
+      const styles: ParsedStyle[] = [
+        // Layout
+        {
+          property: 'layoutMode',
+          value: 'VERTICAL',
+          variant: 'preset'
+        },
+        {
+          property: 'width',
+          value: 320,
+          variant: 'arbitrary'
+        },
+        {
+          property: 'gap',
+          value: 16,
+          variant: 'arbitrary'
+        },
+        // Background
+        {
+          property: 'backgroundColor',
+          value: '#FFFFFF',
+          variant: 'arbitrary'
+        },
+        // Border & Corner
+        {
+          property: 'borderWidth',
+          value: 1,
+          variant: 'arbitrary'
+        },
+        {
+          property: 'borderColor',
+          value: '#E5E7EB',
+          variant: 'arbitrary'
+        },
+        {
+          property: 'borderRadius',
+          value: 12,
+          variant: 'arbitrary'
+        },
+        // Padding
+        {
+          property: 'paddingTop',
+          value: 24,
+          variant: 'arbitrary'
+        },
+        {
+          property: 'paddingRight',
+          value: 24,
+          variant: 'arbitrary'
+        },
+        {
+          property: 'paddingBottom',
+          value: 24,
+          variant: 'arbitrary'
+        },
+        {
+          property: 'paddingLeft',
+          value: 24,
+          variant: 'arbitrary'
+        },
+        // Shadow
+        {
+          property: 'boxShadow',
+          value: [{
+            type: 'outer' as const,
+            x: 0,
+            y: 4,
+            blur: 12,
+            spread: 0,
+            color: 'rgba(0, 0, 0, 0.1)'
+          }],
+          variant: 'arbitrary'
+        }
+      ];
+      
+      const result = convertStylesToFigma(styles);
+      
+      // Layout
+      expect(result.layoutMode).toBe('VERTICAL');
+      expect(result.width).toBe(320);
+      expect(result.itemSpacing).toBe(16);
+      
+      // Background
+      expect(result.fills).toHaveLength(1);
+      expect(result.fills?.[0]).toEqual({
+        type: 'SOLID',
+        color: { r: 1, g: 1, b: 1 }
+      });
+      
+      // Border
+      expect(result.strokeWeight).toBe(1);
+      expect(result.strokes).toHaveLength(1);
+      expect(result.cornerRadius).toBe(12);
+      
+      // Padding
+      expect(result.paddingTop).toBe(24);
+      expect(result.paddingRight).toBe(24);
+      expect(result.paddingBottom).toBe(24);
+      expect(result.paddingLeft).toBe(24);
+      
+      // Shadow
+      expect(result.effects).toBeDefined();
+      expect(Array.isArray(result.effects)).toBe(true);
+    });
+
+    it('should handle button with multiple states', () => {
+      const styles: ParsedStyle[] = [
+        // Layout
+        {
+          property: 'layoutMode',
+          value: 'HORIZONTAL',
+          variant: 'preset'
+        },
+        {
+          property: 'primaryAxisAlignItems',
+          value: 'CENTER',
+          variant: 'preset'
+        },
+        {
+          property: 'counterAxisAlignItems',
+          value: 'CENTER',
+          variant: 'preset'
+        },
+        {
+          property: 'gap',
+          value: 8,
+          variant: 'arbitrary'
+        },
+        // Gradient Background
+        {
+          property: 'backgroundColor',
+          value: 'linear',
+          variant: 'preset',
+          direction: 'b'
+        },
+        {
+          property: 'gradientFrom',
+          value: '#3B82F6',
+          variant: 'arbitrary'
+        },
+        {
+          property: 'gradientTo',
+          value: '#1D4ED8',
+          variant: 'arbitrary'
+        },
+        // Padding
+        {
+          property: 'paddingX',
+          value: 20,
+          variant: 'arbitrary'
+        },
+        {
+          property: 'paddingY',
+          value: 12,
+          variant: 'arbitrary'
+        },
+        // Border
+        {
+          property: 'borderRadius',
+          value: 8,
+          variant: 'arbitrary'
+        },
+        // Transform
+        {
+          property: 'rotation',
+          value: 0,
+          variant: 'arbitrary'
+        }
+      ];
+      
+      const result = convertStylesToFigma(styles);
+      
+      // Layout
+      expect(result.layoutMode).toBe('HORIZONTAL');
+      expect(result.primaryAxisAlignItems).toBe('CENTER');
+      expect(result.counterAxisAlignItems).toBe('CENTER');
+      expect(result.itemSpacing).toBe(8);
+      
+      // Gradient
+      expect(result.fills).toHaveLength(1);
+      expect(result.fills?.[0]).toEqual({
+        type: 'GRADIENT_LINEAR',
+        gradientStops: [
+          {
+            position: 0,
+            color: { r: 0.23, g: 0.51, b: 0.96 }
+          },
+          {
+            position: 1,
+            color: { r: 0.11, g: 0.31, b: 0.85 }
+          }
+        ],
+        gradientTransform: [[1, 0, 0], [0, 1, 0]]
+      });
+      
+      // Padding (X/Y shortcuts)
+      expect(result.paddingLeft).toBe(20);
+      expect(result.paddingRight).toBe(20);
+      expect(result.paddingTop).toBe(12);
+      expect(result.paddingBottom).toBe(12);
+      
+      // Border
+      expect(result.cornerRadius).toBe(8);
+      
+      // Transform
+      expect(result.rotation).toBe(0);
+    });
+  });
+
   describe('Performance and Edge Cases', () => {
     it('should handle large number of backgrounds efficiently', () => {
       const styles: ParsedStyle[] = [];
