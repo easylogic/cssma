@@ -165,35 +165,100 @@ function convertColors(styles: Record<string, any>): string[] {
     const classes: string[] = [];
 
     if (styles.fills && styles.fills.length > 0) {
-        const fill = styles.fills[0];
-        if (fill.type === 'SOLID') {
-            // TEXT 타입일 경우 text- 사용, 그 외에는 bg- 사용
-            const prefix = styles.type === 'TEXT' ? 'text' : 'bg';
-
-            if (fill.opacity !== undefined && fill.opacity != 1) {
-                classes.push(`${prefix}-[${colorToHex(fill.color)}]/${Math.round(fill.opacity * 100)}`);
-            } else {
-                classes.push(`${prefix}-[${colorToHex(fill.color)}]`);
+        // TEXT 타입인지 확인
+        const isTextNode = styles.type === 'TEXT';
+        
+        // Multiple backgrounds 처리
+        styles.fills.forEach((fill: any, index: number) => {
+            if (fill.type === 'SOLID') {
+                // TEXT 노드는 text-, 그 외는 bg- prefix 사용
+                const prefix = isTextNode ? 'text' : 'bg';
+                
+                let colorClass = '';
+                if (fill.opacity !== undefined && fill.opacity !== 1) {
+                    colorClass = `${prefix}-[${colorToHex(fill.color)}]/${Math.round(fill.opacity * 100)}`;
+                } else {
+                    colorClass = `${prefix}-[${colorToHex(fill.color)}]`;
+                }
+                classes.push(colorClass);
+                
+                // Background blend mode 처리 (background fills에만 적용)
+                if (!isTextNode && fill.blendMode && fill.blendMode !== 'NORMAL') {
+                    const blendMode = convertBlendMode(fill.blendMode);
+                    if (blendMode) {
+                        classes.push(`bg-blend-${blendMode}`);
+                    }
+                }
+                
+            } else if (fill.type === 'GRADIENT_LINEAR') {
+                const direction = getGradientDirection(fill.gradientTransform);
+                classes.push(`bg-gradient-${direction}`);
+                classes.push(...convertGradientStops(fill.gradientStops));
+                
+                // Gradient blend mode 처리
+                if (fill.blendMode && fill.blendMode !== 'NORMAL') {
+                    const blendMode = convertBlendMode(fill.blendMode);
+                    if (blendMode) {
+                        classes.push(`bg-blend-${blendMode}`);
+                    }
+                }
+                
+            } else if (fill.type === 'GRADIENT_RADIAL') {
+                classes.push('bg-gradient-radial');
+                classes.push(...convertGradientStops(fill.gradientStops));
+                
+                // Gradient blend mode 처리
+                if (fill.blendMode && fill.blendMode !== 'NORMAL') {
+                    const blendMode = convertBlendMode(fill.blendMode);
+                    if (blendMode) {
+                        classes.push(`bg-blend-${blendMode}`);
+                    }
+                }
+                
+            } else if (fill.type === 'GRADIENT_ANGULAR') {
+                const rotation = fill.rotation || 0;
+                if (rotation === 0) {
+                    classes.push('bg-gradient-conic');
+                } else {
+                    classes.push(`bg-gradient-conic-[${rotation}deg]`);
+                }
+                classes.push(...convertGradientStops(fill.gradientStops));
+                
+                // Gradient blend mode 처리
+                if (fill.blendMode && fill.blendMode !== 'NORMAL') {
+                    const blendMode = convertBlendMode(fill.blendMode);
+                    if (blendMode) {
+                        classes.push(`bg-blend-${blendMode}`);
+                    }
+                }
             }
-        } else if (fill.type === 'GRADIENT_LINEAR') {
-            const direction = getGradientDirection(fill.gradientTransform);
-            classes.push(`bg-linear-${direction}`);
-            classes.push(...convertGradientStops(fill.gradientStops));
-        } else if (fill.type === 'GRADIENT_RADIAL') {
-            classes.push('bg-radial');
-            classes.push(...convertGradientStops(fill.gradientStops));
-        } else if (fill.type === 'GRADIENT_ANGULAR') {
-            const rotation = fill.rotation || 0;
-            if (rotation === 0) {
-                classes.push('bg-conic');
-            } else {
-                classes.push(`bg-conic-[${rotation}deg]`);
-            }
-            classes.push(...convertGradientStops(fill.gradientStops));
-        }
+        });
     }
 
     return classes;
+}
+
+// Blend mode 변환 함수 추가
+function convertBlendMode(figmaBlendMode: string): string | null {
+    const blendModeMap: Record<string, string> = {
+        'MULTIPLY': 'multiply',
+        'SCREEN': 'screen',
+        'OVERLAY': 'overlay',
+        'DARKEN': 'darken',
+        'LIGHTEN': 'lighten',
+        'COLOR_DODGE': 'color-dodge',
+        'COLOR_BURN': 'color-burn',
+        'HARD_LIGHT': 'hard-light',
+        'SOFT_LIGHT': 'soft-light',
+        'DIFFERENCE': 'difference',
+        'EXCLUSION': 'exclusion',
+        'HUE': 'hue',
+        'SATURATION': 'saturation',
+        'COLOR': 'color',
+        'LUMINOSITY': 'luminosity'
+    };
+    
+    return blendModeMap[figmaBlendMode] || null;
 }
 
 function convertTypography(styles: Record<string, any>): string[] {
