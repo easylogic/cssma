@@ -13,57 +13,119 @@ import smartHome from './smart-home.json';
 import socialAnalytics from './social-analytics.json';
 import travelBooking from './travel-booking.json';
 import cardSamples from './card-samples.json';
+import badge from '../../examples/badge.json';
+import progress from '../../examples/progress.json';
+import statsCards from '../../examples/stats-cards.json';
+import navigation from '../../examples/navigation.json';
+import featureCards from '../../examples/feature-cards.json';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Button } from '../ui/button';
 
 const list = [
   {
-    name: 'card-samples',
-    designSpec: cardSamples
+    name: 'Basic Components',
+    children: [
+      {
+        name: 'badge',
+        displayName: 'Badge Components',
+        designSpec: badge
+      },
+      {
+        name: 'progress',
+        displayName: 'Progress Bars',
+        designSpec: progress
+      },
+      {
+        name: 'navigation',
+        displayName: 'Navigation Menus',
+        designSpec: navigation
+      },
+      {
+        name: 'feature-cards',
+        displayName: 'Feature Cards',
+        designSpec: featureCards
+      },
+      {
+        name: 'stats-cards',
+        displayName: 'Statistics Cards',
+        designSpec: statsCards
+      }
+    ]
   },
   {
-    name: 'sample',
-    designSpec: sample
+    name: 'Sample Designs',
+    children: [
+      {
+        name: 'card-samples',
+        displayName: 'Card Samples',
+        designSpec: cardSamples
+      },
+      {
+        name: 'sample',
+        displayName: 'Basic Sample',
+        designSpec: sample
+      }
+    ]
   },
   {
-    name: 'mobile-shop',
-    designSpec: mobileShop
+    name: 'Mobile Apps',
+    children: [
+      {
+        name: 'mobile-shop',
+        displayName: 'Mobile Shop',
+        designSpec: mobileShop
+      },
+      {
+        name: 'mobile-finance',
+        displayName: 'Mobile Finance',
+        designSpec: mobileFinance
+      }
+    ]
   },
   {
-    name: 'e-learning',
-    designSpec: eLearning
-  },
-    {
-      name: 'health-wellness',
-      designSpec: healthWellness
-    },
-  {
-    name: 'mobile-finance',
-    designSpec: mobileFinance
-  },
-  {
-    name: 'music-streaming',
-    designSpec: musicStreaming
-  },
-  {
-    name: 'productivity-dashboard',
-    designSpec: productivityDashboard
-  },
-  {
-    name: 'recipe-planner',
-    designSpec: recipePlanner
-  },
-  {
-    name: 'smart-home',
-    designSpec: smartHome
-  },
-  {
-    name: 'social-analytics',
-    designSpec: socialAnalytics
-  },
-  {
-    name: 'travel-booking',
-    designSpec: travelBooking
+    name: 'Web Applications',
+    children: [
+      {
+        name: 'e-learning',
+        displayName: 'E-Learning Platform',
+        designSpec: eLearning
+      },
+      {
+        name: 'health-wellness',
+        displayName: 'Health & Wellness',
+        designSpec: healthWellness
+      },
+      {
+        name: 'music-streaming',
+        displayName: 'Music Streaming',
+        designSpec: musicStreaming
+      },
+      {
+        name: 'productivity-dashboard',
+        displayName: 'Productivity Dashboard',
+        designSpec: productivityDashboard
+      },
+      {
+        name: 'recipe-planner',
+        displayName: 'Recipe Planner',
+        designSpec: recipePlanner
+      },
+      {
+        name: 'smart-home',
+        displayName: 'Smart Home',
+        designSpec: smartHome
+      },
+      {
+        name: 'social-analytics',
+        displayName: 'Social Analytics',
+        designSpec: socialAnalytics
+      },
+      {
+        name: 'travel-booking',
+        displayName: 'Travel Booking',
+        designSpec: travelBooking
+      }
+    ]
   }
 ]
 
@@ -93,13 +155,23 @@ export const AITab: React.FC = () => {
 
   const handleDesignChange = (value: string) => {
     console.log('Selected design:', value);
-    const design = list.find(item => item.name === value);
-    if (design) {
-      console.log('Selected design:', design.designSpec);
+    // 모든 카테고리에서 디자인 찾기
+    let selectedDesign = null;
+    
+    for (const category of list) {
+      const design = category.children.find(item => item.name === value);
+      if (design) {
+        selectedDesign = design;
+        break;
+      }
+    }
+    
+    if (selectedDesign) {
+      console.log('Selected design:', selectedDesign.designSpec);
       parent.postMessage({
         pluginMessage: {
           type: 'create-design',
-          designSpec: [design]
+          designSpec: [selectedDesign]
         }
       }, '*');
     }
@@ -123,12 +195,19 @@ export const AITab: React.FC = () => {
               <SelectValue placeholder="디자인 선택" />
             </SelectTrigger>
             <SelectContent>
-              {list.map((design) => (
-                <SelectItem key={design.name} value={design.name}>
-                  <div className="flex flex-col">
-                    <span className="font-medium">{design.name}</span>
+              {list.map((category) => (
+                <div key={category.name}>
+                  <div className="px-2 py-1 text-xs font-medium text-gray-500 uppercase">
+                    {category.name}
                   </div>
-                </SelectItem>
+                  {category.children.map((design) => (
+                    <SelectItem key={design.name} value={design.name}>
+                      <div className="flex flex-col">
+                        <span className="font-medium">{design.displayName}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </div>
               ))}
             </SelectContent>
           </Select>

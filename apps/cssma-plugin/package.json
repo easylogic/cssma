@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "watch 'tsup' src/ ../../packages/cssma/src/",
-    "build": "tsup"
+    "dev": "concurrently \"pnpm --filter @easylogic/cssma watch\" \"tsup --watch\"",
+    "build": "pnpm --filter @easylogic/cssma build && tsup"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.52.0",
@@ -65,7 +65,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@figma/plugin-typings": "1.107.0",
+    "@figma/plugin-typings": "1.113.0",
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",

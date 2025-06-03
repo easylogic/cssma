@@ -1,6 +1,6 @@
 import { ParsedStyle, FigmaStyleProperties } from '../types';
 
-type LayoutMode = 'HORIZONTAL' | 'VERTICAL';
+type LayoutMode = 'HORIZONTAL' | 'VERTICAL' | 'GRID';
 type PrimaryAxisAlignValue = 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BETWEEN';
 type CounterAxisAlignValue = 'MIN' | 'CENTER' | 'MAX' | 'BASELINE';
 type SizingValue = 'FIXED' | 'FILL' | 'HUG';

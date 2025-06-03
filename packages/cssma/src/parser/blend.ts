@@ -6,7 +6,17 @@ const BLEND_MODE_MAP = {
   'screen': 'SCREEN',
   'overlay': 'OVERLAY',
   'darken': 'DARKEN',
-  'lighten': 'LIGHTEN'
+  'lighten': 'LIGHTEN',
+  'color-dodge': 'COLOR_DODGE',
+  'color-burn': 'COLOR_BURN',
+  'hard-light': 'HARD_LIGHT',
+  'soft-light': 'SOFT_LIGHT',
+  'difference': 'DIFFERENCE',
+  'exclusion': 'EXCLUSION',
+  'hue': 'HUE',
+  'saturation': 'SATURATION',
+  'color': 'COLOR',
+  'luminosity': 'LUMINOSITY',
 } as const;
 
 export function parseBlendStyleValue(className: string): ParsedStyle | null {

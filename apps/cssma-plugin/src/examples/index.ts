@@ -16,6 +16,12 @@ import landingSaasExample from './landing-saas.json';
 import landingSlidesExample from './landing-slides.json';
 import simpleTestExample from './simple-test.json';
 
+import badgeExample from './badge.json';
+import featureCardsExample from './feature-cards.json';
+import navigationExample from './navigation.json';
+import progressExample from './progress.json';
+import statsCardsExample from './stats-cards.json';
+
 export const examples = {
   button: buttonExample,
   card: cardExample,
@@ -29,6 +35,11 @@ export const examples = {
   table: tableExample,
   tooltip: tooltipExample,
   avatar: avatarExample,
+  badge: badgeExample,
+  featureCards: featureCardsExample,
+  navigation: navigationExample,
+  progress: progressExample,
+  statsCards: statsCardsExample,
   landingHero: landingHeroExample,
   landingProduct: landingProductExample,
   landingSaas: landingSaasExample,

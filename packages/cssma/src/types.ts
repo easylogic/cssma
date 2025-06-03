@@ -186,7 +186,7 @@ export interface FigmaStyleProperties {
   fills?: FigmaPaint[];
   strokes?: FigmaPaint[];
   effects?: FigmaEffect[];
-  layoutMode?: 'NONE' | 'HORIZONTAL' | 'VERTICAL';
+  layoutMode?: 'NONE' | 'HORIZONTAL' | 'VERTICAL' | 'GRID';
   layoutWrap?: 'NO_WRAP' | 'WRAP';
   layoutAlign?: 'MIN' | 'CENTER' | 'MAX' | 'STRETCH';
   layoutGrow?: number;

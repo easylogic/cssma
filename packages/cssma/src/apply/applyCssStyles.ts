@@ -190,6 +190,7 @@ export async function applyCssStyles<T extends SceneNode>(node: T, styles: strin
       // Layout mode and direction
       if (styleObject.layoutMode !== undefined) {
         console.log('📱 Setting layoutMode:', styleObject.layoutMode);
+        // @ts-ignore
         frameNode.layoutMode = styleObject.layoutMode;
         console.log('✅ layoutMode set to:', frameNode.layoutMode);
       }
