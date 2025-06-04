@@ -192,7 +192,7 @@ function convertColors(styles: Record<string, any>): string[] {
                 
             } else if (fill.type === 'GRADIENT_LINEAR') {
                 const direction = getGradientDirection(fill.gradientTransform);
-                classes.push(`bg-gradient-${direction}`);
+                classes.push(`bg-linear-${direction}`);
                 classes.push(...convertGradientStops(fill.gradientStops));
                 
                 // Gradient blend mode 처리
@@ -204,7 +204,7 @@ function convertColors(styles: Record<string, any>): string[] {
                 }
                 
             } else if (fill.type === 'GRADIENT_RADIAL') {
-                classes.push('bg-gradient-radial');
+                classes.push('bg-radial');
                 classes.push(...convertGradientStops(fill.gradientStops));
                 
                 // Gradient blend mode 처리
@@ -218,9 +218,9 @@ function convertColors(styles: Record<string, any>): string[] {
             } else if (fill.type === 'GRADIENT_ANGULAR') {
                 const rotation = fill.rotation || 0;
                 if (rotation === 0) {
-                    classes.push('bg-gradient-conic');
+                    classes.push('bg-conic');
                 } else {
-                    classes.push(`bg-gradient-conic-[${rotation}deg]`);
+                    classes.push(`bg-conic-[${rotation}deg]`);
                 }
                 classes.push(...convertGradientStops(fill.gradientStops));
                 
@@ -707,6 +707,8 @@ function convertPosition(styles: Record<string, any>): string[] {
   
   if (styles.layoutPositioning === 'ABSOLUTE') {
     classes.push('absolute');
+  } else if (styles.position === 'FIXED') {
+    classes.push('fixed');
   }
   
   if (styles.constraints) {
@@ -722,32 +724,36 @@ function convertPosition(styles: Record<string, any>): string[] {
       }
     } else if (horizontal === 'CENTER') {
       classes.push('center-x');
-      
+      // Calculate center positioning based on parent and element size
       if (styles.parent?.width !== undefined && styles.width !== undefined) {
-        const offset = Math.max(0, (styles.parent.width - styles.width) / 2);
-        const leftOffset = offset + (styles.x ?? 0);
-        const rightOffset = offset - (styles.x ?? 0);
-        
-        classes.push(`left-[${leftOffset}px]`, `right-[${rightOffset}px]`);
+        const centerOffset = (styles.parent.width - styles.width) / 2;
+        const leftOffset = centerOffset + (styles.x ?? 0);
+        const rightOffset = centerOffset - (styles.x ?? 0);
+        classes.push(`left-[${leftOffset}px]`);
+        classes.push(`right-[${rightOffset}px]`);
       } else if (styles.x !== undefined) {
-        const offset = styles.x ?? 0;
-        classes.push(`left-[${offset}px]`, `right-[${offset}px]`);
+        classes.push(`left-[${styles.x}px]`);
       }
     } else if (horizontal === 'STRETCH') {
       classes.push('stretch-x');
-      
-      const leftValue = styles.x ?? 0;
-      
-      let rightValue = leftValue;
+      // Calculate stretch positioning based on parent and element size
       if (styles.parent?.width !== undefined && styles.width !== undefined) {
-        rightValue = styles.parent.width - (leftValue + styles.width);
-        if (rightValue < 0) rightValue = 0;
+        const leftValue = styles.x ?? 0;
+        const rightValue = styles.parent.width - (leftValue + styles.width);
+        if (leftValue !== 0) {
+          classes.push(`left-[${leftValue}px]`);
+        }
+        classes.push(`right-[${rightValue}px]`);
+      } else {
+        // Fallback for cases without parent size info
+        if (styles.x !== undefined && styles.x !== 0) {
+          classes.push(`left-[${styles.x}px]`);
+          classes.push(`right-[${styles.x}px]`);
+        } else {
+          classes.push(`left-[0px]`);
+          classes.push(`right-[0px]`);
+        }
       }
-      
-      if (leftValue !== 0) {
-        classes.push(`left-[${leftValue}px]`);
-      }
-      classes.push(`right-[${rightValue}px]`);
     } else if (horizontal === 'SCALE') {
       classes.push('scale-x');
       
@@ -777,32 +783,36 @@ function convertPosition(styles: Record<string, any>): string[] {
       }
     } else if (vertical === 'CENTER') {
       classes.push('center-y');
-      
+      // Calculate center positioning based on parent and element size
       if (styles.parent?.height !== undefined && styles.height !== undefined) {
-        const offset = Math.max(0, (styles.parent.height - styles.height) / 2);
-        const topOffset = offset + (styles.y ?? 0);
-        const bottomOffset = offset - (styles.y ?? 0);
-        
-        classes.push(`top-[${topOffset}px]`, `bottom-[${bottomOffset}px]`);
+        const centerOffset = (styles.parent.height - styles.height) / 2;
+        const topOffset = centerOffset + (styles.y ?? 0);
+        const bottomOffset = centerOffset - (styles.y ?? 0);
+        classes.push(`top-[${topOffset}px]`);
+        classes.push(`bottom-[${bottomOffset}px]`);
       } else if (styles.y !== undefined) {
-        const offset = styles.y ?? 0;
-        classes.push(`top-[${offset}px]`, `bottom-[${offset}px]`);
+        classes.push(`top-[${styles.y}px]`);
       }
     } else if (vertical === 'STRETCH') {
       classes.push('stretch-y');
-      
-      const topValue = styles.y ?? 0;
-      
-      let bottomValue = topValue;
+      // Calculate stretch positioning based on parent and element size
       if (styles.parent?.height !== undefined && styles.height !== undefined) {
-        bottomValue = styles.parent.height - (topValue + styles.height);
-        if (bottomValue < 0) bottomValue = 0;
+        const topValue = styles.y ?? 0;
+        const bottomValue = styles.parent.height - (topValue + styles.height);
+        if (topValue !== 0) {
+          classes.push(`top-[${topValue}px]`);
+        }
+        classes.push(`bottom-[${bottomValue}px]`);
+      } else {
+        // Fallback for cases without parent size info
+        if (styles.y !== undefined && styles.y !== 0) {
+          classes.push(`top-[${styles.y}px]`);
+          classes.push(`bottom-[${styles.y}px]`);
+        } else {
+          classes.push(`top-[0px]`);
+          classes.push(`bottom-[0px]`);
+        }
       }
-      
-      if (topValue !== 0) {
-        classes.push(`top-[${topValue}px]`);
-      }
-      classes.push(`bottom-[${bottomValue}px]`);
     } else if (vertical === 'SCALE') {
       classes.push('scale-y');
       
@@ -822,11 +832,18 @@ function convertPosition(styles: Record<string, any>): string[] {
       classes.push(`top-[${styles.y}px]`);
     }
   } else if (styles.x !== undefined || styles.y !== undefined) {
-    if (styles.x !== undefined && styles.x !== 0) {
-      classes.push(`left-[${styles.x}px]`);
+    // For positioned elements (absolute/fixed), always add coordinates even if 0
+    const isPositioned = styles.layoutPositioning === 'ABSOLUTE' || styles.position === 'FIXED';
+    
+    if (styles.x !== undefined) {
+      if (styles.x !== 0 || isPositioned) {
+        classes.push(`left-[${styles.x}px]`);
+      }
     }
-    if (styles.y !== undefined && styles.y !== 0) {
-      classes.push(`top-[${styles.y}px]`);
+    if (styles.y !== undefined) {
+      if (styles.y !== 0 || isPositioned) {
+        classes.push(`top-[${styles.y}px]`);
+      }
     }
   }
   

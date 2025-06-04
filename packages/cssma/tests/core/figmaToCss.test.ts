@@ -353,7 +353,7 @@ describe('figmaToCss - Multiple Backgrounds and Blend Modes', () => {
       
       const result = figmaToCss(styles);
       expect(result).toContain('bg-[#ff0000]');
-      expect(result).toContain('bg-gradient-to-r');
+      expect(result).toContain('bg-linear-to-r');
       expect(result).toContain('from-[#0000ff]');
       expect(result).toContain('to-[#ffffff]');
     });
@@ -450,7 +450,7 @@ describe('figmaToCss - Multiple Backgrounds and Blend Modes', () => {
       };
       
       const result = figmaToCss(styles);
-      expect(result).toContain('bg-gradient-to-r');
+      expect(result).toContain('bg-linear-to-r');
       expect(result).toContain('from-[#ff0000]');
       expect(result).toContain('to-[#0000ff]');
     });
@@ -468,7 +468,7 @@ describe('figmaToCss - Multiple Backgrounds and Blend Modes', () => {
       };
       
       const result = figmaToCss(styles);
-      expect(result).toContain('bg-gradient-radial');
+      expect(result).toContain('bg-radial');
       expect(result).toContain('from-[#ffffff]');
       expect(result).toContain('to-[#000000]');
     });
@@ -487,7 +487,7 @@ describe('figmaToCss - Multiple Backgrounds and Blend Modes', () => {
       };
       
       const result = figmaToCss(styles);
-      expect(result).toContain('bg-gradient-conic');
+      expect(result).toContain('bg-conic');
       expect(result).toContain('from-[#ff0000]');
       expect(result).toContain('to-[#00ff00]');
     });
@@ -506,7 +506,7 @@ describe('figmaToCss - Multiple Backgrounds and Blend Modes', () => {
       };
       
       const result = figmaToCss(styles);
-      expect(result).toContain('bg-gradient-conic-[45deg]');
+      expect(result).toContain('bg-conic-[45deg]');
       expect(result).toContain('from-[#ff0000]');
       expect(result).toContain('to-[#00ff00]');
     });
@@ -526,7 +526,7 @@ describe('figmaToCss - Multiple Backgrounds and Blend Modes', () => {
       };
       
       const result = figmaToCss(styles);
-      expect(result).toContain('bg-gradient-to-r');
+      expect(result).toContain('bg-linear-to-r');
       expect(result).toContain('from-[#ff0000]');
       expect(result).toContain('to-[#0000ff]');
       expect(result).toContain('bg-blend-overlay');
@@ -549,7 +549,7 @@ describe('figmaToCss - Multiple Backgrounds and Blend Modes', () => {
       };
       
       const result = figmaToCss(styles);
-      expect(result).toContain('bg-gradient-to-r');
+      expect(result).toContain('bg-linear-to-r');
       expect(result).toContain('from-[#ff0000]');
       expect(result).toContain('via-[#00ff00]');
       expect(result).toContain('to-[#0000ff]');
@@ -571,7 +571,7 @@ describe('figmaToCss - Multiple Backgrounds and Blend Modes', () => {
       };
       
       const result = figmaToCss(styles);
-      expect(result).toContain('bg-gradient-to-r');
+      expect(result).toContain('bg-linear-to-r');
       expect(result).toContain('from-[#ff0000]');
       expect(result).toContain('via-[#ffff00]');
       expect(result).toContain('via-[#00ffff]');

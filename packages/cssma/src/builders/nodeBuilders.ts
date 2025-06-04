@@ -20,6 +20,21 @@ export function FRAME(name: string, styles: string = '', children: NodeData[] = 
 }
 
 /**
+ * Create a group NodeData structure
+ * @param name Node name
+ * @param styles Tailwind CSS styles
+ * @param children Child nodes data
+ */
+export function GROUP(name: string, styles: string = '', children: NodeData[] = []): NodeData {
+  return {
+    type: 'GROUP',
+    name,
+    styles,
+    children
+  };
+}
+
+/**
  * Create a text NodeData structure
  * @param name Node name
  * @param styles Tailwind CSS styles
@@ -126,6 +141,45 @@ export function LINE(name: string, styles: string = ''): NodeData {
     type: 'LINE',
     name,
     styles
+  };
+}
+
+/**
+ * Create a boolean operation NodeData structure
+ * @param name Node name
+ * @param operation Boolean operation type
+ * @param styles Tailwind CSS styles
+ * @param children Child nodes data (shapes to combine)
+ */
+export function BOOLEAN_OPERATION(
+  name: string, 
+  operation: 'UNION' | 'INTERSECT' | 'SUBTRACT' | 'EXCLUDE',
+  styles: string = '', 
+  children: NodeData[] = []
+): NodeData {
+  return {
+    type: 'BOOLEAN_OPERATION',
+    name,
+    styles,
+    children,
+    props: {
+      booleanOperation: operation
+    }
+  };
+}
+
+/**
+ * Create a section NodeData structure
+ * @param name Section name
+ * @param styles Tailwind CSS styles
+ * @param children Child nodes data
+ */
+export function SECTION(name: string, styles: string = '', children: NodeData[] = []): NodeData {
+  return {
+    type: 'SECTION',
+    name,
+    styles,
+    children
   };
 }
 

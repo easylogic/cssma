@@ -146,6 +146,7 @@ interface NodeData {
 
 #### Supported Node Types
 - `FRAME`
+- `GROUP` ⚠️ *Requires at least one child*
 - `TEXT`
 - `RECTANGLE`
 - `ELLIPSE`
@@ -153,7 +154,69 @@ interface NodeData {
 - `STAR`
 - `VECTOR`
 - `LINE`
+- `BOOLEAN_OPERATION` ⚠️ *Requires at least 2 children*
+- `SECTION`
 - `COMPONENT`
+- `COMPONENT_SET`
+- `INSTANCE`
+
+#### Special Node Types
+
+**GROUP Nodes** 
+- Must have at least one child (Figma doesn't support empty groups)
+- Uses `figma.group()` API internally
+- Automatically fits to children size
+
+```typescript
+const groupData = {
+  type: 'GROUP',
+  name: 'Icon Group',
+  styles: 'opacity-90',
+  children: [
+    {
+      type: 'ELLIPSE',
+      name: 'Background',
+      styles: 'w-[100] h-[100] bg-blue-100'
+    },
+    {
+      type: 'VECTOR',
+      name: 'Icon',
+      styles: 'w-[60] h-[60] stroke-blue-600 stroke-2',
+      props: {
+        vectorPaths: [{ data: 'M10 10L50 50M50 50L90 10' }]
+      }
+    }
+  ]
+};
+```
+
+**BOOLEAN_OPERATION Nodes**
+- Must have at least 2 children for operation
+- Supports: `UNION`, `SUBTRACT`, `INTERSECT`, `EXCLUDE`
+- Uses specific Figma APIs (`figma.union()`, `figma.subtract()`, etc.)
+
+```typescript
+const booleanData = {
+  type: 'BOOLEAN_OPERATION',
+  name: 'Combined Shape',
+  styles: 'fill-blue-500',
+  props: {
+    booleanOperation: 'SUBTRACT' // or 'UNION', 'INTERSECT', 'EXCLUDE'
+  },
+  children: [
+    {
+      type: 'RECTANGLE',
+      name: 'Base',
+      styles: 'w-[100] h-[100]'
+    },
+    {
+      type: 'ELLIPSE',
+      name: 'Hole',
+      styles: 'w-[60] h-[60]'
+    }
+  ]
+};
+```
 
 #### Comprehensive Example
 

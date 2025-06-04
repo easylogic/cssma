@@ -7,6 +7,7 @@ export const COLORS: Record<string, FigmaColor> = {
   'white': { r: 1, g: 1, b: 1 },
   'black': { r: 0, g: 0, b: 0 },
   'transparent': { r: 0, g: 0, b: 0, a: 0 },
+  'none': { r: 0, g: 0, b: 0, a: 0 },
 
   // Gray Scale
   'gray-50': { r: round(249/255), g: round(250/255), b: round(251/255) },

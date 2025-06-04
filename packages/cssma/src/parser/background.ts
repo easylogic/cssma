@@ -85,8 +85,8 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
 
     const [, type, value] = match;
     
-    // Handle background color and images
-    if (type === 'bg') { 
+    // Handle background color and images (including fill)
+    if (type === 'bg' || type === 'fill') { 
       // Handle Figma variables
       if (value.startsWith('$[') && value.endsWith(']')) {
         const variableId = extractFigmaVariableId(value);
@@ -100,7 +100,7 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
         allowUnits: false,
         allowColors: true,
         allowUrls: true,
-        requireValidColor: false  // Allow URLs
+        requireValidColor: true  // Require valid colors, but allow URLs through allowUrls
       });
 
       if (parsedValue) {
@@ -218,8 +218,10 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
   }
 
   // Handle preset values
-  if (prefix.startsWith('bg-')) {
-    const value = prefix.replace('bg-', '');
+  if (prefix.startsWith('bg-') || prefix.startsWith('fill-')) {
+    const value = prefix.startsWith('bg-') 
+      ? prefix.replace('bg-', '')
+      : prefix.replace('fill-', '');
 
     // Background blend mode
     if (value.startsWith('blend-')) {
@@ -234,29 +236,11 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
       return null;
     }
 
-    // Background size (maps to image scaleMode)
-    if (value === 'cover') {
+    // Background size
+    if (BACKGROUND_SIZE_MAP[value as keyof typeof BACKGROUND_SIZE_MAP]) {
       return {
         property: 'backgroundSize',
-        value: 'FILL',
-        variant: 'preset',
-        ...(opacity !== undefined && { opacity })
-      };
-    }
-    
-    if (value === 'contain') {
-      return {
-        property: 'backgroundSize',
-        value: 'FIT',
-        variant: 'preset',
-        ...(opacity !== undefined && { opacity })
-      };
-    }
-    
-    if (value === 'auto') {
-      return {
-        property: 'backgroundSize',
-        value: 'CROP',
+        value: BACKGROUND_SIZE_MAP[value as keyof typeof BACKGROUND_SIZE_MAP],
         variant: 'preset',
         ...(opacity !== undefined && { opacity })
       };
@@ -272,20 +256,11 @@ export function parseBackgroundStyleValue(className: string): ParsedStyle | null
       };
     }
 
-    // Background repeat (maps to image scaleMode)
-    if (value === 'repeat') {
+    // Background repeat
+    if (BACKGROUND_REPEAT_MAP[value as keyof typeof BACKGROUND_REPEAT_MAP]) {
       return {
         property: 'backgroundRepeat',
-        value: 'TILE',
-        variant: 'preset',
-        ...(opacity !== undefined && { opacity })
-      };
-    }
-    
-    if (value === 'no-repeat') {
-      return {
-        property: 'backgroundRepeat',
-        value: 'FILL',
+        value: BACKGROUND_REPEAT_MAP[value as keyof typeof BACKGROUND_REPEAT_MAP],
         variant: 'preset',
         ...(opacity !== undefined && { opacity })
       };

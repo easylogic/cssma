@@ -302,19 +302,26 @@ export function convertImageToFigma(styles: ParsedStyle[]): FigmaPaint[] {
         
       case 'backgroundSize':
         // Map CSS background-size to Figma scaleMode
+        const sizeModeMap: Record<string, 'FILL' | 'FIT' | 'CROP'> = {
+          'COVER': 'FILL',
+          'CONTAIN': 'FIT', 
+          'AUTO': 'CROP'
+        };
         const scaleMode = style.value as string;
-        if (['FILL', 'FIT', 'CROP', 'TILE'].includes(scaleMode)) {
-          imagePaint.scaleMode = scaleMode as 'FILL' | 'FIT' | 'CROP' | 'TILE';
+        if (sizeModeMap[scaleMode]) {
+          imagePaint.scaleMode = sizeModeMap[scaleMode];
         }
         break;
         
       case 'backgroundRepeat':
-        // bg-repeat maps to TILE, bg-no-repeat maps to FILL
+        // Map CSS background-repeat to Figma scaleMode
+        const repeatModeMap: Record<string, 'TILE' | 'FILL'> = {
+          'REPEAT': 'TILE',
+          'NO_REPEAT': 'FILL'
+        };
         const repeatMode = style.value as string;
-        if (repeatMode === 'TILE') {
-          imagePaint.scaleMode = 'TILE';
-        } else if (repeatMode === 'FILL') {
-          imagePaint.scaleMode = 'FILL';
+        if (repeatModeMap[repeatMode]) {
+          imagePaint.scaleMode = repeatModeMap[repeatMode];
         }
         break;
         

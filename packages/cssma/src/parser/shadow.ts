@@ -178,6 +178,11 @@ export function parseShadowStyleValue(className: string): ParsedStyle | null {
     };
   }
 
+  // Handle shadow-none first (before shadow- color processing)
+  if (prefix === 'shadow-none') {
+    return null;
+  }
+
   
   if (prefix.startsWith('shadow-')) {
     const colorName = prefix.replace('shadow-', '');

@@ -1,5 +1,5 @@
 import { 
-  FRAME, TEXT, RECT, ELLIPSE, COMPONENT, VECTOR, POLYGON, STAR, LINE, INSTANCE, COMPONENT_SET
+  FRAME, TEXT, RECT, ELLIPSE, COMPONENT, VECTOR, POLYGON, STAR, LINE, INSTANCE, COMPONENT_SET, GROUP, BOOLEAN_OPERATION, SECTION
 } from '../builders/nodeBuilders';
 
 // =============================================================================
@@ -273,5 +273,93 @@ export const dashboardHeader = FRAME("Dashboard Header", "flex-row w-full h-[64]
       TEXT("Initials", "text-[13] font-medium text-[#374151]", "JD")
     ]),
     TEXT("Username", "text-sm font-medium", "John Doe")
+  ])
+]);
+
+// =============================================================================
+// New Node Type Examples
+// =============================================================================
+
+// GROUP example - Grouping related elements
+export const iconGroup = GROUP("Icon Group", "w-[100] h-[100]", [
+  ELLIPSE("Background Circle", "w-[100] h-[100] bg-blue-100"),
+  VECTOR("Icon", "w-[48] h-[48] stroke-blue-600 stroke-2 fill-none absolute top-[26] left-[26]", [
+    "M12 2L12 22M2 12L22 12"
+  ])
+]);
+
+// COMPONENT example - Reusable button component
+export const buttonComponentExample = COMPONENT("Button", "flex-row justify-center items-center px-[16] py-[8] rounded-md bg-[#3B82F6]", [
+  TEXT("Label", "text-sm font-medium text-white", "Button Text")
+]);
+
+// BOOLEAN_OPERATION examples
+export const unionOperation = BOOLEAN_OPERATION("Union Shape", "UNION", "fill-blue-500", [
+  ELLIPSE("Circle 1", "w-[60] h-[60] absolute top-0 left-0"),
+  ELLIPSE("Circle 2", "w-[60] h-[60] absolute top-[20] left-[20]")
+]);
+
+export const subtractOperation = BOOLEAN_OPERATION("Subtract Shape", "SUBTRACT", "fill-red-500", [
+  RECT("Base Rectangle", "w-[80] h-[80]"),
+  ELLIPSE("Hole", "w-[40] h-[40] absolute top-[20] left-[20]")
+]);
+
+export const intersectOperation = BOOLEAN_OPERATION("Intersect Shape", "INTERSECT", "fill-green-500", [
+  ELLIPSE("Circle", "w-[60] h-[60]"),
+  RECT("Rectangle", "w-[60] h-[60] absolute top-[15] left-[15]")
+]);
+
+export const excludeOperation = BOOLEAN_OPERATION("Exclude Shape", "EXCLUDE", "fill-purple-500", [
+  ELLIPSE("Circle 1", "w-[60] h-[60]"),
+  ELLIPSE("Circle 2", "w-[60] h-[60] absolute top-[20] left-[20]")
+]);
+
+// SECTION example - Organizing design elements
+export const designSection = SECTION("Design System Section", "w-full h-auto p-[24] bg-gray-50", [
+  TEXT("Section Title", "text-2xl font-bold mb-[16]", "Color Palette"),
+  FRAME("Color Grid", "grid grid-cols-4 gap-[16] w-full", [
+    RECT("Primary", "w-[80] h-[80] bg-blue-500 rounded-lg"),
+    RECT("Secondary", "w-[80] h-[80] bg-gray-500 rounded-lg"),
+    RECT("Success", "w-[80] h-[80] bg-green-500 rounded-lg"),
+    RECT("Warning", "w-[80] h-[80] bg-yellow-500 rounded-lg"),
+    RECT("Error", "w-[80] h-[80] bg-red-500 rounded-lg"),
+    RECT("Info", "w-[80] h-[80] bg-indigo-500 rounded-lg"),
+    RECT("Light", "w-[80] h-[80] bg-gray-100 rounded-lg border border-gray-300"),
+    RECT("Dark", "w-[80] h-[80] bg-gray-900 rounded-lg")
+  ])
+]);
+
+// Complex example combining multiple new node types
+export const complexDesignSystem = SECTION("Complete Design System", "w-full h-auto p-[32]", [
+  TEXT("Design System", "text-3xl font-bold mb-[24]", "UI Component Library"),
+  
+  // Component showcase
+  FRAME("Component Showcase", "flex-col gap-[32] w-full", [
+    // Buttons section
+    GROUP("Button Variants", "flex-row gap-[16] items-center", [
+      buttonComponentExample,
+      INSTANCE("Secondary Button", "Button", "bg-gray-600"),
+      INSTANCE("Outline Button", "Button", "bg-transparent border border-blue-600 text-blue-600")
+    ]),
+    
+    // Boolean operation showcase  
+    FRAME("Shape Operations", "flex-row gap-[24] items-center", [
+      unionOperation,
+      subtractOperation,
+      intersectOperation,
+      excludeOperation
+    ]),
+    
+    // Icon group showcase
+    FRAME("Icon Examples", "flex-row gap-[16] items-center", [
+      iconGroup,
+      GROUP("Settings Icon", "w-[100] h-[100]", [
+        ELLIPSE("Background", "w-[100] h-[100] bg-gray-100"),
+        VECTOR("Gear", "w-[60] h-[60] stroke-gray-600 stroke-2 fill-none absolute top-[20] left-[20]", [
+          "M12 2L12 6M12 18L12 22M6 12L2 12M22 12L18 12",
+          "M8 8L4.93 4.93M19.07 4.93L16 8M4.93 19.07L8 16M16 16L19.07 19.07"
+        ])
+      ])
+    ])
   ])
 ]); 

@@ -13,7 +13,8 @@ describe('Overflow Converter', () => {
             variant: 'preset'
           },
           expected: {
-            clipsContent: true
+            clipsContent: true,
+            scrollingEnabled: false
           }
         },
         {
@@ -23,7 +24,8 @@ describe('Overflow Converter', () => {
             variant: 'preset'
           },
           expected: {
-            clipsContent: false
+            clipsContent: false,
+            scrollingEnabled: false
           }
         },
         {
@@ -33,7 +35,8 @@ describe('Overflow Converter', () => {
             variant: 'preset'
           },
           expected: {
-            clipsContent: true
+            clipsContent: true,
+            scrollingEnabled: true
           }
         }
       ];

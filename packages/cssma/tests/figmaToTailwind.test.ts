@@ -670,7 +670,7 @@ describe('figmaToCss', () => {
 
       expectClassesEqual(
         figmaToCss(styles),
-        'flex-col w-[480] h-auto left-[0px] top-[0px] p-[24] bg-[#ffffff] shadow-xl rounded-2xl gap-[20]'
+        'fixed flex-col w-[480] h-auto left-[0px] top-[0px] p-[24] bg-[#ffffff] shadow-xl rounded-2xl gap-[20]'
       );
     });
 

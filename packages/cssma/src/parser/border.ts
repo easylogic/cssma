@@ -125,6 +125,7 @@ export function parseBorderStyleValue(className: string): ParsedStyle | null {
       allowNegative: type.startsWith('rounded'),
       allowUnits: true,
       allowColors: type === 'border-color' || type === 'border',
+      requireValidColor: type === 'border-color' || type === 'border',
       allowFigmaVariables: true
     });
 

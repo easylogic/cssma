@@ -38,6 +38,7 @@ export function parseStyleValue(className: string, fontState?: FontState): Parse
   if (overflowStyle) return overflowStyle;
 
   if (className.startsWith('bg-') || 
+      className.startsWith('fill-') ||
       className.startsWith('from-') || 
       className.startsWith('via-') || 
       className.startsWith('to-')) {

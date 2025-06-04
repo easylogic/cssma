@@ -158,7 +158,18 @@ export function parseArbitraryValue(value: string, options: {
     }
 
     
-    if (requireValidColor || allowUnits) {
+    // If we require valid colors and it looks like a color but failed validation, reject it
+    if (requireValidColor && (innerValue.startsWith('#') || innerValue.startsWith('rgb'))) {
+      return null;
+    }
+
+    // If we require valid colors but don't allow arbitrary strings, reject
+    if (requireValidColor) {
+      return null;
+    }
+
+    // If we only allow units and this isn't a unit, reject
+    if (allowUnits && !allowColors) {
       return null;
     }
 

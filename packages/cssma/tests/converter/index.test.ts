@@ -1298,10 +1298,8 @@ describe('convertStylesToFigma Integration Tests', () => {
        const styles: ParsedStyle[] = [
          {
            property: 'overflow',
-           value: 'hidden',
-           variant: 'preset',
-           clipsContent: true,
-           scrollingEnabled: false
+           value: { clipsContent: true, scrollingEnabled: false },
+           variant: 'preset'
          }
        ];
        

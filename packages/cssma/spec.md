@@ -173,16 +173,22 @@ z-[10]         → order: 10
 // Solid Colors
 bg-[#FF0000]    → fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }]
 text-[#FF0000]  → fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }]
+fill-[#FF0000]  → fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }]
 bg-transparent  → fills: []
 bg-white        → fills: [{ type: "SOLID", color: { r: 1, g: 1, b: 1 } }]
 bg-black        → fills: [{ type: "SOLID", color: { r: 0, g: 0, b: 0 } }]
+fill-white      → fills: [{ type: "SOLID", color: { r: 1, g: 1, b: 1 } }]
+fill-black      → fills: [{ type: "SOLID", color: { r: 0, g: 0, b: 0 } }]
+fill-none       → fills: []
 
 // Opacity
 bg-white/50     → fills: [{ type: "SOLID", color: { r: 1, g: 1, b: 1 }, opacity: 0.5 }]
 bg-[#FF0000]/75 → fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 }, opacity: 0.75 }]
+fill-white/50   → fills: [{ type: "SOLID", color: { r: 1, g: 1, b: 1 }, opacity: 0.5 }]
+fill-[#FF0000]/75 → fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 }, opacity: 0.75 }]
 
 // Gradients
-bg-gradient-to-r from-[#FF0000] to-[#0000FF] →
+bg-linear-to-r from-[#FF0000] to-[#0000FF] →
 fills: [{
   type: "GRADIENT_LINEAR",
   gradientStops: [
@@ -190,6 +196,26 @@ fills: [{
     { position: 1, color: { r: 0, g: 0, b: 1 } }
   ],
   gradientTransform: [[1, 0, 0], [0, 1, 0]]
+}]
+
+bg-radial from-[#FF0000] to-[#0000FF] →
+fills: [{
+  type: "GRADIENT_RADIAL",
+  gradientStops: [
+    { position: 0, color: { r: 1, g: 0, b: 0 } },
+    { position: 1, color: { r: 0, g: 0, b: 1 } }
+  ],
+  centerX: 0.5, centerY: 0.5, radius: 0.5
+}]
+
+bg-conic from-[#FF0000] to-[#0000FF] →
+fills: [{
+  type: "GRADIENT_ANGULAR", 
+  gradientStops: [
+    { position: 0, color: { r: 1, g: 0, b: 0 } },
+    { position: 1, color: { r: 0, g: 0, b: 1 } }
+  ],
+  centerX: 0.5, centerY: 0.5, rotation: 0
 }]
 
 // Background Images
@@ -321,4 +347,44 @@ text-$[size/body]      → fontSize: setBoundVariableForNumber("fontSize", varia
 
 // Boolean Variables
 hidden-$[state/isHidden] → visible: setBoundVariableForBoolean("visible", variable)
+
+## Vector Fill Properties
+
+```typescript
+// Vector Fill Colors (for VECTOR/SVG elements)
+fill-white      → fills: [{ type: "SOLID", color: { r: 1, g: 1, b: 1 } }]
+fill-black      → fills: [{ type: "SOLID", color: { r: 0, g: 0, b: 0 } }]
+fill-red-500    → fills: [{ type: "SOLID", color: { r: 0.94, g: 0.27, b: 0.27 } }]
+fill-[#FF0000]  → fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }]
+fill-none       → fills: []
+
+// Vector Fill Opacity
+fill-white/50   → fills: [{ type: "SOLID", color: { r: 1, g: 1, b: 1 }, opacity: 0.5 }]
+fill-red-500/75 → fills: [{ type: "SOLID", color: { r: 0.94, g: 0.27, b: 0.27 }, opacity: 0.75 }]
+
+// Vector Fill Variables
+fill-$[colors/primary] → fills: setBoundVariableForPaint("fills", variable)
+```
+
+### Usage Context
+
+- **`bg-xxx`**: Used for background colors of frames, rectangles, and containers
+- **`fill-xxx`**: Used for fill colors of vector elements, SVG paths, and graphics
+- **`text-xxx`**: Used for text color in text nodes
+
+### Examples
+
+```typescript
+// Background for containers
+{ type: "FRAME", styles: "bg-blue-500" }
+→ fills: [{ type: "SOLID", color: { r: 0.23, g: 0.51, b: 0.96 } }]
+
+// Fill for vector graphics
+{ type: "VECTOR", styles: "fill-red-500" }
+→ fills: [{ type: "SOLID", color: { r: 0.94, g: 0.27, b: 0.27 } }]
+
+// Text color
+{ type: "TEXT", styles: "text-green-500" }
+→ fills: [{ type: "SOLID", color: { r: 0.13, g: 0.59, b: 0.3 } }]
+```
 ``` 

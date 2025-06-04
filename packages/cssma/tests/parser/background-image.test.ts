@@ -55,7 +55,7 @@ describe('Background Image Parser', () => {
       const result = parseBackgroundStyleValue('bg-cover');
       expect(result).toEqual({
         property: 'backgroundSize',
-        value: 'FILL',
+        value: 'COVER',
         variant: 'preset'
       });
     });
@@ -64,7 +64,7 @@ describe('Background Image Parser', () => {
       const result = parseBackgroundStyleValue('bg-contain');
       expect(result).toEqual({
         property: 'backgroundSize',
-        value: 'FIT',
+        value: 'CONTAIN',
         variant: 'preset'
       });
     });
@@ -73,7 +73,7 @@ describe('Background Image Parser', () => {
       const result = parseBackgroundStyleValue('bg-auto');
       expect(result).toEqual({
         property: 'backgroundSize',
-        value: 'CROP',
+        value: 'AUTO',
         variant: 'preset'
       });
     });
@@ -84,7 +84,7 @@ describe('Background Image Parser', () => {
       const result = parseBackgroundStyleValue('bg-repeat');
       expect(result).toEqual({
         property: 'backgroundRepeat',
-        value: 'TILE',
+        value: 'REPEAT',
         variant: 'preset'
       });
     });
@@ -93,7 +93,7 @@ describe('Background Image Parser', () => {
       const result = parseBackgroundStyleValue('bg-no-repeat');
       expect(result).toEqual({
         property: 'backgroundRepeat',
-        value: 'FILL',
+        value: 'NO_REPEAT',
         variant: 'preset'
       });
     });

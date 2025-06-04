@@ -86,6 +86,12 @@ function createLineNode(props: Record<string, any> = {}): LineNode {
   return node;
 }
 
+function createSectionNode(props: Record<string, any> = {}): SectionNode {
+  const node = figma.createSection();
+  if (props.name) node.name = props.name;
+  return node;
+}
+
 function createComponentNode(props: Record<string, any> = {}): ComponentNode {
   const node = figma.createComponent();
   
@@ -160,7 +166,7 @@ function createInstanceNode(props: Record<string, any> = {}): InstanceNode {
   return node;
 }
 
-// Node creation map
+// Node creation map (excluding GROUP and BOOLEAN_OPERATION which use special creation methods)
 const nodeCreators: Record<string, (props: Record<string, any>) => SceneNode> = {
   'FRAME': createFrameNode,
   'TEXT': createTextNode,
@@ -170,6 +176,7 @@ const nodeCreators: Record<string, (props: Record<string, any>) => SceneNode> = 
   'STAR': createStarNode,
   'VECTOR': createVectorNode,
   'LINE': createLineNode,
+  'SECTION': createSectionNode,
   'COMPONENT': createComponentNode,
   'COMPONENT_SET': createComponentSetNode,
   'INSTANCE': createInstanceNode,
@@ -343,10 +350,89 @@ async function setupTextNodeBinding(textNode: TextNode, text: string, parent: Ba
  * ```
  */
 export function createNodeForData(data: NodeData, parent?: BaseNode & ChildrenMixin): SceneNode {
-  // 1. Create the node first
+  // 1. Handle special node types that require different creation methods
   const { type, name, styles = '', children, text, props = {} } = data;
   
-  // Set node properties
+  // Special handling for GROUP nodes
+  if (type === 'GROUP') {
+    if (!children || children.length === 0) {
+      throw new Error('GROUP nodes must have at least one child');
+    }
+    
+    // Create children first
+    const childNodes: SceneNode[] = [];
+    children.forEach(childData => {
+      const childNode = createNodeForData(childData);
+      childNodes.push(childNode);
+    });
+    
+    // Create group using figma.group()
+    if (!parent) {
+      throw new Error('GROUP nodes require a parent to be specified');
+    }
+    
+    const groupNode = figma.group(childNodes, parent);
+    if (name) groupNode.name = name;
+    
+    // Apply styles to the group
+    if (styles) {
+      applyCssStyles(groupNode, styles);
+    }
+    
+    return groupNode;
+  }
+  
+  // Special handling for BOOLEAN_OPERATION nodes
+  if (type === 'BOOLEAN_OPERATION') {
+    if (!children || children.length < 2) {
+      throw new Error('BOOLEAN_OPERATION nodes must have at least 2 children');
+    }
+    
+    // Create children first
+    const childNodes: SceneNode[] = [];
+    children.forEach(childData => {
+      const childNode = createNodeForData(childData);
+      childNodes.push(childNode);
+    });
+    
+    // Get operation type
+    const operation = props.booleanOperation || 'UNION';
+    let booleanNode: BooleanOperationNode;
+    
+    // Create boolean operation using appropriate figma method
+    switch (operation) {
+      case 'UNION':
+        booleanNode = figma.union(childNodes, figma.currentPage);
+        break;
+      case 'SUBTRACT':
+        booleanNode = figma.subtract(childNodes, figma.currentPage);
+        break;
+      case 'INTERSECT':
+        booleanNode = figma.intersect(childNodes, figma.currentPage);
+        break;
+      case 'EXCLUDE':
+        booleanNode = figma.exclude(childNodes, figma.currentPage);
+        break;
+      default:
+        throw new Error(`Unsupported boolean operation: ${operation}`);
+    }
+    
+    if (name) booleanNode.name = name;
+    
+    // Apply styles to the boolean operation
+    if (styles) {
+      applyCssStyles(booleanNode, styles);
+    }
+    
+    // Move to parent if specified
+    if (parent) {
+      parent.appendChild(booleanNode);
+    }
+    
+    return booleanNode;
+  }
+  
+  // Regular node creation for other types
   const nodeProps: Record<string, any> = { ...props };
   if (name) {
     nodeProps.name = name;
@@ -360,7 +446,7 @@ export function createNodeForData(data: NodeData, parent?: BaseNode & ChildrenMi
   // Create base node
   const node = createElement(type, '', undefined, nodeProps);
 
-  // 4. Append to parent if provided
+  // Append to parent if provided
   if (parent) {
     parent.appendChild(node);
     
@@ -370,12 +456,12 @@ export function createNodeForData(data: NodeData, parent?: BaseNode & ChildrenMi
     }
   }
   
-  // 2. Apply styles (including layout mode) before adding children
+  // Apply styles (including layout mode) before adding children
   if (styles) {
     applyCssStyles(node, styles);
   }
   
-  // 3. Create and append children after parent's layout is set
+  // Create and append children after parent's layout is set
   if (children && children.length > 0 && 'appendChild' in node) {
     children.forEach(childData => {
       createNodeForData(childData, node as BaseNode & ChildrenMixin);
@@ -607,42 +693,6 @@ export function createVectorFromSVGPath(
     type: 'VECTOR',
     styles,
     paths: [svgPath],
-    props
-  };
-  
-  return createNodeForData(vectorData) as VectorNode;
-}
-
-/**
- * Converts multiple SVG path strings to Figma vector node.
- * 
- * @param svgPaths Array of SVG path strings
- * @param styles Style string to apply (optional)
- * @param props Additional properties (optional)
- * @returns Created vector node
- * 
- * @example
- * ```typescript
- * // Create a complex icon
- * const complexIcon = createVectorFromSVGPaths(
- *   [
- *     "M10 10L20 20M20 20L10 30", // First path
- *     "M30 20H50"                 // Second path
- *   ],
- *   "stroke-black stroke-2 fill-transparent"
- * );
- * figma.currentPage.appendChild(complexIcon);
- * ```
- */
-export function createVectorFromSVGPaths(
-  svgPaths: string[],
-  styles: string = '',
-  props: Record<string, any> = {}
-): VectorNode {
-  const vectorData: VectorNodeData = {
-    type: 'VECTOR',
-    styles,
-    paths: svgPaths,
     props
   };
   

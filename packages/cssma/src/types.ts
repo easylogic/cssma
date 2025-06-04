@@ -21,6 +21,7 @@ export interface ParsedStyle {
 
 export type FigmaNodeType = 
   | 'FRAME' 
+  | 'GROUP'
   | 'TEXT' 
   | 'RECTANGLE' 
   | 'ELLIPSE' 
@@ -28,7 +29,10 @@ export type FigmaNodeType =
   | 'STAR' 
   | 'VECTOR' 
   | 'LINE' 
+  | 'BOOLEAN_OPERATION'
+  | 'SECTION'
   | 'COMPONENT'
+  | 'COMPONENT_SET'
   | 'INSTANCE';
 
 
@@ -311,6 +315,7 @@ export interface ComponentProps {
 
 export type NodeType = 
   | 'FRAME'
+  | 'GROUP'
   | 'TEXT'
   | 'RECTANGLE'
   | 'ELLIPSE'
@@ -318,6 +323,8 @@ export type NodeType =
   | 'STAR'
   | 'VECTOR'
   | 'LINE'
+  | 'BOOLEAN_OPERATION'
+  | 'SECTION'
   | 'COMPONENT'
   | 'COMPONENT_SET'
   | 'INSTANCE';
