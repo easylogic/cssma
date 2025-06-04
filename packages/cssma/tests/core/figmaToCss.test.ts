@@ -652,4 +652,99 @@ describe('figmaToCss - Multiple Backgrounds and Blend Modes', () => {
       expect(result).not.toContain('bg-blend-unknown');
     });
   });
+});
+
+describe('Filter Effects Conversion', () => {
+  test('converts LAYER_BLUR effects to blur classes', () => {
+    expect(figmaToCss({
+      effects: [
+        { type: 'LAYER_BLUR', radius: 8 }
+      ]
+    })).toBe('blur');
+    
+    expect(figmaToCss({
+      effects: [
+        { type: 'LAYER_BLUR', radius: 4 }
+      ]
+    })).toBe('blur-sm');
+    
+    expect(figmaToCss({
+      effects: [
+        { type: 'LAYER_BLUR', radius: 20 }
+      ]
+    })).toBe('blur-[20]');
+  });
+
+  test('converts BACKGROUND_BLUR effects to backdrop-blur classes', () => {
+    expect(figmaToCss({
+      effects: [
+        { type: 'BACKGROUND_BLUR', radius: 8 }
+      ]
+    })).toBe('backdrop-blur');
+    
+    expect(figmaToCss({
+      effects: [
+        { type: 'BACKGROUND_BLUR', radius: 16 }
+      ]
+    })).toBe('backdrop-blur-lg');
+    
+    expect(figmaToCss({
+      effects: [
+        { type: 'BACKGROUND_BLUR', radius: 32 }
+      ]
+    })).toBe('backdrop-blur-[32]');
+  });
+
+  test('converts DROP_SHADOW effects to drop-shadow classes', () => {
+    expect(figmaToCss({
+      effects: [
+        { 
+          type: 'DROP_SHADOW', 
+          radius: 2, 
+          offset: { x: 0, y: 1 },
+          color: { r: 0, g: 0, b: 0, a: 0.1 }
+        }
+      ]
+    })).toBe('drop-shadow');
+    
+    expect(figmaToCss({
+      effects: [
+        { 
+          type: 'DROP_SHADOW', 
+          radius: 6, 
+          offset: { x: 0, y: 4 },
+          color: { r: 0, g: 0, b: 0, a: 0.1 }
+        }
+      ]
+    })).toBe('drop-shadow-md');
+  });
+
+  test('converts DROP_SHADOW with spread to box-shadow classes', () => {
+    expect(figmaToCss({
+      effects: [
+        { 
+          type: 'DROP_SHADOW', 
+          radius: 6, 
+          spread: -2,
+          offset: { x: 0, y: 4 },
+          color: { r: 0, g: 0, b: 0, a: 0.1 }
+        }
+      ]
+    })).toBe('shadow-md');
+  });
+
+  test('handles multiple filter effects', () => {
+    expect(figmaToCss({
+      effects: [
+        { type: 'LAYER_BLUR', radius: 8 },
+        { type: 'BACKGROUND_BLUR', radius: 16 },
+        { 
+          type: 'DROP_SHADOW', 
+          radius: 2, 
+          offset: { x: 0, y: 1 },
+          color: { r: 0, g: 0, b: 0, a: 0.1 }
+        }
+      ]
+    })).toBe('blur backdrop-blur-lg drop-shadow');
+  });
 }); 

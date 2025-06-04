@@ -328,8 +328,74 @@ shadow-sm      → effects: [{ type: "DROP_SHADOW", radius: 2, offset: { x: 0, y
 shadow-md      → effects: [{ type: "DROP_SHADOW", radius: 6, offset: { x: 0, y: 3 }, color: { r: 0, g: 0, b: 0, a: 0.1 } }]
 shadow-lg      → effects: [{ type: "DROP_SHADOW", radius: 15, offset: { x: 0, y: 4 }, color: { r: 0, g: 0, b: 0, a: 0.15 } }]
 
+// Filter Effects - Layer Blur
+blur-none      → effects: [{ type: "LAYER_BLUR", radius: 0 }]
+blur-sm        → effects: [{ type: "LAYER_BLUR", radius: 4 }]
+blur           → effects: [{ type: "LAYER_BLUR", radius: 8 }]
+blur-md        → effects: [{ type: "LAYER_BLUR", radius: 12 }]
+blur-lg        → effects: [{ type: "LAYER_BLUR", radius: 16 }]
+blur-xl        → effects: [{ type: "LAYER_BLUR", radius: 24 }]
+blur-2xl       → effects: [{ type: "LAYER_BLUR", radius: 40 }]
+blur-3xl       → effects: [{ type: "LAYER_BLUR", radius: 64 }]
+blur-[10]      → effects: [{ type: "LAYER_BLUR", radius: 10 }]
+
+// Filter Effects - Backdrop Blur
+backdrop-blur-none → effects: [{ type: "BACKGROUND_BLUR", radius: 0 }]
+backdrop-blur-sm   → effects: [{ type: "BACKGROUND_BLUR", radius: 4 }]
+backdrop-blur      → effects: [{ type: "BACKGROUND_BLUR", radius: 8 }]
+backdrop-blur-md   → effects: [{ type: "BACKGROUND_BLUR", radius: 12 }]
+backdrop-blur-lg   → effects: [{ type: "BACKGROUND_BLUR", radius: 16 }]
+backdrop-blur-xl   → effects: [{ type: "BACKGROUND_BLUR", radius: 24 }]
+backdrop-blur-2xl  → effects: [{ type: "BACKGROUND_BLUR", radius: 40 }]
+backdrop-blur-3xl  → effects: [{ type: "BACKGROUND_BLUR", radius: 64 }]
+backdrop-blur-[15] → effects: [{ type: "BACKGROUND_BLUR", radius: 15 }]
+
+// Filter Effects - Drop Shadow
+drop-shadow-none → effects: [{ type: "DROP_SHADOW", radius: 0, offset: { x: 0, y: 0 } }]
+drop-shadow-sm   → effects: [{ type: "DROP_SHADOW", radius: 1, offset: { x: 0, y: 1 }, color: { r: 0, g: 0, b: 0, a: 0.05 } }]
+drop-shadow      → effects: [{ type: "DROP_SHADOW", radius: 2, offset: { x: 0, y: 1 }, color: { r: 0, g: 0, b: 0, a: 0.1 } }]
+drop-shadow-md   → effects: [{ type: "DROP_SHADOW", radius: 6, offset: { x: 0, y: 4 }, color: { r: 0, g: 0, b: 0, a: 0.1 } }]
+drop-shadow-lg   → effects: [{ type: "DROP_SHADOW", radius: 15, offset: { x: 0, y: 10 }, color: { r: 0, g: 0, b: 0, a: 0.1 } }]
+drop-shadow-xl   → effects: [{ type: "DROP_SHADOW", radius: 25, offset: { x: 0, y: 20 }, color: { r: 0, g: 0, b: 0, a: 0.25 } }]
+drop-shadow-2xl  → effects: [{ type: "DROP_SHADOW", radius: 50, offset: { x: 0, y: 25 }, color: { r: 0, g: 0, b: 0, a: 0.25 } }]
+drop-shadow-[0_4_8_rgba(0,0,0,0.1)] → effects: [{ type: "DROP_SHADOW", radius: 8, offset: { x: 0, y: 4 }, color: { r: 0, g: 0, b: 0, a: 0.1 } }]
+
 // Opacity
 opacity-[0.5]  → opacity: 0.5
+```
+
+### Filter Effects Usage
+
+Filter effects use Figma's native effect system and support both preset and arbitrary values:
+
+#### Layer Blur (`blur-*`)
+- Creates a **LAYER_BLUR** effect that blurs the entire element
+- Supports preset values from `blur-none` (0px) to `blur-3xl` (64px)
+- Arbitrary values: `blur-[10]` for custom radius
+- **Bi-directional**: Figma LAYER_BLUR effects convert back to appropriate `blur-*` classes
+
+#### Backdrop Blur (`backdrop-blur-*`) 
+- Creates a **BACKGROUND_BLUR** effect that blurs content behind the element
+- Supports preset values from `backdrop-blur-none` (0px) to `backdrop-blur-3xl` (64px)
+- Arbitrary values: `backdrop-blur-[15]` for custom radius
+- **Bi-directional**: Figma BACKGROUND_BLUR effects convert back to appropriate `backdrop-blur-*` classes
+
+#### Drop Shadow (`drop-shadow-*`)
+- Creates a **DROP_SHADOW** effect for filter-based shadows (no spread)
+- Supports preset values from `drop-shadow-none` to `drop-shadow-2xl`
+- Arbitrary values: `drop-shadow-[0_4_8_rgba(0,0,0,0.1)]` format (offsetX_offsetY_radius_color)
+- **Bi-directional**: Figma DROP_SHADOW effects convert back to appropriate classes
+- **Smart detection**: Distinguishes between filter drop-shadow and box-shadow based on spread value
+
+#### Multiple Effects
+```typescript
+// Multiple filter effects can be combined
+"blur-sm backdrop-blur-md drop-shadow-lg"
+→ effects: [
+  { type: "LAYER_BLUR", radius: 4 },
+  { type: "BACKGROUND_BLUR", radius: 12 },
+  { type: "DROP_SHADOW", radius: 15, offset: { x: 0, y: 10 }, color: { r: 0, g: 0, b: 0, a: 0.1 } }
+]
 ```
 
 ## Variable References

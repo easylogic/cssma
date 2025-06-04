@@ -71,7 +71,7 @@ export function convertStylesToFigma(
       }
     } else if (style.property.startsWith('border') || style.property.startsWith('stroke') || style.property === 'dashPattern') {
       converted = convertBorderToFigma(style);
-    } else if (style.property.includes('blur')) {
+    } else if (style.property.includes('blur') || style.property === 'dropShadow') {
       converted = convertFilterToFigma(style);
     } else if (
       style.property.startsWith('layout') 
