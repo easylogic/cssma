@@ -1,4 +1,4 @@
-export function convertLayout(styles: Record<string, any>): string[] {
+export function figmaLayoutToCss(styles: Record<string, any>): string[] {
   const classes: string[] = [];
 
   // Layout mode

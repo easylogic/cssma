@@ -1,4 +1,4 @@
-export function convertPosition(styles: Record<string, any>): string[] {
+export function figmaPositionToCss(styles: Record<string, any>): string[] {
   const classes: string[] = [];
   
   if (styles.layoutPositioning === 'ABSOLUTE') {

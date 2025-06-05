@@ -1,4 +1,4 @@
-export function convertEffects(styles: Record<string, any>): string[] {
+export function figmaEffectsToCss(styles: Record<string, any>): string[] {
   const classes: string[] = [];
 
   // Opacity

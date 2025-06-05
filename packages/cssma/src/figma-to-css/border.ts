@@ -1,7 +1,7 @@
 import { FigmaColor } from '../types';
 import { colorToHex } from './utils';
 
-export function convertBorder(styles: Record<string, any>): string[] {
+export function figmaBorderToCss(styles: Record<string, any>): string[] {
     const classes: string[] = [];
 
     // Border width

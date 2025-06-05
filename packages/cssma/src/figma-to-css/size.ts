@@ -1,4 +1,4 @@
-export function convertSize(styles: Record<string, any>): string[] {
+export function figmaSizeToCss(styles: Record<string, any>): string[] {
     const classes: string[] = [];
 
     // Min/Max constraints

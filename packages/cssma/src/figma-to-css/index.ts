@@ -1,39 +1,39 @@
-import { convertLayout } from './layout';
-import { convertColors } from './colors';
-import { convertTypography } from './typography';
-import { convertEffects } from './effects';
-import { convertGeometry } from './geometry';
-import { convertBorder } from './border';
-import { convertShadow } from './shadow';
-import { convertSpacing } from './spacing';
-import { convertPosition } from './position';
-import { convertSize } from './size';
+import { figmaLayoutToCss } from './layout';
+import { figmaColorsToCss } from './colors';
+import { figmaTypographyToCss } from './typography';
+import { figmaEffectsToCss } from './effects';
+import { figmaGeometryToCss } from './geometry';
+import { figmaBorderToCss } from './border';
+import { figmaShadowToCss } from './shadow';
+import { figmaSpacingToCss } from './spacing';
+import { figmaPositionToCss } from './position';
+import { figmaSizeToCss } from './size';
 
 // Re-export individual converter functions
-export { convertLayout } from './layout';
-export { convertColors } from './colors';
-export { convertTypography } from './typography';
-export { convertEffects } from './effects';
-export { convertGeometry } from './geometry';
-export { convertBorder } from './border';
-export { convertShadow } from './shadow';
-export { convertSpacing } from './spacing';
-export { convertPosition } from './position';
-export { convertSize } from './size';
+export { figmaLayoutToCss } from './layout';
+export { figmaColorsToCss } from './colors';
+export { figmaTypographyToCss } from './typography';
+export { figmaEffectsToCss } from './effects';
+export { figmaGeometryToCss } from './geometry';
+export { figmaBorderToCss } from './border';
+export { figmaShadowToCss } from './shadow';
+export { figmaSpacingToCss } from './spacing';
+export { figmaPositionToCss } from './position';
+export { figmaSizeToCss } from './size';
 
 // Main conversion function that combines all modules
 export function figmaToCss(styles: Record<string, any>): string {
     const classes: string[] = [
-        ...convertLayout(styles),
-        ...convertColors(styles),
-        ...convertTypography(styles),
-        ...convertEffects(styles),
-        ...convertGeometry(styles),
-        ...convertBorder(styles),
-        ...convertShadow(styles),
-        ...convertSpacing(styles),
-        ...convertPosition(styles),
-        ...convertSize(styles)
+        ...figmaLayoutToCss(styles),
+        ...figmaColorsToCss(styles),
+        ...figmaTypographyToCss(styles),
+        ...figmaEffectsToCss(styles),
+        ...figmaGeometryToCss(styles),
+        ...figmaBorderToCss(styles),
+        ...figmaShadowToCss(styles),
+        ...figmaSpacingToCss(styles),
+        ...figmaPositionToCss(styles),
+        ...figmaSizeToCss(styles)
     ];
 
     return classes.filter(Boolean).join(' ');

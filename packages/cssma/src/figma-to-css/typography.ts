@@ -11,7 +11,7 @@ const sizeMap: Record<number, string> = {
     36: 'text-4xl'
 };
 
-export function convertTypography(styles: Record<string, any>): string[] {
+export function figmaTypographyToCss(styles: Record<string, any>): string[] {
     const classes: string[] = [];
 
     // Font size

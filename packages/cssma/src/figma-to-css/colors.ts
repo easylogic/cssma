@@ -65,7 +65,7 @@ function convertBlendMode(figmaBlendMode: string): string | null {
     return blendModeMap[figmaBlendMode] || null;
 }
 
-export function convertColors(styles: Record<string, any>): string[] {
+export function figmaColorsToCss(styles: Record<string, any>): string[] {
     const classes: string[] = [];
 
     if (styles.fills && styles.fills.length > 0) {

@@ -8,7 +8,7 @@ const shadowMap: Record<string, string> = {
     '2xl': 'shadow-2xl'   // radius: 25, spread: -8
 };
 
-export function convertShadow(styles: Record<string, any>): string[] {
+export function figmaShadowToCss(styles: Record<string, any>): string[] {
     const classes: string[] = [];
 
     if (styles.effects) {

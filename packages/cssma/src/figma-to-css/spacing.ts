@@ -1,4 +1,4 @@
-export function convertSpacing(styles: Record<string, any>): string[] {
+export function figmaSpacingToCss(styles: Record<string, any>): string[] {
     const classes: string[] = [];
 
     // Margin

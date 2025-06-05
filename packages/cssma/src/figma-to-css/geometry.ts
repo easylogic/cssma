@@ -7,7 +7,7 @@ const radiusMap: Record<number, string> = {
   9999: 'rounded-full'
 };
 
-export function convertGeometry(styles: Record<string, any>): string[] {
+export function figmaGeometryToCss(styles: Record<string, any>): string[] {
   const classes: string[] = [];
 
   // Border radius
