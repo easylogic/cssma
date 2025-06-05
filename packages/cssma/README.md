@@ -159,45 +159,6 @@ figma.currentPage.appendChild(frame);
 'shadow-[0_4px_8px_rgba(0,0,0,0.1)]'  // custom shadow values
 ```
 
-### Performance Tips
-
-#### 1. Use Modular Converters for Large Datasets
-```typescript
-// ❌ Slower - processes all style types
-const classes = figmaNodes.map(node => figmaToCss(node));
-
-// ✅ Faster - only processes needed types
-const classes = figmaNodes.map(node => {
-  const result = [];
-  if (node.layoutMode) result.push(...figmaLayoutToCss(node));
-  if (node.fills) result.push(...figmaColorsToCss(node));
-  return result.join(' ');
-});
-```
-
-#### 2. Batch Process Similar Nodes
-```typescript
-// ✅ Group similar conversions
-const layoutNodes = nodes.filter(n => n.layoutMode);
-const colorNodes = nodes.filter(n => n.fills);
-
-const layoutClasses = layoutNodes.map(n => figmaLayoutToCss(n));
-const colorClasses = colorNodes.map(n => figmaColorsToCss(n));
-```
-
-#### 3. Cache Conversion Results
-```typescript
-// ✅ Cache frequently used styles
-const styleCache = new Map();
-
-function getCachedStyles(styleKey, figmaStyles) {
-  if (!styleCache.has(styleKey)) {
-    styleCache.set(styleKey, figmaToCss(figmaStyles));
-  }
-  return styleCache.get(styleKey);
-}
-```
-
 ### Common Patterns
 
 #### Design System Components
