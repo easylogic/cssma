@@ -24,35 +24,703 @@ or
 yarn add @easylogic/cssma
 ```
 
-## Quick Start
+## Simple Start
 
-Here's how to get started with @easylogic/cssma in a Figma plugin:
+Here's how to get started with `@easylogic/cssma` in a Figma plugin:
 
 ```typescript
-// In your Figma plugin code
-import { processCssStyles } from '@easylogic/cssma';
+import { applyCssStyles, processCssStyles } from '@easylogic/cssma';
 
-// Convert Tailwind CSS to Figma styles
-const node = figma.createFrame();
-const styles = processCssStyles('flex-col bg-white rounded-lg p-[16] gap-[8]');
+// Method 1: Apply styles directly to a node (Recommended)
+const frame = figma.createFrame();
+frame.name = 'My Card';
 
-// Apply styles to the node
-Object.assign(node, {
-  layoutMode: styles.layoutMode,
-  fills: styles.fills,
-  topLeftRadius: styles.topLeftRadius,
-  topRightRadius: styles.topRightRadius,
-  bottomLeftRadius: styles.bottomLeftRadius,
-  bottomRightRadius: styles.bottomRightRadius,
-  paddingTop: styles.paddingTop,
-  paddingRight: styles.paddingRight,
-  paddingBottom: styles.paddingBottom,
-  paddingLeft: styles.paddingLeft,
-  itemSpacing: styles.itemSpacing
+// Apply styles directly - this is the easiest way!
+await applyCssStyles(frame, 'flex-col bg-white rounded-lg p-[16] gap-[8]');
+
+// Method 2: Convert CSS to Figma styles object first
+const styles = processCssStyles('w-[300] h-[200] bg-blue-500');
+console.log(styles);
+// → { width: 300, height: 200, fills: [{ type: 'SOLID', color: { r: 0.33, g: 0.65, b: 1 } }] }
+
+// Then manually apply the styles
+Object.assign(frame, styles);
+
+// Add to page
+figma.currentPage.appendChild(frame);
+```
+
+
+## Quick Reference
+
+### API Overview
+
+| Function | Purpose | Input | Output |
+|----------|---------|-------|--------|
+| `applyCssStyles(node, css)` | Apply CSS → Figma node | Figma node + CSS class string | Styled Figma node |
+| `processCssStyles(css)` | CSS → Figma styles | CSS class string | Figma style object |
+| `figmaToCss(styles)` | Figma → CSS (complete) | Figma style object | CSS class string |
+| `createNodeForData(data)` | Create Figma nodes | NodeData object | Figma node |
+
+### Most Used CSS Classes
+
+#### Layout
+```typescript
+// Flexbox
+'flex'                // layoutMode: "HORIZONTAL"
+'flex-col'            // layoutMode: "VERTICAL"
+'flex-row'            // layoutMode: "HORIZONTAL"
+'items-center'        // counterAxisAlignItems: "CENTER"
+'justify-center'      // primaryAxisAlignItems: "CENTER"
+'gap-[16]'            // itemSpacing: 16
+
+// Sizing
+'w-full'            // layoutSizingHorizontal: "FILL"
+'h-auto'            // layoutSizingVertical: "HUG"
+'w-[300]'           // width: 300
+'h-[200]'           // height: 200
+
+// Self Alignment (NEW!)
+'self-start'        // layoutAlign: "MIN"
+'self-center'       // layoutAlign: "CENTER"
+'self-end'          // layoutAlign: "MAX"
+'self-stretch'      // layoutAlign: "STRETCH"
+```
+
+#### Spacing
+```typescript
+// Padding
+'p-[16]'            // padding: 16 (all sides)
+'px-[20]'           // paddingLeft/Right: 20
+'py-[12]'           // paddingTop/Bottom: 12
+'pt-[8]'            // paddingTop: 8
+
+// Gaps
+'gap-[8]'           // itemSpacing: 8
+'gap-x-[12]'        // counterAxisSpacing: 12
+```
+
+#### Colors
+```typescript
+// Solid Colors
+'bg-white'          // fills: [{ type: "SOLID", color: { r: 1, g: 1, b: 1 } }]
+'bg-[#FF0000]'      // fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }]
+'text-gray-900'     // fills: [{ type: "SOLID", color: { r: 0.1, g: 0.1, b: 0.1 } }]
+
+// Opacity
+'bg-opacity-80'     // fill opacity: 0.8
+'opacity-50'        // node opacity: 0.5
+```
+
+#### Border & Radius
+```typescript
+// Border
+'border'            // strokeWeight: 1
+'border-2'          // strokeWeight: 2
+'border-blue-500'   // stroke color
+
+// Radius
+'rounded'           // cornerRadius: 4
+'rounded-lg'        // cornerRadius: 8
+'rounded-xl'        // cornerRadius: 12
+'rounded-[16]'      // cornerRadius: 16
+```
+
+#### Typography
+```typescript
+// Size
+'text-sm'           // fontSize: 14
+'text-base'         // fontSize: 16
+'text-lg'           // fontSize: 18
+'text-xl'           // fontSize: 20
+
+// Weight
+'font-normal'       // fontWeight: 400
+'font-medium'       // fontWeight: 500
+'font-semibold'     // fontWeight: 600
+'font-bold'         // fontWeight: 700
+
+// Alignment
+'text-left'         // textAlignHorizontal: "LEFT"
+'text-center'       // textAlignHorizontal: "CENTER"
+'text-right'        // textAlignHorizontal: "RIGHT"
+```
+
+#### Effects
+```typescript
+// Shadows
+'shadow-sm'         // subtle shadow
+'shadow'            // default shadow
+'shadow-md'         // medium shadow
+'shadow-lg'         // large shadow
+'shadow-xl'         // extra large shadow
+
+// Custom shadows
+'shadow-[0_4px_8px_rgba(0,0,0,0.1)]'  // custom shadow values
+```
+
+### Performance Tips
+
+#### 1. Use Modular Converters for Large Datasets
+```typescript
+// ❌ Slower - processes all style types
+const classes = figmaNodes.map(node => figmaToCss(node));
+
+// ✅ Faster - only processes needed types
+const classes = figmaNodes.map(node => {
+  const result = [];
+  if (node.layoutMode) result.push(...figmaLayoutToCss(node));
+  if (node.fills) result.push(...figmaColorsToCss(node));
+  return result.join(' ');
 });
+```
 
-// Add the node to the current page
-figma.currentPage.appendChild(node);
+#### 2. Batch Process Similar Nodes
+```typescript
+// ✅ Group similar conversions
+const layoutNodes = nodes.filter(n => n.layoutMode);
+const colorNodes = nodes.filter(n => n.fills);
+
+const layoutClasses = layoutNodes.map(n => figmaLayoutToCss(n));
+const colorClasses = colorNodes.map(n => figmaColorsToCss(n));
+```
+
+#### 3. Cache Conversion Results
+```typescript
+// ✅ Cache frequently used styles
+const styleCache = new Map();
+
+function getCachedStyles(styleKey, figmaStyles) {
+  if (!styleCache.has(styleKey)) {
+    styleCache.set(styleKey, figmaToCss(figmaStyles));
+  }
+  return styleCache.get(styleKey);
+}
+```
+
+### Common Patterns
+
+#### Design System Components
+```typescript
+// Button variants
+const primaryButton = 'flex items-center justify-center px-[16] py-[8] bg-blue-500 text-white rounded-lg';
+const secondaryButton = 'flex items-center justify-center px-[16] py-[8] bg-white border border-gray-300 text-gray-700 rounded-lg';
+
+// Card layouts
+const card = 'flex-col bg-white rounded-xl shadow-lg p-[20] gap-[16]';
+const cardHeader = 'flex-row items-center justify-between mb-[12]';
+const cardContent = 'flex-col gap-[8]';
+
+// Navigation
+const sidebar = 'flex-col w-[240] h-full bg-white border-r border-gray-200 p-[24]';
+const navItem = 'flex items-center px-[12] py-[8] rounded-lg hover:bg-gray-100';
+
+// Grid systems
+const gridContainer = 'grid grid-cols-12 gap-[16] w-full';
+const gridItem = 'col-span-4 h-[200] bg-gray-100 rounded-lg';
+```
+
+#### Responsive Patterns
+```typescript
+// Container patterns
+const responsiveContainer = 'w-full max-w-[1200] mx-auto px-[16]';
+const flexContainer = 'flex-col lg:flex-row gap-[24]';
+const gridResponsive = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[16]';
+
+// Content patterns
+const hero = 'flex-col items-center text-center py-[80] px-[20]';
+const section = 'w-full py-[60] px-[20]';
+const twoColumn = 'grid grid-cols-1 lg:grid-cols-2 gap-[40] items-center';
+```
+
+
+## Real-World Examples
+
+### Design System Creation
+
+Create a complete design system with components using declarative JSON:
+
+```typescript
+import { createNodeForData } from '@easylogic/cssma';
+
+// 1. Color Palette Component
+const colorPaletteData = {
+  type: 'FRAME',
+  name: 'Color Palette',
+  styles: 'flex-col w-full h-auto gap-[24] p-[32] bg-gray-50',
+  children: [
+    {
+      type: 'TEXT',
+      name: 'Section Title',
+      styles: 'text-2xl font-bold text-gray-900 mb-[16]',
+      text: 'Brand Colors'
+    },
+    {
+      type: 'FRAME',
+      name: 'Primary Colors',
+      styles: 'flex-row w-full gap-[16]',
+      children: [
+        {
+          type: 'FRAME',
+          name: 'Primary 500',
+          styles: 'flex-col items-center gap-[8]',
+          children: [
+            {
+              type: 'RECTANGLE',
+              name: 'Color Swatch',
+              styles: 'w-[80] h-[80] bg-blue-500 rounded-lg shadow-sm'
+            },
+            {
+              type: 'TEXT',
+              name: 'Color Name',
+              styles: 'text-sm font-medium text-gray-700',
+              text: 'Primary 500'
+            },
+            {
+              type: 'TEXT',
+              name: 'Hex Value',
+              styles: 'text-xs text-gray-500',
+              text: '#3B82F6'
+            }
+          ]
+        },
+        {
+          type: 'FRAME',
+          name: 'Primary 600',
+          styles: 'flex-col items-center gap-[8]',
+          children: [
+            {
+              type: 'RECTANGLE',
+              name: 'Color Swatch',
+              styles: 'w-[80] h-[80] bg-blue-600 rounded-lg shadow-sm'
+            },
+            {
+              type: 'TEXT',
+              name: 'Color Name',
+              styles: 'text-sm font-medium text-gray-700',
+              text: 'Primary 600'
+            },
+            {
+              type: 'TEXT',
+              name: 'Hex Value',
+              styles: 'text-xs text-gray-500',
+              text: '#2563EB'
+            }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+// 2. Button Variants Component Set
+const buttonVariantsData = {
+  type: 'COMPONENT_SET',
+  name: 'Button Variants',
+  styles: 'flex-row gap-[24] p-[32]',
+  children: [
+    {
+      type: 'COMPONENT',
+      name: 'Button/Primary',
+      styles: 'flex items-center justify-center px-[24] py-[12] bg-blue-500 hover:bg-blue-600 rounded-lg shadow-sm',
+      children: [{
+        type: 'TEXT',
+        styles: 'text-white font-medium',
+        text: 'Primary Button'
+      }]
+    },
+    {
+      type: 'COMPONENT',
+      name: 'Button/Secondary',
+      styles: 'flex items-center justify-center px-[24] py-[12] bg-white border border-gray-300 hover:bg-gray-50 rounded-lg',
+      children: [{
+        type: 'TEXT',
+        styles: 'text-gray-700 font-medium',
+        text: 'Secondary Button'
+      }]
+    },
+    {
+      type: 'COMPONENT',
+      name: 'Button/Danger',
+      styles: 'flex items-center justify-center px-[24] py-[12] bg-red-500 hover:bg-red-600 rounded-lg shadow-sm',
+      children: [{
+        type: 'TEXT',
+        styles: 'text-white font-medium',
+        text: 'Danger Button'
+      }]
+    }
+  ]
+};
+
+// 3. Complex Card Component
+const cardComponentData = {
+  type: 'COMPONENT',
+  name: 'Product Card',
+  styles: 'flex-col w-[320] h-auto bg-white rounded-xl shadow-lg overflow-hidden',
+  children: [
+    {
+      type: 'FRAME',
+      name: 'Image Container',
+      styles: 'w-full h-[200] bg-gradient-to-br from-blue-400 to-purple-500 relative',
+      children: [
+        {
+          type: 'FRAME',
+          name: 'Badge',
+          styles: 'absolute top-[12] right-[12] px-[8] py-[4] bg-white bg-opacity-90 rounded-full',
+          children: [{
+            type: 'TEXT',
+            styles: 'text-xs font-semibold text-blue-600',
+            text: 'NEW'
+          }]
+        }
+      ]
+    },
+    {
+      type: 'FRAME',
+      name: 'Content',
+      styles: 'flex-col p-[20] gap-[12]',
+      children: [
+        {
+          type: 'TEXT',
+          name: 'Product Name',
+          styles: 'text-lg font-bold text-gray-900',
+          text: 'Premium Product'
+        },
+        {
+          type: 'TEXT',
+          name: 'Description',
+          styles: 'text-sm text-gray-600 leading-relaxed',
+          text: 'This is a detailed description of the premium product with all its amazing features.'
+        },
+        {
+          type: 'FRAME',
+          name: 'Price Section',
+          styles: 'flex-row items-center justify-between mt-[8]',
+          children: [
+            {
+              type: 'TEXT',
+              name: 'Price',
+              styles: 'text-2xl font-bold text-gray-900',
+              text: '$99.99'
+            },
+            {
+              type: 'FRAME',
+              name: 'CTA Button',
+              styles: 'flex items-center justify-center px-[16] py-[8] bg-blue-500 hover:bg-blue-600 rounded-lg',
+              children: [{
+                type: 'TEXT',
+                styles: 'text-white font-medium',
+                text: 'Add to Cart'
+              }]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+// Create all components
+const colorPalette = createNodeForData(colorPaletteData);
+const buttonVariants = createNodeForData(buttonVariantsData);
+const cardComponent = createNodeForData(cardComponentData);
+
+// Add to current page
+figma.currentPage.appendChild(colorPalette);
+figma.currentPage.appendChild(buttonVariants);
+figma.currentPage.appendChild(cardComponent);
+```
+
+### Advanced Layout Examples
+
+```typescript
+// 1. Responsive Grid System
+const gridSystemData = {
+  type: 'FRAME',
+  name: 'Grid System',
+  styles: 'flex-col w-full gap-[32] p-[32]',
+  children: [
+    {
+      type: 'FRAME',
+      name: '12 Column Grid',
+      styles: 'grid w-full grid-cols-12 gap-[16]',
+      children: Array(12).fill(null).map((_, i) => ({
+        type: 'RECTANGLE',
+        name: `Col ${i + 1}`,
+        styles: 'h-[60] bg-blue-100 border border-blue-200 rounded flex items-center justify-center'
+      }))
+    },
+    {
+      type: 'FRAME',
+      name: 'Complex Layout',
+      styles: 'grid w-full grid-cols-12 gap-[16]',
+      children: [
+        {
+          type: 'RECTANGLE',
+          name: 'Sidebar',
+          styles: 'col-span-3 h-[300] bg-gray-200 rounded-lg'
+        },
+        {
+          type: 'FRAME',
+          name: 'Main Content',
+          styles: 'col-span-9 flex-col gap-[16]',
+          children: [
+            {
+              type: 'RECTANGLE',
+              name: 'Header',
+              styles: 'w-full h-[80] bg-blue-100 rounded-lg'
+            },
+            {
+              type: 'FRAME',
+              name: 'Content Grid',
+              styles: 'grid grid-cols-2 gap-[16]',
+              children: Array(4).fill(null).map((_, i) => ({
+                type: 'RECTANGLE',
+                name: `Content ${i + 1}`,
+                styles: 'h-[100] bg-green-100 rounded-lg'
+              }))
+            }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+// 2. Dashboard Layout
+const dashboardData = {
+  type: 'FRAME',
+  name: 'Dashboard',
+  styles: 'flex w-full h-[800] bg-gray-50',
+  children: [
+    {
+      type: 'FRAME',
+      name: 'Sidebar',
+      styles: 'flex-col w-[240] h-full bg-white border-r border-gray-200 p-[24] gap-[16]',
+      children: [
+        {
+          type: 'TEXT',
+          name: 'Logo',
+          styles: 'text-xl font-bold text-gray-900 mb-[24]',
+          text: 'Dashboard'
+        },
+        ...['Analytics', 'Users', 'Products', 'Settings'].map(item => ({
+          type: 'FRAME',
+          name: `Nav ${item}`,
+          styles: 'flex items-center w-full px-[12] py-[8] hover:bg-gray-100 rounded-lg cursor-pointer',
+          children: [{
+            type: 'TEXT',
+            styles: 'text-gray-700 font-medium',
+            text: item
+          }]
+        }))
+      ]
+    },
+    {
+      type: 'FRAME',
+      name: 'Main Content',
+      styles: 'flex-col flex-1 h-full overflow-hidden',
+      children: [
+        {
+          type: 'FRAME',
+          name: 'Header',
+          styles: 'flex items-center justify-between w-full h-[64] bg-white border-b border-gray-200 px-[32]',
+          children: [
+            {
+              type: 'TEXT',
+              name: 'Page Title',
+              styles: 'text-2xl font-bold text-gray-900',
+              text: 'Analytics Overview'
+            },
+            {
+              type: 'FRAME',
+              name: 'User Menu',
+              styles: 'flex items-center gap-[16]',
+              children: [
+                {
+                  type: 'ELLIPSE',
+                  name: 'Avatar',
+                  styles: 'w-[32] h-[32] bg-blue-500'
+                },
+                {
+                  type: 'TEXT',
+                  styles: 'text-sm font-medium text-gray-700',
+                  text: 'John Doe'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          type: 'FRAME',
+          name: 'Content Area',
+          styles: 'flex-1 p-[32] overflow-auto',
+          children: [
+            {
+              type: 'FRAME',
+              name: 'Stats Grid',
+              styles: 'grid grid-cols-4 gap-[24] mb-[32]',
+              children: [
+                'Total Users', 'Revenue', 'Orders', 'Conversion'
+              ].map((stat, i) => ({
+                type: 'FRAME',
+                name: `Stat ${stat}`,
+                styles: 'flex-col p-[20] bg-white rounded-lg shadow-sm border border-gray-200',
+                children: [
+                  {
+                    type: 'TEXT',
+                    name: 'Value',
+                    styles: 'text-3xl font-bold text-gray-900 mb-[4]',
+                    text: `${(i + 1) * 1234}`
+                  },
+                  {
+                    type: 'TEXT',
+                    name: 'Label',
+                    styles: 'text-sm text-gray-600',
+                    text: stat
+                  }
+                ]
+              }))
+            }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+const gridSystem = createNodeForData(gridSystemData);
+const dashboard = createNodeForData(dashboardData);
+```
+
+### Figma-to-CSS Conversion Examples
+
+```typescript
+import { figmaToCss, figmaLayoutToCss, figmaColorsToCss } from '@easylogic/cssma';
+
+// 1. Convert complex Figma component to CSS
+const complexFigmaNode = {
+  layoutMode: "VERTICAL",
+  primaryAxisAlignItems: "MIN",
+  counterAxisAlignItems: "STRETCH",
+  layoutSizingHorizontal: "FILL",
+  layoutSizingVertical: "HUG",
+  itemSpacing: 16,
+  paddingTop: 24,
+  paddingRight: 20,
+  paddingBottom: 24,
+  paddingLeft: 20,
+  fills: [{
+    type: "SOLID",
+    color: { r: 1, g: 1, b: 1 },
+    opacity: 0.95
+  }],
+  cornerRadius: 12,
+  effects: [{
+    type: "DROP_SHADOW",
+    color: { r: 0, g: 0, b: 0, a: 0.1 },
+    offset: { x: 0, y: 4 },
+    radius: 8,
+    spread: 0
+  }],
+  strokes: [{
+    type: "SOLID",
+    color: { r: 0.9, g: 0.9, b: 0.9 }
+  }],
+  strokeWeight: 1
+};
+
+const cssClasses = figmaToCss(complexFigmaNode);
+console.log(cssClasses);
+// Output: "flex-col items-stretch w-full h-auto gap-[16] px-[20] py-[24] bg-white bg-opacity-95 rounded-xl shadow-lg border border-gray-200"
+
+// 2. Selective conversion for performance
+const layoutOnly = figmaLayoutToCss(complexFigmaNode);
+console.log(layoutOnly);
+// Output: ["flex-col", "items-stretch", "w-full", "h-auto", "gap-[16]", "px-[20]", "py-[24]"]
+
+const visualOnly = [
+  ...figmaColorsToCss(complexFigmaNode),
+  ...figmaGeometryToCss(complexFigmaNode),
+  ...figmaShadowToCss(complexFigmaNode),
+  ...figmaBorderToCss(complexFigmaNode)
+].join(' ');
+console.log(visualOnly);
+// Output: "bg-white bg-opacity-95 rounded-xl shadow-lg border border-gray-200"
+
+// 3. Batch conversion for multiple nodes
+const figmaNodes = [
+  { layoutMode: "HORIZONTAL", itemSpacing: 8, fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }] },
+  { layoutMode: "VERTICAL", paddingTop: 16, cornerRadius: 8 },
+  { fontSize: 18, fontWeight: 600, fills: [{ type: "SOLID", color: { r: 0.1, g: 0.1, b: 0.1 } }] }
+];
+
+const convertedNodes = figmaNodes.map(node => ({
+  original: node,
+  css: figmaToCss(node),
+  layoutCss: figmaLayoutToCss(node),
+  colorsCss: figmaColorsToCss(node)
+}));
+
+console.log(convertedNodes);
+// Detailed conversion results for batch processing
+```
+
+### Integration with Frontend Frameworks
+
+```typescript
+// React Component Example
+import React from 'react';
+import { figmaToCss } from '@easylogic/cssma';
+
+const FigmaStyledComponent = ({ figmaStyles, children }) => {
+  const cssClasses = figmaToCss(figmaStyles);
+  
+  return (
+    <div className={cssClasses}>
+      {children}
+    </div>
+  );
+};
+
+// Usage
+const cardStyles = {
+  layoutMode: "VERTICAL",
+  paddingTop: 20,
+  paddingBottom: 20,
+  paddingLeft: 16,
+  paddingRight: 16,
+  fills: [{ type: "SOLID", color: { r: 1, g: 1, b: 1 } }],
+  cornerRadius: 8,
+  effects: [{ type: "DROP_SHADOW", radius: 4 }]
+};
+
+function App() {
+  return (
+    <FigmaStyledComponent figmaStyles={cardStyles}>
+      <h2>Card Title</h2>
+      <p>Card content here</p>
+    </FigmaStyledComponent>
+  );
+}
+
+// Vue Component Example
+import { figmaToCss } from '@easylogic/cssma';
+
+export default {
+  name: 'FigmaStyledComponent',
+  props: ['figmaStyles'],
+  computed: {
+    cssClasses() {
+      return figmaToCss(this.figmaStyles);
+    }
+  },
+  template: `
+    <div :class="cssClasses">
+      <slot></slot>
+    </div>
+  `
+};
 ```
 
 ## Core Features
@@ -71,9 +739,11 @@ node.fills = styles.fills;
 node.cornerRadius = styles.cornerRadius;
 ```
 
-### 2. Figma → Tailwind CSS Conversion (`figmaToCss`)
+### 2. Figma → Tailwind CSS Conversion
 
-Convert Figma style objects to Tailwind CSS class strings:
+#### 2.1 Complete Conversion (`figmaToCss`)
+
+Convert all Figma style properties to Tailwind CSS class strings:
 
 ```typescript
 import { figmaToCss } from '@easylogic/cssma';
@@ -81,10 +751,164 @@ import { figmaToCss } from '@easylogic/cssma';
 const tailwindClasses = figmaToCss({
   layoutMode: "VERTICAL",
   fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }],
-  cornerRadius: 8
+  cornerRadius: 8,
+  paddingTop: 16,
+  paddingBottom: 16,
+  itemSpacing: 8
 });
-// Result: "flex-col bg-[#ff0000] rounded-lg"
+// Result: "flex-col bg-[#ff0000] rounded-lg py-[16] gap-[8]"
 ```
+
+#### 2.2 Modular Conversion (Individual Converters)
+
+For better performance and selective conversion, use individual converter functions:
+
+```typescript
+import { 
+  figmaLayoutToCss,
+  figmaColorsToCss,
+  figmaTypographyToCss,
+  figmaEffectsToCss,
+  figmaGeometryToCss,
+  figmaBorderToCss,
+  figmaShadowToCss,
+  figmaSpacingToCss,
+  figmaPositionToCss,
+  figmaSizeToCss
+} from '@easylogic/cssma';
+
+// Convert only layout properties
+const layoutClasses = figmaLayoutToCss({
+  layoutMode: "HORIZONTAL",
+  primaryAxisAlignItems: "CENTER",
+  counterAxisAlignItems: "CENTER",
+  itemSpacing: 12
+});
+// Result: ["flex-row", "justify-center", "items-center", "gap-[12]"]
+
+// Convert only colors
+const colorClasses = figmaColorsToCss({
+  fills: [{ 
+    type: "SOLID", 
+    color: { r: 0.2, g: 0.6, b: 1 },
+    opacity: 0.8 
+  }]
+});
+// Result: ["bg-[#3396ff]", "bg-opacity-80"]
+
+// Convert only typography
+const textClasses = figmaTypographyToCss({
+  fontSize: 18,
+  fontWeight: 600,
+  fills: [{ type: "SOLID", color: { r: 0.1, g: 0.1, b: 0.1 } }],
+  textAlignHorizontal: "CENTER"
+});
+// Result: ["text-lg", "font-semibold", "text-[#1a1a1a]", "text-center"]
+
+// Combine multiple converters
+const combinedClasses = [
+  ...figmaLayoutToCss(styles),
+  ...figmaColorsToCss(styles),
+  ...figmaTypographyToCss(styles)
+].join(' ');
+```
+
+#### 2.3 Advanced Modular Usage Examples
+
+**Selective Component Styling:**
+```typescript
+// Only convert layout for responsive containers
+const containerLayout = figmaLayoutToCss({
+  layoutMode: "VERTICAL",
+  layoutSizingHorizontal: "FILL",
+  paddingTop: 24,
+  paddingBottom: 24,
+  itemSpacing: 16
+});
+// Result: ["flex-col", "w-full", "py-[24]", "gap-[16]"]
+
+// Only convert visual styles for theming
+const visualStyles = [
+  ...figmaColorsToCss(styles),
+  ...figmaBorderToCss(styles),
+  ...figmaShadowToCss(styles)
+].join(' ');
+
+// Only convert typography for text components
+const textStyles = figmaTypographyToCss({
+  fontSize: 14,
+  fontWeight: 400,
+  lineHeight: { unit: "PERCENT", value: 150 },
+  letterSpacing: { unit: "PERCENT", value: 2 }
+});
+// Result: ["text-sm", "font-normal", "leading-[150%]", "tracking-[0.02em]"]
+```
+
+**Performance Optimization:**
+```typescript
+// For large datasets, use only needed converters
+const nodes = figmaNodes.map(node => {
+  const classes = [];
+  
+  // Only process layout if it has layout properties
+  if (node.layoutMode) {
+    classes.push(...figmaLayoutToCss(node));
+  }
+  
+  // Only process colors if it has fills
+  if (node.fills?.length) {
+    classes.push(...figmaColorsToCss(node));
+  }
+  
+  // Only process spacing if it has padding/spacing
+  if (node.paddingTop || node.itemSpacing) {
+    classes.push(...figmaSpacingToCss(node));
+  }
+  
+  return classes.join(' ');
+});
+```
+
+**Custom Converter Combinations:**
+```typescript
+// Create custom converter for specific use cases
+function convertCardStyles(figmaNode) {
+  return [
+    ...figmaLayoutToCss(figmaNode),      // Layout structure
+    ...figmaColorsToCss(figmaNode),      // Background/theme colors
+    ...figmaGeometryToCss(figmaNode),    // Border radius
+    ...figmaShadowToCss(figmaNode),      // Shadows for depth
+    ...figmaSpacingToCss(figmaNode)      // Internal spacing
+  ].filter(Boolean).join(' ');
+}
+
+function convertTextStyles(figmaNode) {
+  return [
+    ...figmaTypographyToCss(figmaNode),  // Font properties
+    ...figmaColorsToCss(figmaNode),      // Text colors
+    ...figmaEffectsToCss(figmaNode)      // Opacity/filters
+  ].filter(Boolean).join(' ');
+}
+
+// Usage
+const cardClasses = convertCardStyles(cardNode);
+const titleClasses = convertTextStyles(titleNode);
+```
+
+#### 2.4 Available Modular Converters
+
+| Converter | Handles | Example Input | Example Output |
+|-----------|---------|---------------|----------------|
+| `figmaLayoutToCss` | Layout modes, alignment, sizing | `{ layoutMode: "HORIZONTAL", itemSpacing: 8 }` | `["flex-row", "gap-[8]"]` |
+| `figmaColorsToCss` | Fills, backgrounds, blend modes | `{ fills: [{ type: "SOLID", color: {...} }] }` | `["bg-[#ff0000]"]` |
+| `figmaTypographyToCss` | Font size, weight, alignment, color | `{ fontSize: 16, fontWeight: 600 }` | `["text-base", "font-semibold"]` |
+| `figmaEffectsToCss` | Opacity, filters | `{ opacity: 0.8 }` | `["opacity-80"]` |
+| `figmaGeometryToCss` | Border radius | `{ cornerRadius: 8 }` | `["rounded-lg"]` |
+| `figmaBorderToCss` | Stroke width, color, style | `{ strokeWeight: 2, strokes: [...] }` | `["border-2", "border-blue-500"]` |
+| `figmaShadowToCss` | Drop shadows, inner shadows | `{ effects: [{ type: "DROP_SHADOW", ... }] }` | `["shadow-md"]` |
+| `figmaSpacingToCss` | Padding, margins | `{ paddingTop: 16, paddingLeft: 8 }` | `["pt-[16]", "pl-[8]"]` |
+| `figmaPositionToCss` | Absolute positioning, constraints | `{ layoutPositioning: "ABSOLUTE", x: 10 }` | `["absolute", "left-[10]"]` |
+| `figmaSizeToCss` | Width, height constraints | `{ width: 100, height: 200 }` | `["w-[100]", "h-[200]"]` |
 
 ### 3. Node Creation with Styles (`createNodeForData`)
 
