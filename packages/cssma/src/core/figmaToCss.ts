@@ -144,6 +144,12 @@ function convertLayout(styles: Record<string, any>): string[] {
   if (styles.counterAxisAlignItems === 'MAX') classes.push('items-end');
   if (styles.counterAxisAlignItems === 'BASELINE') classes.push('items-baseline');
 
+  // Self alignment (individual item alignment)
+  if (styles.layoutAlign === 'MIN') classes.push('self-start');
+  if (styles.layoutAlign === 'CENTER') classes.push('self-center');
+  if (styles.layoutAlign === 'MAX') classes.push('self-end');
+  if (styles.layoutAlign === 'STRETCH') classes.push('self-stretch');
+
   // Spacing
   if (styles.itemSpacing) classes.push(`gap-[${styles.itemSpacing}]`);
   if (styles.paddingTop === styles.paddingRight && 

@@ -94,6 +94,15 @@ items-end       → counterAxisAlignItems: "MAX"
 items-baseline  → counterAxisAlignItems: "BASELINE"
 ```
 
+### Self Alignment (Individual Item)
+```typescript
+// Individual item alignment (overrides container alignment)
+self-start      → layoutAlign: "MIN"
+self-center     → layoutAlign: "CENTER"
+self-end        → layoutAlign: "MAX"
+self-stretch    → layoutAlign: "STRETCH"
+```
+
 ## Spacing Properties
 
 ### Gap (Item Spacing)

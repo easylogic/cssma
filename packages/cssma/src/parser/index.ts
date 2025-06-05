@@ -72,6 +72,7 @@ export function parseStyleValue(className: string, fontState?: FontState): Parse
       className.startsWith('grid') ||
       className.startsWith('items-') || 
       className.startsWith('justify-') || 
+      className.startsWith('self-') ||
       className.startsWith('w-') || 
       className.startsWith('h-')) {
     return parseLayoutValue(className);

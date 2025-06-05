@@ -21,6 +21,13 @@ const COUNTER_AXIS_ALIGN_MAP = {
   'items-baseline': 'BASELINE'
 } as const;
 
+const SELF_ALIGN_MAP = {
+  'self-start': 'MIN',
+  'self-center': 'CENTER',
+  'self-end': 'MAX',
+  'self-stretch': 'STRETCH'
+} as const;
+
 /**
  * Parse arbitrary numeric value from a string
  * @param value Value to parse
@@ -91,6 +98,15 @@ export function parseLayoutValue(className: string): ParsedStyle | null {
     return {
       property: 'primaryAxisAlignItems',
       value: PRIMARY_AXIS_ALIGN_MAP[className as keyof typeof PRIMARY_AXIS_ALIGN_MAP],
+      variant: 'preset'
+    };
+  }
+
+  // Handle Self Alignment (individual item alignment)
+  if (className in SELF_ALIGN_MAP) {
+    return {
+      property: 'layoutAlign',
+      value: SELF_ALIGN_MAP[className as keyof typeof SELF_ALIGN_MAP],
       variant: 'preset'
     };
   }

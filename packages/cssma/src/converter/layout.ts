@@ -3,6 +3,7 @@ import { ParsedStyle, FigmaStyleProperties } from '../types';
 type LayoutMode = 'HORIZONTAL' | 'VERTICAL' | 'GRID';
 type PrimaryAxisAlignValue = 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BETWEEN';
 type CounterAxisAlignValue = 'MIN' | 'CENTER' | 'MAX' | 'BASELINE';
+type LayoutAlignValue = 'MIN' | 'CENTER' | 'MAX' | 'STRETCH';
 type SizingValue = 'FIXED' | 'FILL' | 'HUG';
 
 const SPACING_MAP: Record<string, number> = {
@@ -27,6 +28,7 @@ function parseSpacing(value: string): number {
 const VALID_LAYOUT_MODES: readonly LayoutMode[] = ['HORIZONTAL', 'VERTICAL', 'GRID'];
 const VALID_PRIMARY_AXIS_VALUES: readonly PrimaryAxisAlignValue[] = ['MIN', 'CENTER', 'MAX', 'SPACE_BETWEEN'];
 const VALID_COUNTER_AXIS_VALUES: readonly CounterAxisAlignValue[] = ['MIN', 'CENTER', 'MAX', 'BASELINE'];
+const VALID_LAYOUT_ALIGN_VALUES: readonly LayoutAlignValue[] = ['MIN', 'CENTER', 'MAX', 'STRETCH'];
 const VALID_SIZING_VALUES: readonly SizingValue[] = ['FIXED', 'FILL', 'HUG'];
 
 export function convertLayoutToFigma(style: ParsedStyle): Partial<FigmaStyleProperties> {
@@ -54,6 +56,12 @@ export function convertLayoutToFigma(style: ParsedStyle): Partial<FigmaStyleProp
     case 'counterAxisAlignItems':
       if (typeof style.value === 'string' && VALID_COUNTER_AXIS_VALUES.includes(style.value as CounterAxisAlignValue)) {
         result.counterAxisAlignItems = style.value as CounterAxisAlignValue;
+      }
+      break;
+
+    case 'layoutAlign':
+      if (typeof style.value === 'string' && VALID_LAYOUT_ALIGN_VALUES.includes(style.value as LayoutAlignValue)) {
+        result.layoutAlign = style.value as LayoutAlignValue;
       }
       break;
 

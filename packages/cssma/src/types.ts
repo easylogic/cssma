@@ -4,6 +4,14 @@ export interface ParsedStyle {
   value: number | number[] | string | FigmaColor | FigmaFontName | FigmaLineHeight | Shadow[] | {
     horizontal?: 'MIN' | 'MAX' | 'SCALE' | 'CENTER' | 'STRETCH';
     vertical?: 'MIN' | 'MAX' | 'SCALE' | 'CENTER' | 'STRETCH';
+  } | {
+    offsetX: number;
+    offsetY: number; 
+    blur: number;
+    color: string;
+  } | {
+    clipsContent?: boolean;
+    scrollingEnabled?: boolean;
   };
   unit?: string;
   variant?: string; 
@@ -127,6 +135,11 @@ export interface FigmaSolidPaint {
 }
 
 export type FigmaPaint = FigmaSolidPaint | FigmaGradient;
+
+export interface VectorPath {
+  windingRule: 'NONZERO' | 'EVENODD';
+  data: string;
+}
 
 export interface FigmaEffect {
   type: 'DROP_SHADOW' | 'INNER_SHADOW' | 'LAYER_BLUR' | 'BACKGROUND_BLUR';

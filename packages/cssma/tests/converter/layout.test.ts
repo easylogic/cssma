@@ -132,6 +132,55 @@ describe('Layout Converter', () => {
         expect(convertLayoutToFigma(input)).toEqual(expected);
       });
     });
+
+    it('should convert layout align (self alignment)', () => {
+      const testCases: { input: ParsedStyle; expected: any }[] = [
+        {
+          input: {
+            property: 'layoutAlign',
+            value: 'MIN',
+            variant: 'preset'
+          },
+          expected: {
+            layoutAlign: 'MIN'
+          }
+        },
+        {
+          input: {
+            property: 'layoutAlign',
+            value: 'CENTER',
+            variant: 'preset'
+          },
+          expected: {
+            layoutAlign: 'CENTER'
+          }
+        },
+        {
+          input: {
+            property: 'layoutAlign',
+            value: 'MAX',
+            variant: 'preset'
+          },
+          expected: {
+            layoutAlign: 'MAX'
+          }
+        },
+        {
+          input: {
+            property: 'layoutAlign',
+            value: 'STRETCH',
+            variant: 'preset'
+          },
+          expected: {
+            layoutAlign: 'STRETCH'
+          }
+        }
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        expect(convertLayoutToFigma(input)).toEqual(expected);
+      });
+    });
   });
 
   describe('Layout Sizing', () => {

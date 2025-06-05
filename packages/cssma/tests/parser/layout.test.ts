@@ -74,6 +74,23 @@ describe('Layout Parser', () => {
         });
       });
     });
+
+    it('should parse self alignment', () => {
+      const testCases = [
+        { input: 'self-start', expected: 'MIN' },
+        { input: 'self-center', expected: 'CENTER' },
+        { input: 'self-end', expected: 'MAX' },
+        { input: 'self-stretch', expected: 'STRETCH' }
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        expect(parseLayoutValue(input)).toEqual({
+          property: 'layoutAlign',
+          value: expected,
+          variant: 'preset'
+        });
+      });
+    });
   });
 
   describe('Sizing', () => {
