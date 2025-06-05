@@ -22,12 +22,14 @@ figma.showUI(__html__, {
   height: 700,
 });
 
-// 메뉴 커맨드 핸들러
+// Menu command handler
 figma.on("run", (event) => {
   if (event.command === "convert-css") {
     figma.ui.postMessage({ type: "show-converter" });
   } else if (event.command === "create-component") {
     figma.ui.postMessage({ type: "show-component-creator" });
+  } else if (event.command === "ai-generator") {
+    figma.ui.postMessage({ type: "show-ai-generator" });
   }
 });
 
@@ -109,69 +111,69 @@ figma.ui.onmessage = async (msg) => {
         break;
 
       default:
-        console.log('알 수 없는 메시지 타입:', msg.type);
+        console.log('Unknown message type:', msg.type);
         break;
     }
   } catch (error) {
-    console.error('메시지 처리 중 오류:', error);
-    figma.notify('작업 처리 중 오류가 발생했습니다: ' + (error as Error).message, { error: true });
+    console.error('Error processing message:', error);
+    figma.notify('An error occurred while processing: ' + (error as Error).message, { error: true });
   }
 };
 
-// 선택된 요소에 스타일 적용
+// Apply styles to selected elements
 async function applyStylesToSelection(cssInput: string) {
-  // cssInput이 null이거나 undefined이거나 빈 문자열인 경우 처리
+  // Handle null, undefined, or empty string input
   if (!cssInput || cssInput.trim() === '') {
-    figma.notify('CSS 또는 Tailwind 코드를 입력해주세요');
+    figma.notify('Please enter CSS or Tailwind code');
     return;
   }
 
   const selection = figma.currentPage.selection;
   
   if (selection.length === 0) {
-    figma.notify('요소를 선택해주세요');
+    figma.notify('Please select an element');
     return;
   }
   
-  // 로딩 표시
-  figma.notify('스타일 적용 중...', { timeout: 500 });
+  // Show loading indicator
+  figma.notify('Applying styles...', { timeout: 500 });
   
   try {
-    // 필요한 글꼴 로드 (한 번만 로드)
+    // Load required fonts (load once)
     await Promise.all([
       figma.loadFontAsync({ family: "Inter", style: "Regular" }),
       figma.loadFontAsync({ family: "Inter", style: "Medium" }),
       figma.loadFontAsync({ family: "Inter", style: "Bold" })
     ]);
     
-    // 스타일 처리 (한 번만 처리)
+    // Process styles (process once)
     const styles = processCssStyles(cssInput);
     
-    // 모든 선택 노드에 스타일 적용
+    // Apply styles to all selected nodes
     for (const node of selection) {
-      // 스타일 적용 전에 작업 기록 시작
+      // Start recording work before applying styles
       figma.skipInvisibleInstanceChildren = true;
       
-      // applyStyles 함수 사용
+      // Use applyStyles function
       await applyCssStyles(node, cssInput);
     }
     
-    figma.notify('스타일이 적용되었습니다');
+    figma.notify('Styles applied successfully');
   } catch (error) {
-    console.error('스타일 적용 중 오류:', error);
-    figma.notify('스타일 적용 중 오류가 발생했습니다: ' + (error as Error).message, { error: true });
+    console.error('Error applying styles:', error);
+    figma.notify('Error occurred while applying styles: ' + (error as Error).message, { error: true });
   }
 }
 
-// 스펙에서 컴포넌트 생성
+// Create component from specification
 async function createComponentFromSpec(componentSpec: any) {
   if (!componentSpec) {
-    figma.notify('유효한 컴포넌트 스펙을 입력해주세요');
+    figma.notify('Please enter a valid component specification');
     return;
   }
   
-  // 로딩 표시
-  figma.notify('컴포넌트 생성 중...', { timeout: 500 });
+  // Show loading indicator
+  figma.notify('Creating component...', { timeout: 500 });
   
   try {
     // 글꼴 로드
@@ -183,23 +185,23 @@ async function createComponentFromSpec(componentSpec: any) {
     // 노드 생성
     const node = await createNodeForData(componentSpec);
     
-    // 컴포넌트 위치 설정
+    // Set component position
     node.x = figma.viewport.center.x - node.width / 2;
     node.y = figma.viewport.center.y - node.height / 2;
     
-    // 현재 페이지에 추가
+    // Add to current page
     figma.currentPage.appendChild(node);
     
-    // 뷰포트 초점 맞추기
+    // Focus viewport
     figma.viewport.scrollAndZoomIntoView([node]);
     
-    // 선택 상태로 설정
+    // Set selection state
     figma.currentPage.selection = [node];
     
-    figma.notify('컴포넌트가 생성되었습니다');
+    figma.notify('Component created successfully');
   } catch (error) {
-    console.error('컴포넌트 생성 중 오류:', error);
-    figma.notify('컴포넌트 생성 중 오류가 발생했습니다: ' + (error as Error).message, { error: true });
+    console.error('Error creating component:', error);
+    figma.notify('Error occurred while creating component: ' + (error as Error).message, { error: true });
   }
 }
 

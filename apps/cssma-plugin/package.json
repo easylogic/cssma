@@ -1,10 +1,14 @@
 {
   "name": "@easylogic/cssma-plugin",
+  "version": "1.0.0",
+  "description": "A powerful Figma plugin that enables seamless bidirectional conversion between Figma designs and CSS/TailwindCSS code",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "concurrently \"pnpm --filter @easylogic/cssma watch\" \"tsup --watch\"",
-    "build": "pnpm --filter @easylogic/cssma build && tsup"
+    "build": "pnpm --filter @easylogic/cssma build && tsup",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.52.0",

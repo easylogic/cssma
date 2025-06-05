@@ -50,6 +50,8 @@ function App() {
         setActiveTab('converter');
       } else if (message.type === 'show-component-creator') {
         setActiveTab('component');
+      } else if (message.type === 'show-ai-generator') {
+        setActiveTab('ai');
       } else if (message.type === 'selection-change') {
         setSelectedElement(message.message);
       } else if (message.type === 'analysis-result') {
