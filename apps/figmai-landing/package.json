@@ -10,7 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@easylogic/cssma": "workspace:*",
+    "cssma": "workspace:*",
     "next": "15.1.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

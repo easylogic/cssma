@@ -1,18 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { Menu, X, Github } from "lucide-react";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   const navItems = [
-    { name: "Features", href: "#features" },
-    { name: "Demo", href: "#demo" },
-    { name: "Community", href: "#community" },
-    { name: "Pricing", href: "#pricing" },
+    { name: "Features", href: "/features" },
+    { name: "Playground", href: "/playground" },
     { name: "Docs", href: "/docs" },
+    { name: "Community", href: "/community" },
+    { name: "Pricing", href: "/pricing" },
   ];
+
+  const isActive = (href: string) => pathname === href;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
@@ -20,9 +24,9 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <a href="/" className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
               CSSMA
-            </div>
+            </a>
           </div>
 
           {/* Desktop Navigation */}
@@ -31,7 +35,11 @@ export default function Header() {
               <a
                 key={item.name}
                 href={item.href}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
+                className={`transition-colors ${
+                  isActive(item.href)
+                    ? "text-purple-600 font-semibold"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
               >
                 {item.name}
               </a>
@@ -49,10 +57,10 @@ export default function Header() {
               <Github className="w-5 h-5" />
             </a>
             <a
-              href="#demo"
+              href="/playground"
               className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-300"
             >
-              Try Demo
+              Try Playground
             </a>
           </div>
 
@@ -75,7 +83,11 @@ export default function Header() {
                 <a
                   key={item.name}
                   href={item.href}
-                  className="block px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors"
+                  className={`block px-3 py-2 transition-colors ${
+                    isActive(item.href)
+                      ? "text-purple-600 font-semibold bg-purple-50"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
@@ -92,11 +104,11 @@ export default function Header() {
                   GitHub
                 </a>
                 <a
-                  href="#demo"
+                  href="/playground"
                   className="block mt-2 mx-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-lg text-center"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Try Demo
+                  Try Playground
                 </a>
               </div>
             </div>

@@ -8,7 +8,7 @@ FigmaikR provides a powerful, bidirectional conversion system between Tailwind C
 
 ## 📦 Packages
 
-### [@easylogic/cssma](./packages/cssma/)
+### [cssma](./packages/cssma/)
 The core library providing robust CSS/Tailwind to Figma conversion and vice versa.
 
 **Key Features:**
@@ -19,7 +19,7 @@ The core library providing robust CSS/Tailwind to Figma conversion and vice vers
 - 🌈 **Variable Integration** - Native Figma variables support
 
 ```typescript
-import { processCssStyles, figmaToCss } from '@easylogic/cssma';
+import { processCssStyles, figmaToCss } from 'cssma';
 
 // CSS → Figma
 const styles = processCssStyles('flex-col w-full bg-gradient-to-r from-blue-500 to-purple-600 backdrop-blur-md rounded-lg');
@@ -33,7 +33,7 @@ const classes = figmaToCss({
 ```
 
 ### [cssma-plugin](./apps/cssma-plugin/)
-A powerful Figma plugin that brings the @easylogic/cssma library directly into the Figma interface.
+A powerful Figma plugin that brings the cssma library directly into the Figma interface.
 
 **Plugin Features:**
 - ⚡ **Real-time Conversion** - Convert between CSS and Figma styles instantly
@@ -96,10 +96,10 @@ const buttonVariants = {
 
 ```bash
 # Install the core library
-npm install @easylogic/cssma
+npm install cssma
 
 # Or using pnpm
-pnpm add @easylogic/cssma
+pnpm add cssma
 ```
 
 ## 🤝 Contributing
@@ -116,7 +116,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔗 Links
 
-- **[NPM Package](https://www.npmjs.com/package/@easylogic/cssma)**
+- **[NPM Package](https://www.npmjs.com/package/cssma)**
 - **[Figma Plugin](https://www.figma.com/community/plugin/cssma)**
 - **[Documentation](./docs/)**
 - **[Changelog](./CHANGELOG.md)**

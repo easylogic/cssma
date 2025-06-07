@@ -230,7 +230,7 @@ Brief description of changes and motivation.
 pnpm test
 
 # Specific package
-pnpm test --filter @easylogic/cssma
+pnpm test --filter cssma
 
 # Watch mode
 pnpm test --watch

@@ -17,7 +17,7 @@ import {
   generateVueComponent,
   generateAngularComponent,
   generateCSS
-} from "@easylogic/cssma";
+} from "cssma";
 
 export default function Demo() {
   const [outputTab, setOutputTab] = useState<"figma" | "react" | "vue" | "angular" | "css">("figma");

@@ -8,11 +8,11 @@ description: CSS/Tailwind to Figma 변환 규칙과 스타일 시스템 가이�
 globs: ["**/*.{ts,tsx,js,jsx,css}"]
 ---
 
-# @easylogic/cssma 디자인 시스템
+# cssma 디자인 시스템
 
 ## 개요
 
-@easylogic/cssma는 Tailwind CSS 스타일을 Figma 스타일로 변환하고, 그 반대로도 변환하는 라이브러리입니다. 이 규칙 문서는 개발자와 디자이너가 일관된 디자인 시스템을 유지하기 위한 가이드라인을 제공합니다.
+cssma는 Tailwind CSS 스타일을 Figma 스타일로 변환하고, 그 반대로도 변환하는 라이브러리입니다. 이 규칙 문서는 개발자와 디자이너가 일관된 디자인 시스템을 유지하기 위한 가이드라인을 제공합니다.
 
 ## 주요 기능
 
@@ -22,7 +22,7 @@ Tailwind CSS 클래스 문자열을 Figma 스타일 객체로 변환합니다.
 
 ```typescript
 // 예시
-import { processCssStyles } from '@easylogic/cssma';
+import { processCssStyles } from 'cssma';
 
 const styles = processCssStyles('flex-col w-full bg-[#FF0000] rounded-lg');
 // Figma 노드에 적용
@@ -37,7 +37,7 @@ Figma 스타일 객체를 Tailwind CSS 클래스 문자열로 변환합니다.
 
 ```typescript
 // 예시
-import { figmaToCss } from '@easylogic/cssma';
+import { figmaToCss } from 'cssma';
 
 const tailwindClasses = figmaToCss({
   layoutMode: "VERTICAL",
@@ -357,4 +357,4 @@ fills: [{
 - [Tailwind CSS 공식 문서](mdc:https:/tailwindcss.com/docs)
 - [Figma API 참조](mdc:https:/www.figma.com/developers/api)
 - [Figma Plugin 개발 가이드](mdc:https:/www.figma.com/plugin-docs)
-- [@easylogic/cssma GitHub 저장소](mdc:https:/github.com/figmaikr/@easylogic/cssma)
+- [cssma GitHub 저장소](mdc:https:/github.com/figmaikr/cssma)

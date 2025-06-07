@@ -31,7 +31,7 @@ CSS-to-Figma is a library that converts Tailwind CSS styles to Figma styles and 
 ## 🚀 Quick Start
 
 ```typescript
-import { processCssStyles, figmaToCss } from '@easylogic/cssma';
+import { processCssStyles, figmaToCss } from 'cssma';
 
 // Tailwind CSS → Figma
 const styles = processCssStyles('flex-col w-full bg-[#FF0000] rounded-lg');
@@ -66,7 +66,7 @@ const tailwindClasses = figmaToCss({
 ## 🔧 Installation
 
 ```bash
-npm install @easylogic/cssma
+npm install cssma
 ```
 
 ## 📝 Contributing

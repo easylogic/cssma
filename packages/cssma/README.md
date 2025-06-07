@@ -1,35 +1,35 @@
-# @easylogic/cssma
+# cssma
 
 A library for converting Tailwind CSS like styles to Figma styles and vice versa.
 
 ## Overview
 
-`@easylogic/cssma` provides a seamless bridge between Tailwind CSS and Figma's design system. This library allows you to convert Tailwind CSS classes to Figma style objects and convert Figma styles back to Tailwind CSS classes.
+`cssma` provides a seamless bridge between Tailwind CSS and Figma's design system. This library allows you to convert Tailwind CSS classes to Figma style objects and convert Figma styles back to Tailwind CSS classes.
 
 ## Installation
 
 ```bash
-npm install @easylogic/cssma
+npm install cssma
 ```
 
 or
 
 ```bash
-pnpm add @easylogic/cssma
+pnpm add cssma
 ```
 
 or
 
 ```bash
-yarn add @easylogic/cssma
+yarn add cssma
 ```
 
 ## Simple Start
 
-Here's how to get started with `@easylogic/cssma` in a Figma plugin:
+Here's how to get started with `cssma` in a Figma plugin:
 
 ```typescript
-import { applyCssStyles, processCssStyles } from '@easylogic/cssma';
+import { applyCssStyles, processCssStyles } from 'cssma';
 
 // Method 1: Apply styles directly to a node (Recommended)
 const frame = figma.createFrame();
@@ -202,7 +202,7 @@ const twoColumn = 'grid grid-cols-1 lg:grid-cols-2 gap-[40] items-center';
 Create a complete design system with components using declarative JSON:
 
 ```typescript
-import { createNodeForData } from '@easylogic/cssma';
+import { createNodeForData } from 'cssma';
 
 // 1. Color Palette Component
 const colorPaletteData = {
@@ -557,7 +557,7 @@ const dashboard = createNodeForData(dashboardData);
 ### Figma-to-CSS Conversion Examples
 
 ```typescript
-import { figmaToCss, figmaLayoutToCss, figmaColorsToCss } from '@easylogic/cssma';
+import { figmaToCss, figmaLayoutToCss, figmaColorsToCss } from 'cssma';
 
 // 1. Convert complex Figma component to CSS
 const complexFigmaNode = {
@@ -632,7 +632,7 @@ console.log(convertedNodes);
 ```typescript
 // React Component Example
 import React from 'react';
-import { figmaToCss } from '@easylogic/cssma';
+import { figmaToCss } from 'cssma';
 
 const FigmaStyledComponent = ({ figmaStyles, children }) => {
   const cssClasses = figmaToCss(figmaStyles);
@@ -666,7 +666,7 @@ function App() {
 }
 
 // Vue Component Example
-import { figmaToCss } from '@easylogic/cssma';
+import { figmaToCss } from 'cssma';
 
 export default {
   name: 'FigmaStyledComponent',
@@ -691,7 +691,7 @@ export default {
 Convert Tailwind CSS class strings to Figma style objects:
 
 ```typescript
-import { processCssStyles } from '@easylogic/cssma';
+import { processCssStyles } from 'cssma';
 
 const styles = processCssStyles('flex-col w-full bg-[#FF0000] rounded-lg');
 // Apply the result to a Figma node
@@ -707,7 +707,7 @@ node.cornerRadius = styles.cornerRadius;
 Convert all Figma style properties to Tailwind CSS class strings:
 
 ```typescript
-import { figmaToCss } from '@easylogic/cssma';
+import { figmaToCss } from 'cssma';
 
 const tailwindClasses = figmaToCss({
   layoutMode: "VERTICAL",
@@ -736,7 +736,7 @@ import {
   figmaSpacingToCss,
   figmaPositionToCss,
   figmaSizeToCss
-} from '@easylogic/cssma';
+} from 'cssma';
 
 // Convert only layout properties
 const layoutClasses = figmaLayoutToCss({
@@ -876,7 +876,7 @@ const titleClasses = convertTextStyles(titleNode);
 Create Figma nodes with Tailwind CSS styles using a declarative JSON structure:
 
 ```typescript
-import { createNodeForData } from '@easylogic/cssma';
+import { createNodeForData } from 'cssma';
 
 // Create a simple card component
 const cardData = {
@@ -1008,7 +1008,7 @@ const booleanData = {
 Here's a complete example showcasing all supported Figma node types:
 
 ```typescript
-import { createNodeForData } from '@easylogic/cssma';
+import { createNodeForData } from 'cssma';
 
 const designSystemData = {
   type: 'FRAME',
@@ -1230,10 +1230,10 @@ This example demonstrates:
 
 #### Landing Page Example
 
-Here's an example of creating a modern landing page using @easylogic/cssma:
+Here's an example of creating a modern landing page using cssma:
 
 ```typescript
-import { createNodeForData } from '@easylogic/cssma';
+import { createNodeForData } from 'cssma';
 
 const landingPageData = {
   type: 'FRAME',
@@ -2640,7 +2640,7 @@ hidden-$[state/isHidden] → Boolean variable for visibility
 
 ## Contributing
 
-We welcome contributions! If you'd like to improve @easylogic/cssma, please:
+We welcome contributions! If you'd like to improve cssma, please:
 
 1. Fork the repository
 2. Create a feature branch

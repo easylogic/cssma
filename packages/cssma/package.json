@@ -1,5 +1,5 @@
 {
-  "name": "@easylogic/cssma",
+  "name": "cssma",
   "version": "0.1.0",
   "description": "Convert Tailwind CSS-like tokens to Figma styles",
   "main": "src/index.ts",

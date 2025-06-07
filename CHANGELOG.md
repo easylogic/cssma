@@ -70,7 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2023-11-20
 
 ### Added
-- **Core Library (`@easylogic/cssma`)**
+- **Core Library (`cssma`)**
   - Basic CSS to Figma conversion (`processCssStyles`)
   - Figma to CSS conversion (`figmaToCss`)
   - Node creation with styles (`createNodeForData`)

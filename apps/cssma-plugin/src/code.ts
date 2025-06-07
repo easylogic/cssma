@@ -1,4 +1,4 @@
-import { figmaToCss, processCssStyles, createNodeForData, applyCssStyles } from '@easylogic/cssma';
+import { figmaToCss, processCssStyles, createNodeForData, applyCssStyles } from 'cssma';
 
 // RGB 색상을 16진수 문자열로 변환하는 함수
 function colorToHex(color: { r: number, g: number, b: number }): string {
