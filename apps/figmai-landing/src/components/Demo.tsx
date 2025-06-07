@@ -163,7 +163,7 @@ export default function Demo() {
           {
             type: "FRAME",
             name: "Content",
-            styles: "flex-col gap-1",
+            styles: "flex flex-col gap-1",
             children: [
               {
                 type: "TEXT",
