@@ -1,5 +1,11 @@
 # cssma
 
+## 0.1.2
+
+### Patch Changes
+
+- 07d9f6d: modify version test
+
 ## 0.1.1
 
 ### Patch Changes
