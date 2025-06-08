@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { LivePreview } from './LivePreview';
 
 interface CssConverterProps {
   selectedElement: any;
@@ -17,6 +18,8 @@ export function CssConverter({
   onAnalyzeSelection,
   onApplyStyles
 }: CssConverterProps) {
+  const [isPreviewEnabled, setIsPreviewEnabled] = useState(true);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -31,6 +34,14 @@ export function CssConverter({
           Analyze Selection
         </Button>
       </div>
+
+      {/* Live Preview Section */}
+      <LivePreview
+        cssInput={cssInput}
+        selectedElement={selectedElement}
+        isEnabled={isPreviewEnabled}
+        onToggle={() => setIsPreviewEnabled(!isPreviewEnabled)}
+      />
 
       <Textarea
         placeholder="Enter CSS or Tailwind code here..."
