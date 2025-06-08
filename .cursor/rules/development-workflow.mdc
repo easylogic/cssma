@@ -3,63 +3,63 @@ description: 개발 워크플로우 및 자동화 가이드, GitHub Actions 워�
 globs: 
 alwaysApply: false
 ---
-# 개발 워크플로우 및 자동화 가이드
+# Development Workflow and Automation Guide
 
-## GitHub Actions 워크플로우
+## GitHub Actions Workflows
 
-### 1. 릴리즈 자동화 ([.github/workflows/release.yml](mdc:.github/workflows/release.yml))
+### 1. Release Automation ([.github/workflows/release.yml](mdc:.github/workflows/release.yml))
 
-완전 자동화된 패키지 배포 시스템:
+Fully automated package deployment system:
 
 ```yaml
-# 트리거: main 브랜치 푸시
+# Trigger: main branch push
 on:
   push:
     branches: [main]
 
-# 주요 단계:
-# 1. 의존성 설치 (pnpm v9)
-# 2. 패키지 빌드
-# 3. Changeset 처리
-# 4. NPM 배포
-# 5. GitHub 릴리즈 생성
+# Key steps:
+# 1. Install dependencies (pnpm v9)
+# 2. Build packages
+# 3. Process changesets
+# 4. NPM deployment
+# 5. Create GitHub release
 ```
 
-#### 필수 시크릿
+#### Required Secrets
 
-- `NPM_TOKEN`: NPM 배포용 토큰 (Automation 타입)
-- `GITHUB_TOKEN`: 자동 제공 (PR 생성, 릴리즈 생성용)
+- `NPM_TOKEN`: NPM deployment token (Automation type)
+- `GITHUB_TOKEN`: Auto-provided (for PR creation, release creation)
 
-#### 권한 설정
+#### Permission Settings
 
 ```yaml
 permissions:
-  contents: write      # Git 태그 생성
-  pull-requests: write # Release PR 생성
-  issues: write        # 이슈 관리
+  contents: write      # Git tag creation
+  pull-requests: write # Release PR creation
+  issues: write        # Issue management
 ```
 
-### 2. 워크플로우 실행 과정
+### 2. Workflow Execution Process
 
 ```mermaid
 graph TD
-    A[main 브랜치 푸시] --> B[GitHub Actions 트리거]
-    B --> C[의존성 설치]
-    C --> D[패키지 빌드]
-    D --> E[Changeset 확인]
-    E --> F{Changeset 존재?}
-    F -->|Yes| G[Release PR 생성]
-    F -->|No| H[워크플로우 종료]
-    G --> I[PR 머지 대기]
-    I --> J[PR 머지됨]
-    J --> K[NPM 배포]
-    K --> L[GitHub 릴리즈 생성]
-    K --> M[Git 태그 생성]
+    A[main branch push] --> B[GitHub Actions trigger]
+    B --> C[Install dependencies]
+    C --> D[Build packages]
+    D --> E[Check changesets]
+    E --> F{Changesets exist?}
+    F -->|Yes| G[Create Release PR]
+    F -->|No| H[End workflow]
+    G --> I[Wait for PR merge]
+    I --> J[PR merged]
+    J --> K[NPM deployment]
+    K --> L[Create GitHub release]
+    K --> M[Create Git tags]
 ```
 
-## Changeset 관리
+## Changeset Management
 
-### 1. 설정 파일 ([.changeset/config.json](mdc:.changeset/config.json))
+### 1. Configuration File ([.changeset/config.json](mdc:.changeset/config.json))
 
 ```json
 {
@@ -75,62 +75,62 @@ graph TD
 }
 ```
 
-#### 주요 설정 설명
+#### Key Configuration Explanations
 
-- `ignore`: 배포하지 않을 패키지 (private 패키지)
-- `updateInternalDependencies`: 내부 의존성 업데이트 방식
-- `snapshot`: 스냅샷 버전 계산 방식
+- `ignore`: Packages not to deploy (private packages)
+- `updateInternalDependencies`: Internal dependency update method
+- `snapshot`: Snapshot version calculation method
 
-### 2. Changeset 생성 가이드
+### 2. Changeset Creation Guide
 
 ```bash
-# 대화형 changeset 생성
+# Interactive changeset creation
 pnpm changeset
 
-# 선택 과정:
-# 1. 변경된 패키지 선택 (cssma)
-# 2. 변경 타입 선택 (patch/minor/major)
-# 3. 변경 내용 요약 작성
-# 4. 확인 및 생성
+# Selection process:
+# 1. Select changed packages (cssma)
+# 2. Select change type (patch/minor/major)
+# 3. Write change summary
+# 4. Confirm and create
 ```
 
-#### 변경 타입 기준
+#### Change Type Criteria
 
-| 타입 | 사용 시기 | 예시 |
-|------|-----------|------|
-| **patch** | 버그 수정, 문서 업데이트 | 0.1.1 → 0.1.2 |
-| **minor** | 새 기능 추가 | 0.1.1 → 0.2.0 |
-| **major** | 호환성 깨는 변경 | 0.1.1 → 1.0.0 |
+| Type | When to Use | Example |
+|------|-------------|---------|
+| **patch** | Bug fixes, documentation updates | 0.1.1 → 0.1.2 |
+| **minor** | New feature additions | 0.1.1 → 0.2.0 |
+| **major** | Breaking changes | 0.1.1 → 1.0.0 |
 
-### 3. Changeset 파일 구조
+### 3. Changeset File Structure
 
 ```markdown
 ---
 "cssma": patch
 ---
 
-실시간 CSS 미리보기 시스템 추가
+Add real-time CSS preview system
 
-- LivePreview 컴포넌트 구현
-- 300ms 디바운싱 적용
-- 에러 처리 및 로딩 상태 추가
+- Implement LivePreview component
+- Apply 300ms debouncing
+- Add error handling and loading states
 ```
 
-## 패키지 관리
+## Package Management
 
-### 1. 모노레포 구조
+### 1. Monorepo Structure
 
 ```
 packages/
-  cssma/           # 핵심 라이브러리 (배포됨)
+  cssma/           # Core library (deployed)
 apps/
-  cssma-plugin/    # Figma 플러그인 (배포 안됨)
-  figmai-landing/  # 랜딩 페이지 (배포 안됨)
+  cssma-plugin/    # Figma plugin (not deployed)
+  figmai-landing/  # Landing page (not deployed)
 ```
 
-### 2. 의존성 관리
+### 2. Dependency Management
 
-#### 루트 package.json 스크립트
+#### Root package.json Scripts
 
 ```json
 {
@@ -146,7 +146,7 @@ apps/
 }
 ```
 
-#### pnpm 워크스페이스 설정
+#### pnpm Workspace Configuration
 
 ```yaml
 # pnpm-workspace.yaml
@@ -155,141 +155,141 @@ packages:
   - 'apps/*'
 ```
 
-### 3. 빌드 최적화
+### 3. Build Optimization
 
 ```bash
-# 특정 패키지만 빌드 (배포용)
+# Build specific package only (for deployment)
 pnpm --filter cssma build
 
-# 전체 빌드 (개발용)
+# Build all (for development)
 pnpm build:all
 
-# 병렬 빌드
+# Parallel build
 pnpm -r --parallel build
 ```
 
-## 버전 관리 전략
+## Version Management Strategy
 
-### 1. 시맨틱 버저닝
+### 1. Semantic Versioning
 
 ```
 MAJOR.MINOR.PATCH
   |     |     |
-  |     |     └─ 버그 수정
-  |     └─ 새 기능 (하위 호환)
-  └─ 호환성 깨는 변경
+  |     |     └─ Bug fixes
+  |     └─ New features (backward compatible)
+  └─ Breaking changes
 ```
 
-### 2. 브랜치 전략
+### 2. Branch Strategy
 
 ```
-main                 # 안정 버전, 자동 배포
-├── feature/xxx      # 새 기능 개발
-├── fix/xxx          # 버그 수정
-└── changeset-release/main  # 자동 생성되는 릴리즈 브랜치
+main                 # Stable version, auto-deploy
+├── feature/xxx      # New feature development
+├── fix/xxx          # Bug fixes
+└── changeset-release/main  # Auto-generated release branch
 ```
 
-### 3. 태그 관리
+### 3. Tag Management
 
 ```bash
-# 자동 생성되는 태그 형식
+# Auto-generated tag format
 v0.1.0, v0.1.1, v0.1.2, ...
 
-# 태그 확인
+# Check tags
 git tag -l
 
-# 특정 태그로 체크아웃
+# Checkout to specific tag
 git checkout v0.1.2
 ```
 
-## 자동화 트러블슈팅
+## Automation Troubleshooting
 
-### 1. GitHub Actions 실패 원인
+### 1. GitHub Actions Failure Causes
 
-#### NPM 배포 실패
+#### NPM Deployment Failure
 ```bash
-# 원인: NPM_TOKEN 만료 또는 잘못된 설정
-# 해결: NPM에서 새 토큰 생성 후 GitHub Secrets 업데이트
+# Cause: NPM_TOKEN expired or incorrect configuration
+# Solution: Generate new token in NPM and update GitHub Secrets
 ```
 
-#### PR 생성 실패
+#### PR Creation Failure
 ```bash
-# 원인: GitHub Actions 권한 부족
-# 해결: 수동 PR 생성 또는 PAT 사용
+# Cause: Insufficient GitHub Actions permissions
+# Solution: Manual PR creation or use PAT
 ```
 
-#### 빌드 실패
+#### Build Failure
 ```bash
-# 원인: pnpm 버전 불일치
-# 해결: GitHub Actions에서 pnpm v9 사용 확인
+# Cause: pnpm version mismatch
+# Solution: Ensure pnpm v9 usage in GitHub Actions
 ```
 
-### 2. 일반적인 해결 방법
+### 2. Common Solutions
 
 ```bash
-# 1. 로컬에서 빌드 테스트
+# 1. Test build locally
 pnpm install --no-frozen-lockfile
 pnpm build
 
-# 2. Changeset 상태 확인
+# 2. Check changeset status
 pnpm changeset:status
 
-# 3. 수동 버전 업데이트 (테스트용)
+# 3. Manual version update (for testing)
 pnpm changeset:version
 
-# 4. 의존성 캐시 클리어
+# 4. Clear dependency cache
 pnpm store prune
 ```
 
-### 3. 모니터링 및 알림
+### 3. Monitoring and Notifications
 
-#### GitHub Actions 상태 확인
-- Actions 탭에서 워크플로우 실행 상태 모니터링
-- 실패 시 이메일 알림 자동 발송
+#### GitHub Actions Status Check
+- Monitor workflow execution status in Actions tab
+- Automatic email notifications on failure
 
-#### NPM 패키지 상태
+#### NPM Package Status
 ```bash
-# 최신 버전 확인
+# Check latest version
 npm view cssma version
 
-# 배포 히스토리
+# Deployment history
 npm view cssma versions --json
 ```
 
-## 개발 환경 설정
+## Development Environment Setup
 
-### 1. 로컬 개발 환경
+### 1. Local Development Environment
 
 ```bash
-# 1. 저장소 클론
+# 1. Clone repository
 git clone https://github.com/easylogic/cssma.git
 cd cssma
 
-# 2. 의존성 설치
+# 2. Install dependencies
 pnpm install
 
-# 3. 개발 서버 실행
+# 3. Run development server
 pnpm dev
 
-# 4. 테스트 실행
+# 4. Run tests
 pnpm test
 ```
 
-### 2. 환경 변수
+### 2. Environment Variables
 
 ```bash
-# .env.local (로컬 개발용)
+# .env.local (for local development)
 NODE_ENV=development
 FIGMA_ACCESS_TOKEN=your_token_here
 
-# GitHub Secrets (배포용)
+# GitHub Secrets (for deployment)
 NPM_TOKEN=npm_xxx
-GITHUB_TOKEN=ghp_xxx (자동 제공)
+GITHUB_TOKEN=ghp_xxx (auto-provided)
 ```
 
-### 3. IDE 설정
+### 3. IDE Configuration
 
-#### VSCode 권장 확장
+#### VSCode Recommended Extensions
 
 ```json
 {
@@ -302,22 +302,22 @@ GITHUB_TOKEN=ghp_xxx (자동 제공)
 }
 ```
 
-## 성능 모니터링
+## Performance Monitoring
 
-### 1. 빌드 성능
+### 1. Build Performance
 
 ```bash
-# 빌드 시간 측정
+# Measure build time
 time pnpm build
 
-# 번들 크기 분석
+# Bundle size analysis
 pnpm build --analyze
 ```
 
-### 2. 배포 성능
+### 2. Deployment Performance
 
-- GitHub Actions 실행 시간 모니터링
-- NPM 배포 성공률 추적
-- 의존성 설치 시간 최적화
+- Monitor GitHub Actions execution time
+- Track NPM deployment success rate
+- Optimize dependency installation time
 
-이 가이드를 통해 안정적이고 효율적인 개발 워크플로우를 유지하세요.
+Follow this guide to maintain a stable and efficient development workflow.

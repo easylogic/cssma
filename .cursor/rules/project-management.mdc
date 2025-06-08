@@ -3,147 +3,147 @@ description: FigmaikR 프로젝트 관리 가이드
 globs: 
 alwaysApply: false
 ---
-# FigmaikR 프로젝트 관리 가이드
+# FigmaikR Project Management Guide
 
-## 프로젝트 개요
+## Project Overview
 
-FigmaikR는 Tailwind CSS와 Figma 간의 양방향 변환을 지원하는 디자인 시스템 툴킷입니다.
+FigmaikR is a design system toolkit that supports bidirectional conversion between Tailwind CSS and Figma.
 
-### 주요 구성 요소
+### Key Components
 
-- **packages/cssma**: 핵심 라이브러리 (NPM 패키지)
-- **apps/cssma-plugin**: Figma 플러그인
-- **apps/figmai-landing**: 랜딩 페이지
-- **docs/**: 문서화
+- **packages/cssma**: Core library (NPM package)
+- **apps/cssma-plugin**: Figma plugin
+- **apps/figmai-landing**: Landing page
+- **docs/**: Documentation
 
-## 개발 워크플로우
+## Development Workflow
 
-### 1. 버전 관리 (Changeset)
+### 1. Version Management (Changeset)
 
-모든 패키지 변경사항은 Changeset을 통해 관리됩니다.
+All package changes are managed through Changeset.
 
 ```bash
-# 새로운 변경사항 추가
+# Add new changes
 pnpm changeset
 
-# 현재 changeset 상태 확인
+# Check current changeset status
 pnpm changeset:status
 
-# 버전 업데이트 (로컬 테스트용)
+# Update versions (for local testing)
 pnpm changeset:version
 
-# 패키지 배포 (CI에서 자동 실행)
+# Deploy packages (automatically executed in CI)
 pnpm release
 ```
 
-#### Changeset 타입 가이드
+#### Changeset Type Guide
 
-- **patch**: 버그 수정, 문서 업데이트, 내부 리팩토링
-- **minor**: 새로운 기능 추가, API 확장
-- **major**: 호환성을 깨는 변경사항
+- **patch**: Bug fixes, documentation updates, internal refactoring
+- **minor**: New feature additions, API extensions
+- **major**: Breaking changes
 
-### 2. 자동 배포 시스템
+### 2. Automated Deployment System
 
-GitHub Actions를 통한 완전 자동화된 배포 파이프라인:
+Fully automated deployment pipeline through GitHub Actions:
 
-1. **main 브랜치 푸시** → GitHub Actions 트리거
-2. **Changeset 감지** → 자동 release PR 생성
-3. **PR 머지** → NPM 배포 + GitHub 릴리즈 생성
+1. **main branch push** → GitHub Actions trigger
+2. **Changeset detection** → Automatic release PR creation
+3. **PR merge** → NPM deployment + GitHub release creation
 
-#### 배포 관련 파일
+#### Deployment Related Files
 
-- [.github/workflows/release.yml](mdc:.github/workflows/release.yml): 자동 배포 워크플로우
-- [.changeset/config.json](mdc:.changeset/config.json): Changeset 설정
-- [package.json](mdc:package.json): 루트 패키지 설정
+- [.github/workflows/release.yml](mdc:.github/workflows/release.yml): Automated deployment workflow
+- [.changeset/config.json](mdc:.changeset/config.json): Changeset configuration
+- [package.json](mdc:package.json): Root package configuration
 
-### 3. 패키지 구조
+### 3. Package Structure
 
-#### 핵심 라이브러리 (packages/cssma)
+#### Core Library (packages/cssma)
 
 ```typescript
-// 주요 진입점
+// Main entry points
 import { processCssStyles, figmaToCss } from 'cssma';
 
-// 스타일 변환
+// Style conversion
 const figmaStyles = processCssStyles('flex-col w-full bg-blue-500');
 const tailwindClasses = figmaToCss(figmaNode);
 ```
 
-주요 파일:
-- [packages/cssma/src/index.ts](mdc:packages/cssma/src/index.ts): 메인 진입점
-- [packages/cssma/package.json](mdc:packages/cssma/package.json): 패키지 설정
-- [packages/cssma/CHANGELOG.md](mdc:packages/cssma/CHANGELOG.md): 변경 로그
+Key files:
+- [packages/cssma/src/index.ts](mdc:packages/cssma/src/index.ts): Main entry point
+- [packages/cssma/package.json](mdc:packages/cssma/package.json): Package configuration
+- [packages/cssma/CHANGELOG.md](mdc:packages/cssma/CHANGELOG.md): Change log
 
-#### Figma 플러그인 (apps/cssma-plugin)
+#### Figma Plugin (apps/cssma-plugin)
 
-실시간 CSS 미리보기 시스템이 포함된 Figma 플러그인:
+Figma plugin with real-time CSS preview system:
 
-주요 컴포넌트:
-- [apps/cssma-plugin/src/components/CssConverter.tsx](mdc:apps/cssma-plugin/src/components/CssConverter.tsx): CSS 변환기
-- [apps/cssma-plugin/src/components/LivePreview.tsx](mdc:apps/cssma-plugin/src/components/LivePreview.tsx): 실시간 미리보기
-- [apps/cssma-plugin/src/hooks/useLocalStorage.ts](mdc:apps/cssma-plugin/src/hooks/useLocalStorage.ts): 로컬 스토리지 훅
+Key components:
+- [apps/cssma-plugin/src/components/CssConverter.tsx](mdc:apps/cssma-plugin/src/components/CssConverter.tsx): CSS converter
+- [apps/cssma-plugin/src/components/LivePreview.tsx](mdc:apps/cssma-plugin/src/components/LivePreview.tsx): Real-time preview
+- [apps/cssma-plugin/src/hooks/useLocalStorage.ts](mdc:apps/cssma-plugin/src/hooks/useLocalStorage.ts): Local storage hook
 
-## 코딩 표준
+## Coding Standards
 
-### 1. TypeScript 사용
+### 1. TypeScript Usage
 
-모든 새로운 코드는 TypeScript로 작성하며, 엄격한 타입 검사를 적용합니다.
+All new code is written in TypeScript with strict type checking applied.
 
 ```typescript
-// 좋은 예: 명확한 타입 정의
+// Good example: Clear type definition
 interface FigmaStyleProps {
   layoutMode?: 'HORIZONTAL' | 'VERTICAL';
   fills?: Paint[];
   cornerRadius?: number;
 }
 
-// 나쁜 예: any 타입 사용
+// Bad example: Using any type
 function processStyles(styles: any): any {
   // ...
 }
 ```
 
-### 2. 컴포넌트 구조
+### 2. Component Structure
 
-React 컴포넌트는 다음 구조를 따릅니다:
+React components follow this structure:
 
 ```typescript
-// 1. 임포트
+// 1. Imports
 import React, { useState, useEffect } from 'react';
 import { processCssStyles } from 'cssma';
 
-// 2. 타입 정의
+// 2. Type definitions
 interface ComponentProps {
   className?: string;
   onStyleChange?: (styles: string) => void;
 }
 
-// 3. 컴포넌트 정의
+// 3. Component definition
 export const Component: React.FC<ComponentProps> = ({
   className,
   onStyleChange
 }) => {
-  // 4. 상태 및 훅
+  // 4. State and hooks
   const [styles, setStyles] = useState('');
   
-  // 5. 이벤트 핸들러
+  // 5. Event handlers
   const handleChange = (value: string) => {
     setStyles(value);
     onStyleChange?.(value);
   };
   
-  // 6. 렌더링
+  // 6. Rendering
   return (
     <div className={className}>
-      {/* 컴포넌트 내용 */}
+      {/* Component content */}
     </div>
   );
 };
 ```
 
-### 3. 에러 처리
+### 3. Error Handling
 
-모든 비동기 작업과 외부 API 호출에는 적절한 에러 처리를 포함해야 합니다:
+All asynchronous operations and external API calls must include proper error handling:
 
 ```typescript
 try {
@@ -151,51 +151,51 @@ try {
   setStyles(result);
 } catch (error) {
   console.error('Style processing failed:', error);
-  setError('스타일 처리 중 오류가 발생했습니다.');
+  setError('An error occurred while processing styles.');
 }
 ```
 
-## 테스트 전략
+## Testing Strategy
 
-### 1. 단위 테스트
+### 1. Unit Testing
 
-각 유틸리티 함수와 컴포넌트에 대한 단위 테스트를 작성합니다:
+Write unit tests for each utility function and component:
 
 ```bash
-# 테스트 실행
+# Run tests
 pnpm test
 
-# 테스트 커버리지
+# Test coverage
 pnpm test:coverage
 
-# 테스트 UI
+# Test UI
 pnpm test:ui
 ```
 
-### 2. 통합 테스트
+### 2. Integration Testing
 
-Figma 플러그인의 경우 실제 Figma API와의 통합 테스트를 포함합니다.
+For Figma plugins, include integration tests with actual Figma API.
 
-## 문서화
+## Documentation
 
-### 1. README 업데이트
+### 1. README Updates
 
-새로운 기능 추가 시 해당 패키지의 README.md를 업데이트합니다:
+Update the corresponding package's README.md when adding new features:
 
-- [README.md](mdc:README.md): 프로젝트 전체 개요
-- [packages/cssma/README.md](mdc:packages/cssma/README.md): 라이브러리 사용법
-- [apps/cssma-plugin/README.md](mdc:apps/cssma-plugin/README.md): 플러그인 사용법
+- [README.md](mdc:README.md): Overall project overview
+- [packages/cssma/README.md](mdc:packages/cssma/README.md): Library usage
+- [apps/cssma-plugin/README.md](mdc:apps/cssma-plugin/README.md): Plugin usage
 
-### 2. API 문서
+### 2. API Documentation
 
-TypeScript 타입 정의와 JSDoc 주석을 통해 API 문서를 자동 생성합니다.
+Auto-generate API documentation through TypeScript type definitions and JSDoc comments.
 
 ```typescript
 /**
- * Tailwind CSS 클래스를 Figma 스타일로 변환합니다.
+ * Converts Tailwind CSS classes to Figma styles.
  * 
- * @param cssClasses - 변환할 Tailwind CSS 클래스 문자열
- * @returns Figma 스타일 객체
+ * @param cssClasses - Tailwind CSS class string to convert
+ * @returns Figma style object
  * 
  * @example
  * ```typescript
@@ -204,90 +204,90 @@ TypeScript 타입 정의와 JSDoc 주석을 통해 API 문서를 자동 생성�
  * ```
  */
 export function processCssStyles(cssClasses: string): FigmaStyles {
-  // 구현
+  // Implementation
 }
 ```
 
-## 성능 최적화
+## Performance Optimization
 
-### 1. 번들 크기 최적화
+### 1. Bundle Size Optimization
 
-- Tree shaking을 위한 ES 모듈 사용
-- 불필요한 의존성 제거
-- 코드 분할 적용
+- Use ES modules for tree shaking
+- Remove unnecessary dependencies
+- Apply code splitting
 
-### 2. 런타임 성능
+### 2. Runtime Performance
 
-- 디바운싱을 통한 실시간 업데이트 최적화 (300ms)
-- 메모이제이션을 통한 중복 계산 방지
-- 가상화를 통한 대용량 데이터 처리
+- Real-time update optimization through debouncing (300ms)
+- Prevent duplicate calculations through memoization
+- Handle large data through virtualization
 
-## 보안 고려사항
+## Security Considerations
 
-### 1. 의존성 관리
+### 1. Dependency Management
 
 ```bash
-# 보안 취약점 검사
+# Security vulnerability check
 pnpm audit
 
-# 의존성 업데이트
+# Dependency updates
 pnpm update
 ```
 
-### 2. 환경 변수
+### 2. Environment Variables
 
-민감한 정보는 환경 변수로 관리하며, `.env.example` 파일을 제공합니다.
+Manage sensitive information through environment variables and provide `.env.example` file.
 
-## 배포 체크리스트
+## Deployment Checklist
 
-새로운 릴리즈 전 확인사항:
+Pre-release verification items:
 
-- [ ] 모든 테스트 통과
-- [ ] 타입 검사 통과
-- [ ] 린트 검사 통과
-- [ ] 문서 업데이트
-- [ ] Changeset 생성
-- [ ] 브레이킹 체인지 확인
-- [ ] 성능 테스트 완료
+- [ ] All tests pass
+- [ ] Type checking passes
+- [ ] Lint checking passes
+- [ ] Documentation updated
+- [ ] Changeset created
+- [ ] Breaking changes verified
+- [ ] Performance testing completed
 
-## 트러블슈팅
+## Troubleshooting
 
-### 1. 일반적인 문제
+### 1. Common Issues
 
-#### Changeset PR이 생성되지 않는 경우
-- GitHub Actions 권한 확인
-- GITHUB_TOKEN 및 NPM_TOKEN 시크릿 확인
-- 수동 PR 생성 후 머지
+#### Changeset PR not being created
+- Check GitHub Actions permissions
+- Verify GITHUB_TOKEN and NPM_TOKEN secrets
+- Create manual PR and merge
 
-#### 빌드 실패
-- pnpm 버전 확인 (v9 권장)
-- 의존성 재설치: `pnpm install --no-frozen-lockfile`
-- 타입 오류 확인
+#### Build failure
+- Check pnpm version (v9 recommended)
+- Reinstall dependencies: `pnpm install --no-frozen-lockfile`
+- Check type errors
 
-#### Figma 플러그인 로드 실패
-- manifest.json 설정 확인
-- 빌드 출력 파일 경로 확인
-- Figma 개발자 모드 활성화
+#### Figma plugin load failure
+- Check manifest.json configuration
+- Verify build output file paths
+- Enable Figma developer mode
 
-### 2. 디버깅 도구
+### 2. Debugging Tools
 
 ```bash
-# 상세 로그와 함께 빌드
+# Build with verbose logs
 pnpm build --verbose
 
-# 개발 서버 실행
+# Run development server
 pnpm dev
 
-# 타입 검사만 실행
+# Run type checking only
 pnpm type-check
 ```
 
-## 기여 가이드라인
+## Contribution Guidelines
 
-1. **이슈 생성**: 버그 리포트나 기능 요청은 GitHub 이슈로 생성
-2. **브랜치 전략**: `feature/기능명` 또는 `fix/버그명` 형태로 브랜치 생성
-3. **커밋 메시지**: Conventional Commits 형식 사용
-4. **PR 템플릿**: [.github/pull_request_template.md](mdc:.github/pull_request_template.md) 활용
-5. **Changeset 필수**: 패키지 변경 시 반드시 changeset 생성
+1. **Issue Creation**: Create GitHub issues for bug reports or feature requests
+2. **Branch Strategy**: Create branches in `feature/feature-name` or `fix/bug-name` format
+3. **Commit Messages**: Use Conventional Commits format
+4. **PR Template**: Utilize [.github/pull_request_template.md](mdc:.github/pull_request_template.md)
+5. **Changeset Required**: Always create changeset when changing packages
 
-이 가이드를 따라 일관되고 효율적인 개발 환경을 유지하세요.
+Follow this guide to maintain a consistent and efficient development environment.

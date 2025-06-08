@@ -4,39 +4,39 @@ globs: ["**/*.{ts,tsx,js,jsx,css}"]
 alwaysApply: false
 ---
 ---
-description: CSS/Tailwind to Figma 변환 규칙과 스타일 시스템 가이드
+description: CSS/Tailwind to Figma Conversion Rules and Design System Guide
 globs: ["**/*.{ts,tsx,js,jsx,css}"]
 ---
 
-# cssma 디자인 시스템
+# cssma Design System
 
-## 개요
+## Overview
 
-cssma는 Tailwind CSS 스타일을 Figma 스타일로 변환하고, 그 반대로도 변환하는 라이브러리입니다. 이 규칙 문서는 개발자와 디자이너가 일관된 디자인 시스템을 유지하기 위한 가이드라인을 제공합니다.
+cssma is a library that converts Tailwind CSS styles to Figma styles and vice versa. This rule document provides guidelines for developers and designers to maintain a consistent design system.
 
-## 주요 기능
+## Key Features
 
-### 1. Tailwind CSS → Figma 변환 (`processCssStyles`)
+### 1. Tailwind CSS → Figma Conversion (`processCssStyles`)
 
-Tailwind CSS 클래스 문자열을 Figma 스타일 객체로 변환합니다.
+Converts Tailwind CSS class strings to Figma style objects.
 
 ```typescript
-// 예시
+// Example
 import { processCssStyles } from 'cssma';
 
 const styles = processCssStyles('flex-col w-full bg-[#FF0000] rounded-lg');
-// Figma 노드에 적용
+// Apply to Figma node
 node.layoutMode = styles.layout.layoutMode;
 node.fills = styles.fills;
 node.cornerRadius = styles.geometry.cornerRadius;
 ```
 
-### 2. Figma → Tailwind CSS 변환 (`figmaToCss`)
+### 2. Figma → Tailwind CSS Conversion (`figmaToCss`)
 
-Figma 스타일 객체를 Tailwind CSS 클래스 문자열로 변환합니다.
+Converts Figma style objects to Tailwind CSS class strings.
 
 ```typescript
-// 예시
+// Example
 import { figmaToCss } from 'cssma';
 
 const tailwindClasses = figmaToCss({
@@ -44,19 +44,19 @@ const tailwindClasses = figmaToCss({
   fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }],
   cornerRadius: 8
 });
-// 결과: "flex-col bg-[#ff0000] rounded-lg"
+// Result: "flex-col bg-[#ff0000] rounded-lg"
 ```
 
-## 지원하는 스타일
+## Supported Styles
 
-### 1. 레이아웃 속성
+### 1. Layout Properties
 
 ```typescript
-// 방향 설정
+// Direction settings
 flex-row        → layoutMode: "HORIZONTAL"
 flex-col        → layoutMode: "VERTICAL"
 
-// 크기 설정
+// Size settings
 w-full         → layoutSizingHorizontal: "FILL"
 w-auto         → layoutSizingHorizontal: "HUG"
 w-[100]        → width: 100
@@ -64,7 +64,7 @@ h-full         → layoutSizingVertical: "FILL"
 h-auto         → layoutSizingVertical: "HUG"
 h-[100]        → height: 100
 
-// 정렬
+// Alignment
 justify-start   → primaryAxisAlignItems: "MIN"
 justify-center  → primaryAxisAlignItems: "CENTER"
 justify-end     → primaryAxisAlignItems: "MAX"
@@ -75,26 +75,26 @@ items-center    → counterAxisAlignItems: "CENTER"
 items-end       → counterAxisAlignItems: "MAX"
 items-baseline  → counterAxisAlignItems: "BASELINE"
 
-// 간격
+// Spacing
 gap-[16]       → itemSpacing: 16
-p-[16]         → padding: 16 (모든 방향)
+p-[16]         → padding: 16 (all directions)
 pt-[16]        → paddingTop: 16
 pr-[16]        → paddingRight: 16
 pb-[16]        → paddingBottom: 16
 pl-[16]        → paddingLeft: 16
 ```
 
-### 2. 색상 및 그라데이션
+### 2. Colors and Gradients
 
 ```typescript
-// 단색
+// Solid colors
 bg-[#FF0000]   → fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }]
 text-[#FF0000] → fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }]
-bg-transparent → fills: [] // 배경 채우기 제거
+bg-transparent → fills: [] // Remove background fill
 bg-white       → fills: [{ type: "SOLID", color: { r: 1, g: 1, b: 1 } }]
 bg-black       → fills: [{ type: "SOLID", color: { r: 0, g: 0, b: 0 } }]
 
-// 선형 그라데이션
+// Linear gradients
 bg-linear-to-r from-[#FF0000] to-[#0000FF] →
 fills: [{
   type: "GRADIENT_LINEAR",
@@ -105,7 +105,7 @@ fills: [{
   gradientTransform: [[1, 0, 0], [0, 1, 0]]
 }]
 
-// 원형 그라데이션
+// Radial gradients
 bg-radial from-[#FF0000] to-[#0000FF] →
 fills: [{
   type: "GRADIENT_RADIAL",
@@ -119,10 +119,10 @@ fills: [{
 }]
 ```
 
-### 3. 타이포그래피
+### 3. Typography
 
 ```typescript
-// 폰트 크기
+// Font sizes
 text-xs        → fontSize: 12
 text-sm        → fontSize: 14
 text-base      → fontSize: 16
@@ -131,43 +131,43 @@ text-xl        → fontSize: 20
 text-2xl       → fontSize: 24
 text-[20]      → fontSize: 20
 
-// 폰트 두께
+// Font weights
 font-thin      → fontName: { family: "Inter", style: "Thin" }
 font-normal    → fontName: { family: "Inter", style: "Regular" }
 font-medium    → fontName: { family: "Inter", style: "Medium" }
 font-bold      → fontName: { family: "Inter", style: "Bold" }
 
-// 텍스트 정렬
+// Text alignment
 text-left      → textAlignHorizontal: "LEFT"
 text-center    → textAlignHorizontal: "CENTER"
 text-right     → textAlignHorizontal: "RIGHT"
 text-justify   → textAlignHorizontal: "JUSTIFIED"
 
-// 텍스트 장식
+// Text decoration
 underline      → textDecoration: "UNDERLINE"
 line-through   → textDecoration: "STRIKETHROUGH"
 no-underline   → textDecoration: "NONE"
 ```
 
-### 4. 테두리 및 모서리
+### 4. Borders and Corners
 
 ```typescript
-// 테두리 두께
+// Border width
 border-0        → borderWidth: 0
 border          → borderWidth: 1
 border-2        → borderWidth: 2
 border-4        → borderWidth: 4
 border-8        → borderWidth: 8
 
-// 테두리 색상
+// Border colors
 border-[#FF0000] → strokes: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }]
 
-// 테두리 스타일
+// Border styles
 border-solid    → borderStyle: "SOLID"
 border-dashed   → borderStyle: "DASHED"
 border-dotted   → borderStyle: "DOTTED"
 
-// 모서리 반경
+// Corner radius
 rounded         → cornerRadius: 4
 rounded-sm      → cornerRadius: 2
 rounded-md      → cornerRadius: 6
@@ -178,20 +178,20 @@ rounded-full    → cornerRadius: 9999
 rounded-none    → cornerRadius: 0
 ```
 
-### 5. 벡터 노드
+### 5. Vector Nodes
 
-벡터 노드를 사용하면 SVG 경로 데이터를 활용한 확장 가능한 벡터 그래픽을 만들 수 있습니다.
+Vector nodes allow you to create scalable vector graphics using SVG path data.
 
 ```typescript
-// 벡터 노드 구조
+// Vector node structure
 {
   "type": "VECTOR",
   "name": string,
-  "styles": string, // Tailwind CSS 스타일 문자열
-  "paths": string[] // SVG 경로 문자열 배열
+  "styles": string, // Tailwind CSS style string
+  "paths": string[] // SVG path string array
 }
 
-// 예시: 간단한 벡터
+// Example: Simple vector
 {
   "type": "VECTOR",
   "name": "Arrow Icon",
@@ -201,7 +201,7 @@ rounded-none    → cornerRadius: 0
   ]
 }
 
-// 예시: 여러 경로를 가진 벡터
+// Example: Vector with multiple paths
 {
   "type": "VECTOR",
   "name": "Check Circle Icon",
@@ -213,9 +213,9 @@ rounded-none    → cornerRadius: 0
 }
 ```
 
-## 사용 예시
+## Usage Examples
 
-### 1. 기본 텍스트 스타일링
+### 1. Basic Text Styling
 
 ```typescript
 {
@@ -226,7 +226,7 @@ rounded-none    → cornerRadius: 0
 }
 ```
 
-### 2. 카드 컴포넌트
+### 2. Card Component
 
 ```typescript
 {
@@ -250,7 +250,7 @@ rounded-none    → cornerRadius: 0
 }
 ```
 
-### 3. 버튼 컴포넌트
+### 3. Button Component
 
 ```typescript
 {
@@ -268,27 +268,27 @@ rounded-none    → cornerRadius: 0
 }
 ```
 
-## 배경 속성
+## Background Properties
 
-### 배경 색상
+### Background Colors
 
 ```typescript
-// 단색
+// Solid colors
 bg-white       → fills: [{ type: "SOLID", color: { r: 1, g: 1, b: 1 } }]
 bg-black       → fills: [{ type: "SOLID", color: { r: 0, g: 0, b: 0 } }]
 bg-transparent → fills: []
 bg-[#FF0000]   → fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }]
 bg-[rgb(255,0,0)] → fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }]
 
-// 투명도 적용
+// Opacity applied
 bg-white/50    → fills: [{ type: "SOLID", color: { r: 1, g: 1, b: 1 }, opacity: 0.5 }]
 bg-[#FF0000]/75 → fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 }, opacity: 0.75 }]
 ```
 
-### 그라데이션
+### Gradients
 
 ```typescript
-// 선형 그라데이션
+// Linear gradients
 bg-linear-to-r from-[#FF0000] to-[#0000FF] →
 fills: [{
   type: "GRADIENT_LINEAR",
@@ -299,17 +299,17 @@ fills: [{
   gradientTransform: [[1, 0, 0], [0, 1, 0]]
 }]
 
-// 방향
-bg-linear-to-t  → 위쪽 (0도)
-bg-linear-to-tr → 오른쪽 상단 (45도)
-bg-linear-to-r  → 오른쪽 (90도)
-bg-linear-to-br → 오른쪽 하단 (135도)
-bg-linear-to-b  → 아래쪽 (180도)
-bg-linear-to-bl → 왼쪽 하단 (225도)
-bg-linear-to-l  → 왼쪽 (270도)
-bg-linear-to-tl → 왼쪽 상단 (315도)
+// Directions
+bg-linear-to-t  → Top (0 degrees)
+bg-linear-to-tr → Top right (45 degrees)
+bg-linear-to-r  → Right (90 degrees)
+bg-linear-to-br → Bottom right (135 degrees)
+bg-linear-to-b  → Bottom (180 degrees)
+bg-linear-to-bl → Bottom left (225 degrees)
+bg-linear-to-l  → Left (270 degrees)
+bg-linear-to-tl → Top left (315 degrees)
 
-// 다중 정지점 그라데이션
+// Multi-stop gradients
 bg-linear-to-r from-[#FF0000] via-[#00FF00] to-[#0000FF] →
 fills: [{
   type: "GRADIENT_LINEAR",
@@ -322,39 +322,39 @@ fills: [{
 }]
 ```
 
-## 제한 사항
+## Limitations
 
-1. 일부 Tailwind CSS 속성은 Figma에 직접적인 대응 항목이 없어 변환되지 않을 수 있습니다.
-2. 복잡한 반응형 스타일은 지원되지 않습니다.
-3. 일부 Figma 고유 기능은 Tailwind CSS로 완벽하게 변환되지 않을 수 있습니다.
-4. 기본적으로 Inter 폰트 패밀리만 지원합니다.
+1. Some Tailwind CSS properties may not have direct counterparts in Figma and may not be converted.
+2. Complex responsive styles are not supported.
+3. Some Figma-specific features may not be perfectly converted to Tailwind CSS.
+4. Only the Inter font family is supported by default.
 
-## 모범 사례
+## Best Practices
 
-1. **일관된 명명 규칙 사용**
-   - 컴포넌트, 스타일, 변수 등에 일관된 명명 규칙을 적용하세요.
-   - 의미 있는 이름을 사용하여 코드 가독성을 높이세요.
+1. **Use Consistent Naming Conventions**
+   - Apply consistent naming conventions to components, styles, variables, etc.
+   - Use meaningful names to improve code readability.
 
-2. **디자인 토큰 활용**
-   - 색상, 간격, 폰트 크기 등 디자인 요소를 토큰화하여 일관성을 유지하세요.
-   - 변경 사항이 시스템 전체에 쉽게 반영되도록 하세요.
+2. **Utilize Design Tokens**
+   - Tokenize design elements like colors, spacing, font sizes to maintain consistency.
+   - Ensure changes are easily reflected throughout the system.
 
-3. **성능 최적화**
-   - 복잡한 중첩된 자동 레이아웃은 성능에 영향을 줄 수 있으므로 적절히 사용하세요.
-   - 과도한 그라데이션이나 효과는 렌더링 성능에 영향을 줄 수 있습니다.
+3. **Performance Optimization**
+   - Use complex nested auto layouts judiciously as they can impact performance.
+   - Excessive gradients or effects can affect rendering performance.
 
-4. **접근성 고려**
-   - 충분한 색상 대비율을 유지하세요.
-   - 적절한 폰트 크기와 줄 높이를 사용하여 가독성을 확보하세요.
-   - 의미 전달을 위해 색상만 사용하지 마세요.
+4. **Consider Accessibility**
+   - Maintain sufficient color contrast ratios.
+   - Use appropriate font sizes and line heights to ensure readability.
+   - Don't rely solely on color to convey meaning.
 
-5. **프리셋 값 활용**
-   - 가능한 경우 임의 값보다 사전 정의된 값을 사용하세요.
-   - 프리셋 값은 일관성을 유지하고 오류 가능성을 줄입니다.
+5. **Leverage Preset Values**
+   - Use predefined values over arbitrary values when possible.
+   - Preset values maintain consistency and reduce error possibilities.
 
-## 추가 리소스
+## Additional Resources
 
-- [Tailwind CSS 공식 문서](mdc:https:/tailwindcss.com/docs)
-- [Figma API 참조](mdc:https:/www.figma.com/developers/api)
-- [Figma Plugin 개발 가이드](mdc:https:/www.figma.com/plugin-docs)
-- [cssma GitHub 저장소](mdc:https:/github.com/figmaikr/cssma)
+- [Tailwind CSS Official Documentation](mdc:https:/tailwindcss.com/docs)
+- [Figma API Reference](mdc:https:/www.figma.com/developers/api)
+- [Figma Plugin Development Guide](mdc:https:/www.figma.com/plugin-docs)
+- [cssma GitHub Repository](mdc:https:/github.com/figmaikr/cssma)
