@@ -3,6 +3,8 @@
 import { useState, useMemo } from 'react';
 import { templateCollection, searchTemplates, getTemplatesByCategory } from '@/lib/template-data';
 import { TemplateFilter } from '@/types/template';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import TemplateCard from '@/components/TemplateCard';
 import TemplateFilters from '@/components/TemplateFilters';
 import TemplateSearch from '@/components/TemplateSearch';
@@ -51,7 +53,9 @@ export default function TemplatesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
+      <Header />
+      <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -198,5 +202,7 @@ export default function TemplatesPage() {
         </div>
       </div>
     </div>
+    <Footer />
+    </>
   );
 } 
