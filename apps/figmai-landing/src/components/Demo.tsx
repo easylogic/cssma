@@ -41,6 +41,12 @@ export default function Demo() {
     (typeof examplePresets)[0] | null
   >(null);
   const [isConverting, setIsConverting] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Ensure component is mounted on client side
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const examplePresets = [
     {
@@ -337,6 +343,8 @@ export default function Demo() {
 
   // Auto-convert when input or output tab changes
   useEffect(() => {
+    if (!isMounted) return;
+    
     const handleAutoConvert = async () => {
       if (!cssInput.trim()) return;
       
@@ -352,10 +360,21 @@ export default function Demo() {
     };
 
     handleAutoConvert();
-  }, [cssInput, outputTab]);
+  }, [cssInput, outputTab, isMounted]);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(output);
+    if (typeof window !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(output).catch(err => {
+        console.error('Failed to copy text: ', err);
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = output;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      });
+    }
   };
 
   const loadPreset = (preset: (typeof examplePresets)[0]) => {
@@ -437,6 +456,25 @@ export default function Demo() {
     { id: 'angular', label: 'Angular', description: 'Angular component' },
     { id: 'css', label: 'CSS', description: 'Pure CSS styles' },
   ];
+
+  // Don't render until mounted on client
+  if (!isMounted) {
+    return (
+      <section
+        id="demo"
+        className="py-24 bg-gradient-to-br from-gray-50 via-white to-purple-50"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="animate-pulse">
+              <div className="h-8 bg-gray-300 rounded w-1/2 mx-auto mb-4"></div>
+              <div className="h-4 bg-gray-300 rounded w-1/3 mx-auto"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
