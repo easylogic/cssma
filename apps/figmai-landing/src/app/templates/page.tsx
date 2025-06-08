@@ -56,20 +56,64 @@ export default function TemplatesPage() {
     <>
       <Header />
       <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Template Gallery
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Discover ready-to-use UI components with Tailwind CSS classes and Figma styles. 
-              Copy, customize, and integrate into your projects instantly.
-            </p>
+      {/* Hero Section */}
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+        {/* Background Elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+          <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-2000"></div>
+          <div className="absolute bottom-1/4 left-1/3 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-4000"></div>
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-gray-200 mb-8">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            <span className="text-sm font-medium text-gray-700">{templateCollection.totalCount} Templates Available</span>
+          </div>
+
+          {/* Main Headline */}
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            Template
+            <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent"> Gallery</span>
+          </h1>
+
+          {/* Subheadline */}
+          <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
+            Discover ready-to-use UI components with <strong>Tailwind CSS</strong> classes and <strong>Figma styles</strong>. 
+            Copy, customize, and integrate into your projects instantly.
+          </p>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto mb-8">
+            <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+              <div className="text-2xl font-bold text-indigo-600 mb-1">{templateCollection.totalCount}</div>
+              <div className="text-sm text-gray-600">Templates</div>
+            </div>
+            <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+              <div className="text-2xl font-bold text-purple-600 mb-1">{templateCollection.categories.length}</div>
+              <div className="text-sm text-gray-600">Categories</div>
+            </div>
+            <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+              <div className="text-2xl font-bold text-pink-600 mb-1">{templateCollection.featuredTemplates.length}</div>
+              <div className="text-sm text-gray-600">Featured</div>
+            </div>
+            <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+              <div className="text-2xl font-bold text-orange-600 mb-1">
+                {Math.floor(templateCollection.templates.reduce((sum, t) => sum + (t.usageCount || 0), 0) / 1000)}K+
+              </div>
+              <div className="text-sm text-gray-600">Uses</div>
+            </div>
           </div>
         </div>
-      </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <div className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center">
+            <div className="w-1 h-3 bg-gray-400 rounded-full mt-2 animate-pulse"></div>
+          </div>
+        </div>
+      </section>
 
       {/* Featured Templates Section */}
       {!searchQuery && !filter.category && (
@@ -170,37 +214,7 @@ export default function TemplatesPage() {
         </div>
       </div>
 
-      {/* Stats Section */}
-      <div className="bg-white border-t border-gray-200 mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-3xl font-bold text-blue-600">
-                {templateCollection.totalCount}
-              </div>
-              <div className="text-gray-600 mt-1">Total Templates</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-green-600">
-                {templateCollection.categories.length}
-              </div>
-              <div className="text-gray-600 mt-1">Categories</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-purple-600">
-                {templateCollection.featuredTemplates.length}
-              </div>
-              <div className="text-gray-600 mt-1">Featured</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-orange-600">
-                {templateCollection.templates.reduce((sum, t) => sum + (t.usageCount || 0), 0).toLocaleString()}
-              </div>
-              <div className="text-gray-600 mt-1">Total Uses</div>
-            </div>
-          </div>
-        </div>
-      </div>
+
     </div>
     <Footer />
     </>

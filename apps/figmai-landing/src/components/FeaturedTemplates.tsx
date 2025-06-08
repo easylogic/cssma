@@ -11,23 +11,38 @@ export default function FeaturedTemplates() {
   }
 
   return (
-    <section>
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">
-          ⭐ Featured Templates
+    <section className="relative">
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-gradient-to-r from-yellow-50 via-orange-50 to-red-50 rounded-3xl opacity-30"></div>
+      
+      <div className="relative z-10 text-center mb-12">
+        {/* Featured Badge */}
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-400 text-white rounded-full mb-6 shadow-lg">
+          <span className="text-lg">⭐</span>
+          <span className="font-semibold">Featured Templates</span>
+          <span className="text-lg">✨</span>
+        </div>
+        
+        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          <span className="bg-gradient-to-r from-yellow-600 via-orange-600 to-red-600 bg-clip-text text-transparent">
+            Handpicked Excellence
+          </span>
         </h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Hand-picked templates that showcase the best of design and functionality. 
-          Perfect starting points for your next project.
+        <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          Curated templates that showcase the <strong>best of design and functionality</strong>. 
+          Perfect starting points for your next breakthrough project.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {featuredTemplates.map((template) => (
-          <TemplateCard 
-            key={template.id} 
-            template={template}
-          />
+      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {featuredTemplates.map((template, index) => (
+          <div 
+            key={template.id}
+            className="transform hover:scale-105 transition-all duration-300"
+            style={{ animationDelay: `${index * 100}ms` }}
+          >
+            <TemplateCard template={template} />
+          </div>
         ))}
       </div>
 
