@@ -41,6 +41,66 @@ A powerful Figma plugin that brings the cssma library directly into the Figma in
 - 🎨 **Design System Integration** - Work with Figma variables and components
 - 📤 **Code Export** - Export designs as clean Tailwind CSS code
 
+## 🚀 Development & Release
+
+### 📋 Release Management with Changesets
+
+This project uses [Changesets](https://github.com/changesets/changesets) for version management and automated releases.
+
+#### Creating a Changeset
+
+When you make changes that should be included in a release:
+
+```bash
+# Create a new changeset
+pnpm changeset
+
+# Check current changeset status
+pnpm changeset:status
+```
+
+#### Release Process
+
+```bash
+# 1. Version packages (updates package.json and CHANGELOG.md)
+pnpm changeset:version
+
+# 2. Build and publish packages
+pnpm release
+```
+
+#### Changeset Types
+
+- **patch** - Bug fixes and small improvements
+- **minor** - New features that don't break existing functionality
+- **major** - Breaking changes
+
+#### Automated Releases
+
+The project includes GitHub Actions workflow that automatically:
+- Creates release PRs when changesets are added
+- Publishes packages to NPM when release PRs are merged
+- Updates changelogs and version numbers
+
+### 🔧 Development Commands
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development mode
+pnpm dev
+
+# Build all packages
+pnpm build
+
+# Run tests
+pnpm test
+
+# Clean build artifacts
+pnpm clean
+```
+
 ## 📚 Documentation
 
 ### 📖 **Core Library**
@@ -109,6 +169,15 @@ We welcome contributions! Please check out:
 - **[Contributing Guide](./CONTRIBUTING.md)** - Guidelines for contributors
 - **[Issue Tracker](https://github.com/easylogic/figmaikr/issues)** - Bug reports and feature requests
 - **[Discussions](https://github.com/easylogic/figmaikr/discussions)** - Community discussions
+
+### Contributing Workflow
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add a changeset: `pnpm changeset`
+5. Commit your changes
+6. Create a pull request
 
 ## 📄 License
 
