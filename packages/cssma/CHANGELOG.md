@@ -1,5 +1,26 @@
 # cssma
 
+## 0.1.3
+
+### Patch Changes
+
+- a6a4a37: Add interactive tutorial system to figmai-landing
+
+  - Implement step-by-step learning system with 5 tutorial steps
+  - Add progress tracking and completion celebration
+  - Include visual preview and real-time CSS output
+  - Add hint system and example loading functionality
+  - Integrate tutorial navigation in header component
+  - Support basic to advanced Tailwind CSS concepts
+
+- 980bdfe: Update development workflow to use develop branch strategy
+
+  - Implement develop branch for changeset accumulation
+  - Update PR workflow to target develop instead of main
+  - Add release management process documentation
+  - Support multiple feature development before release
+  - Improve changeset collection and version management
+
 ## 0.1.2
 
 ### Patch Changes
