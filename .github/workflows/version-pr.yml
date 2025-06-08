@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - develop
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run on'
+        required: false
+        default: 'develop'
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -21,7 +27,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # Use PAT token for broader permissions
+          token: ${{ secrets.CHANGESET_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -61,7 +68,8 @@ jobs:
           setupGitUser: true
           createGithubReleases: false
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Use PAT token for broader permissions
+          GITHUB_TOKEN: ${{ secrets.CHANGESET_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: No changesets found
         if: steps.check-changesets.outputs.has_changesets == 'false'
