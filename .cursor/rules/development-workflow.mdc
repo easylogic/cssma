@@ -5,16 +5,16 @@ alwaysApply: false
 ---
 # Development Workflow and Automation Guide
 
-## PR-Based Development Workflow (Recommended)
+## PR-Based Development Workflow with Develop Branch (Recommended)
 
-### 1. Feature Development with PR-based Changeset
+### 1. Feature Development with Changeset Accumulation
 
 **Step-by-step workflow for each feature/fix:**
 
 ```bash
-# 1. Create feature branch from main
-git checkout main
-git pull origin main
+# 1. Create feature branch from develop
+git checkout develop
+git pull origin develop
 git checkout -b feature/your-feature-name
 
 # 2. Develop your feature
@@ -33,28 +33,32 @@ git commit -m "feat: add your feature
 - Implement feature X
 - Add changeset for version bump"
 
-# 5. Push branch and create PR
+# 5. Push branch and create PR to develop
 git push origin feature/your-feature-name
-# Create PR via GitHub UI or CLI
+# Create PR targeting develop branch (NOT main)
 ```
 
 ### 2. PR Review and Merge Process
 
 ```mermaid
 graph TD
-    A[Create feature branch] --> B[Develop feature]
+    A[Create feature branch from develop] --> B[Develop feature]
     B --> C[Create changeset]
     C --> D[Commit & push]
-    D --> E[Create PR]
+    D --> E[Create PR to develop]
     E --> F[Code review]
     F --> G{Review approved?}
     G -->|No| H[Address feedback]
     H --> F
-    G -->|Yes| I[Merge PR to main]
-    I --> J[GitHub Actions trigger]
-    J --> K[Auto-create Release PR]
-    K --> L[Review & merge Release PR]
-    L --> M[NPM deployment]
+    G -->|Yes| I[Merge PR to develop]
+    I --> J[Changeset accumulated in develop]
+    J --> K[Multiple features ready?]
+    K -->|No| L[Continue development]
+    L --> A
+    K -->|Yes| M[Create Release PR: develop → main]
+    M --> N[Review & merge Release PR]
+    N --> O[GitHub Actions trigger]
+    O --> P[NPM deployment]
 ```
 
 ### 3. Changeset Management per PR
@@ -93,24 +97,34 @@ Add live CSS preview system
 - Include error handling and loading states
 ```
 
-### 4. Multiple PRs Before Release
+### 4. Changeset Accumulation in Develop Branch
 
 **Scenario: Multiple features before next release**
 
 ```bash
-# PR #1: feature/live-preview
+# develop branch accumulates changesets:
+
+# PR #1: feature/live-preview → develop
 .changeset/brave-lions-dance.md (minor)
 
-# PR #2: fix/css-parser-bug  
+# PR #2: fix/css-parser-bug → develop  
 .changeset/tiny-cats-jump.md (patch)
 
-# PR #3: feature/new-converter
+# PR #3: feature/new-converter → develop
 .changeset/loud-dogs-sing.md (minor)
 
-# When all PRs are merged to main:
-# → GitHub Actions creates single Release PR
-# → Combines all changesets
+# develop branch now contains:
+.changeset/
+├── brave-lions-dance.md (minor)
+├── tiny-cats-jump.md (patch)
+├── loud-dogs-sing.md (minor)
+└── config.json
+
+# When ready for release:
+# → Create PR: develop → main
+# → GitHub Actions processes all changesets
 # → Calculates final version (0.1.0 → 0.2.0)
+# → NPM deployment
 ```
 
 ### 5. Branch Protection Rules (Recommended)
@@ -138,45 +152,71 @@ protection_rules:
 
 PR template is available at `.github/pull_request_template.md` with comprehensive checklist including changeset requirements.
 
-### 7. Real-world Example Workflow
+### 7. Release Management Process
 
-**Example: Adding a new CSS converter feature**
+**When to create a release:**
 
 ```bash
-# 1. Create feature branch
-git checkout main
-git pull origin main
-git checkout -b feature/add-grid-converter
+# Check accumulated changesets in develop
+pnpm changeset:status
 
-# 2. Implement the feature
-# ... develop grid converter functionality ...
+# Review what will be released
+git log main..develop --oneline
 
-# 3. Create changeset
-pnpm changeset
-# ✔ Which packages would you like to include? › cssma
-# ✔ Which type of change is this for cssma? › minor
-# ✔ Please enter a summary for this change: › Add CSS Grid converter support
-
-# 4. Commit with changeset
-git add .
-git commit -m "feat: add CSS Grid converter support
-
-- Implement grid-template-columns/rows parsing
-- Add grid-area support
-- Include comprehensive test coverage
-- Add changeset for minor version bump"
-
-# 5. Push and create PR
-git push origin feature/add-grid-converter
-# Create PR via GitHub UI
-
-# 6. After PR review and merge to main:
-# → GitHub Actions automatically creates Release PR
-# → Review and merge Release PR
-# → Automatic NPM deployment
+# Create release PR when ready
+# 1. Create PR: develop → main
+# 2. Title: "Release v0.x.x"
+# 3. Review all accumulated changes
+# 4. Merge to trigger deployment
 ```
 
-**Result**: Version bump from `0.1.0` → `0.2.0` with automated deployment.
+### 8. Real-world Example Workflow
+
+**Example: Adding multiple features before release**
+
+```bash
+# Feature 1: CSS Grid converter
+git checkout develop
+git pull origin develop
+git checkout -b feature/add-grid-converter
+# ... develop feature ...
+pnpm changeset # minor
+git commit -m "feat: add CSS Grid converter support"
+git push origin feature/add-grid-converter
+# Create PR to develop → merge
+
+# Feature 2: Bug fix
+git checkout develop
+git pull origin develop
+git checkout -b fix/parser-edge-case
+# ... fix bug ...
+pnpm changeset # patch
+git commit -m "fix: handle edge case in CSS parser"
+git push origin fix/parser-edge-case
+# Create PR to develop → merge
+
+# Feature 3: New component
+git checkout develop
+git pull origin develop
+git checkout -b feature/new-component-type
+# ... develop feature ...
+pnpm changeset # minor
+git commit -m "feat: add new component type support"
+git push origin feature/new-component-type
+# Create PR to develop → merge
+
+# Ready for release
+git checkout develop
+pnpm changeset:status
+# Shows: 2 minor + 1 patch = minor release (0.1.0 → 0.2.0)
+
+# Create release PR
+# develop → main
+# Title: "Release v0.2.0"
+# Merge → triggers GitHub Actions → NPM deployment
+```
+
+**Result**: Single release with multiple features, version bump from `0.1.0` → `0.2.0`.
 
 ## GitHub Actions Workflows
 
@@ -356,11 +396,21 @@ MAJOR.MINOR.PATCH
 ### 2. Branch Strategy
 
 ```
-main                 # Stable version, auto-deploy
-├── feature/xxx      # New feature development
-├── fix/xxx          # Bug fixes
-└── changeset-release/main  # Auto-generated release branch
+main                 # Stable version, production releases only
+├── develop          # Integration branch, changeset accumulation
+│   ├── feature/xxx  # New feature development
+│   ├── fix/xxx      # Bug fixes
+│   └── hotfix/xxx   # Critical fixes
+└── release/xxx      # Release preparation (optional)
 ```
+
+#### Branch Purposes
+
+- **main**: Production-ready code, only receives merges from develop
+- **develop**: Integration branch where all features are merged and changesets accumulate
+- **feature/**: New feature development, merged to develop
+- **fix/**: Bug fixes, merged to develop
+- **hotfix/**: Critical production fixes, can be merged directly to main if urgent
 
 ### 3. Tag Management
 
