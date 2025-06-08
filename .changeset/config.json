@@ -8,7 +8,12 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": ["figmai-landing", "cssma-plugin"],
+  "snapshot": {
+    "useCalculatedVersion": true,
+    "prereleaseTemplate": null
+  },
   "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
-    "onlyUpdatePeerDependentsWhenOutOfRange": true
+    "onlyUpdatePeerDependentsWhenOutOfRange": true,
+    "useCalculatedVersionForSnapshots": true
   }
 }
