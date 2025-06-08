@@ -101,7 +101,7 @@ export default function TemplateCard({ template }: TemplateCardProps) {
         </div>
 
         {/* Overlay Actions */}
-        <div className="absolute top-2 right-2 flex space-x-2">
+        <div className="absolute top-2 right-2 flex space-x-2" suppressHydrationWarning>
           <button
             onClick={() => setShowPreview(!showPreview)}
             className="p-2 bg-white rounded-full shadow-sm hover:shadow-md transition-shadow"
@@ -180,7 +180,7 @@ export default function TemplateCard({ template }: TemplateCardProps) {
         </div>
 
         {/* Actions */}
-        <div className="flex space-x-2">
+        <div className="flex space-x-2" suppressHydrationWarning>
           <button
             onClick={handleCopyTailwind}
             className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium flex items-center justify-center space-x-2"
@@ -206,15 +206,12 @@ export default function TemplateCard({ template }: TemplateCardProps) {
           </button>
         </div>
 
-        {/* Code Preview (when expanded) */}
+        {/* Code Preview */}
         {showPreview && (
-          <div className="mt-4 border-t border-gray-200 pt-4">
-            <div className="bg-gray-900 rounded-lg p-4 text-sm">
-              <div className="text-gray-400 mb-2">Tailwind CSS:</div>
-              <code className="text-green-400 break-all">
-                {template.tailwindClasses}
-              </code>
-            </div>
+          <div className="mt-4 p-4 bg-gray-900 rounded-lg overflow-x-auto">
+            <pre className="text-sm text-gray-300">
+              <code>{template.tailwindClasses}</code>
+            </pre>
           </div>
         )}
       </div>
