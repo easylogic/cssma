@@ -1,5 +1,323 @@
 ---
-description:
-globs:
+description: 개발 워크플로우 및 자동화 가이드, GitHub Actions 워크플로우
+globs: 
 alwaysApply: false
 ---
+# 개발 워크플로우 및 자동화 가이드
+
+## GitHub Actions 워크플로우
+
+### 1. 릴리즈 자동화 ([.github/workflows/release.yml](mdc:.github/workflows/release.yml))
+
+완전 자동화된 패키지 배포 시스템:
+
+```yaml
+# 트리거: main 브랜치 푸시
+on:
+  push:
+    branches: [main]
+
+# 주요 단계:
+# 1. 의존성 설치 (pnpm v9)
+# 2. 패키지 빌드
+# 3. Changeset 처리
+# 4. NPM 배포
+# 5. GitHub 릴리즈 생성
+```
+
+#### 필수 시크릿
+
+- `NPM_TOKEN`: NPM 배포용 토큰 (Automation 타입)
+- `GITHUB_TOKEN`: 자동 제공 (PR 생성, 릴리즈 생성용)
+
+#### 권한 설정
+
+```yaml
+permissions:
+  contents: write      # Git 태그 생성
+  pull-requests: write # Release PR 생성
+  issues: write        # 이슈 관리
+```
+
+### 2. 워크플로우 실행 과정
+
+```mermaid
+graph TD
+    A[main 브랜치 푸시] --> B[GitHub Actions 트리거]
+    B --> C[의존성 설치]
+    C --> D[패키지 빌드]
+    D --> E[Changeset 확인]
+    E --> F{Changeset 존재?}
+    F -->|Yes| G[Release PR 생성]
+    F -->|No| H[워크플로우 종료]
+    G --> I[PR 머지 대기]
+    I --> J[PR 머지됨]
+    J --> K[NPM 배포]
+    K --> L[GitHub 릴리즈 생성]
+    K --> M[Git 태그 생성]
+```
+
+## Changeset 관리
+
+### 1. 설정 파일 ([.changeset/config.json](mdc:.changeset/config.json))
+
+```json
+{
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": ["figmai-landing", "cssma-plugin"],
+  "snapshot": {
+    "useCalculatedVersion": true
+  }
+}
+```
+
+#### 주요 설정 설명
+
+- `ignore`: 배포하지 않을 패키지 (private 패키지)
+- `updateInternalDependencies`: 내부 의존성 업데이트 방식
+- `snapshot`: 스냅샷 버전 계산 방식
+
+### 2. Changeset 생성 가이드
+
+```bash
+# 대화형 changeset 생성
+pnpm changeset
+
+# 선택 과정:
+# 1. 변경된 패키지 선택 (cssma)
+# 2. 변경 타입 선택 (patch/minor/major)
+# 3. 변경 내용 요약 작성
+# 4. 확인 및 생성
+```
+
+#### 변경 타입 기준
+
+| 타입 | 사용 시기 | 예시 |
+|------|-----------|------|
+| **patch** | 버그 수정, 문서 업데이트 | 0.1.1 → 0.1.2 |
+| **minor** | 새 기능 추가 | 0.1.1 → 0.2.0 |
+| **major** | 호환성 깨는 변경 | 0.1.1 → 1.0.0 |
+
+### 3. Changeset 파일 구조
+
+```markdown
+---
+"cssma": patch
+---
+
+실시간 CSS 미리보기 시스템 추가
+
+- LivePreview 컴포넌트 구현
+- 300ms 디바운싱 적용
+- 에러 처리 및 로딩 상태 추가
+```
+
+## 패키지 관리
+
+### 1. 모노레포 구조
+
+```
+packages/
+  cssma/           # 핵심 라이브러리 (배포됨)
+apps/
+  cssma-plugin/    # Figma 플러그인 (배포 안됨)
+  figmai-landing/  # 랜딩 페이지 (배포 안됨)
+```
+
+### 2. 의존성 관리
+
+#### 루트 package.json 스크립트
+
+```json
+{
+  "scripts": {
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "changeset:publish": "changeset publish",
+    "changeset:status": "changeset status",
+    "release": "pnpm build && pnpm changeset:publish",
+    "build": "pnpm --filter cssma build",
+    "build:all": "pnpm -r build"
+  }
+}
+```
+
+#### pnpm 워크스페이스 설정
+
+```yaml
+# pnpm-workspace.yaml
+packages:
+  - 'packages/*'
+  - 'apps/*'
+```
+
+### 3. 빌드 최적화
+
+```bash
+# 특정 패키지만 빌드 (배포용)
+pnpm --filter cssma build
+
+# 전체 빌드 (개발용)
+pnpm build:all
+
+# 병렬 빌드
+pnpm -r --parallel build
+```
+
+## 버전 관리 전략
+
+### 1. 시맨틱 버저닝
+
+```
+MAJOR.MINOR.PATCH
+  |     |     |
+  |     |     └─ 버그 수정
+  |     └─ 새 기능 (하위 호환)
+  └─ 호환성 깨는 변경
+```
+
+### 2. 브랜치 전략
+
+```
+main                 # 안정 버전, 자동 배포
+├── feature/xxx      # 새 기능 개발
+├── fix/xxx          # 버그 수정
+└── changeset-release/main  # 자동 생성되는 릴리즈 브랜치
+```
+
+### 3. 태그 관리
+
+```bash
+# 자동 생성되는 태그 형식
+v0.1.0, v0.1.1, v0.1.2, ...
+
+# 태그 확인
+git tag -l
+
+# 특정 태그로 체크아웃
+git checkout v0.1.2
+```
+
+## 자동화 트러블슈팅
+
+### 1. GitHub Actions 실패 원인
+
+#### NPM 배포 실패
+```bash
+# 원인: NPM_TOKEN 만료 또는 잘못된 설정
+# 해결: NPM에서 새 토큰 생성 후 GitHub Secrets 업데이트
+```
+
+#### PR 생성 실패
+```bash
+# 원인: GitHub Actions 권한 부족
+# 해결: 수동 PR 생성 또는 PAT 사용
+```
+
+#### 빌드 실패
+```bash
+# 원인: pnpm 버전 불일치
+# 해결: GitHub Actions에서 pnpm v9 사용 확인
+```
+
+### 2. 일반적인 해결 방법
+
+```bash
+# 1. 로컬에서 빌드 테스트
+pnpm install --no-frozen-lockfile
+pnpm build
+
+# 2. Changeset 상태 확인
+pnpm changeset:status
+
+# 3. 수동 버전 업데이트 (테스트용)
+pnpm changeset:version
+
+# 4. 의존성 캐시 클리어
+pnpm store prune
+```
+
+### 3. 모니터링 및 알림
+
+#### GitHub Actions 상태 확인
+- Actions 탭에서 워크플로우 실행 상태 모니터링
+- 실패 시 이메일 알림 자동 발송
+
+#### NPM 패키지 상태
+```bash
+# 최신 버전 확인
+npm view cssma version
+
+# 배포 히스토리
+npm view cssma versions --json
+```
+
+## 개발 환경 설정
+
+### 1. 로컬 개발 환경
+
+```bash
+# 1. 저장소 클론
+git clone https://github.com/easylogic/cssma.git
+cd cssma
+
+# 2. 의존성 설치
+pnpm install
+
+# 3. 개발 서버 실행
+pnpm dev
+
+# 4. 테스트 실행
+pnpm test
+```
+
+### 2. 환경 변수
+
+```bash
+# .env.local (로컬 개발용)
+NODE_ENV=development
+FIGMA_ACCESS_TOKEN=your_token_here
+
+# GitHub Secrets (배포용)
+NPM_TOKEN=npm_xxx
+GITHUB_TOKEN=ghp_xxx (자동 제공)
+```
+
+### 3. IDE 설정
+
+#### VSCode 권장 확장
+
+```json
+{
+  "recommendations": [
+    "ms-vscode.vscode-typescript-next",
+    "bradlc.vscode-tailwindcss",
+    "esbenp.prettier-vscode",
+    "ms-playwright.playwright"
+  ]
+}
+```
+
+## 성능 모니터링
+
+### 1. 빌드 성능
+
+```bash
+# 빌드 시간 측정
+time pnpm build
+
+# 번들 크기 분석
+pnpm build --analyze
+```
+
+### 2. 배포 성능
+
+- GitHub Actions 실행 시간 모니터링
+- NPM 배포 성공률 추적
+- 의존성 설치 시간 최적화
+
+이 가이드를 통해 안정적이고 효율적인 개발 워크플로우를 유지하세요.

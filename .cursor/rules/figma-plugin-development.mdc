@@ -1,5 +1,381 @@
 ---
-description:
-globs:
+description: Figma 플러그인 개발 가이드
+globs: 
 alwaysApply: false
 ---
+# Figma 플러그인 개발 가이드
+
+## 플러그인 구조
+
+### 1. 핵심 파일 구조
+
+```
+apps/cssma-plugin/
+├── src/
+│   ├── components/
+│   │   ├── CssConverter.tsx      # 메인 CSS 변환 컴포넌트
+│   │   ├── LivePreview.tsx       # 실시간 미리보기 시스템
+│   │   └── ui/                   # UI 컴포넌트들
+│   ├── hooks/
+│   │   └── useLocalStorage.ts    # 로컬 스토리지 훅
+│   ├── lib/
+│   │   └── figma-utils.ts        # Figma API 유틸리티
+│   ├── styles/
+│   │   └── globals.css           # 전역 스타일
+│   ├── code.ts                   # Figma 플러그인 백엔드
+│   └── ui.html                   # 플러그인 UI 진입점
+├── manifest.json                 # 플러그인 매니페스트
+└── package.json
+```
+
+### 2. 매니페스트 설정
+
+```json
+{
+  "name": "cssma",
+  "id": "your-plugin-id",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "dist/ui.html",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  }
+}
+```
+
+## 실시간 미리보기 시스템
+
+### 1. LivePreview 컴포넌트 ([apps/cssma-plugin/src/components/LivePreview.tsx](mdc:apps/cssma-plugin/src/components/LivePreview.tsx))
+
+실시간 CSS 미리보기 기능의 핵심 컴포넌트:
+
+```typescript
+interface LivePreviewProps {
+  cssInput: string;
+  isEnabled: boolean;
+  onToggle: (enabled: boolean) => void;
+}
+
+// 주요 기능:
+// - 300ms 디바운싱으로 성능 최적화
+// - 에러 처리 및 사용자 친화적 메시지
+// - 스타일 인스펙터로 적용된 스타일 표시
+// - 로컬 스토리지를 통한 설정 저장
+```
+
+#### 핵심 기능
+
+1. **디바운싱 최적화**
+```typescript
+const debouncedCssInput = useDebounce(cssInput, 300);
+```
+
+2. **에러 처리**
+```typescript
+try {
+  const styles = processCssStyles(cssInput);
+  setProcessedStyles(styles);
+  setError(null);
+} catch (err) {
+  setError('CSS 처리 중 오류가 발생했습니다.');
+}
+```
+
+3. **스타일 인스펙터**
+```typescript
+const getAppliedStyles = (styles: any) => {
+  return Object.entries(styles)
+    .filter(([_, value]) => value !== undefined)
+    .map(([key, value]) => ({ property: key, value }));
+};
+```
+
+### 2. CSS 변환기 통합 ([apps/cssma-plugin/src/components/CssConverter.tsx](mdc:apps/cssma-plugin/src/components/CssConverter.tsx))
+
+```typescript
+// LivePreview 컴포넌트 통합
+<LivePreview
+  cssInput={cssInput}
+  isEnabled={isLivePreviewEnabled}
+  onToggle={setIsLivePreviewEnabled}
+/>
+```
+
+### 3. 로컬 스토리지 훅 ([apps/cssma-plugin/src/hooks/useLocalStorage.ts](mdc:apps/cssma-plugin/src/hooks/useLocalStorage.ts))
+
+사용자 설정 영속화:
+
+```typescript
+export function useLocalStorage<T>(
+  key: string,
+  initialValue: T
+): [T, (value: T | ((val: T) => T)) => void] {
+  // 초기값 로드
+  // 값 업데이트 및 저장
+  // 타입 안전성 보장
+}
+```
+
+## Figma API 활용
+
+### 1. 노드 조작
+
+```typescript
+// 선택된 노드 가져오기
+const selection = figma.currentPage.selection;
+
+// 새 노드 생성
+const frame = figma.createFrame();
+frame.name = "Generated Frame";
+
+// 스타일 적용
+frame.layoutMode = "VERTICAL";
+frame.fills = [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }];
+```
+
+### 2. 메시지 통신
+
+#### UI → Plugin (code.ts)
+```typescript
+// UI에서 플러그인으로 메시지 전송
+parent.postMessage({
+  pluginMessage: {
+    type: 'apply-styles',
+    styles: processedStyles
+  }
+}, '*');
+```
+
+#### Plugin → UI
+```typescript
+// 플러그인에서 UI로 메시지 전송
+figma.ui.postMessage({
+  type: 'selection-changed',
+  selection: figma.currentPage.selection.length
+});
+```
+
+### 3. 스타일 적용 패턴
+
+```typescript
+// 안전한 스타일 적용
+function applyStyles(node: SceneNode, styles: any) {
+  try {
+    // 레이아웃 속성
+    if ('layoutMode' in node && styles.layoutMode) {
+      node.layoutMode = styles.layoutMode;
+    }
+    
+    // 채우기 속성
+    if ('fills' in node && styles.fills) {
+      node.fills = styles.fills;
+    }
+    
+    // 크기 속성
+    if (styles.width) node.resize(styles.width, node.height);
+    if (styles.height) node.resize(node.width, styles.height);
+    
+  } catch (error) {
+    console.error('스타일 적용 실패:', error);
+  }
+}
+```
+
+## 성능 최적화
+
+### 1. 디바운싱 전략
+
+```typescript
+// 사용자 입력에 대한 300ms 디바운싱
+const useDebounce = (value: string, delay: number) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+    
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+  
+  return debouncedValue;
+};
+```
+
+### 2. 메모이제이션
+
+```typescript
+// 스타일 처리 결과 캐싱
+const processedStyles = useMemo(() => {
+  if (!debouncedCssInput.trim()) return null;
+  
+  try {
+    return processCssStyles(debouncedCssInput);
+  } catch {
+    return null;
+  }
+}, [debouncedCssInput]);
+```
+
+### 3. 조건부 렌더링
+
+```typescript
+// 필요한 경우에만 컴포넌트 렌더링
+{isEnabled && processedStyles && (
+  <StyleInspector styles={processedStyles} />
+)}
+```
+
+## 에러 처리 및 사용자 경험
+
+### 1. 에러 상태 관리
+
+```typescript
+interface ErrorState {
+  message: string;
+  type: 'warning' | 'error';
+  details?: string;
+}
+
+// 사용자 친화적 에러 메시지
+const getErrorMessage = (error: unknown): string => {
+  if (error instanceof SyntaxError) {
+    return 'CSS 문법 오류가 있습니다. 입력을 확인해주세요.';
+  }
+  return '처리 중 오류가 발생했습니다.';
+};
+```
+
+### 2. 로딩 상태
+
+```typescript
+// 로딩 인디케이터
+{isLoading && (
+  <div className="flex items-center gap-2">
+    <Spinner size="sm" />
+    <span>스타일 처리 중...</span>
+  </div>
+)}
+```
+
+### 3. 빈 상태 처리
+
+```typescript
+// 빈 입력에 대한 안내
+{!cssInput.trim() && (
+  <div className="text-gray-500 text-center py-4">
+    Tailwind CSS 클래스를 입력해주세요
+  </div>
+)}
+```
+
+## 테스트 전략
+
+### 1. 컴포넌트 테스트
+
+```typescript
+// LivePreview 컴포넌트 테스트
+describe('LivePreview', () => {
+  it('should debounce CSS input', async () => {
+    const { rerender } = render(
+      <LivePreview cssInput="flex" isEnabled={true} onToggle={jest.fn()} />
+    );
+    
+    // 디바운싱 테스트 로직
+  });
+  
+  it('should handle CSS errors gracefully', () => {
+    // 에러 처리 테스트
+  });
+});
+```
+
+### 2. 통합 테스트
+
+```typescript
+// Figma API 모킹
+const mockFigma = {
+  createFrame: jest.fn(),
+  currentPage: {
+    selection: []
+  }
+};
+
+global.figma = mockFigma;
+```
+
+## 배포 및 빌드
+
+### 1. 빌드 설정
+
+```json
+{
+  "scripts": {
+    "build": "webpack --mode=production",
+    "dev": "webpack --mode=development --watch",
+    "type-check": "tsc --noEmit"
+  }
+}
+```
+
+### 2. Webpack 설정
+
+```javascript
+// webpack.config.js
+module.exports = {
+  entry: {
+    ui: './src/ui.tsx',
+    code: './src/code.ts'
+  },
+  output: {
+    filename: '[name].js',
+    path: path.resolve(__dirname, 'dist')
+  }
+};
+```
+
+### 3. 플러그인 배포
+
+1. **빌드 실행**: `pnpm build`
+2. **매니페스트 확인**: `manifest.json` 설정 검증
+3. **Figma 개발자 콘솔**: 플러그인 업로드
+4. **테스트**: 다양한 시나리오에서 동작 확인
+
+## 디버깅 가이드
+
+### 1. 개발자 도구 활용
+
+```typescript
+// 콘솔 로깅
+console.log('Current selection:', figma.currentPage.selection);
+
+// 에러 추적
+try {
+  // 위험한 작업
+} catch (error) {
+  console.error('Error details:', error);
+  figma.notify('오류가 발생했습니다: ' + error.message);
+}
+```
+
+### 2. 일반적인 문제 해결
+
+#### 플러그인이 로드되지 않는 경우
+- `manifest.json` 경로 확인
+- 빌드 출력 파일 존재 여부 확인
+- Figma 개발자 모드 활성화
+
+#### 스타일이 적용되지 않는 경우
+- 노드 타입 호환성 확인
+- 권한 및 잠금 상태 확인
+- CSS 파싱 오류 확인
+
+#### 성능 문제
+- 디바운싱 시간 조정 (현재 300ms)
+- 불필요한 리렌더링 방지
+- 메모이제이션 적용
+
+이 가이드를 통해 효율적이고 사용자 친화적인 Figma 플러그인을 개발하세요.
