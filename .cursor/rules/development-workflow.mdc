@@ -5,6 +5,179 @@ alwaysApply: false
 ---
 # Development Workflow and Automation Guide
 
+## PR-Based Development Workflow (Recommended)
+
+### 1. Feature Development with PR-based Changeset
+
+**Step-by-step workflow for each feature/fix:**
+
+```bash
+# 1. Create feature branch from main
+git checkout main
+git pull origin main
+git checkout -b feature/your-feature-name
+
+# 2. Develop your feature
+# ... make code changes ...
+
+# 3. Create changeset for your changes
+pnpm changeset
+# Select packages: cssma
+# Select change type: patch/minor/major
+# Write clear description of changes
+
+# 4. Commit changes including changeset
+git add .
+git commit -m "feat: add your feature
+
+- Implement feature X
+- Add changeset for version bump"
+
+# 5. Push branch and create PR
+git push origin feature/your-feature-name
+# Create PR via GitHub UI or CLI
+```
+
+### 2. PR Review and Merge Process
+
+```mermaid
+graph TD
+    A[Create feature branch] --> B[Develop feature]
+    B --> C[Create changeset]
+    C --> D[Commit & push]
+    D --> E[Create PR]
+    E --> F[Code review]
+    F --> G{Review approved?}
+    G -->|No| H[Address feedback]
+    H --> F
+    G -->|Yes| I[Merge PR to main]
+    I --> J[GitHub Actions trigger]
+    J --> K[Auto-create Release PR]
+    K --> L[Review & merge Release PR]
+    L --> M[NPM deployment]
+```
+
+### 3. Changeset Management per PR
+
+#### Individual PR Changeset Strategy
+
+Each PR should include its own changeset file:
+
+```bash
+# Example: feature/live-preview PR
+.changeset/
+├── brave-lions-dance.md    # Live preview feature
+└── config.json
+
+# Example: fix/css-parser PR  
+.changeset/
+├── brave-lions-dance.md    # Previous feature
+├── tiny-cats-jump.md       # CSS parser fix
+└── config.json
+```
+
+#### Changeset Naming Convention
+
+```bash
+# Changeset files are auto-generated with random names
+# Content is what matters:
+
+---
+"cssma": minor
+---
+
+Add live CSS preview system
+
+- Implement real-time preview component
+- Add debounced updates (300ms)
+- Include error handling and loading states
+```
+
+### 4. Multiple PRs Before Release
+
+**Scenario: Multiple features before next release**
+
+```bash
+# PR #1: feature/live-preview
+.changeset/brave-lions-dance.md (minor)
+
+# PR #2: fix/css-parser-bug  
+.changeset/tiny-cats-jump.md (patch)
+
+# PR #3: feature/new-converter
+.changeset/loud-dogs-sing.md (minor)
+
+# When all PRs are merged to main:
+# → GitHub Actions creates single Release PR
+# → Combines all changesets
+# → Calculates final version (0.1.0 → 0.2.0)
+```
+
+### 5. Branch Protection Rules (Recommended)
+
+Set up branch protection for main branch:
+
+```yaml
+# GitHub Settings → Branches → main
+protection_rules:
+  require_pull_request_reviews: true
+  required_approving_review_count: 1
+  dismiss_stale_reviews: true
+  require_code_owner_reviews: false
+  require_status_checks: true
+  required_status_checks:
+    - "build"
+    - "test"
+    - "type-check"
+  enforce_admins: false
+  allow_force_pushes: false
+  allow_deletions: false
+```
+
+### 6. PR Template with Changeset Checklist
+
+PR template is available at `.github/pull_request_template.md` with comprehensive checklist including changeset requirements.
+
+### 7. Real-world Example Workflow
+
+**Example: Adding a new CSS converter feature**
+
+```bash
+# 1. Create feature branch
+git checkout main
+git pull origin main
+git checkout -b feature/add-grid-converter
+
+# 2. Implement the feature
+# ... develop grid converter functionality ...
+
+# 3. Create changeset
+pnpm changeset
+# ✔ Which packages would you like to include? › cssma
+# ✔ Which type of change is this for cssma? › minor
+# ✔ Please enter a summary for this change: › Add CSS Grid converter support
+
+# 4. Commit with changeset
+git add .
+git commit -m "feat: add CSS Grid converter support
+
+- Implement grid-template-columns/rows parsing
+- Add grid-area support
+- Include comprehensive test coverage
+- Add changeset for minor version bump"
+
+# 5. Push and create PR
+git push origin feature/add-grid-converter
+# Create PR via GitHub UI
+
+# 6. After PR review and merge to main:
+# → GitHub Actions automatically creates Release PR
+# → Review and merge Release PR
+# → Automatic NPM deployment
+```
+
+**Result**: Version bump from `0.1.0` → `0.2.0` with automated deployment.
+
 ## GitHub Actions Workflows
 
 ### 1. Release Automation ([.github/workflows/release.yml](mdc:.github/workflows/release.yml))
