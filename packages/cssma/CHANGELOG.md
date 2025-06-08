@@ -13,7 +13,7 @@
   - Integrate tutorial navigation in header component
   - Support basic to advanced Tailwind CSS concepts
 
-- 10fc3c7: Update development workflow to use develop branch strategy
+- 980bdfe: Update development workflow to use develop branch strategy
 
   - Implement develop branch for changeset accumulation
   - Update PR workflow to target develop instead of main
