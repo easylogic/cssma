@@ -46,6 +46,27 @@ export function useTemplates(params: UseTemplatesParams = {}) {
         searchParams.set('tags', params.filter.tags.join(','));
       }
       
+      if (params.filter?.rating) {
+        searchParams.set('rating', params.filter.rating.toString());
+      }
+      
+      if (params.filter?.featured) {
+        searchParams.set('featured', 'true');
+      }
+      
+      if (params.filter?.favorites) {
+        searchParams.set('favorites', 'true');
+      }
+      
+      if (params.filter?.usageRange) {
+        if (params.filter.usageRange.min) {
+          searchParams.set('usageMin', params.filter.usageRange.min.toString());
+        }
+        if (params.filter.usageRange.max) {
+          searchParams.set('usageMax', params.filter.usageRange.max.toString());
+        }
+      }
+      
       if (params.searchQuery) {
         searchParams.set('search', params.searchQuery);
       }
@@ -75,7 +96,20 @@ export function useTemplates(params: UseTemplatesParams = {}) {
     } finally {
       setLoading(false);
     }
-  }, [params.filter, params.searchQuery, params.page, params.limit, params.sortBy]);
+  }, [
+    params.filter?.category,
+    params.filter?.complexity,
+    params.filter?.tags?.join(','),
+    params.filter?.rating,
+    params.filter?.featured,
+    params.filter?.favorites,
+    params.filter?.usageRange?.min,
+    params.filter?.usageRange?.max,
+    params.searchQuery,
+    params.page,
+    params.limit,
+    params.sortBy
+  ]);
 
   useEffect(() => {
     fetchTemplates();
@@ -95,8 +129,10 @@ export function useTemplates(params: UseTemplatesParams = {}) {
 }
 
 export function useFeaturedTemplates() {
+  const [featuredFilter] = useState({ featured: true });
+  
   return useTemplates({
-    filter: { featured: true },
+    filter: featuredFilter,
     limit: 6
   });
 }
