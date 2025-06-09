@@ -7,9 +7,10 @@ import { useCategories } from '@/hooks/useCategories';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import TemplateCard from '@/components/TemplateCard';
-import TemplateFilters from '@/components/TemplateFilters';
-import TemplateSearch from '@/components/TemplateSearch';
+import TemplateFilterPanel from '@/components/TemplateFilterPanel';
+import TemplateSearchWithHistory from '@/components/TemplateSearchWithHistory';
 import FeaturedTemplates from '@/components/FeaturedTemplates';
+import { useSearchHistory } from '@/hooks/useSearchHistory';
 
 export default function TemplatesPage() {
   const [filter, setFilter] = useState<TemplateFilter>({});
@@ -28,6 +29,9 @@ export default function TemplatesPage() {
 
   // Fetch categories
   const { categories } = useCategories();
+  
+  // Search history
+  const { addToHistory } = useSearchHistory();
 
   const handleFilterChange = (newFilter: Partial<TemplateFilter>) => {
     setFilter(prev => ({ ...prev, ...newFilter }));
@@ -47,6 +51,12 @@ export default function TemplatesPage() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    addToHistory(query, pagination?.totalCount);
+    setCurrentPage(1);
   };
 
   return (
@@ -141,14 +151,15 @@ export default function TemplatesPage() {
                 )}
               </div>
               
-              <TemplateSearch 
+              <TemplateSearchWithHistory 
                 value={searchQuery}
                 onChange={setSearchQuery}
+                onSearch={handleSearch}
                 placeholder="Search templates..."
               />
               
               <div className="mt-6">
-                <TemplateFilters 
+                <TemplateFilterPanel 
                   filter={filter}
                   onChange={handleFilterChange}
                   categories={categories}
@@ -198,7 +209,7 @@ export default function TemplatesPage() {
               </div>
             ) : templates.length > 0 ? (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {templates.map((template) => (
                     <TemplateCard 
                       key={template.id} 
