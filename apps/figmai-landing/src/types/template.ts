@@ -16,6 +16,18 @@ export interface Template {
   };
   usageCount?: number;
   featured?: boolean;
+  rating?: {
+    average: number;
+    count: number;
+    distribution: {
+      1: number;
+      2: number;
+      3: number;
+      4: number;
+      5: number;
+    };
+  };
+  reviews?: TemplateReview[];
 }
 
 export interface TemplateCategory {
@@ -81,6 +93,25 @@ export interface TemplateFilter {
   tags?: string[];
   complexity?: string;
   search?: string;
+  rating?: number; // Minimum rating filter
+  featured?: boolean;
+  favorites?: boolean;
+  usageRange?: {
+    min?: number;
+    max?: number;
+  };
+}
+
+export interface TemplateReview {
+  id: string;
+  templateId: string;
+  userId: string;
+  userName: string;
+  userAvatar?: string;
+  rating: number;
+  comment?: string;
+  createdAt: string;
+  helpful?: number;
 }
 
 export interface TemplateCollection {
