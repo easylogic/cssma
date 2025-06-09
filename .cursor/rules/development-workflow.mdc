@@ -3,488 +3,793 @@ description: 개발 워크플로우 및 자동화 가이드, GitHub Actions 워�
 globs: 
 alwaysApply: false
 ---
-# Development Workflow and Automation Guide
+# FigmaikR Development Workflow Guide
 
-## 🔄 Complete Development Flow Overview
+## 🎯 Complete Development Lifecycle
 
-### Current Proven Workflow (Updated 2024)
+### 📋 Workflow Overview
 
 ```mermaid
 graph TD
-    A[Feature 개발] --> B[develop 브랜치에 PR]
-    B --> C[PR 머지 to develop]
-    C --> D[Changeset 누적]
-    D --> E{릴리즈 준비?}
-    E -->|Yes| F[Version PR 자동 생성]
-    E -->|No| A
-    F --> G[Version PR 머지 to develop]
-    G --> H[develop → main PR 생성]
-    H --> I[main 브랜치 머지]
-    I --> J[자동 NPM 배포]
-    J --> K[GitHub Release 생성]
+    A[Create Issue] --> B[Create Feature Branch]
+    B --> C[Feature Development]
+    C --> D[Add Changeset]
+    D --> E[Feature PR → develop]
+    E --> F[Close Feature Issue]
+    F --> G[Create Release Issue]
+    G --> H[Auto-generate Version PR]
+    H --> I[Merge Version PR → develop]
+    I --> J[Create develop → main PR]
+    J --> K[Link Release Issue]
+    K --> L[Merge to main branch]
+    L --> M[Auto NPM Deployment]
 ```
 
-## 🛠️ Step-by-Step Development Process
+## 🚀 Step-by-Step Development Process
 
-### 1️⃣ Feature Development with Changeset
+### 1️⃣ Issue Creation and Management
 
-**Complete workflow for each feature/fix:**
+**GitHub Issue Creation Guide:**
+
+```bash
+# Use issue templates
+# 1. GitHub → Issues → New Issue
+# 2. Select appropriate template:
+#    - Feature Request
+#    - Bug Report  
+#    - Enhancement
+#    - Documentation
+
+# Include required information:
+# - Clear title
+# - Detailed description
+# - Label assignment (feature, bug, enhancement, docs)
+# - Assignee designation (@username)
+# - Milestone setting (if applicable)
+# - Project board connection
+```
+
+**Issue Labeling System:**
+
+| Label | Purpose | Example |
+|-------|---------|---------|
+| `feature` | New functionality | Add CSS Grid support |
+| `bug` | Bug fixes | Parser error fix |
+| `enhancement` | Existing feature improvement | Performance optimization |
+| `docs` | Documentation work | API documentation update |
+| `breaking` | Breaking changes | API structure changes |
+| `priority:high` | High priority | Security issues |
+| `priority:low` | Low priority | Code cleanup |
+
+### 2️⃣ Feature Development Process
+
+**Branch Creation and Development:**
 
 ```bash
 # 1. Create feature branch from develop
 git checkout develop
 git pull origin develop
-git checkout -b feature/your-feature-name
+git checkout -b feature/issue-123-css-grid-support
 
-# 2. Develop your feature
-# ... make code changes ...
+# Branch naming convention:
+# feature/issue-{number}-{brief-description}
+# fix/issue-{number}-{brief-description}
+# docs/issue-{number}-{brief-description}
+# enhancement/issue-{number}-{brief-description}
 
-# 3. Create changeset for your changes
+# 2. Feature development
+# ... write code ...
+# ... write tests ...
+# ... update documentation ...
+
+# 3. Commit message rules during development
+git commit -m "feat: implement CSS Grid layout support
+
+- Add grid container and item style processing
+- Support grid-template-columns and grid-template-rows
+- Add comprehensive test coverage
+- Update documentation with examples
+
+Closes #123"
+```
+
+**Commit Message Convention:**
+
+```bash
+# Format: type(scope): description
+#
+# body (optional)
+#
+# footer (optional)
+
+# Types:
+# feat: new feature
+# fix: bug fix
+# docs: documentation changes
+# style: code formatting (no functionality change)
+# refactor: code refactoring
+# test: adding/modifying tests
+# chore: build process, tool configuration, etc.
+
+# Example:
+git commit -m "feat(converter): add CSS Grid support
+
+- Implement grid-template-columns parsing
+- Add grid-gap to Figma spacing conversion
+- Support responsive grid layouts
+- Add error handling for invalid grid values
+
+Closes #123"
+```
+
+### 3️⃣ Changeset Management
+
+**Changeset Creation Guide:**
+
+```bash
+# 1. Create changeset
 pnpm changeset
-# Select packages: cssma
-# Select change type: patch/minor/major
-# Write clear description of changes
 
-# 4. Commit changes including changeset
-git add .
-git commit -m "feat: add your feature
+# 2. Package selection
+# ✅ cssma (main library)
+# ❌ cssma-plugin (internal app)
+# ❌ figmai-landing (internal app)
 
-- Implement feature X
-- Add changeset for version bump"
+# 3. Change type selection
+# patch: bug fixes, documentation updates, internal refactoring
+# minor: new features, API additions, non-breaking improvements
+# major: breaking changes, API removal, structural changes
 
-# 5. Push branch and create PR to develop
-git push origin feature/your-feature-name
-# Create PR targeting develop branch (NOT main)
+# 4. Write change description
 ```
 
-### 2️⃣ Changeset Accumulation in Develop
+**Changeset File Example:**
 
-**Multiple features before release:**
+```markdown
+# .changeset/brave-lions-dance.md
+---
+"cssma": minor
+---
+
+Add CSS Grid layout support
+
+- Implement grid-template-columns and grid-template-rows parsing
+- Add grid-gap to Figma spacing conversion  
+- Support responsive grid layouts with auto-fit and auto-fill
+- Add comprehensive error handling for invalid grid values
+- Include 15+ new test cases for grid functionality
+- Update documentation with grid layout examples
+
+This enhancement allows designers to use modern CSS Grid layouts
+in their Tailwind classes and see them properly converted to 
+Figma's auto-layout system.
+```
+
+**Verify Changeset Auto-addition:**
 
 ```bash
-# develop branch accumulates changesets:
+# Check if changeset file is automatically generated
+ls .changeset/
 
-# PR #1: feature/live-preview → develop
-.changeset/brave-lions-dance.md (minor)
+# Expected result:
+# .changeset/
+# ├── config.json
+# ├── brave-lions-dance.md  # newly created changeset
+# └── README.md
 
-# PR #2: fix/css-parser-bug → develop  
-.changeset/tiny-cats-jump.md (patch)
-
-# PR #3: feature/new-converter → develop
-.changeset/loud-dogs-sing.md (minor)
-
-# develop branch now contains:
-.changeset/
-├── brave-lions-dance.md (minor)
-├── tiny-cats-jump.md (patch)
-├── loud-dogs-sing.md (minor)
-└── config.json
+# Check changeset status
+pnpm changeset:status
 ```
 
-### 3️⃣ Version PR Automation (NEW!)
+### 4️⃣ Feature PR Creation and Merge
 
-**Automatic version PR creation:**
+**Pull Request Creation:**
 
 ```bash
-# When changesets exist in develop:
-# 1. GitHub Actions automatically creates Version PR
-# 2. PR title: "chore: version packages"
-# 3. Processes all accumulated changesets
-# 4. Updates package.json versions
-# 5. Updates CHANGELOG.md
-# 6. Removes processed changeset files
+# 1. Push branch
+git push origin feature/issue-123-css-grid-support
 
-# Manual trigger option (NEW!):
-# Go to: https://github.com/easylogic/cssma/actions/workflows/version-pr.yml
-# Click "Run workflow" → Select branch → Run
+# 2. Create PR on GitHub
+# - Base: develop (NOT main)
+# - Head: feature/issue-123-css-grid-support
+# - Title: "feat: Add CSS Grid layout support (#123)"
+# - Description: issue link, change summary, test results
 ```
 
-### 4️⃣ Release to Production
+**PR Template Example:**
 
-**Final release process:**
+```markdown
+## 📋 Summary
+Implements CSS Grid layout support for Tailwind to Figma conversion.
+
+## 🔗 Related Issue
+Closes #123
+
+## 🚀 Changes Made
+- ✅ Add grid-template-columns parsing
+- ✅ Add grid-template-rows parsing  
+- ✅ Support grid-gap conversion
+- ✅ Add responsive grid support
+- ✅ Comprehensive test coverage (15+ tests)
+- ✅ Documentation updates
+
+## 🧪 Testing
+- [ ] Unit tests pass
+- [ ] Integration tests pass
+- [ ] Manual testing completed
+- [ ] Performance impact assessed
+
+## 📦 Changeset
+- [x] Changeset added (.changeset/brave-lions-dance.md)
+- [x] Version type: minor
+- [x] Breaking changes: None
+
+## 📸 Screenshots/Demo
+[Include relevant screenshots or demo links]
+
+## ✅ Checklist
+- [x] Code follows project conventions
+- [x] Tests added/updated
+- [x] Documentation updated
+- [x] Changeset included
+- [x] No breaking changes (or properly documented)
+```
+
+**PR Review and Merge:**
 
 ```bash
-# 1. Merge Version PR to develop
-# 2. Create develop → main PR manually
-# 3. Review all changes going to production
-# 4. Merge to main
-# 5. GitHub Actions triggers:
-#    - NPM deployment
-#    - GitHub Release creation
-#    - Git tag creation
+# 1. After code review completion
+# 2. Verify CI/CD checks pass
+# 3. Merge to develop branch (Squash merge recommended)
+# 4. Delete feature branch
 ```
 
-## 🔧 GitHub Actions Workflows
+### 5️⃣ Close Feature Issue
 
-### 1. Version PR Workflow ([.github/workflows/version-pr.yml](mdc:.github/workflows/version-pr.yml))
+**Issue Closing Process:**
 
-**Enhanced with manual trigger support:**
+```bash
+# 1. Issue automatically closes when PR is merged (with "Closes #123" in commit message)
+# 2. Manual closing if needed:
+#    - Click "Close issue" on issue page
+#    - Add closing comment
+
+# Closing comment example:
+# "✅ Completed in PR #456
+# 
+# CSS Grid support has been successfully implemented with:
+# - Full grid-template parsing
+# - Responsive grid support  
+# - Comprehensive test coverage
+# - Updated documentation
+#
+# Available in next release."
+```
+
+### 6️⃣ Create Release Issue
+
+**Release Planning Issue:**
+
+```bash
+# Create release issue when sufficient changes accumulate in develop branch
+
+# Issue title: "Release v0.4.0 - CSS Grid & Performance Improvements"
+# Labels: release, milestone
+# Assignee: Release manager
+```
+
+**Release Issue Template:**
+
+```markdown
+## 🚀 Release v0.4.0 Planning
+
+### 📋 Included Features
+- [ ] #123 CSS Grid layout support
+- [ ] #124 Performance optimization for large stylesheets  
+- [ ] #125 Enhanced error messages
+- [ ] #126 TypeScript strict mode support
+
+### 🐛 Bug Fixes
+- [ ] #127 Fix parser edge case with complex selectors
+- [ ] #128 Resolve memory leak in preview mode
+
+### 📚 Documentation
+- [ ] #129 Update API documentation
+- [ ] #130 Add CSS Grid examples
+
+### ✅ Release Checklist
+- [ ] All feature PRs merged to develop
+- [ ] Version PR created and reviewed
+- [ ] CHANGELOG.md updated
+- [ ] Documentation updated
+- [ ] Performance benchmarks run
+- [ ] Breaking changes documented (if any)
+- [ ] Release notes prepared
+
+### 📦 Expected Version Impact
+- **Type**: Minor (new features, no breaking changes)
+- **Current**: v0.3.2
+- **Target**: v0.4.0
+
+### 🗓️ Timeline
+- **Feature freeze**: 2024-01-15
+- **Version PR**: 2024-01-16  
+- **Release**: 2024-01-18
+```
+
+### 7️⃣ Auto-generate Version PR
+
+**GitHub Actions Automation:**
+
+```bash
+# Version PR automatically created when changesets accumulate in develop branch
+# Or manual trigger available
+
+# Manual trigger method:
+# 1. GitHub → Actions → "Version PR" workflow
+# 2. Click "Run workflow"
+# 3. Select Branch: develop
+# 4. Execute "Run workflow"
+```
+
+**Version PR Content:**
+
+```markdown
+# PR title: "chore: version packages"
+
+## 📦 Package Updates
+
+### cssma@0.4.0
+
+#### 🚀 Minor Changes
+- Add CSS Grid layout support (#123)
+- Enhance performance for large stylesheets (#124)
+- Add TypeScript strict mode support (#126)
+
+#### 🐛 Patch Changes  
+- Fix parser edge case with complex selectors (#127)
+- Resolve memory leak in preview mode (#128)
+- Update API documentation (#129)
+
+## 📋 Files Changed
+- packages/cssma/package.json (0.3.2 → 0.4.0)
+- packages/cssma/CHANGELOG.md (updated)
+- .changeset/ (processed and removed)
+
+## ✅ Automated Changes
+- [x] Version bumps calculated
+- [x] CHANGELOG.md generated
+- [x] Changeset files processed
+- [x] Package.json updated
+```
+
+### 8️⃣ Merge Version PR and Verification
+
+**Version PR Merge Process:**
+
+```bash
+# 1. Review Version PR
+#    - Verify package.json version
+#    - Review CHANGELOG.md content
+#    - Check for missing changes
+
+# 2. Merge Version PR (to develop branch)
+#    - Use Merge commit (preserve changeset history)
+
+# 3. Verify develop branch state
+git checkout develop
+git pull origin develop
+
+# Check package.json version
+cat packages/cssma/package.json | grep version
+
+# Verify CHANGELOG.md update  
+head -20 packages/cssma/CHANGELOG.md
+
+# Verify changeset files are removed
+ls .changeset/
+# Result: should only have config.json, README.md
+```
+
+### 9️⃣ Create develop → main PR
+
+**Production Release PR:**
+
+```bash
+# 1. Create develop → main PR
+# Base: main
+# Head: develop  
+# Title: "Release v0.4.0 - CSS Grid & Performance Improvements"
+```
+
+**Release PR Template:**
+
+```markdown
+## 🚀 Release v0.4.0
+
+### 📋 Summary
+This release includes CSS Grid support, performance improvements, and several bug fixes.
+
+### 🔗 Related Release Issue
+Closes #131 (Release v0.4.0 planning issue)
+
+### 🚀 New Features
+- **CSS Grid Support**: Full grid-template parsing and conversion
+- **Performance Optimization**: 40% faster processing for large stylesheets
+- **TypeScript Strict Mode**: Enhanced type safety
+
+### 🐛 Bug Fixes
+- Fixed parser edge case with complex CSS selectors
+- Resolved memory leak in live preview mode
+- Improved error handling for invalid grid values
+
+### 📦 Version Changes
+- cssma: 0.3.2 → 0.4.0
+
+### ✅ Pre-Release Checklist
+- [x] All features tested in develop
+- [x] Version PR merged successfully
+- [x] CHANGELOG.md updated
+- [x] Documentation updated
+- [x] No breaking changes
+- [x] Performance benchmarks passed
+
+### 🧪 Testing
+- [x] Unit tests: 98% coverage
+- [x] Integration tests: All passing
+- [x] E2E tests: All passing
+- [x] Performance tests: Within thresholds
+
+### 📚 Documentation
+- [x] API docs updated
+- [x] Examples added for new features
+- [x] Migration guide (if needed)
+
+### 🚨 Breaking Changes
+None in this release.
+
+### 📈 Performance Impact
+- 40% faster CSS parsing
+- 25% reduced memory usage
+- Improved error handling performance
+```
+
+### 🔟 Link Release Issue
+
+**Connect PR with Release Issue:**
+
+```bash
+# Link release issue in PR description
+# Add "Closes #131" or "Resolves #131"
+
+# Add PR link to release issue
+# Comment "🔗 Release PR: #456"
+```
+
+### 1️⃣1️⃣ Merge to main Branch
+
+**Production Deployment Trigger:**
+
+```bash
+# 1. Final review of Release PR
+#    - Verify all checklist items completed
+#    - Review release notes
+#    - Confirm version number
+
+# 2. Merge to main branch
+#    - Use Merge commit (preserve release history)
+#    - Auto deployment starts immediately after merge
+
+# 3. Post-merge verification
+#    - Monitor GitHub Actions execution status
+#    - Verify NPM deployment success
+#    - Confirm GitHub Release creation
+#    - Check Git tag creation
+```
+
+### 1️⃣2️⃣ Auto NPM Deployment Process
+
+**GitHub Actions Automation:**
+
+```yaml
+# .github/workflows/release.yml
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Build packages
+        run: pnpm build
+        
+      - name: Run tests
+        run: pnpm test
+        
+      - name: Publish to NPM
+        run: pnpm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.PACKAGE_VERSION }}
+          release_name: Release v${{ env.PACKAGE_VERSION }}
+          body_path: ./RELEASE_NOTES.md
+          draft: false
+          prerelease: false
+```
+
+**Post-deployment Verification:**
+
+```bash
+# 1. Verify NPM deployment
+npm view cssma version
+# Result: 0.4.0
+
+# 2. Check GitHub Release
+# GitHub → Releases → Check latest release
+
+# 3. Verify Git tags
+git fetch --tags
+git tag -l | tail -5
+
+# 4. Deployment notifications
+# - Slack/Discord channel notifications
+# - Documentation site updates
+# - User announcements
+```
+
+## 🔧 Automation Tools and Configuration
+
+### GitHub Actions Workflows
+
+**1. Version PR Workflow (.github/workflows/version-pr.yml):**
 
 ```yaml
 name: Version PR
 
 on:
   push:
-    branches:
-      - develop
-  workflow_dispatch:    # NEW: Manual trigger support
+    branches: [develop]
+  workflow_dispatch:
     inputs:
       branch:
         description: 'Branch to run on'
         required: false
         default: 'develop'
 
-# Key features:
-# - Automatic changeset processing
-# - Version bump calculation
-# - CHANGELOG generation
-# - Manual execution capability
+jobs:
+  version-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Create Version PR
+        uses: changesets/action@v1
+        with:
+          version: pnpm changeset:version
+          commit: 'chore: version packages'
+          title: 'chore: version packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-#### Manual Workflow Execution
-
-```bash
-# Option 1: GitHub UI
-# 1. Go to Actions tab
-# 2. Select "Version PR" workflow
-# 3. Click "Run workflow"
-# 4. Select branch (default: develop)
-# 5. Click "Run workflow"
-
-# Option 2: Automatic trigger
-# Push to develop branch with changesets
-```
-
-### 2. Release Workflow ([.github/workflows/release.yml](mdc:.github/workflows/release.yml))
-
-**Production deployment automation:**
+**2. Release Workflow (.github/workflows/release.yml):**
 
 ```yaml
-# Trigger: main branch push
+name: Release
+
 on:
   push:
     branches: [main]
 
-# Process:
-# 1. Build packages
-# 2. NPM deployment
-# 3. GitHub Release creation
-# 4. Git tag creation
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Build
+        run: pnpm build
+        
+      - name: Test
+        run: pnpm test
+        
+      - name: Publish
+        run: pnpm changeset:publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-## 📋 Changeset Management Best Practices
+### Changeset Configuration
 
-### 1. Changeset Creation Guidelines
-
-```bash
-# Interactive changeset creation
-pnpm changeset
-
-# Selection criteria:
-# patch: Bug fixes, docs, small improvements
-# minor: New features, API additions
-# major: Breaking changes, API removals
-```
-
-#### Example Changeset Content
-
-```markdown
----
-"cssma": minor
----
-
-Add real-time CSS preview system
-
-- Implement LivePreview component with debounced updates
-- Add error handling and loading states
-- Include style inspector functionality
-- Support enable/disable toggle control
-```
-
-### 2. Changeset Accumulation Strategy
-
-**Benefits of develop branch accumulation:**
-
-- ✅ **Multiple features per release**: Combine related features
-- ✅ **Flexible release timing**: Release when ready, not per feature
-- ✅ **Better version control**: Logical version increments
-- ✅ **Reduced deployment frequency**: Fewer NPM publishes
-
-### 3. Version Calculation Logic
-
-```bash
-# Changeset combination rules:
-# patch + patch = patch (0.1.0 → 0.1.1)
-# patch + minor = minor (0.1.0 → 0.2.0)
-# minor + minor = minor (0.1.0 → 0.2.0)
-# any + major = major (0.1.0 → 1.0.0)
-
-# Example scenario:
-# - 2 minor features + 1 patch fix = minor release
-# - 0.1.2 → 0.2.0
-```
-
-## 🚀 Branch Management Strategy
-
-### 1. Branch Hierarchy
-
-```
-main                 # Production releases only
-├── develop          # Integration & changeset accumulation
-│   ├── feature/xxx  # New feature development
-│   ├── fix/xxx      # Bug fixes
-│   └── hotfix/xxx   # Critical fixes
-└── changeset-release/develop  # Auto-generated version PRs
-```
-
-### 2. Branch Protection Rules
-
-**Recommended GitHub settings:**
-
-```yaml
-# main branch protection:
-protection_rules:
-  require_pull_request_reviews: true
-  required_approving_review_count: 1
-  dismiss_stale_reviews: true
-  require_status_checks: true
-  required_status_checks:
-    - "build"
-    - "test"
-    - "type-check"
-  enforce_admins: false
-  allow_force_pushes: false
-  allow_deletions: false
-
-# develop branch protection:
-protection_rules:
-  require_pull_request_reviews: true
-  required_approving_review_count: 1
-  require_status_checks: true
-```
-
-### 3. Merge Strategies
-
-```bash
-# Feature → develop: Squash merge (clean history)
-# Version PR → develop: Merge commit (preserve changeset processing)
-# develop → main: Merge commit (preserve release history)
-```
-
-## 🔍 Workflow Monitoring & Debugging
-
-### 1. GitHub Actions Debugging
-
-**Manual workflow execution for testing:**
-
-```bash
-# Test version PR workflow:
-# 1. Ensure changesets exist in develop
-# 2. Go to Actions → Version PR → Run workflow
-# 3. Monitor execution logs
-# 4. Check created PR
-
-# Common debugging steps:
-# - Check changeset files exist
-# - Verify pnpm installation
-# - Review GitHub permissions
-# - Monitor build logs
-```
-
-### 2. Troubleshooting Common Issues
-
-#### Version PR Creation Failure
-
-```bash
-# Cause: No changesets in develop
-# Solution: Ensure changeset files exist
-
-# Cause: GitHub Actions permissions
-# Solution: Enable "Allow GitHub Actions to create PRs"
-
-# Cause: Merge conflicts
-# Solution: Resolve conflicts manually
-```
-
-#### NPM Deployment Failure
-
-```bash
-# Cause: NPM_TOKEN expired
-# Solution: Update token in GitHub Secrets
-
-# Cause: Package version already exists
-# Solution: Check version calculation logic
-```
-
-### 3. Status Monitoring Commands
-
-```bash
-# Check changeset status
-pnpm changeset:status
-
-# Preview version changes
-pnpm changeset:version --dry-run
-
-# Check current package version
-npm view cssma version
-
-# Monitor GitHub Actions
-# Visit: https://github.com/easylogic/cssma/actions
-```
-
-## 📦 Package Management Configuration
-
-### 1. Monorepo Structure
-
-```
-packages/
-  cssma/           # Core library (deployed to NPM)
-apps/
-  cssma-plugin/    # Figma plugin (private)
-  figmai-landing/  # Landing page (private)
-```
-
-### 2. Changeset Configuration ([.changeset/config.json](mdc:.changeset/config.json))
+**.changeset/config.json:**
 
 ```json
 {
+  "$schema": "https://unpkg.com/@changesets/config@2.3.1/schema.json",
   "changelog": "@changesets/cli/changelog",
   "commit": false,
+  "fixed": [],
+  "linked": [],
   "access": "public",
-  "baseBranch": "develop",  # Changed from main to develop
+  "baseBranch": "develop",
   "updateInternalDependencies": "patch",
-  "ignore": ["figmai-landing", "cssma-plugin"],
+  "ignore": ["cssma-plugin", "figmai-landing"],
   "snapshot": {
-    "useCalculatedVersion": true
+    "useCalculatedVersion": true,
+    "prereleaseTemplate": null
   }
 }
 ```
 
-### 3. Package Scripts
+### Branch Protection Rules
 
-```json
-{
-  "scripts": {
-    "changeset": "changeset",
-    "changeset:version": "changeset version",
-    "changeset:publish": "changeset publish",
-    "changeset:status": "changeset status",
-    "release": "pnpm build && pnpm changeset:publish",
-    "build": "pnpm --filter cssma build",
-    "build:all": "pnpm -r build"
-  }
-}
+**main branch:**
+- Require pull request reviews (1+ reviewers)
+- Require status checks to pass
+- Require branches to be up to date
+- Restrict pushes that create files larger than 100MB
+- Do not allow force pushes
+- Do not allow deletions
+
+**develop branch:**
+- Require pull request reviews (1+ reviewers)  
+- Require status checks to pass
+- Allow force pushes (when necessary)
+
+## 📋 Checklist Templates
+
+### Feature Development Checklist
+
+```markdown
+## 🚀 Feature Development Checklist
+
+### 📋 Planning
+- [ ] Create GitHub issue (labels, assignee designation)
+- [ ] Clarify requirements
+- [ ] Decide technical approach
+
+### 💻 Development  
+- [ ] Create feature branch (from develop)
+- [ ] Implement functionality
+- [ ] Write unit tests
+- [ ] Write integration tests
+- [ ] Update documentation
+
+### 📦 Changeset
+- [ ] Create changeset (pnpm changeset)
+- [ ] Select appropriate version type (patch/minor/major)
+- [ ] Write clear change description
+- [ ] Verify .changeset/xxxx.md file
+
+### 🔄 Pull Request
+- [ ] Create feature → develop PR
+- [ ] Complete PR template
+- [ ] Request code review
+- [ ] Pass CI/CD checks
+- [ ] Merge PR
+
+### ✅ Completion
+- [ ] Close feature issue
+- [ ] Clean up branches
 ```
 
-## 🎯 Real-World Usage Examples
+### Release Checklist
 
-### Example 1: Single Feature Release
+```markdown
+## 🚀 Release Checklist
 
+### 📋 Pre-Release
+- [ ] Create release issue based on develop branch
+- [ ] Confirm included features/fixes
+- [ ] Determine version number
+- [ ] Draft release notes
+
+### 🔄 Version Management
+- [ ] Verify changeset accumulation in develop
+- [ ] Confirm Version PR auto-generation
+- [ ] Verify package.json version update
+- [ ] Verify CHANGELOG.md update
+- [ ] Merge Version PR → develop
+
+### 🚀 Release Process
+- [ ] Create develop → main PR
+- [ ] Link release issue
+- [ ] Execute final testing
+- [ ] Merge PR → main
+- [ ] Verify auto NPM deployment
+
+### ✅ Post-Release
+- [ ] Verify NPM package deployment
+- [ ] Confirm GitHub Release creation
+- [ ] Verify Git tag creation
+- [ ] Close release issue
+- [ ] Team notifications and announcements
+```
+
+## 🛠️ Troubleshooting Guide
+
+### Common Problem Solutions
+
+**1. Changeset not being created:**
 ```bash
-# 1. Develop feature
-git checkout -b feature/css-grid-support
-# ... implement feature ...
-pnpm changeset  # minor
-git commit -m "feat: add CSS Grid support"
-git push origin feature/css-grid-support
-
-# 2. Create PR to develop → merge
-
-# 3. Trigger version PR (automatic or manual)
-# 4. Merge version PR to develop
-# 5. Create develop → main PR → merge
-# 6. Automatic NPM deployment
+# Error when running pnpm changeset command
+# Solution: Check .changeset/config.json
+# Solution: Check and update pnpm version
 ```
 
-### Example 2: Multiple Features Release
-
+**2. Version PR not auto-generating:**
 ```bash
-# Week 1: Feature A
-feature/live-preview → develop (minor changeset)
-
-# Week 2: Feature B  
-feature/new-parser → develop (minor changeset)
-
-# Week 3: Bug fix
-fix/edge-case → develop (patch changeset)
-
-# Week 4: Ready for release
-# 1. Version PR processes all 3 changesets
-# 2. Calculates: 2 minor + 1 patch = minor release
-# 3. Version: 0.1.0 → 0.2.0
-# 4. develop → main → NPM deployment
+# Check GitHub Actions permissions
+# Settings → Actions → General → Workflow permissions
+# Select "Read and write permissions"
+# Check "Allow GitHub Actions to create and approve pull requests"
 ```
 
-### Example 3: Hotfix Process
-
+**3. NPM deployment failure:**
 ```bash
-# Critical bug in production
-git checkout main
-git pull origin main
-git checkout -b hotfix/critical-parser-bug
-
-# ... fix bug ...
-pnpm changeset  # patch
-git commit -m "fix: resolve critical parser bug"
-git push origin hotfix/critical-parser-bug
-
-# Option 1: Emergency (direct to main)
-# Create PR to main → merge → immediate deployment
-
-# Option 2: Standard (through develop)
-# Create PR to develop → follow normal process
+# Check NPM_TOKEN
+# GitHub → Settings → Secrets → Update NPM_TOKEN
+# Verify permissions with npm whoami
 ```
 
-## 🔐 Security & Permissions
-
-### 1. GitHub Actions Permissions
-
-**Required repository settings:**
-
+**4. Merge conflict resolution:**
 ```bash
-# Settings → Actions → General
-# ✅ Allow GitHub Actions to create and approve pull requests
-# ✅ Allow GitHub Actions to create and approve pull requests
+# Update develop branch
+git checkout develop
+git pull origin develop
 
-# Workflow permissions:
-# ✅ Read and write permissions
-# ✅ Allow GitHub Actions to create and approve pull requests
+# Rebase from feature branch
+git checkout feature/your-branch
+git rebase develop
+
+# After resolving conflicts
+git add .
+git rebase --continue
+git push --force-with-lease origin feature/your-branch
 ```
 
-### 2. NPM Token Management
-
-```bash
-# NPM token requirements:
-# - Type: Automation
-# - Scope: Public packages
-# - Expiration: No expiration (or long-term)
-
-# GitHub Secrets:
-# NPM_TOKEN: npm_xxxxxxxxxxxx
-# GITHUB_TOKEN: (auto-provided)
-```
-
-## 📈 Performance Optimization
-
-### 1. Build Performance
-
-```bash
-# Optimized build commands:
-pnpm --filter cssma build     # Build only deployed package
-pnpm -r --parallel build      # Parallel builds for development
-
-# Cache optimization:
-# - GitHub Actions cache for node_modules
-# - pnpm store cache for dependencies
-```
-
-### 2. Workflow Efficiency
-
-```bash
-# Debounced workflow execution:
-# - Version PR only runs when changesets exist
-# - Manual trigger prevents unnecessary runs
-# - Conditional steps based on changeset presence
-```
-
-This comprehensive workflow ensures reliable, automated package management with flexibility for both automatic and manual execution. Follow this guide for consistent development and deployment processes.
+Following this workflow ensures a systematic and stable development process, reducing errors and increasing efficiency through automation.
