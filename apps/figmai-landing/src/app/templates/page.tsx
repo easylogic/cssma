@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { templateCollection, searchTemplates, getTemplatesByCategory } from '@/lib/template-data';
 import { TemplateFilter } from '@/types/template';
+import { useTemplates } from '@/hooks/useTemplates';
+import { useCategories } from '@/hooks/useCategories';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import TemplateCard from '@/components/TemplateCard';
@@ -13,43 +14,39 @@ import FeaturedTemplates from '@/components/FeaturedTemplates';
 export default function TemplatesPage() {
   const [filter, setFilter] = useState<TemplateFilter>({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'popular' | 'newest' | 'name' | 'complexity'>('popular');
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Filter and search templates
-  const filteredTemplates = useMemo(() => {
-    let templates = templateCollection.templates;
+  // Fetch templates using API
+  const { templates, pagination, loading, error } = useTemplates({
+    filter,
+    searchQuery,
+    sortBy,
+    page: currentPage,
+    limit: 12
+  });
 
-    // Apply search
-    if (searchQuery.trim()) {
-      templates = searchTemplates(searchQuery);
-    }
-
-    // Apply category filter
-    if (filter.category) {
-      templates = templates.filter(template => template.category.id === filter.category);
-    }
-
-    // Apply complexity filter
-    if (filter.complexity) {
-      templates = templates.filter(template => template.complexity === filter.complexity);
-    }
-
-    // Apply tag filters
-    if (filter.tags && filter.tags.length > 0) {
-      templates = templates.filter(template =>
-        filter.tags!.some(tag => template.tags.includes(tag))
-      );
-    }
-
-    return templates;
-  }, [searchQuery, filter]);
+  // Fetch categories
+  const { categories } = useCategories();
 
   const handleFilterChange = (newFilter: Partial<TemplateFilter>) => {
     setFilter(prev => ({ ...prev, ...newFilter }));
+    setCurrentPage(1); // Reset to first page when filter changes
   };
 
   const clearFilters = () => {
     setFilter({});
     setSearchQuery('');
+    setCurrentPage(1);
+  };
+
+  const handleSortChange = (newSortBy: 'popular' | 'newest' | 'name' | 'complexity') => {
+    setSortBy(newSortBy);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -69,7 +66,9 @@ export default function TemplatesPage() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-gray-200 mb-8">
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-            <span className="text-sm font-medium text-gray-700">{templateCollection.totalCount} Templates Available</span>
+            <span className="text-sm font-medium text-gray-700">
+              {pagination?.totalCount || 0} Templates Available
+            </span>
           </div>
 
           {/* Main Headline */}
@@ -87,20 +86,22 @@ export default function TemplatesPage() {
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto mb-8">
             <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-              <div className="text-2xl font-bold text-indigo-600 mb-1">{templateCollection.totalCount}</div>
+              <div className="text-2xl font-bold text-indigo-600 mb-1">{pagination?.totalCount || 0}</div>
               <div className="text-sm text-gray-600">Templates</div>
             </div>
             <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-              <div className="text-2xl font-bold text-purple-600 mb-1">{templateCollection.categories.length}</div>
+              <div className="text-2xl font-bold text-purple-600 mb-1">{categories.length}</div>
               <div className="text-sm text-gray-600">Categories</div>
             </div>
             <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-              <div className="text-2xl font-bold text-pink-600 mb-1">{templateCollection.featuredTemplates.length}</div>
+              <div className="text-2xl font-bold text-pink-600 mb-1">
+                {templates.filter(t => t.featured).length}
+              </div>
               <div className="text-sm text-gray-600">Featured</div>
             </div>
             <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/20">
               <div className="text-2xl font-bold text-orange-600 mb-1">
-                {Math.floor(templateCollection.templates.reduce((sum, t) => sum + (t.usageCount || 0), 0) / 1000)}K+
+                {Math.floor(templates.reduce((sum, t) => sum + (t.usageCount || 0), 0) / 1000)}K+
               </div>
               <div className="text-sm text-gray-600">Uses</div>
             </div>
@@ -150,7 +151,7 @@ export default function TemplatesPage() {
                 <TemplateFilters 
                   filter={filter}
                   onChange={handleFilterChange}
-                  categories={templateCollection.categories}
+                  categories={categories}
                 />
               </div>
             </div>
@@ -163,18 +164,23 @@ export default function TemplatesPage() {
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">
                   {filter.category 
-                    ? templateCollection.categories.find(c => c.id === filter.category)?.name 
+                    ? categories.find(c => c.id === filter.category)?.name 
                     : 'All Templates'
                   }
                 </h2>
                 <p className="text-gray-600 mt-1">
-                  {filteredTemplates.length} template{filteredTemplates.length !== 1 ? 's' : ''} found
+                  {pagination?.totalCount || 0} template{(pagination?.totalCount || 0) !== 1 ? 's' : ''} found
+                  {loading && ' (Loading...)'}
                 </p>
               </div>
 
               {/* Sort Options */}
               <div className="flex items-center space-x-4">
-                <select className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select 
+                  value={sortBy}
+                  onChange={(e) => handleSortChange(e.target.value as any)}
+                  className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
                   <option value="popular">Most Popular</option>
                   <option value="newest">Newest First</option>
                   <option value="name">Name A-Z</option>
@@ -184,14 +190,67 @@ export default function TemplatesPage() {
             </div>
 
             {/* Templates Grid */}
-            {filteredTemplates.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredTemplates.map((template) => (
-                  <TemplateCard 
-                    key={template.id} 
-                    template={template}
-                  />
-                ))}
+            {error ? (
+              <div className="text-center py-12">
+                <div className="text-red-400 text-6xl mb-4">⚠️</div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Error loading templates</h3>
+                <p className="text-gray-600">{error}</p>
+              </div>
+            ) : templates.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {templates.map((template) => (
+                    <TemplateCard 
+                      key={template.id} 
+                      template={template}
+                    />
+                  ))}
+                </div>
+                
+                {/* Pagination */}
+                {pagination && pagination.totalPages > 1 && (
+                  <div className="flex justify-center items-center space-x-2 mt-12">
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={!pagination.hasPrevPage}
+                      className="px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                    >
+                      Previous
+                    </button>
+                    
+                    <div className="flex space-x-1">
+                      {Array.from({ length: Math.min(pagination.totalPages, 10) }, (_, i) => {
+                        const page = i + 1;
+                        return (
+                          <button
+                            key={page}
+                            onClick={() => handlePageChange(page)}
+                            className={`px-3 py-2 rounded-md ${
+                              page === currentPage
+                                ? 'bg-blue-600 text-white'
+                                : 'border border-gray-300 hover:bg-gray-50'
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={!pagination.hasNextPage}
+                      className="px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : loading ? (
+              <div className="text-center py-12">
+                <div className="text-gray-400 text-6xl mb-4">⏳</div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Loading templates...</h3>
               </div>
             ) : (
               <div className="text-center py-12">

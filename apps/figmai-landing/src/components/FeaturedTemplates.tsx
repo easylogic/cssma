@@ -1,10 +1,28 @@
 'use client';
 
-import { getFeaturedTemplates } from '@/lib/template-data';
+import { useFeaturedTemplates } from '@/hooks/useTemplates';
 import TemplateCard from './TemplateCard';
 
 export default function FeaturedTemplates() {
-  const featuredTemplates = getFeaturedTemplates();
+  const { templates: featuredTemplates, loading, error } = useFeaturedTemplates();
+
+  if (loading) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-gray-400 text-4xl mb-4">⏳</div>
+        <p className="text-gray-600">Loading featured templates...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-red-400 text-4xl mb-4">⚠️</div>
+        <p className="text-gray-600">Failed to load featured templates</p>
+      </div>
+    );
+  }
 
   if (featuredTemplates.length === 0) {
     return null;
