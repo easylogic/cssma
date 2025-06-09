@@ -7,7 +7,7 @@
   "access": "public",
   "baseBranch": "develop",
   "updateInternalDependencies": "patch",
-  "ignore": ["figmai-landing", "cssma-plugin"],
+  "ignore": [],
   "snapshot": {
     "useCalculatedVersion": true
   }
