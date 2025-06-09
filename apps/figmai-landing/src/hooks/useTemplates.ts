@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Template, TemplateFilter } from '@/types/template';
 
 interface UseTemplatesParams {
@@ -19,13 +19,16 @@ interface TemplatesResponse {
     hasNextPage: boolean;
     hasPrevPage: boolean;
   };
-  filters: any;
+  filters?: Record<string, unknown>;
 }
 
 export function useTemplates(params: UseTemplatesParams = {}) {
   const [data, setData] = useState<TemplatesResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Serialize params to avoid dependency issues
+  const serializedParams = useMemo(() => JSON.stringify(params), [params]);
 
   const fetchTemplates = useCallback(async () => {
     try {
@@ -96,20 +99,7 @@ export function useTemplates(params: UseTemplatesParams = {}) {
     } finally {
       setLoading(false);
     }
-  }, [
-    params.filter?.category,
-    params.filter?.complexity,
-    params.filter?.tags?.join(','),
-    params.filter?.rating,
-    params.filter?.featured,
-    params.filter?.favorites,
-    params.filter?.usageRange?.min,
-    params.filter?.usageRange?.max,
-    params.searchQuery,
-    params.page,
-    params.limit,
-    params.sortBy
-  ]);
+  }, [serializedParams]);
 
   useEffect(() => {
     fetchTemplates();

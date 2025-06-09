@@ -65,55 +65,88 @@ export default function TemplateCard({ template }: TemplateCardProps) {
       {/* Preview Area */}
       <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 p-6 min-h-[180px] flex items-center justify-center overflow-hidden">
         {/* Live Preview */}
-        <div 
-          className={`${template.tailwindClasses} transition-transform group-hover:scale-105 duration-300`}
-          style={{ 
-            minWidth: 'fit-content',
-            minHeight: 'fit-content',
-            maxWidth: '100%'
-          }}
-        >
+        <div className="transition-transform group-hover:scale-105 duration-300 flex items-center justify-center w-full">
           {template.category.id === 'buttons' && (
-            <span className="text-current">Button</span>
+            <button className={template.tailwindClasses} disabled>
+              {template.name.includes('Primary') ? 'Primary' : 
+               template.name.includes('Outline') ? 'Outline' : 
+               template.name.includes('Ghost') ? 'Ghost' : 'Button'}
+            </button>
           )}
           {template.category.id === 'cards' && (
-            <div className="w-full h-full flex items-center justify-center text-gray-600">
-              <span>Card Content</span>
-            </div>
-          )}
-          {template.category.id === 'forms' && (
-            <input 
-              type="text" 
-              placeholder="Enter text..." 
-              className={template.tailwindClasses}
-              readOnly
-            />
-          )}
-          {template.category.id === 'navigation' && (
-            <div className="w-full flex items-center justify-between">
-              <span className="font-semibold">Logo</span>
-              <div className="flex space-x-4">
-                <span>Home</span>
-                <span>About</span>
-                <span>Contact</span>
+            <div className={`${template.tailwindClasses} w-48 max-w-full`}>
+              <div className="p-4">
+                <h3 className="font-semibold text-gray-900 mb-2 text-sm">Product Card</h3>
+                <p className="text-gray-600 text-xs">Beautiful card design with clean layout</p>
+                <div className="mt-3 flex items-center justify-between">
+                  <span className="text-lg font-bold text-gray-900">$29</span>
+                  <button className="text-xs bg-blue-600 text-white px-2 py-1 rounded">Buy</button>
+                </div>
               </div>
             </div>
           )}
+          {template.category.id === 'forms' && (
+            <div className="w-48 max-w-full">
+              <input 
+                type="text" 
+                placeholder="Enter your email..." 
+                className={template.tailwindClasses}
+                readOnly
+              />
+            </div>
+          )}
+          {template.category.id === 'navigation' && (
+            <nav className={`${template.tailwindClasses} w-48 max-w-full`}>
+              <div className="flex items-center justify-between px-4 py-2">
+                <span className="font-semibold text-sm">Logo</span>
+                <div className="flex space-x-3 text-xs">
+                  <span>Home</span>
+                  <span>About</span>
+                </div>
+              </div>
+            </nav>
+          )}
           {template.category.id === 'layout' && (
-            <div className="w-full h-full">
-              <div className="grid grid-cols-3 gap-4 h-full">
-                <div className="bg-gray-200 rounded"></div>
-                <div className="bg-gray-200 rounded"></div>
-                <div className="bg-gray-200 rounded"></div>
+            <div className={`${template.tailwindClasses} w-48 max-w-full h-24`}>
+              <div className="grid grid-cols-3 gap-2 h-full p-2">
+                <div className="bg-gray-300 rounded"></div>
+                <div className="bg-gray-300 rounded"></div>
+                <div className="bg-gray-300 rounded"></div>
               </div>
             </div>
           )}
           {template.category.id === 'feedback' && (
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-current rounded-full flex items-center justify-center">
-                <Check className="w-3 h-3 text-white" />
+            <div className={`${template.tailwindClasses} max-w-xs`}>
+              <div className="flex items-center space-x-2 p-3">
+                <Check className="w-4 h-4 text-green-600" />
+                <span className="text-sm">Success message</span>
               </div>
-              <span>Success message</span>
+            </div>
+          )}
+          {template.category.id === 'modals' && (
+            <div className={`${template.tailwindClasses} w-48 max-w-full`}>
+              <div className="p-4 text-center">
+                <h3 className="font-semibold text-sm mb-2">Modal Title</h3>
+                <p className="text-xs text-gray-600 mb-3">Modal content goes here</p>
+                <button className="text-xs bg-blue-600 text-white px-3 py-1 rounded">OK</button>
+              </div>
+            </div>
+          )}
+          {template.category.id === 'badges' && (
+            <div className="flex flex-wrap gap-2 justify-center">
+              <span className={template.tailwindClasses}>
+                {template.name.includes('Success') ? 'Success' :
+                 template.name.includes('Warning') ? 'Warning' :
+                 template.name.includes('Error') ? 'Error' : 'Badge'}
+              </span>
+            </div>
+          )}
+          {/* Default fallback for other categories */}
+          {!['buttons', 'cards', 'forms', 'navigation', 'layout', 'feedback', 'modals', 'badges'].includes(template.category.id) && (
+            <div className={`${template.tailwindClasses} w-48 max-w-full p-3`}>
+              <div className="text-center text-sm">
+                {template.name}
+              </div>
             </div>
           )}
         </div>
