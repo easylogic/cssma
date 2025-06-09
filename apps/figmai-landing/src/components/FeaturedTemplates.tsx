@@ -52,7 +52,7 @@ export default function FeaturedTemplates() {
         </p>
       </div>
 
-      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
         {featuredTemplates.map((template, index) => (
           <div 
             key={template.id}
@@ -65,7 +65,7 @@ export default function FeaturedTemplates() {
       </div>
 
       {/* Call to Action */}
-      <div className="text-center mt-12">
+      <div className="relative z-10 text-center mt-12">
         <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 border border-blue-100">
           <h3 className="text-2xl font-bold text-gray-900 mb-4">
             Ready to explore more?

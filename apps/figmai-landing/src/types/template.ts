@@ -1,35 +1,3 @@
-export interface Template {
-  id: string;
-  name: string;
-  description: string;
-  category: TemplateCategory;
-  tags: string[];
-  tailwindClasses: string;
-  figmaStyles: FigmaStyleConfig;
-  previewImage?: string;
-  complexity: 'beginner' | 'intermediate' | 'advanced';
-  createdAt: string;
-  updatedAt: string;
-  author?: {
-    name: string;
-    avatar?: string;
-  };
-  usageCount?: number;
-  featured?: boolean;
-  rating?: {
-    average: number;
-    count: number;
-    distribution: {
-      1: number;
-      2: number;
-      3: number;
-      4: number;
-      5: number;
-    };
-  };
-  reviews?: TemplateReview[];
-}
-
 export interface TemplateCategory {
   id: string;
   name: string;
@@ -38,80 +6,110 @@ export interface TemplateCategory {
   color: string;
 }
 
-export interface FigmaStyleConfig {
-  layout?: {
-    layoutMode?: 'HORIZONTAL' | 'VERTICAL' | 'NONE';
-    primaryAxisSizingMode?: 'FIXED' | 'AUTO';
-    counterAxisSizingMode?: 'FIXED' | 'AUTO';
-    paddingLeft?: number;
-    paddingRight?: number;
-    paddingTop?: number;
-    paddingBottom?: number;
-    itemSpacing?: number;
-    width?: number;
-    height?: number;
+export interface TemplateAuthor {
+  name: string;
+  avatar?: string;
+  url?: string;
+}
+
+export interface TemplateRating {
+  average: number;
+  count: number;
+  distribution: {
+    5: number;
+    4: number;
+    3: number;
+    2: number;
+    1: number;
   };
-  appearance?: {
-    fills?: Array<{
-      type: 'SOLID' | 'GRADIENT_LINEAR' | 'GRADIENT_RADIAL';
-      color?: { r: number; g: number; b: number };
-      opacity?: number;
-      gradientStops?: Array<{
-        position: number;
-        color: { r: number; g: number; b: number };
-      }>;
-    }>;
-    cornerRadius?: number;
-    strokeWeight?: number;
-    strokes?: Array<{
-      type: 'SOLID';
-      color: { r: number; g: number; b: number };
-      opacity?: number;
-    }>;
+}
+
+export interface TemplateReview {
+  id: string;
+  author: {
+    name: string;
+    avatar?: string;
   };
-  effects?: Array<{
-    type: 'DROP_SHADOW' | 'INNER_SHADOW' | 'LAYER_BLUR';
-    color?: { r: number; g: number; b: number };
-    offset?: { x: number; y: number };
-    radius?: number;
-    spread?: number;
-    visible?: boolean;
-  }>;
-  typography?: {
-    fontFamily?: string;
-    fontSize?: number;
-    fontWeight?: number;
-    lineHeight?: number;
-    letterSpacing?: number;
-    textAlignHorizontal?: 'LEFT' | 'CENTER' | 'RIGHT';
-    textAlignVertical?: 'TOP' | 'CENTER' | 'BOTTOM';
+  rating: number;
+  comment: string;
+  createdAt: string;
+  helpful?: number;
+}
+
+// CSSMa NodeData structure for template representation
+export interface NodeData {
+  type: string;
+  id?: string;
+  name?: string;
+  styles?: string;
+  text?: string;
+  children?: NodeData[];
+  props?: Record<string, any>;
+  bind?: {
+    text?: string;
+    visible?: {
+      property: string;
+      value: string;
+    };
+    [key: string]: string | { property: string; value: string } | undefined;
+  };
+}
+
+export interface Template {
+  id: string;
+  name: string;
+  description: string;
+  category: TemplateCategory;
+  tags: string[];
+  
+  // CSSMa JSON structure for UI representation
+  nodeData: NodeData;
+  
+  complexity: 'beginner' | 'intermediate' | 'advanced';
+  createdAt: string;
+  updatedAt: string;
+  author: TemplateAuthor;
+  usageCount?: number;
+  featured?: boolean;
+  
+  // Rating and review system
+  rating?: TemplateRating;
+  reviews?: TemplateReview[];
+  
+  // Additional metadata
+  version?: string;
+  license?: string;
+  dependencies?: string[];
+  preview?: {
+    image?: string;
+    thumbnail?: string;
   };
 }
 
 export interface TemplateFilter {
   category?: string;
   tags?: string[];
-  complexity?: string;
-  search?: string;
-  rating?: number; // Minimum rating filter
+  complexity?: ('beginner' | 'intermediate' | 'advanced')[];
   featured?: boolean;
-  favorites?: boolean;
-  usageRange?: {
-    min?: number;
-    max?: number;
+  rating?: {
+    min: number;
+    max: number;
   };
+  usageRange?: {
+    min: number;
+    max: number;
+  };
+  author?: string;
+  search?: string;
 }
 
-export interface TemplateReview {
-  id: string;
-  templateId: string;
-  userId: string;
-  userName: string;
-  userAvatar?: string;
-  rating: number;
-  comment?: string;
-  createdAt: string;
-  helpful?: number;
+export interface TemplatePagination {
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
 }
 
 export interface TemplateCollection {

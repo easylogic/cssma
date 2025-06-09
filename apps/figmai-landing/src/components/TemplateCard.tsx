@@ -1,27 +1,94 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState } from 'react';
-import { Template } from '@/types/template';
-import { Copy, Eye, Heart, Check, Star, Maximize2, Code, Figma } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { Template, NodeData } from '@/types/template';
+import { Copy, Eye, Heart, Check, Star, Maximize2, Code } from 'lucide-react';
 import { useFavorites } from '@/hooks/useFavorites';
+import { getTemplateComponent } from '@/components/templates';
+import Image from 'next/image';
+import { parseStyles, convertStylesToFigma } from 'cssma';
 
 interface TemplateCardProps {
   template: Template;
 }
 
+// Convert nodeData to JSON string for copying
+const nodeDataToJson = (nodeData: NodeData): string => {
+  return JSON.stringify(nodeData, null, 2);
+};
+
+// Extract Tailwind classes from nodeData recursively
+const extractTailwindClasses = (nodeData: NodeData): string => {
+  const styles = nodeData.styles || '';
+  const childStyles = nodeData.children?.map(child => extractTailwindClasses(child)).filter(Boolean).join(' ') || '';
+  return [styles, childStyles].filter(Boolean).join(' ');
+};
+
+// Convert NodeData to Figma properties using cssma package (from Demo.tsx)
+const convertNodeDataToFigma = (nodeData: NodeData): any => {
+  const convertedNode = { ...nodeData };
+
+  // Convert styles to figmaProperties if styles exist
+  if (nodeData.styles) {
+    try {
+      const parsedStyles = parseStyles(nodeData.styles);
+      const figmaProperties = convertStylesToFigma(parsedStyles);
+      convertedNode.figmaProperties = figmaProperties;
+    } catch (error) {
+      console.error('Error converting styles:', error);
+      convertedNode.figmaProperties = { error: 'Failed to convert styles' };
+    }
+  }
+
+  // Recursively convert children
+  if (nodeData.children && Array.isArray(nodeData.children)) {
+    convertedNode.children = nodeData.children.map((child: NodeData) =>
+      convertNodeDataToFigma(child)
+    );
+  }
+
+  // Remove original styles property
+  delete (convertedNode as any).styles;
+  return convertedNode;
+};
+
+// Render preview - use component if available, otherwise fallback to nodeData
+const renderPreview = (template: Template, isFullSize: boolean = false): React.ReactNode => {
+  // Try to get component by template ID
+  const Component = getTemplateComponent(template.id);
+  
+  if (Component) {
+    const ComponentToRender = Component as React.ComponentType<any>;
+    return (
+      <div className={isFullSize ? '' : 'transform scale-75 origin-center'}>
+        <ComponentToRender />
+      </div>
+    );
+  }
+
+  return <div>No Preview</div>
+};
+
 export default function TemplateCard({ template }: TemplateCardProps) {
   const [copied, setCopied] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [showFullPreview, setShowFullPreview] = useState(false);
-  const [copyType, setCopyType] = useState<'tailwind' | 'figma'>('tailwind');
+  const [copyType, setCopyType] = useState<'tailwind' | 'nodedata' | 'figma'>('tailwind');
   
   const { isFavorite, toggleFavorite } = useFavorites();
 
-  const handleCopy = async (type: 'tailwind' | 'figma') => {
+  const handleCopy = async (type: 'tailwind' | 'nodedata' | 'figma') => {
     try {
-      const textToCopy = type === 'tailwind' 
-        ? template.tailwindClasses 
-        : JSON.stringify(template.figmaStyles, null, 2);
+      let textToCopy = '';
+      if (type === 'tailwind') {
+        textToCopy = extractTailwindClasses(template.nodeData);
+      } else if (type === 'nodedata') {
+        textToCopy = nodeDataToJson(template.nodeData);
+      } else if (type === 'figma') {
+        textToCopy = JSON.stringify(convertNodeDataToFigma(template.nodeData), null, 2);
+      }
       
       await navigator.clipboard.writeText(textToCopy);
       setCopyType(type);
@@ -46,174 +113,166 @@ export default function TemplateCard({ template }: TemplateCardProps) {
   };
 
   const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <Star
-        key={i}
-        className={`w-3 h-3 ${
-          i < Math.floor(rating)
-            ? 'text-yellow-400 fill-current'
-            : i < rating
-            ? 'text-yellow-400 fill-current opacity-50'
-            : 'text-gray-300'
-        }`}
-      />
-    ));
+    return Array.from({ length: 5 }, (_, i) => {
+      const StarIcon = Star as React.ComponentType<{ 
+        key: number; 
+        className: string; 
+      }>;
+      return (
+        <StarIcon
+          key={i}
+          className={`w-3 h-3 ${
+            i < Math.floor(rating)
+              ? 'text-yellow-400 fill-current'
+              : i < rating
+              ? 'text-yellow-400 fill-current opacity-50'
+              : 'text-gray-300'
+          }`}
+        />
+      );
+    });
   };
+
+  // Lucide 아이콘들을 타입캐스팅
+  const EyeIcon = Eye as React.ComponentType<{ className: string }>;
+  const Maximize2Icon = Maximize2 as React.ComponentType<{ className: string }>;
+  const HeartIcon = Heart as React.ComponentType<{ className: string }>;
+  const CheckIcon = Check as React.ComponentType<{ className: string }>;
+  const CopyIcon = Copy as React.ComponentType<{ className: string }>;
+  const CodeIcon = Code as React.ComponentType<{ className: string }>;
 
   return (
     <div className="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:border-gray-300 transition-all duration-300">
       {/* Preview Area */}
-      <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 p-6 min-h-[180px] flex items-center justify-center overflow-hidden">
+      <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 p-6 h-[200px] flex items-center justify-center overflow-hidden">
         {/* Live Preview */}
-        <div className="transition-transform group-hover:scale-105 duration-300 flex items-center justify-center w-full">
-          {template.category.id === 'buttons' && (
-            <button className={template.tailwindClasses} disabled>
-              {template.name.includes('Primary') ? 'Primary' : 
-               template.name.includes('Outline') ? 'Outline' : 
-               template.name.includes('Ghost') ? 'Ghost' : 'Button'}
+        <div className="transition-transform flex items-center justify-center w-full h-full">
+          <div className="flex items-center justify-center max-w-[240px] max-h-[160px]">
+            {renderPreview(template, false)}
+          </div>
+        </div>
+
+        {/* Hover Actions */}
+        <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowPreview(!showPreview)}
+              className="p-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm hover:bg-white transition-colors"
+              title="Quick Preview"
+            >
+              <EyeIcon className="w-4 h-4 text-gray-600" />
             </button>
-          )}
-          {template.category.id === 'cards' && (
-            <div className={`${template.tailwindClasses} w-48 max-w-full`}>
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-900 mb-2 text-sm">Product Card</h3>
-                <p className="text-gray-600 text-xs">Beautiful card design with clean layout</p>
-                <div className="mt-3 flex items-center justify-between">
-                  <span className="text-lg font-bold text-gray-900">$29</span>
-                  <button className="text-xs bg-blue-600 text-white px-2 py-1 rounded">Buy</button>
-                </div>
-              </div>
-            </div>
-          )}
-          {template.category.id === 'forms' && (
-            <div className="w-48 max-w-full">
-              <input 
-                type="text" 
-                placeholder="Enter your email..." 
-                className={template.tailwindClasses}
-                readOnly
-              />
-            </div>
-          )}
-          {template.category.id === 'navigation' && (
-            <nav className={`${template.tailwindClasses} w-48 max-w-full`}>
-              <div className="flex items-center justify-between px-4 py-2">
-                <span className="font-semibold text-sm">Logo</span>
-                <div className="flex space-x-3 text-xs">
-                  <span>Home</span>
-                  <span>About</span>
-                </div>
-              </div>
-            </nav>
-          )}
-          {template.category.id === 'layout' && (
-            <div className={`${template.tailwindClasses} w-48 max-w-full h-24`}>
-              <div className="grid grid-cols-3 gap-2 h-full p-2">
-                <div className="bg-gray-300 rounded"></div>
-                <div className="bg-gray-300 rounded"></div>
-                <div className="bg-gray-300 rounded"></div>
-              </div>
-            </div>
-          )}
-          {template.category.id === 'feedback' && (
-            <div className={`${template.tailwindClasses} max-w-xs`}>
-              <div className="flex items-center space-x-2 p-3">
-                <Check className="w-4 h-4 text-green-600" />
-                <span className="text-sm">Success message</span>
-              </div>
-            </div>
-          )}
-          {template.category.id === 'modals' && (
-            <div className={`${template.tailwindClasses} w-48 max-w-full`}>
-              <div className="p-4 text-center">
-                <h3 className="font-semibold text-sm mb-2">Modal Title</h3>
-                <p className="text-xs text-gray-600 mb-3">Modal content goes here</p>
-                <button className="text-xs bg-blue-600 text-white px-3 py-1 rounded">OK</button>
-              </div>
-            </div>
-          )}
-          {template.category.id === 'badges' && (
-            <div className="flex flex-wrap gap-2 justify-center">
-              <span className={template.tailwindClasses}>
-                {template.name.includes('Success') ? 'Success' :
-                 template.name.includes('Warning') ? 'Warning' :
-                 template.name.includes('Error') ? 'Error' : 'Badge'}
-              </span>
-            </div>
-          )}
-          {/* Default fallback for other categories */}
-          {!['buttons', 'cards', 'forms', 'navigation', 'layout', 'feedback', 'modals', 'badges'].includes(template.category.id) && (
-            <div className={`${template.tailwindClasses} w-48 max-w-full p-3`}>
-              <div className="text-center text-sm">
-                {template.name}
-              </div>
-            </div>
-          )}
+            <button
+              onClick={() => setShowFullPreview(true)}
+              className="p-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm hover:bg-white transition-colors"
+              title="Full Preview"
+            >
+              <Maximize2Icon className="w-4 h-4 text-gray-600" />
+            </button>
+          </div>
         </div>
 
-        {/* Overlay Actions */}
-        <div className="absolute top-3 right-3 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200" suppressHydrationWarning>
-          <button
-            onClick={() => setShowFullPreview(true)}
-            className="p-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm hover:bg-white transition-colors"
-            title="Full preview"
-          >
-            <Maximize2 className="w-4 h-4 text-gray-700" />
-          </button>
-          <button
-            onClick={handleFavoriteToggle}
-            className="p-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm hover:bg-white transition-colors"
-            title={isFavorite(template.id) ? "Remove from favorites" : "Add to favorites"}
-          >
-            <Heart className={`w-4 h-4 ${isFavorite(template.id) ? 'text-red-500 fill-current' : 'text-gray-700'}`} />
-          </button>
-        </div>
-
-        {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-col space-y-2">
-          {template.featured && (
-            <span className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-medium px-2 py-1 rounded-full shadow-sm">
-              ⭐ Featured
-            </span>
-          )}
-          {template.rating && template.rating.average >= 4.5 && (
-            <span className="bg-gradient-to-r from-green-400 to-emerald-400 text-white text-xs font-medium px-2 py-1 rounded-full shadow-sm">
-              🏆 Top Rated
-            </span>
-          )}
-        </div>
-
-        {/* Usage Count */}
-        {template.usageCount && template.usageCount > 1000 && (
-          <div className="absolute bottom-3 left-3">
-            <span className="bg-black/20 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
-              {template.usageCount > 1000 ? `${Math.floor(template.usageCount / 1000)}k+ uses` : `${template.usageCount} uses`}
-            </span>
+        {/* Featured Badge */}
+        {template.featured && (
+          <div className="absolute top-3 left-3">
+            <div className="bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-medium px-2 py-1 rounded-full">
+              Featured
+            </div>
           </div>
         )}
       </div>
 
+      {/* Quick Preview Overlay */}
+      {showPreview && (
+        <div className="absolute inset-0 bg-black/80 z-20 flex items-center justify-center p-6">
+          <div className="bg-white rounded-lg p-6 max-w-full max-h-full overflow-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-gray-900">Preview</h3>
+              <button
+                onClick={() => setShowPreview(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ×
+              </button>
+            </div>
+            <div className="flex items-center justify-center p-4">
+              {renderPreview(template, true)}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Content */}
-      <div className="p-5">
+      <div className="p-4">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center space-x-2 mb-1">
-              <h3 className="text-lg font-semibold text-gray-900 truncate">
-                {template.name}
-              </h3>
-              <span className="text-lg">{template.category.icon}</span>
-            </div>
+          <div className="flex-1">
+            <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
+              {template.name}
+            </h3>
             <p className="text-sm text-gray-600 line-clamp-2">
               {template.description}
             </p>
           </div>
+          <button
+            onClick={handleFavoriteToggle}
+            className={`p-2 rounded-lg transition-colors ml-2 ${
+              isFavorite(template.id)
+                ? 'text-red-500 bg-red-50 hover:bg-red-100'
+                : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
+            }`}
+          >
+            <HeartIcon className={`w-4 h-4 ${isFavorite(template.id) ? 'fill-current' : ''}`} />
+          </button>
+        </div>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-1 mb-3">
+          {template.tags.slice(0, 3).map((tag) => (
+            <span
+              key={tag}
+              className="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-md"
+            >
+              {tag}
+            </span>
+          ))}
+          {template.tags.length > 3 && (
+            <span className="inline-block text-gray-500 text-xs">
+              +{template.tags.length - 3}
+            </span>
+          )}
+        </div>
+
+        {/* Metadata Row */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            {/* Category */}
+            <span
+              className="inline-flex items-center text-xs px-2 py-1 rounded-full"
+              style={{ backgroundColor: `${template.category.color}15`, color: template.category.color }}
+            >
+              <span className="mr-1">{template.category.icon}</span>
+              {template.category.name}
+            </span>
+
+            {/* Complexity */}
+            <span className={`text-xs px-2 py-1 rounded-full ${getComplexityColor(template.complexity)}`}>
+              {template.complexity}
+            </span>
+          </div>
+
+          {/* Usage Count */}
+          {template.usageCount && (
+            <div className="text-xs text-gray-500">
+              {template.usageCount.toLocaleString()} uses
+            </div>
+          )}
         </div>
 
         {/* Rating */}
         {template.rating && (
-          <div className="flex items-center space-x-2 mb-3">
-            <div className="flex items-center space-x-1">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center">
               {renderStars(template.rating.average)}
             </div>
             <span className="text-sm text-gray-600">
@@ -222,116 +281,122 @@ export default function TemplateCard({ template }: TemplateCardProps) {
           </div>
         )}
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-1.5 mb-4">
-          {template.tags.slice(0, 3).map((tag) => (
-            <span
-              key={tag}
-              className="inline-block bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-md font-medium"
-            >
-              {tag}
-            </span>
-          ))}
-          {template.tags.length > 3 && (
-            <span className="inline-block bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-md font-medium">
-              +{template.tags.length - 3}
-            </span>
-          )}
-        </div>
-
-        {/* Metadata */}
-        <div className="flex items-center justify-between mb-4 text-sm">
-          <div className="flex items-center space-x-3">
-            <span className={`px-2 py-1 rounded-md text-xs font-medium ${getComplexityColor(template.complexity)}`}>
-              {template.complexity}
-            </span>
-            {template.author && (
-              <span className="text-gray-500">by {template.author.name}</span>
-            )}
-          </div>
-        </div>
-
         {/* Actions */}
-        <div className="flex space-x-2" suppressHydrationWarning>
+        <div className="flex gap-2">
           <button
             onClick={() => handleCopy('tailwind')}
-            className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-3 py-2.5 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 text-sm font-medium flex items-center justify-center space-x-2 shadow-sm"
+            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
           >
             {copied && copyType === 'tailwind' ? (
-              <>
-                <Check className="w-4 h-4" />
-                <span>Copied!</span>
-              </>
+              <CheckIcon className="w-4 h-4" />
             ) : (
-              <>
-                <Code className="w-4 h-4" />
-                <span>CSS</span>
-              </>
+              <CopyIcon className="w-4 h-4" />
             )}
+            {copied && copyType === 'tailwind' ? 'Copied!' : 'Copy CSS'}
           </button>
+          
           <button
-            onClick={() => handleCopy('figma')}
-            className="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 text-white px-3 py-2.5 rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-200 text-sm font-medium flex items-center justify-center space-x-2 shadow-sm"
+            onClick={() => handleCopy('nodedata')}
+            className="flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
           >
-            {copied && copyType === 'figma' ? (
-              <>
-                <Check className="w-4 h-4" />
-                <span>Copied!</span>
-              </>
+            {copied && copyType === 'nodedata' ? (
+              <CheckIcon className="w-4 h-4" />
             ) : (
-              <>
-                <Figma className="w-4 h-4" />
-                <span>Figma</span>
-              </>
+              <CodeIcon className="w-4 h-4" />
             )}
+            {copied && copyType === 'nodedata' ? 'Copied!' : 'NodeData'}
           </button>
+        </div>
+
+        {/* Author & Date */}
+        <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+          <div className="flex items-center gap-2">
+            {template.author.avatar && <Image src={template.author.avatar} alt={template.author.name} className="w-6 h-6 rounded-full" width={24} height={24} />}
+            <span className="text-sm text-gray-600">{template.author.name}</span>
+          </div>
+          <span className="text-xs text-gray-500">
+            {new Date(template.updatedAt).toLocaleDateString()}
+          </span>
         </div>
       </div>
 
       {/* Full Preview Modal */}
-      {showFullPreview && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowFullPreview(false)}>
-          <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="p-6 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xl font-semibold text-gray-900">{template.name}</h3>
+      {showFullPreview && typeof document !== 'undefined' && (
+        createPortal(
+          <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl w-[95vw] h-[95vh] max-w-7xl flex flex-col overflow-hidden shadow-2xl">
+              {/* Modal Header */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gray-50 rounded-t-xl">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">{template.name}</h2>
+                  <p className="text-gray-600 mt-1">{template.description}</p>
+                </div>
                 <button
                   onClick={() => setShowFullPreview(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="text-gray-400 hover:text-gray-600 text-3xl font-light hover:bg-gray-100 w-10 h-10 flex items-center justify-center rounded-full transition-colors"
                 >
-                  ✕
+                  ×
                 </button>
               </div>
-            </div>
-            <div className="p-8 bg-gray-50 min-h-[300px] flex items-center justify-center">
-              <div className={`${template.tailwindClasses} scale-150`}>
-                {template.category.id === 'buttons' && <span className="text-current">Button</span>}
-                {template.category.id === 'cards' && (
-                  <div className="w-full h-full flex items-center justify-center text-gray-600">
-                    <span>Card Content</span>
+
+              {/* Modal Content */}
+              <div className="flex-1 p-6 flex flex-col min-h-0">
+                {/* Preview - 상단 영역 (높이 더 증가) */}
+                <div className="h-96 mb-4 flex-shrink-0">
+                  <div className="h-full border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 flex items-center justify-center">
+                    <div className="flex items-center justify-center max-w-full max-h-full">
+                      {renderPreview(template, true)}
+                    </div>
                   </div>
-                )}
-                {/* Add other category previews as needed */}
+                </div>
+
+                {/* Bottom Section: nodeData와 Figma Styles */}
+                <div className="flex-1 grid grid-cols-2 gap-4 min-h-0">
+                  {/* Left: nodeData */}
+                  <div className="flex flex-col min-h-0">
+                    <div className="flex items-center gap-3 mb-2 flex-shrink-0">
+                      <h3 className="text-sm font-semibold text-gray-900">NodeData Structure</h3>
+                      <button
+                        onClick={() => handleCopy('nodedata')}
+                        className="px-2 py-1 text-xs text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+                      >
+                        Copy JSON
+                      </button>
+                    </div>
+                    <div className="flex-1 bg-gray-900 text-gray-100 rounded-lg p-3 text-xs overflow-auto min-h-0">
+                      <pre className="whitespace-pre-wrap">
+                        <code className="language-json text-green-400">
+                          {nodeDataToJson(template.nodeData)}
+                        </code>
+                      </pre>
+                    </div>
+                  </div>
+
+                  {/* Right: Figma Styles */}
+                  <div className="flex flex-col min-h-0">
+                    <div className="flex items-center gap-3 mb-2 flex-shrink-0">
+                      <h3 className="text-sm font-semibold text-gray-900">Figma Styles</h3>
+                      <button
+                        onClick={() => handleCopy('figma')}
+                        className="px-2 py-1 text-xs text-green-600 hover:text-green-800 bg-green-50 hover:bg-green-100 rounded-md transition-colors"
+                      >
+                        Copy Figma JSON
+                      </button>
+                    </div>
+                    <div className="flex-1 bg-gray-900 text-gray-100 rounded-lg p-3 text-xs overflow-auto min-h-0">
+                      <pre className="whitespace-pre-wrap">
+                        <code className="language-json text-blue-400">
+                          {JSON.stringify(convertNodeDataToFigma(template.nodeData), null, 2)}
+                        </code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="p-6 border-t border-gray-200">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Tailwind CSS</h4>
-                  <pre className="bg-gray-100 p-3 rounded-lg text-sm overflow-x-auto">
-                    <code>{template.tailwindClasses}</code>
-                  </pre>
-                </div>
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Figma Styles</h4>
-                  <pre className="bg-gray-100 p-3 rounded-lg text-sm overflow-x-auto max-h-40">
-                    <code>{JSON.stringify(template.figmaStyles, null, 2)}</code>
-                  </pre>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+          </div>,
+          document.body
+        )
       )}
     </div>
   );
