@@ -5,11 +5,30 @@ alwaysApply: false
 ---
 # Development Workflow and Automation Guide
 
-## PR-Based Development Workflow with Develop Branch (Recommended)
+## 🔄 Complete Development Flow Overview
 
-### 1. Feature Development with Changeset Accumulation
+### Current Proven Workflow (Updated 2024)
 
-**Step-by-step workflow for each feature/fix:**
+```mermaid
+graph TD
+    A[Feature 개발] --> B[develop 브랜치에 PR]
+    B --> C[PR 머지 to develop]
+    C --> D[Changeset 누적]
+    D --> E{릴리즈 준비?}
+    E -->|Yes| F[Version PR 자동 생성]
+    E -->|No| A
+    F --> G[Version PR 머지 to develop]
+    G --> H[develop → main PR 생성]
+    H --> I[main 브랜치 머지]
+    I --> J[자동 NPM 배포]
+    J --> K[GitHub Release 생성]
+```
+
+## 🛠️ Step-by-Step Development Process
+
+### 1️⃣ Feature Development with Changeset
+
+**Complete workflow for each feature/fix:**
 
 ```bash
 # 1. Create feature branch from develop
@@ -38,68 +57,9 @@ git push origin feature/your-feature-name
 # Create PR targeting develop branch (NOT main)
 ```
 
-### 2. PR Review and Merge Process
+### 2️⃣ Changeset Accumulation in Develop
 
-```mermaid
-graph TD
-    A[Create feature branch from develop] --> B[Develop feature]
-    B --> C[Create changeset]
-    C --> D[Commit & push]
-    D --> E[Create PR to develop]
-    E --> F[Code review]
-    F --> G{Review approved?}
-    G -->|No| H[Address feedback]
-    H --> F
-    G -->|Yes| I[Merge PR to develop]
-    I --> J[Changeset accumulated in develop]
-    J --> K[Multiple features ready?]
-    K -->|No| L[Continue development]
-    L --> A
-    K -->|Yes| M[Create Release PR: develop → main]
-    M --> N[Review & merge Release PR]
-    N --> O[GitHub Actions trigger]
-    O --> P[NPM deployment]
-```
-
-### 3. Changeset Management per PR
-
-#### Individual PR Changeset Strategy
-
-Each PR should include its own changeset file:
-
-```bash
-# Example: feature/live-preview PR
-.changeset/
-├── brave-lions-dance.md    # Live preview feature
-└── config.json
-
-# Example: fix/css-parser PR  
-.changeset/
-├── brave-lions-dance.md    # Previous feature
-├── tiny-cats-jump.md       # CSS parser fix
-└── config.json
-```
-
-#### Changeset Naming Convention
-
-```bash
-# Changeset files are auto-generated with random names
-# Content is what matters:
-
----
-"cssma": minor
----
-
-Add live CSS preview system
-
-- Implement real-time preview component
-- Add debounced updates (300ms)
-- Include error handling and loading states
-```
-
-### 4. Changeset Accumulation in Develop Branch
-
-**Scenario: Multiple features before next release**
+**Multiple features before release:**
 
 ```bash
 # develop branch accumulates changesets:
@@ -119,25 +79,174 @@ Add live CSS preview system
 ├── tiny-cats-jump.md (patch)
 ├── loud-dogs-sing.md (minor)
 └── config.json
-
-# When ready for release:
-# → Create PR: develop → main
-# → GitHub Actions processes all changesets
-# → Calculates final version (0.1.0 → 0.2.0)
-# → NPM deployment
 ```
 
-### 5. Branch Protection Rules (Recommended)
+### 3️⃣ Version PR Automation (NEW!)
 
-Set up branch protection for main branch:
+**Automatic version PR creation:**
+
+```bash
+# When changesets exist in develop:
+# 1. GitHub Actions automatically creates Version PR
+# 2. PR title: "chore: version packages"
+# 3. Processes all accumulated changesets
+# 4. Updates package.json versions
+# 5. Updates CHANGELOG.md
+# 6. Removes processed changeset files
+
+# Manual trigger option (NEW!):
+# Go to: https://github.com/easylogic/cssma/actions/workflows/version-pr.yml
+# Click "Run workflow" → Select branch → Run
+```
+
+### 4️⃣ Release to Production
+
+**Final release process:**
+
+```bash
+# 1. Merge Version PR to develop
+# 2. Create develop → main PR manually
+# 3. Review all changes going to production
+# 4. Merge to main
+# 5. GitHub Actions triggers:
+#    - NPM deployment
+#    - GitHub Release creation
+#    - Git tag creation
+```
+
+## 🔧 GitHub Actions Workflows
+
+### 1. Version PR Workflow ([.github/workflows/version-pr.yml](mdc:.github/workflows/version-pr.yml))
+
+**Enhanced with manual trigger support:**
 
 ```yaml
-# GitHub Settings → Branches → main
+name: Version PR
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:    # NEW: Manual trigger support
+    inputs:
+      branch:
+        description: 'Branch to run on'
+        required: false
+        default: 'develop'
+
+# Key features:
+# - Automatic changeset processing
+# - Version bump calculation
+# - CHANGELOG generation
+# - Manual execution capability
+```
+
+#### Manual Workflow Execution
+
+```bash
+# Option 1: GitHub UI
+# 1. Go to Actions tab
+# 2. Select "Version PR" workflow
+# 3. Click "Run workflow"
+# 4. Select branch (default: develop)
+# 5. Click "Run workflow"
+
+# Option 2: Automatic trigger
+# Push to develop branch with changesets
+```
+
+### 2. Release Workflow ([.github/workflows/release.yml](mdc:.github/workflows/release.yml))
+
+**Production deployment automation:**
+
+```yaml
+# Trigger: main branch push
+on:
+  push:
+    branches: [main]
+
+# Process:
+# 1. Build packages
+# 2. NPM deployment
+# 3. GitHub Release creation
+# 4. Git tag creation
+```
+
+## 📋 Changeset Management Best Practices
+
+### 1. Changeset Creation Guidelines
+
+```bash
+# Interactive changeset creation
+pnpm changeset
+
+# Selection criteria:
+# patch: Bug fixes, docs, small improvements
+# minor: New features, API additions
+# major: Breaking changes, API removals
+```
+
+#### Example Changeset Content
+
+```markdown
+---
+"cssma": minor
+---
+
+Add real-time CSS preview system
+
+- Implement LivePreview component with debounced updates
+- Add error handling and loading states
+- Include style inspector functionality
+- Support enable/disable toggle control
+```
+
+### 2. Changeset Accumulation Strategy
+
+**Benefits of develop branch accumulation:**
+
+- ✅ **Multiple features per release**: Combine related features
+- ✅ **Flexible release timing**: Release when ready, not per feature
+- ✅ **Better version control**: Logical version increments
+- ✅ **Reduced deployment frequency**: Fewer NPM publishes
+
+### 3. Version Calculation Logic
+
+```bash
+# Changeset combination rules:
+# patch + patch = patch (0.1.0 → 0.1.1)
+# patch + minor = minor (0.1.0 → 0.2.0)
+# minor + minor = minor (0.1.0 → 0.2.0)
+# any + major = major (0.1.0 → 1.0.0)
+
+# Example scenario:
+# - 2 minor features + 1 patch fix = minor release
+# - 0.1.2 → 0.2.0
+```
+
+## 🚀 Branch Management Strategy
+
+### 1. Branch Hierarchy
+
+```
+main                 # Production releases only
+├── develop          # Integration & changeset accumulation
+│   ├── feature/xxx  # New feature development
+│   ├── fix/xxx      # Bug fixes
+│   └── hotfix/xxx   # Critical fixes
+└── changeset-release/develop  # Auto-generated version PRs
+```
+
+### 2. Branch Protection Rules
+
+**Recommended GitHub settings:**
+
+```yaml
+# main branch protection:
 protection_rules:
   require_pull_request_reviews: true
   required_approving_review_count: 1
   dismiss_stale_reviews: true
-  require_code_owner_reviews: false
   require_status_checks: true
   required_status_checks:
     - "build"
@@ -146,140 +255,103 @@ protection_rules:
   enforce_admins: false
   allow_force_pushes: false
   allow_deletions: false
+
+# develop branch protection:
+protection_rules:
+  require_pull_request_reviews: true
+  required_approving_review_count: 1
+  require_status_checks: true
 ```
 
-### 6. PR Template with Changeset Checklist
-
-PR template is available at `.github/pull_request_template.md` with comprehensive checklist including changeset requirements.
-
-### 7. Release Management Process
-
-**When to create a release:**
+### 3. Merge Strategies
 
 ```bash
-# Check accumulated changesets in develop
-pnpm changeset:status
-
-# Review what will be released
-git log main..develop --oneline
-
-# Create release PR when ready
-# 1. Create PR: develop → main
-# 2. Title: "Release v0.x.x"
-# 3. Review all accumulated changes
-# 4. Merge to trigger deployment
+# Feature → develop: Squash merge (clean history)
+# Version PR → develop: Merge commit (preserve changeset processing)
+# develop → main: Merge commit (preserve release history)
 ```
 
-### 8. Real-world Example Workflow
+## 🔍 Workflow Monitoring & Debugging
 
-**Example: Adding multiple features before release**
+### 1. GitHub Actions Debugging
+
+**Manual workflow execution for testing:**
 
 ```bash
-# Feature 1: CSS Grid converter
-git checkout develop
-git pull origin develop
-git checkout -b feature/add-grid-converter
-# ... develop feature ...
-pnpm changeset # minor
-git commit -m "feat: add CSS Grid converter support"
-git push origin feature/add-grid-converter
-# Create PR to develop → merge
+# Test version PR workflow:
+# 1. Ensure changesets exist in develop
+# 2. Go to Actions → Version PR → Run workflow
+# 3. Monitor execution logs
+# 4. Check created PR
 
-# Feature 2: Bug fix
-git checkout develop
-git pull origin develop
-git checkout -b fix/parser-edge-case
-# ... fix bug ...
-pnpm changeset # patch
-git commit -m "fix: handle edge case in CSS parser"
-git push origin fix/parser-edge-case
-# Create PR to develop → merge
+# Common debugging steps:
+# - Check changeset files exist
+# - Verify pnpm installation
+# - Review GitHub permissions
+# - Monitor build logs
+```
 
-# Feature 3: New component
-git checkout develop
-git pull origin develop
-git checkout -b feature/new-component-type
-# ... develop feature ...
-pnpm changeset # minor
-git commit -m "feat: add new component type support"
-git push origin feature/new-component-type
-# Create PR to develop → merge
+### 2. Troubleshooting Common Issues
 
-# Ready for release
-git checkout develop
+#### Version PR Creation Failure
+
+```bash
+# Cause: No changesets in develop
+# Solution: Ensure changeset files exist
+
+# Cause: GitHub Actions permissions
+# Solution: Enable "Allow GitHub Actions to create PRs"
+
+# Cause: Merge conflicts
+# Solution: Resolve conflicts manually
+```
+
+#### NPM Deployment Failure
+
+```bash
+# Cause: NPM_TOKEN expired
+# Solution: Update token in GitHub Secrets
+
+# Cause: Package version already exists
+# Solution: Check version calculation logic
+```
+
+### 3. Status Monitoring Commands
+
+```bash
+# Check changeset status
 pnpm changeset:status
-# Shows: 2 minor + 1 patch = minor release (0.1.0 → 0.2.0)
 
-# Create release PR
-# develop → main
-# Title: "Release v0.2.0"
-# Merge → triggers GitHub Actions → NPM deployment
+# Preview version changes
+pnpm changeset:version --dry-run
+
+# Check current package version
+npm view cssma version
+
+# Monitor GitHub Actions
+# Visit: https://github.com/easylogic/cssma/actions
 ```
 
-**Result**: Single release with multiple features, version bump from `0.1.0` → `0.2.0`.
+## 📦 Package Management Configuration
 
-## GitHub Actions Workflows
+### 1. Monorepo Structure
 
-### 1. Release Automation ([.github/workflows/release.yml](mdc:.github/workflows/release.yml))
-
-Fully automated package deployment system:
-
-```yaml
-# Trigger: main branch push
-on:
-  push:
-    branches: [main]
-
-# Key steps:
-# 1. Install dependencies (pnpm v9)
-# 2. Build packages
-# 3. Process changesets
-# 4. NPM deployment
-# 5. Create GitHub release
+```
+packages/
+  cssma/           # Core library (deployed to NPM)
+apps/
+  cssma-plugin/    # Figma plugin (private)
+  figmai-landing/  # Landing page (private)
 ```
 
-#### Required Secrets
-
-- `NPM_TOKEN`: NPM deployment token (Automation type)
-- `GITHUB_TOKEN`: Auto-provided (for PR creation, release creation)
-
-#### Permission Settings
-
-```yaml
-permissions:
-  contents: write      # Git tag creation
-  pull-requests: write # Release PR creation
-  issues: write        # Issue management
-```
-
-### 2. Workflow Execution Process
-
-```mermaid
-graph TD
-    A[main branch push] --> B[GitHub Actions trigger]
-    B --> C[Install dependencies]
-    C --> D[Build packages]
-    D --> E[Check changesets]
-    E --> F{Changesets exist?}
-    F -->|Yes| G[Create Release PR]
-    F -->|No| H[End workflow]
-    G --> I[Wait for PR merge]
-    I --> J[PR merged]
-    J --> K[NPM deployment]
-    K --> L[Create GitHub release]
-    K --> M[Create Git tags]
-```
-
-## Changeset Management
-
-### 1. Configuration File ([.changeset/config.json](mdc:.changeset/config.json))
+### 2. Changeset Configuration ([.changeset/config.json](mdc:.changeset/config.json))
 
 ```json
 {
   "changelog": "@changesets/cli/changelog",
   "commit": false,
   "access": "public",
-  "baseBranch": "main",
+  "baseBranch": "develop",  # Changed from main to develop
   "updateInternalDependencies": "patch",
   "ignore": ["figmai-landing", "cssma-plugin"],
   "snapshot": {
@@ -288,62 +360,7 @@ graph TD
 }
 ```
 
-#### Key Configuration Explanations
-
-- `ignore`: Packages not to deploy (private packages)
-- `updateInternalDependencies`: Internal dependency update method
-- `snapshot`: Snapshot version calculation method
-
-### 2. Changeset Creation Guide
-
-```bash
-# Interactive changeset creation
-pnpm changeset
-
-# Selection process:
-# 1. Select changed packages (cssma)
-# 2. Select change type (patch/minor/major)
-# 3. Write change summary
-# 4. Confirm and create
-```
-
-#### Change Type Criteria
-
-| Type | When to Use | Example |
-|------|-------------|---------|
-| **patch** | Bug fixes, documentation updates | 0.1.1 → 0.1.2 |
-| **minor** | New feature additions | 0.1.1 → 0.2.0 |
-| **major** | Breaking changes | 0.1.1 → 1.0.0 |
-
-### 3. Changeset File Structure
-
-```markdown
----
-"cssma": patch
----
-
-Add real-time CSS preview system
-
-- Implement LivePreview component
-- Apply 300ms debouncing
-- Add error handling and loading states
-```
-
-## Package Management
-
-### 1. Monorepo Structure
-
-```
-packages/
-  cssma/           # Core library (deployed)
-apps/
-  cssma-plugin/    # Figma plugin (not deployed)
-  figmai-landing/  # Landing page (not deployed)
-```
-
-### 2. Dependency Management
-
-#### Root package.json Scripts
+### 3. Package Scripts
 
 ```json
 {
@@ -359,188 +376,115 @@ apps/
 }
 ```
 
-#### pnpm Workspace Configuration
+## 🎯 Real-World Usage Examples
 
-```yaml
-# pnpm-workspace.yaml
-packages:
-  - 'packages/*'
-  - 'apps/*'
-```
-
-### 3. Build Optimization
+### Example 1: Single Feature Release
 
 ```bash
-# Build specific package only (for deployment)
-pnpm --filter cssma build
+# 1. Develop feature
+git checkout -b feature/css-grid-support
+# ... implement feature ...
+pnpm changeset  # minor
+git commit -m "feat: add CSS Grid support"
+git push origin feature/css-grid-support
 
-# Build all (for development)
-pnpm build:all
+# 2. Create PR to develop → merge
 
-# Parallel build
-pnpm -r --parallel build
+# 3. Trigger version PR (automatic or manual)
+# 4. Merge version PR to develop
+# 5. Create develop → main PR → merge
+# 6. Automatic NPM deployment
 ```
 
-## Version Management Strategy
-
-### 1. Semantic Versioning
-
-```
-MAJOR.MINOR.PATCH
-  |     |     |
-  |     |     └─ Bug fixes
-  |     └─ New features (backward compatible)
-  └─ Breaking changes
-```
-
-### 2. Branch Strategy
-
-```
-main                 # Stable version, production releases only
-├── develop          # Integration branch, changeset accumulation
-│   ├── feature/xxx  # New feature development
-│   ├── fix/xxx      # Bug fixes
-│   └── hotfix/xxx   # Critical fixes
-└── release/xxx      # Release preparation (optional)
-```
-
-#### Branch Purposes
-
-- **main**: Production-ready code, only receives merges from develop
-- **develop**: Integration branch where all features are merged and changesets accumulate
-- **feature/**: New feature development, merged to develop
-- **fix/**: Bug fixes, merged to develop
-- **hotfix/**: Critical production fixes, can be merged directly to main if urgent
-
-### 3. Tag Management
+### Example 2: Multiple Features Release
 
 ```bash
-# Auto-generated tag format
-v0.1.0, v0.1.1, v0.1.2, ...
+# Week 1: Feature A
+feature/live-preview → develop (minor changeset)
 
-# Check tags
-git tag -l
+# Week 2: Feature B  
+feature/new-parser → develop (minor changeset)
 
-# Checkout to specific tag
-git checkout v0.1.2
+# Week 3: Bug fix
+fix/edge-case → develop (patch changeset)
+
+# Week 4: Ready for release
+# 1. Version PR processes all 3 changesets
+# 2. Calculates: 2 minor + 1 patch = minor release
+# 3. Version: 0.1.0 → 0.2.0
+# 4. develop → main → NPM deployment
 ```
 
-## Automation Troubleshooting
-
-### 1. GitHub Actions Failure Causes
-
-#### NPM Deployment Failure
-```bash
-# Cause: NPM_TOKEN expired or incorrect configuration
-# Solution: Generate new token in NPM and update GitHub Secrets
-```
-
-#### PR Creation Failure
-```bash
-# Cause: Insufficient GitHub Actions permissions
-# Solution: Manual PR creation or use PAT
-```
-
-#### Build Failure
-```bash
-# Cause: pnpm version mismatch
-# Solution: Ensure pnpm v9 usage in GitHub Actions
-```
-
-### 2. Common Solutions
+### Example 3: Hotfix Process
 
 ```bash
-# 1. Test build locally
-pnpm install --no-frozen-lockfile
-pnpm build
+# Critical bug in production
+git checkout main
+git pull origin main
+git checkout -b hotfix/critical-parser-bug
 
-# 2. Check changeset status
-pnpm changeset:status
+# ... fix bug ...
+pnpm changeset  # patch
+git commit -m "fix: resolve critical parser bug"
+git push origin hotfix/critical-parser-bug
 
-# 3. Manual version update (for testing)
-pnpm changeset:version
+# Option 1: Emergency (direct to main)
+# Create PR to main → merge → immediate deployment
 
-# 4. Clear dependency cache
-pnpm store prune
+# Option 2: Standard (through develop)
+# Create PR to develop → follow normal process
 ```
 
-### 3. Monitoring and Notifications
+## 🔐 Security & Permissions
 
-#### GitHub Actions Status Check
-- Monitor workflow execution status in Actions tab
-- Automatic email notifications on failure
+### 1. GitHub Actions Permissions
 
-#### NPM Package Status
-```bash
-# Check latest version
-npm view cssma version
-
-# Deployment history
-npm view cssma versions --json
-```
-
-## Development Environment Setup
-
-### 1. Local Development Environment
+**Required repository settings:**
 
 ```bash
-# 1. Clone repository
-git clone https://github.com/easylogic/cssma.git
-cd cssma
+# Settings → Actions → General
+# ✅ Allow GitHub Actions to create and approve pull requests
+# ✅ Allow GitHub Actions to create and approve pull requests
 
-# 2. Install dependencies
-pnpm install
-
-# 3. Run development server
-pnpm dev
-
-# 4. Run tests
-pnpm test
+# Workflow permissions:
+# ✅ Read and write permissions
+# ✅ Allow GitHub Actions to create and approve pull requests
 ```
 
-### 2. Environment Variables
+### 2. NPM Token Management
 
 ```bash
-# .env.local (for local development)
-NODE_ENV=development
-FIGMA_ACCESS_TOKEN=your_token_here
+# NPM token requirements:
+# - Type: Automation
+# - Scope: Public packages
+# - Expiration: No expiration (or long-term)
 
-# GitHub Secrets (for deployment)
-NPM_TOKEN=npm_xxx
-GITHUB_TOKEN=ghp_xxx (auto-provided)
+# GitHub Secrets:
+# NPM_TOKEN: npm_xxxxxxxxxxxx
+# GITHUB_TOKEN: (auto-provided)
 ```
 
-### 3. IDE Configuration
-
-#### VSCode Recommended Extensions
-
-```json
-{
-  "recommendations": [
-    "ms-vscode.vscode-typescript-next",
-    "bradlc.vscode-tailwindcss",
-    "esbenp.prettier-vscode",
-    "ms-playwright.playwright"
-  ]
-}
-```
-
-## Performance Monitoring
+## 📈 Performance Optimization
 
 ### 1. Build Performance
 
 ```bash
-# Measure build time
-time pnpm build
+# Optimized build commands:
+pnpm --filter cssma build     # Build only deployed package
+pnpm -r --parallel build      # Parallel builds for development
 
-# Bundle size analysis
-pnpm build --analyze
+# Cache optimization:
+# - GitHub Actions cache for node_modules
+# - pnpm store cache for dependencies
 ```
 
-### 2. Deployment Performance
+### 2. Workflow Efficiency
 
-- Monitor GitHub Actions execution time
-- Track NPM deployment success rate
-- Optimize dependency installation time
+```bash
+# Debounced workflow execution:
+# - Version PR only runs when changesets exist
+# - Manual trigger prevents unnecessary runs
+# - Conditional steps based on changeset presence
+```
 
-Follow this guide to maintain a stable and efficient development workflow.
+This comprehensive workflow ensures reliable, automated package management with flexibility for both automatic and manual execution. Follow this guide for consistent development and deployment processes.

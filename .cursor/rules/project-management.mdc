@@ -5,289 +5,576 @@ alwaysApply: false
 ---
 # FigmaikR Project Management Guide
 
-## Project Overview
+## 🎯 Project Overview
 
-FigmaikR is a design system toolkit that supports bidirectional conversion between Tailwind CSS and Figma.
+FigmaikR is a comprehensive design system toolkit that enables seamless bidirectional conversion between Tailwind CSS and Figma, supporting modern design-to-code workflows.
 
-### Key Components
+### 🏗️ Architecture Components
 
-- **packages/cssma**: Core library (NPM package)
-- **apps/cssma-plugin**: Figma plugin
-- **apps/figmai-landing**: Landing page
-- **docs/**: Documentation
+- **packages/cssma**: Core library (NPM package) - Production-ready conversion engine
+- **apps/cssma-plugin**: Figma plugin - Real-time design tool integration
+- **apps/figmai-landing**: Landing page - Documentation and showcase
+- **docs/**: Comprehensive documentation and guides
 
-## Development Workflow
+## 🔄 Development Workflow (Updated 2024)
 
-### 1. Version Management (Changeset)
+### 1. Feature Development Process
 
-All package changes are managed through Changeset.
+**Complete feature development cycle:**
 
 ```bash
-# Add new changes
-pnpm changeset
+# 1. Create feature branch from develop
+git checkout develop
+git pull origin develop
+git checkout -b feature/your-feature-name
 
+# 2. Implement feature with proper testing
+# ... develop feature ...
+
+# 3. Create changeset for version management
+pnpm changeset
+# Select: cssma package
+# Choose: patch/minor/major
+# Describe: Clear feature description
+
+# 4. Commit with conventional format
+git add .
+git commit -m "feat: add your feature
+
+- Implement core functionality
+- Add comprehensive tests
+- Include changeset for version bump"
+
+# 5. Create PR targeting develop branch
+git push origin feature/your-feature-name
+# Create PR: feature/your-feature-name → develop
+```
+
+### 2. Version Management with Changeset Automation
+
+**Enhanced changeset workflow:**
+
+```bash
 # Check current changeset status
 pnpm changeset:status
 
-# Update versions (for local testing)
-pnpm changeset:version
+# Preview version changes (dry run)
+pnpm changeset:version --dry-run
 
-# Deploy packages (automatically executed in CI)
-pnpm release
+# Manual version PR trigger (when needed)
+# Go to: https://github.com/easylogic/cssma/actions/workflows/version-pr.yml
+# Click "Run workflow" → Select develop → Run
+
+# Automatic deployment (production)
+pnpm release  # Executed automatically in CI/CD
 ```
 
-#### Changeset Type Guide
+#### Changeset Type Guidelines
 
-- **patch**: Bug fixes, documentation updates, internal refactoring
-- **minor**: New feature additions, API extensions
-- **major**: Breaking changes
+| Type | Use Case | Version Impact | Example |
+|------|----------|----------------|---------|
+| **patch** | Bug fixes, docs, refactoring | 0.1.0 → 0.1.1 | Fix CSS parser edge case |
+| **minor** | New features, API additions | 0.1.0 → 0.2.0 | Add live preview system |
+| **major** | Breaking changes, API removals | 0.1.0 → 1.0.0 | Redesign core API |
 
-### 2. Automated Deployment System
+### 3. Automated Release Pipeline
 
-Fully automated deployment pipeline through GitHub Actions:
+**Complete automation flow:**
 
-1. **main branch push** → GitHub Actions trigger
-2. **Changeset detection** → Automatic release PR creation
-3. **PR merge** → NPM deployment + GitHub release creation
+```mermaid
+graph TD
+    A[Feature PR → develop] --> B[Changeset accumulation]
+    B --> C[Version PR auto-creation]
+    C --> D[Version PR merge to develop]
+    D --> E[develop → main PR]
+    E --> F[main branch merge]
+    F --> G[NPM deployment]
+    G --> H[GitHub Release]
+    G --> I[Git tag creation]
+```
 
-#### Deployment Related Files
+#### Key Automation Files
 
-- [.github/workflows/release.yml](mdc:.github/workflows/release.yml): Automated deployment workflow
-- [.changeset/config.json](mdc:.changeset/config.json): Changeset configuration
-- [package.json](mdc:package.json): Root package configuration
+- [.github/workflows/version-pr.yml](mdc:.github/workflows/version-pr.yml): Version PR automation with manual trigger
+- [.github/workflows/release.yml](mdc:.github/workflows/release.yml): Production deployment pipeline
+- [.changeset/config.json](mdc:.changeset/config.json): Changeset configuration (develop-based)
 
-### 3. Package Structure
+### 4. Branch Strategy & Management
 
-#### Core Library (packages/cssma)
+**Optimized branch hierarchy:**
+
+```
+main                           # Production releases only
+├── develop                    # Integration & changeset accumulation
+│   ├── feature/live-preview   # Real-time preview system
+│   ├── feature/css-grid       # CSS Grid support
+│   ├── fix/parser-bug         # Bug fixes
+│   └── hotfix/critical-fix    # Critical production fixes
+└── changeset-release/develop  # Auto-generated version PRs
+```
+
+#### Branch Protection Rules
+
+```yaml
+# main branch (production):
+protection_rules:
+  require_pull_request_reviews: true
+  required_approving_review_count: 1
+  dismiss_stale_reviews: true
+  require_status_checks: true
+  required_status_checks: ["build", "test", "type-check"]
+  enforce_admins: false
+  allow_force_pushes: false
+
+# develop branch (integration):
+protection_rules:
+  require_pull_request_reviews: true
+  required_approving_review_count: 1
+  require_status_checks: true
+  required_status_checks: ["build", "test"]
+```
+
+## 📦 Package Architecture
+
+### 1. Core Library (packages/cssma)
+
+**Production-ready conversion engine:**
 
 ```typescript
-// Main entry points
-import { processCssStyles, figmaToCss } from 'cssma';
+// Main API surface
+import { 
+  processCssStyles,    // Tailwind → Figma conversion
+  figmaToCss,         // Figma → Tailwind conversion
+  StyleConverter,     // Advanced conversion class
+  FigmaStyleBuilder   // Figma style construction
+} from 'cssma';
 
-// Style conversion
-const figmaStyles = processCssStyles('flex-col w-full bg-blue-500');
+// Usage examples
+const figmaStyles = processCssStyles('flex-col w-full bg-blue-500 p-4');
 const tailwindClasses = figmaToCss(figmaNode);
+const converter = new StyleConverter({ optimize: true });
 ```
 
-Key files:
-- [packages/cssma/src/index.ts](mdc:packages/cssma/src/index.ts): Main entry point
+**Key architecture files:**
+- [packages/cssma/src/index.ts](mdc:packages/cssma/src/index.ts): Main entry point & API exports
+- [packages/cssma/src/converter/](mdc:packages/cssma/src/converter): Core conversion logic
+- [packages/cssma/src/builders/](mdc:packages/cssma/src/builders): Figma style builders
 - [packages/cssma/package.json](mdc:packages/cssma/package.json): Package configuration
-- [packages/cssma/CHANGELOG.md](mdc:packages/cssma/CHANGELOG.md): Change log
+- [packages/cssma/CHANGELOG.md](mdc:packages/cssma/CHANGELOG.md): Version history
 
-#### Figma Plugin (apps/cssma-plugin)
+### 2. Figma Plugin (apps/cssma-plugin)
 
-Figma plugin with real-time CSS preview system:
-
-Key components:
-- [apps/cssma-plugin/src/components/CssConverter.tsx](mdc:apps/cssma-plugin/src/components/CssConverter.tsx): CSS converter
-- [apps/cssma-plugin/src/components/LivePreview.tsx](mdc:apps/cssma-plugin/src/components/LivePreview.tsx): Real-time preview
-- [apps/cssma-plugin/src/hooks/useLocalStorage.ts](mdc:apps/cssma-plugin/src/hooks/useLocalStorage.ts): Local storage hook
-
-## Coding Standards
-
-### 1. TypeScript Usage
-
-All new code is written in TypeScript with strict type checking applied.
+**Real-time design tool integration:**
 
 ```typescript
-// Good example: Clear type definition
-interface FigmaStyleProps {
-  layoutMode?: 'HORIZONTAL' | 'VERTICAL';
-  fills?: Paint[];
-  cornerRadius?: number;
+// Plugin architecture
+├── components/
+│   ├── CssConverter.tsx      // Main conversion interface
+│   ├── LivePreview.tsx       // Real-time preview system
+│   ├── StyleInspector.tsx    // Style analysis tool
+│   └── ui/                   // Reusable UI components
+├── hooks/
+│   ├── useLocalStorage.ts    // Persistent settings
+│   ├── useFigmaSelection.ts  // Figma API integration
+│   └── useDebounce.ts        // Performance optimization
+└── services/
+    ├── figmaApi.ts           // Figma API wrapper
+    └── styleProcessor.ts     // Style processing logic
+```
+
+**Key plugin features:**
+- **Real-time preview**: 300ms debounced CSS-to-visual conversion
+- **Error handling**: User-friendly error messages and recovery
+- **Performance optimization**: Efficient rendering and memory management
+- **Settings persistence**: Local storage for user preferences
+
+### 3. Landing Page (apps/figmai-landing)
+
+**Documentation and showcase platform:**
+
+```typescript
+// Landing page structure
+├── app/
+│   ├── docs/                 # Documentation system
+│   ├── playground/           # Interactive demo
+│   ├── tutorial/             # Step-by-step learning
+│   └── features/             # Feature showcase
+├── components/
+│   ├── InteractiveTutorial/  # Learning system
+│   ├── CodePreview/          # Live code examples
+│   └── FeatureShowcase/      # Product demonstrations
+└── lib/
+    ├── tutorial-steps.ts     # Tutorial configuration
+    └── examples.ts           # Code examples
+```
+
+## 🛠️ Development Standards
+
+### 1. TypeScript Best Practices
+
+**Strict type safety with practical flexibility:**
+
+```typescript
+// ✅ Good: Comprehensive type definitions
+interface FigmaStyleConfig {
+  layoutMode?: 'HORIZONTAL' | 'VERTICAL' | 'NONE';
+  fills?: ReadonlyArray<Paint>;
+  cornerRadius?: number | PluginAPI['mixed'];
+  constraints?: Constraints;
 }
 
-// Bad example: Using any type
+// ✅ Good: Generic type constraints
+interface StyleConverter<T extends FigmaNode = FrameNode> {
+  convert(node: T): TailwindClasses;
+  validate(styles: Partial<T>): boolean;
+}
+
+// ❌ Avoid: Loose typing
 function processStyles(styles: any): any {
-  // ...
+  return styles.map((s: any) => s.value);
+}
+
+// ✅ Better: Specific typing
+function processStyles(styles: Paint[]): string[] {
+  return styles.map(paint => paint.type);
 }
 ```
 
-### 2. Component Structure
+### 2. Component Architecture
 
-React components follow this structure:
+**Consistent React component structure:**
 
 ```typescript
-// 1. Imports
-import React, { useState, useEffect } from 'react';
+// Component template
+import React, { useState, useEffect, useCallback } from 'react';
 import { processCssStyles } from 'cssma';
 
-// 2. Type definitions
+// 1. Type definitions
 interface ComponentProps {
   className?: string;
-  onStyleChange?: (styles: string) => void;
+  initialValue?: string;
+  onStyleChange?: (styles: FigmaStyles) => void;
+  onError?: (error: Error) => void;
 }
 
-// 3. Component definition
-export const Component: React.FC<ComponentProps> = ({
+// 2. Component with proper error boundaries
+export const StyleConverter: React.FC<ComponentProps> = ({
   className,
-  onStyleChange
+  initialValue = '',
+  onStyleChange,
+  onError
 }) => {
-  // 4. State and hooks
-  const [styles, setStyles] = useState('');
+  // 3. State management
+  const [cssInput, setCssInput] = useState(initialValue);
+  const [figmaStyles, setFigmaStyles] = useState<FigmaStyles | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
-  // 5. Event handlers
-  const handleChange = (value: string) => {
-    setStyles(value);
-    onStyleChange?.(value);
-  };
+  // 4. Memoized callbacks
+  const handleConversion = useCallback(async (css: string) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const styles = await processCssStyles(css);
+      setFigmaStyles(styles);
+      onStyleChange?.(styles);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Conversion failed';
+      setError(errorMessage);
+      onError?.(err instanceof Error ? err : new Error(errorMessage));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [onStyleChange, onError]);
   
-  // 6. Rendering
+  // 5. Effects
+  useEffect(() => {
+    if (cssInput.trim()) {
+      const timeoutId = setTimeout(() => handleConversion(cssInput), 300);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [cssInput, handleConversion]);
+  
+  // 6. Render with error handling
   return (
-    <div className={className}>
+    <div className={`style-converter ${className || ''}`}>
+      {error && (
+        <div className="error-message" role="alert">
+          {error}
+        </div>
+      )}
       {/* Component content */}
     </div>
   );
 };
 ```
 
-### 3. Error Handling
+### 3. Error Handling Strategy
 
-All asynchronous operations and external API calls must include proper error handling:
+**Comprehensive error management:**
 
 ```typescript
-try {
-  const result = await processCssStyles(cssString);
-  setStyles(result);
-} catch (error) {
-  console.error('Style processing failed:', error);
-  setError('An error occurred while processing styles.');
+// Error types
+export class CSSParseError extends Error {
+  constructor(message: string, public readonly cssInput: string) {
+    super(message);
+    this.name = 'CSSParseError';
+  }
+}
+
+export class FigmaAPIError extends Error {
+  constructor(message: string, public readonly apiCall: string) {
+    super(message);
+    this.name = 'FigmaAPIError';
+  }
+}
+
+// Error handling patterns
+async function safeStyleConversion(css: string): Promise<Result<FigmaStyles, CSSParseError>> {
+  try {
+    const styles = await processCssStyles(css);
+    return { success: true, data: styles };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: new CSSParseError(
+        `Failed to parse CSS: ${error.message}`, 
+        css
+      )
+    };
+  }
 }
 ```
 
-## Testing Strategy
+## 🧪 Testing Strategy
 
-### 1. Unit Testing
+### 1. Comprehensive Test Coverage
 
-Write unit tests for each utility function and component:
+**Multi-layer testing approach:**
 
 ```bash
-# Run tests
-pnpm test
+# Unit tests (utilities, converters)
+pnpm test:unit
 
-# Test coverage
+# Integration tests (API interactions)
+pnpm test:integration
+
+# E2E tests (full workflow)
+pnpm test:e2e
+
+# Visual regression tests (UI components)
+pnpm test:visual
+
+# Performance tests (conversion speed)
+pnpm test:performance
+
+# Test coverage report
 pnpm test:coverage
-
-# Test UI
-pnpm test:ui
 ```
 
-### 2. Integration Testing
+### 2. Test Organization
 
-For Figma plugins, include integration tests with actual Figma API.
+```typescript
+// Test structure example
+describe('StyleConverter', () => {
+  describe('CSS to Figma conversion', () => {
+    it('should convert basic layout styles', async () => {
+      const css = 'flex-col w-full h-screen';
+      const result = await processCssStyles(css);
+      
+      expect(result.layout.layoutMode).toBe('VERTICAL');
+      expect(result.layout.width).toBe('FILL_CONTAINER');
+      expect(result.layout.height).toBe('FILL_CONTAINER');
+    });
+    
+    it('should handle invalid CSS gracefully', async () => {
+      const invalidCSS = 'invalid-class-name';
+      
+      await expect(processCssStyles(invalidCSS))
+        .rejects
+        .toThrow(CSSParseError);
+    });
+  });
+  
+  describe('Performance', () => {
+    it('should convert complex styles within 100ms', async () => {
+      const complexCSS = 'flex-col w-full bg-gradient-to-r from-blue-500 to-purple-600 p-8 rounded-lg shadow-xl';
+      
+      const startTime = performance.now();
+      await processCssStyles(complexCSS);
+      const endTime = performance.now();
+      
+      expect(endTime - startTime).toBeLessThan(100);
+    });
+  });
+});
+```
 
-## Documentation
+## 📚 Documentation Standards
 
-### 1. README Updates
+### 1. API Documentation
 
-Update the corresponding package's README.md when adding new features:
-
-- [README.md](mdc:README.md): Overall project overview
-- [packages/cssma/README.md](mdc:packages/cssma/README.md): Library usage
-- [apps/cssma-plugin/README.md](mdc:apps/cssma-plugin/README.md): Plugin usage
-
-### 2. API Documentation
-
-Auto-generate API documentation through TypeScript type definitions and JSDoc comments.
+**Comprehensive JSDoc with examples:**
 
 ```typescript
 /**
- * Converts Tailwind CSS classes to Figma styles.
+ * Converts Tailwind CSS classes to Figma-compatible styles.
  * 
- * @param cssClasses - Tailwind CSS class string to convert
- * @returns Figma style object
+ * @param cssClasses - Space-separated Tailwind CSS classes
+ * @param options - Conversion options and preferences
+ * @returns Promise resolving to Figma style configuration
  * 
  * @example
+ * Basic usage:
  * ```typescript
- * const styles = processCssStyles('flex-col w-full bg-blue-500');
- * node.layoutMode = styles.layout.layoutMode;
+ * const styles = await processCssStyles('flex-col w-full bg-blue-500');
+ * figmaNode.layoutMode = styles.layout.layoutMode;
+ * figmaNode.fills = styles.appearance.fills;
  * ```
+ * 
+ * @example
+ * With options:
+ * ```typescript
+ * const styles = await processCssStyles('p-4 rounded-lg', {
+ *   optimize: true,
+ *   fallbackColors: true
+ * });
+ * ```
+ * 
+ * @throws {CSSParseError} When CSS classes are invalid or unsupported
+ * @throws {FigmaAPIError} When Figma API interaction fails
+ * 
+ * @since 0.1.0
+ * @version 0.3.0 - Added optimization options
  */
-export function processCssStyles(cssClasses: string): FigmaStyles {
+export async function processCssStyles(
+  cssClasses: string,
+  options?: ConversionOptions
+): Promise<FigmaStyles> {
   // Implementation
 }
 ```
 
-## Performance Optimization
+### 2. README Maintenance
 
-### 1. Bundle Size Optimization
+**Keep documentation current with features:**
 
-- Use ES modules for tree shaking
-- Remove unnecessary dependencies
-- Apply code splitting
+- [README.md](mdc:README.md): Project overview, quick start, contribution guide
+- [packages/cssma/README.md](mdc:packages/cssma/README.md): Library API, usage examples, migration guide
+- [apps/cssma-plugin/README.md](mdc:apps/cssma-plugin/README.md): Plugin installation, features, troubleshooting
+
+### 3. Changelog Management
+
+**Automated changelog generation through changesets:**
+
+```markdown
+# packages/cssma/CHANGELOG.md
+
+## 0.3.0
+
+### Minor Changes
+
+- a1b2c3d: Add real-time CSS preview system
+  - Implement LivePreview component with 300ms debouncing
+  - Add error handling and loading states
+  - Include style inspector functionality
+  - Support enable/disable toggle control
+
+### Patch Changes
+
+- d4e5f6g: Fix CSS parser edge case with complex selectors
+- h7i8j9k: Improve TypeScript type definitions for better IDE support
+```
+
+## 🚀 Performance Optimization
+
+### 1. Build Optimization
+
+**Efficient build pipeline:**
+
+```bash
+# Development builds (fast iteration)
+pnpm dev
+
+# Production builds (optimized)
+pnpm build
+
+# Package-specific builds
+pnpm --filter cssma build
+pnpm --filter cssma-plugin build
+
+# Parallel builds (CI/CD)
+pnpm -r --parallel build
+
+# Bundle analysis
+pnpm build:analyze
+```
 
 ### 2. Runtime Performance
 
-- Real-time update optimization through debouncing (300ms)
-- Prevent duplicate calculations through memoization
-- Handle large data through virtualization
+**Optimization strategies:**
 
-## Security Considerations
+```typescript
+// Debounced operations
+const debouncedConversion = useMemo(
+  () => debounce(processCssStyles, 300),
+  []
+);
+
+// Memoized computations
+const memoizedStyles = useMemo(
+  () => computeComplexStyles(cssInput),
+  [cssInput]
+);
+
+// Lazy loading
+const LazyPreview = lazy(() => import('./LivePreview'));
+
+// Virtual scrolling for large lists
+const VirtualizedStyleList = ({ styles }: { styles: Style[] }) => (
+  <FixedSizeList
+    height={400}
+    itemCount={styles.length}
+    itemSize={50}
+  >
+    {StyleItem}
+  </FixedSizeList>
+);
+```
+
+## 🔧 Maintenance & Monitoring
 
 ### 1. Dependency Management
 
 ```bash
-# Security vulnerability check
+# Update dependencies
+pnpm update
+
+# Security audit
 pnpm audit
 
-# Dependency updates
-pnpm update
+# Dependency analysis
+pnpm why package-name
+
+# Clean installation
+pnpm install --frozen-lockfile
 ```
 
-### 2. Environment Variables
-
-Manage sensitive information through environment variables and provide `.env.example` file.
-
-## Deployment Checklist
-
-Pre-release verification items:
-
-- [ ] All tests pass
-- [ ] Type checking passes
-- [ ] Lint checking passes
-- [ ] Documentation updated
-- [ ] Changeset created
-- [ ] Breaking changes verified
-- [ ] Performance testing completed
-
-## Troubleshooting
-
-### 1. Common Issues
-
-#### Changeset PR not being created
-- Check GitHub Actions permissions
-- Verify GITHUB_TOKEN and NPM_TOKEN secrets
-- Create manual PR and merge
-
-#### Build failure
-- Check pnpm version (v9 recommended)
-- Reinstall dependencies: `pnpm install --no-frozen-lockfile`
-- Check type errors
-
-#### Figma plugin load failure
-- Check manifest.json configuration
-- Verify build output file paths
-- Enable Figma developer mode
-
-### 2. Debugging Tools
+### 2. Performance Monitoring
 
 ```bash
-# Build with verbose logs
-pnpm build --verbose
+# Bundle size tracking
+pnpm build:analyze
 
-# Run development server
-pnpm dev
+# Test performance
+pnpm test:performance
 
-# Run type checking only
-pnpm type-check
+# Memory usage analysis
+pnpm test:memory
+
+# GitHub Actions monitoring
+# Visit: https://github.com/easylogic/cssma/actions
 ```
 
-## Contribution Guidelines
-
-1. **Issue Creation**: Create GitHub issues for bug reports or feature requests
-2. **Branch Strategy**: Create branches in `feature/feature-name` or `fix/bug-name` format
-3. **Commit Messages**: Use Conventional Commits format
-4. **PR Template**: Utilize [.github/pull_request_template.md](mdc:.github/pull_request_template.md)
-5. **Changeset Required**: Always create changeset when changing packages
-
-Follow this guide to maintain a consistent and efficient development environment.
+This comprehensive guide ensures consistent development practices, reliable automation, and maintainable code quality across the FigmaikR project.
