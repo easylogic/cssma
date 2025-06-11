@@ -105,29 +105,39 @@ const { className } = useCssma('w-[400px] bg-blue-500 hover:bg-blue-600');
 // Styles are automatically injected - just use the className!
 ```
 
-#### `useCssmaMultiple(classGroups: string[])`
+#### `useCssmaMultiple(classGroups: string[] | Record<string, string>)`
 
 Processes multiple class groups for complex components with multiple styled elements.
 
 **Parameters:**
-- `classGroups` (string[]): Array of Tailwind CSS class strings
+- `classGroups` (string[] | Record<string, string>): Array of class strings or object with named class groups
 
 **Returns:**
-Array of style objects with the same structure as `useCssma`
+- Array of style objects (when input is array)
+- Object with same keys containing style objects (when input is object)
 
-**Example:**
+**Example (Array - Legacy):**
 ```tsx
 const [containerStyles, headerStyles, contentStyles] = useCssmaMultiple([
   'w-full h-screen bg-gray-100',
   'text-2xl font-bold text-gray-800 mb-4',
   'p-6 bg-white rounded-lg shadow-md'
 ]);
+```
 
-// All styles are automatically injected
+**Example (Object - Recommended):**
+```tsx
+const styles = useCssmaMultiple({
+  container: 'w-full h-screen bg-gray-100',
+  header: 'text-2xl font-bold text-gray-800 mb-4',
+  content: 'p-6 bg-white rounded-lg shadow-md'
+});
+
+// Much clearer and maintainable!
 return (
-  <div className={containerStyles.className}>
-    <h1 className={headerStyles.className}>Header</h1>
-    <div className={contentStyles.className}>Content</div>
+  <div className={styles.container.className}>
+    <h1 className={styles.header.className}>Header</h1>
+    <div className={styles.content.className}>Content</div>
   </div>
 );
 ```
@@ -155,7 +165,47 @@ interface NodeRendererProps {
 
 ## 🎨 Advanced Usage
 
-### Complex Component with Multiple Styles
+### Complex Component with Multiple Styles (Object Approach)
+
+```tsx
+import React from 'react';
+import { useCssmaMultiple } from 'cssma-react';
+
+function Dashboard() {
+  const styles = useCssmaMultiple({
+    container: 'min-h-screen bg-gray-50 flex',
+    sidebar: 'w-64 bg-white shadow-lg p-6',
+    main: 'flex-1 p-8',
+    card: 'bg-white rounded-lg shadow-md p-6 mb-6',
+    navigation: 'space-y-2 mb-8',
+    navItem: 'block w-full text-left px-3 py-2 rounded hover:bg-gray-100'
+  });
+  
+  return (
+    <div className={styles.container.className}>
+      <aside className={styles.sidebar.className}>
+        <nav className={styles.navigation.className}>
+          <button className={styles.navItem.className}>Dashboard</button>
+          <button className={styles.navItem.className}>Profile</button>
+          <button className={styles.navItem.className}>Settings</button>
+        </nav>
+      </aside>
+      <main className={styles.main.className}>
+        <div className={styles.card.className}>
+          <h1>Dashboard</h1>
+          <p>Welcome to your dashboard!</p>
+        </div>
+        <div className={styles.card.className}>
+          <h2>Statistics</h2>
+          <p>Your latest metrics and data.</p>
+        </div>
+      </main>
+    </div>
+  );
+}
+```
+
+### Legacy Array Approach (Still Supported)
 
 ```tsx
 import React from 'react';
@@ -180,6 +230,39 @@ function Dashboard() {
           <p>Welcome to your dashboard!</p>
         </div>
       </main>
+    </div>
+  );
+}
+```
+
+### Dynamic Conditional Styles
+
+```tsx
+import React, { useState } from 'react';
+import { useCssmaMultiple } from 'cssma-react';
+
+function ConditionalCard({ isHighlighted, size = 'medium' }) {
+  const styles = useCssmaMultiple({
+    card: `
+      p-6 rounded-lg transition-all duration-300
+      ${isHighlighted ? 'bg-blue-50 border-2 border-blue-200' : 'bg-white border border-gray-200'}
+      ${size === 'small' ? 'p-4' : size === 'large' ? 'p-8' : 'p-6'}
+    `,
+    title: `
+      font-bold mb-2
+      ${isHighlighted ? 'text-blue-900' : 'text-gray-900'}
+      ${size === 'small' ? 'text-lg' : size === 'large' ? 'text-2xl' : 'text-xl'}
+    `,
+    content: `
+      ${isHighlighted ? 'text-blue-700' : 'text-gray-600'}
+      ${size === 'small' ? 'text-sm' : 'text-base'}
+    `
+  });
+  
+  return (
+    <div className={styles.card.className}>
+      <h3 className={styles.title.className}>Card Title</h3>
+      <p className={styles.content.className}>Card content goes here.</p>
     </div>
   );
 }
@@ -386,17 +469,61 @@ function Button2() {
 }
 ```
 
-### 2. Group Related Styles
+### 2. Use Object Approach for Multiple Styles (Recommended)
 ```tsx
-// ✅ Good: Use useCssmaMultiple for related elements
+// ✅ Good: Object approach is more maintainable
+const styles = useCssmaMultiple({
+  container: 'w-full max-w-4xl mx-auto p-6',
+  header: 'text-3xl font-bold mb-6',
+  content: 'prose prose-lg',
+  sidebar: 'w-64 bg-gray-50 p-4'
+});
+
+// Clear, self-documenting usage
+<div className={styles.container.className}>
+  <h1 className={styles.header.className}>Title</h1>
+  <div className={styles.content.className}>Content</div>
+</div>
+
+// ❌ Avoid: Array approach (harder to maintain)
 const [container, header, content] = useCssmaMultiple([
-  'w-full max-w-4xl mx-auto p-6',
-  'text-3xl font-bold mb-6',
-  'prose prose-lg'
+  'w-full max-w-4xl mx-auto p-6', // What is index 0?
+  'text-3xl font-bold mb-6',       // What is index 1?
+  'prose prose-lg'                 // Easy to mix up order
 ]);
 ```
 
-### 3. Minimize Dynamic Classes
+### 3. Create Reusable Style Objects
+```tsx
+// ✅ Good: Define common style combinations
+const commonStyles = {
+  button: 'px-4 py-2 rounded font-medium transition-colors',
+  card: 'bg-white rounded-lg shadow-md p-6',
+  input: 'w-full px-3 py-2 border border-gray-300 rounded focus:ring-2',
+  layout: 'min-h-screen bg-gray-50'
+};
+
+function MyComponent() {
+  const styles = useCssmaMultiple({
+    container: commonStyles.layout,
+    submitButton: `${commonStyles.button} bg-blue-500 text-white hover:bg-blue-600`,
+    cancelButton: `${commonStyles.button} bg-gray-500 text-white hover:bg-gray-600`,
+    formCard: commonStyles.card
+  });
+  
+  // Usage is clear and consistent
+  return (
+    <div className={styles.container.className}>
+      <div className={styles.formCard.className}>
+        <button className={styles.submitButton.className}>Submit</button>
+        <button className={styles.cancelButton.className}>Cancel</button>
+      </div>
+    </div>
+  );
+}
+```
+
+### 4. Minimize Dynamic Classes
 ```tsx
 // ✅ Good: Prefer standard Tailwind when possible
 const { className } = useCssma('w-full bg-blue-500 p-4');
@@ -405,19 +532,41 @@ const { className } = useCssma('w-full bg-blue-500 p-4');
 const { className: bad } = useCssma('w-[100%] bg-[#3b82f6] p-[1rem]');
 ```
 
-### 4. Component Composition
+### 5. Component Composition with Named Styles
 ```tsx
-// ✅ Good: Break complex styles into smaller components
+// ✅ Good: Break complex styles into smaller, named components
 function Card({ children, variant = 'default' }) {
-  const variants = {
-    default: 'bg-white shadow-md',
-    highlighted: 'bg-blue-50 shadow-lg border-blue-200'
-  };
+  const styles = useCssmaMultiple({
+    base: 'p-6 rounded-lg transition-all duration-200',
+    default: 'bg-white shadow-md border border-gray-200',
+    highlighted: 'bg-blue-50 shadow-lg border-2 border-blue-200',
+    danger: 'bg-red-50 shadow-lg border-2 border-red-200'
+  });
   
-  const { className } = useCssma(`p-6 rounded-lg ${variants[variant]}`);
+  const variantStyle = styles[variant] || styles.default;
   
-  return <div className={className}>{children}</div>;
+  return (
+    <div className={`${styles.base.className} ${variantStyle.className}`}>
+      {children}
+    </div>
+  );
 }
+```
+
+### 6. TypeScript Benefits with Object Approach
+```tsx
+// ✅ Good: TypeScript autocomplete and type safety
+const styles = useCssmaMultiple({
+  container: 'w-full',
+  header: 'text-2xl',
+  content: 'p-4'
+});
+
+// TypeScript will provide autocomplete for:
+styles.container.className  // ✅ Autocomplete available
+styles.header.className     // ✅ Autocomplete available  
+styles.content.className    // ✅ Autocomplete available
+// styles.nonExistent       // ❌ TypeScript error!
 ```
 
 ## 🔗 Related Packages
