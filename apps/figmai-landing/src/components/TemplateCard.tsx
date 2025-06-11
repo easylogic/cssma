@@ -7,9 +7,9 @@ import { Template, NodeData } from '@/types/template';
 import { Copy, Eye, Heart, Check, Star, Maximize2, Code } from 'lucide-react';
 import { useFavorites } from '@/hooks/useFavorites';
 import { getTemplateComponent } from '@/components/templates';
-import { NodeRenderer } from '@/components/NodeRenderer';
 import Image from 'next/image';
 import { parseStyles, convertStylesToFigma } from 'cssma';
+import { NodeRenderer } from 'cssma-react';
 
 interface TemplateCardProps {
   template: Template;
