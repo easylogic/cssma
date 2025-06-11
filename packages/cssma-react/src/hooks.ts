@@ -54,25 +54,77 @@ export function useDynamicTailwind(tailwindClasses: string) {
 /**
  * Hook for processing multiple class sets
  */
-export function useCssmaMultiple(classGroups: string[]) {
+export function useCssmaMultiple(classGroups: string[]): Array<{
+  className: string;
+  staticClassName: string;
+  dynamicClassName: string;
+  styleContent: string;
+  hash: string;
+}>;
+
+export function useCssmaMultiple<T extends Record<string, string>>(classGroups: T): {
+  [K in keyof T]: {
+    className: string;
+    staticClassName: string;
+    dynamicClassName: string;
+    styleContent: string;
+    hash: string;
+  }
+};
+
+export function useCssmaMultiple(classGroups: string[] | Record<string, string>) {
   const results = useMemo(() => {
-    return classGroups.map(classes => generateHybridStyles(classes));
+    if (Array.isArray(classGroups)) {
+      return classGroups.map(classes => generateHybridStyles(classes));
+    } else {
+      // Object case
+      const entries = Object.entries(classGroups);
+      return entries.map(([key, classes]) => ({
+        key,
+        result: generateHybridStyles(classes)
+      }));
+    }
   }, [classGroups]);
 
   // Inject all dynamic styles
   useEffect(() => {
-    results.forEach(result => {
-      if (result.styleContent && result.hash) {
-        injectDynamicStyle(result.hash, result.styleContent);
-      }
-    });
-  }, [results]);
+    if (Array.isArray(classGroups)) {
+      results.forEach((result: any) => {
+        if (result.styleContent && result.hash) {
+          injectDynamicStyle(result.hash, result.styleContent);
+        }
+      });
+    } else {
+      results.forEach((item: any) => {
+        const result = item.result;
+        if (result.styleContent && result.hash) {
+          injectDynamicStyle(result.hash, result.styleContent);
+        }
+      });
+    }
+  }, [results, classGroups]);
 
-  return results.map(result => ({
-    className: result.combinedClassName,
-    staticClassName: result.staticClassName,
-    dynamicClassName: result.dynamicClassName,
-    styleContent: result.styleContent,
-    hash: result.hash
-  }));
+  if (Array.isArray(classGroups)) {
+    return results.map((result: any) => ({
+      className: result.combinedClassName,
+      staticClassName: result.staticClassName,
+      dynamicClassName: result.dynamicClassName,
+      styleContent: result.styleContent,
+      hash: result.hash
+    }));
+  } else {
+    // Return object with same keys
+    const returnObj: any = {};
+    results.forEach((item: any) => {
+      const result = item.result;
+      returnObj[item.key] = {
+        className: result.combinedClassName,
+        staticClassName: result.staticClassName,
+        dynamicClassName: result.dynamicClassName,
+        styleContent: result.styleContent,
+        hash: result.hash
+      };
+    });
+    return returnObj;
+  }
 } 
