@@ -14,6 +14,10 @@ CSS-to-Figma is a library that converts Tailwind CSS styles to Figma styles and 
 - **[Colors](specs/colors.md)** - Color System, Presets
 - **[Variables](specs/variables.md)** - Figma Variable Binding
 - **[Vectors](specs/vectors.md)** - Vector Nodes, SVG Paths
+- **[Dynamic Conversion](specs/dynamic-conversion.md)** - ✨ **NEW** Real-time CSS processing with caching
+
+### React Integration
+- **[CSSMA React](specs/cssma-react.md)** - ✨ **NEW** React hooks and components for dynamic CSS processing
 
 ### Conversion Specifications
 - **[Figma to CSS](specs/figma-to-css.md)** - ✨ **NEW** Comprehensive Figma → CSS conversion guide
@@ -30,6 +34,7 @@ CSS-to-Figma is a library that converts Tailwind CSS styles to Figma styles and 
 
 ## 🚀 Quick Start
 
+### Core Library
 ```typescript
 import { processCssStyles, figmaToCss } from 'cssma';
 
@@ -45,13 +50,36 @@ const tailwindClasses = figmaToCss({
 });
 ```
 
+### React Integration
+```tsx
+import { useCssma, NodeRenderer } from 'cssma-react';
+
+function MyComponent() {
+  const { className, styleContent } = useCssma('w-[400px] bg-blue-500 hover:bg-blue-600');
+  
+  return (
+    <>
+      <style>{styleContent}</style>
+      <div className={className}>Dynamic styled content</div>
+    </>
+  );
+}
+```
+
 ## 🎯 Core Features
 
 1. **Bidirectional Conversion** - CSS ↔ Figma
-2. **Comprehensive Coverage** - Layout, Colors, Typography, Effects
-3. **Variable Support** - Figma variable binding
-4. **Type Safety** - Full TypeScript support
-5. **Performance Optimized** - Efficient conversion algorithms
+2. **React Integration** - Hooks and components for React apps
+3. **Dynamic Processing** - Real-time CSS class processing with caching
+4. **Comprehensive Coverage** - Layout, Colors, Typography, Effects
+5. **Variable Support** - Figma variable binding
+6. **Type Safety** - Full TypeScript support
+7. **Performance Optimized** - Efficient conversion algorithms
+
+## 📦 Packages
+
+- **`cssma`** - Core library for CSS ↔ Figma conversion
+- **`cssma-react`** - React hooks and components for dynamic CSS processing
 
 ## 📋 Supported Properties
 
@@ -66,7 +94,11 @@ const tailwindClasses = figmaToCss({
 ## 🔧 Installation
 
 ```bash
+# Core library
 npm install cssma
+
+# React integration
+npm install cssma-react cssma react react-dom
 ```
 
 ## 📝 Contributing

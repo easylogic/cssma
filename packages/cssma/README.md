@@ -195,6 +195,185 @@ const twoColumn = 'grid grid-cols-1 lg:grid-cols-2 gap-[40] items-center';
 ```
 
 
+## Dynamic Style System
+
+CSSMA now includes a powerful dynamic style system that solves the common problem of Tailwind CSS not generating styles for arbitrary values at runtime. This system converts Tailwind classes to CSS and injects them dynamically into the document.
+
+### Problem Solved
+
+When using Tailwind CSS with dynamic values like `w-[320px]` or `bg-[#FF0000]`, these styles often don't work because Tailwind only includes classes that are detected at build time. Our dynamic style system solves this by:
+
+1. **Parsing** Tailwind classes using CSSMA's existing parser
+2. **Generating** unique CSS classes with proper styles
+3. **Injecting** styles into the document head automatically
+4. **Caching** styles to prevent duplicates
+
+### Basic Usage
+
+#### Method 1: React Hook (Recommended)
+
+```typescript
+import { useCssma } from 'cssma';
+
+function MyComponent({ nodeData }) {
+  // Works with any CSSMA/Tailwind classes - static, dynamic, or mixed!
+  const className = useCssma('flex items-center w-[320] h-[240] bg-[#FF0000] p-4 rounded-lg');
+  
+  return <div className={className}>Styled element</div>;
+}
+
+// Perfect for template rendering
+function TemplateRenderer({ template }) {
+  const className = useCssma(template.styles);
+  
+  return (
+    <div className={className}>
+      {template.children?.map((child, index) => (
+        <TemplateRenderer key={index} template={child} />
+      ))}
+      {template.text && <span>{template.text}</span>}
+    </div>
+  );
+}
+```
+
+#### Method 2: Direct API Usage
+
+```typescript
+import { generateDynamicStyle, injectDynamicStyle } from 'cssma';
+
+// Generate CSS class and content
+const { className, styleContent, hash } = generateDynamicStyle('w-[320] h-[240] bg-[#FF0000]');
+
+// Inject into document
+injectDynamicStyle(hash, styleContent);
+
+// Use the generated class
+document.getElementById('myElement').className = className;
+```
+
+### Advanced Features
+
+#### Dynamic Props
+
+```typescript
+import { useCssma } from 'cssma';
+
+function Card({ width, height, color }) {
+  const className = useCssma(`flex flex-col items-center p-4 rounded-lg shadow-md w-[${width}] h-[${height}] bg-[${color}]`);
+  
+  return (
+    <div className={className}>
+      <h3>Dynamic Card</h3>
+      <p>Width: {width}px, Height: {height}px</p>
+    </div>
+  );
+}
+```
+
+#### Conditional Styles
+
+```typescript
+import { useCssma } from 'cssma';
+
+function ConditionalComponent({ isActive, size }) {
+  const baseStyles = `w-[${size}] h-[${size}] rounded-lg transition-colors`;
+  const conditionalStyles = isActive ? 'bg-[#00FF00]' : 'bg-[#CCCCCC]';
+  const className = useCssma(`${baseStyles} ${conditionalStyles}`);
+  
+  return <div className={className}>Conditional Element</div>;
+}
+```
+
+### Performance Features
+
+#### Automatic Deduplication
+```typescript
+// These will generate the same CSS class and reuse it
+const class1 = useCssma('w-[320] h-[240]');
+const class2 = useCssma('w-[320] h-[240]'); // Same class, no duplicate CSS
+```
+
+#### Style Statistics
+```typescript
+import { getStyleStats } from 'cssma';
+
+// Get information about injected styles
+const stats = getStyleStats();
+console.log(`Injected ${stats.count} unique styles`);
+console.log('Style hashes:', stats.hashes);
+```
+
+#### Manual Cleanup
+```typescript
+import { useDynamicTailwindWithCleanup } from 'cssma';
+
+function CleanupComponent() {
+  const { className, cleanup } = useDynamicTailwindWithCleanup('w-[320] h-[240]', false);
+  
+  const handleCleanup = () => {
+    cleanup(); // Manually remove the style
+  };
+  
+  return (
+    <div>
+      <div className={className}>Styled element</div>
+      <button onClick={handleCleanup}>Clean up styles</button>
+    </div>
+  );
+}
+```
+
+### Integration with Template System
+
+Perfect for template galleries where you need to render components with dynamic styles:
+
+```typescript
+import { useCssma } from 'cssma';
+
+function TemplateRenderer({ template }) {
+  const className = useCssma(template.styles);
+  
+  return (
+    <div className={className}>
+      {template.children?.map((child, index) => (
+        <TemplateRenderer key={index} template={child} />
+      ))}
+      {template.text && <span>{template.text}</span>}
+    </div>
+  );
+}
+
+// Usage with NodeData
+const template = {
+  name: "Card",
+  styles: "flex flex-col w-[320] h-[240] bg-[#FFFFFF] p-[16] rounded-[8] shadow-lg",
+  children: [
+    {
+      name: "Header",
+      styles: "text-[18] font-bold text-[#333333] mb-[8]",
+      text: "Card Title"
+    }
+  ]
+};
+```
+
+### API Reference
+
+#### Hooks
+
+| Hook | Purpose | Parameters | Returns |
+|------|---------|------------|---------|
+| `useCssma` | Main hook for all CSSMA styles | `cssmaClasses: string` | `className: string` |
+
+#### Core Functions
+
+| Function | Purpose | Parameters | Returns |
+|----------|---------|------------|---------|
+| `generateDynamicStyle` | Generate CSS class | `tailwindClasses: string` | `{ className, styleContent, hash }` |
+| `injectDynamicStyle` | Inject CSS into document | `hash: string, styleContent: string` | `void` |
+| `generateHybridStyles` | Separate static/dynamic | `tailwindClasses: string` | `{ staticClassName, dynamicClassName, styleContent, hash }` |
+
 ## Real-World Examples
 
 ### Design System Creation
