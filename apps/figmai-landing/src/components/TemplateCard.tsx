@@ -9,6 +9,7 @@ import { useFavorites } from '@/hooks/useFavorites';
 import { getTemplateComponent } from '@/components/templates';
 import Image from 'next/image';
 import { parseStyles, convertStylesToFigma } from 'cssma';
+import { NodeRenderer } from 'cssma-react';
 
 interface TemplateCardProps {
   template: Template;
@@ -54,9 +55,9 @@ const convertNodeDataToFigma = (nodeData: NodeData): any => {
   return convertedNode;
 };
 
-// Render preview - use component if available, otherwise fallback to nodeData
+// Render preview - use NodeRenderer with useCssma for dynamic rendering
 const renderPreview = (template: Template, isFullSize: boolean = false): React.ReactNode => {
-  // Try to get component by template ID
+  // Try to get component by template ID first (for backward compatibility)
   const Component = getTemplateComponent(template.id);
   
   if (Component) {
@@ -68,7 +69,17 @@ const renderPreview = (template: Template, isFullSize: boolean = false): React.R
     );
   }
 
-  return <div>No Preview</div>
+  // Use NodeRenderer with useCssma for dynamic rendering
+  if (template.nodeData) {
+    return (
+      <NodeRenderer 
+        nodeData={template.nodeData} 
+        scale={isFullSize ? 1 : 0.75}
+      />
+    );
+  }
+
+  return <div className="text-gray-400 text-sm">No Preview Available</div>;
 };
 
 export default function TemplateCard({ template }: TemplateCardProps) {
