@@ -1,5 +1,11 @@
 # cssma
 
+## 0.1.6
+
+### Patch Changes
+
+- bb25357: update class names converter
+
 ## 0.1.5
 
 ### Patch Changes

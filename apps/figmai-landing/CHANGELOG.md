@@ -1,5 +1,13 @@
 # figmai-landing
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [bb25357]
+  - cssma-react@0.1.2
+  - cssma@0.1.6
+
 ## 0.1.1
 
 ### Patch Changes
