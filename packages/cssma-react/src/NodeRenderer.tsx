@@ -1,17 +1,29 @@
 import React from 'react';
 import { NodeData } from 'cssma';
-import { useCssma } from './hooks';
+import { useCssmaRuntime } from './hooks';
 
 interface NodeRendererProps {
   data: NodeData;
   className?: string;
   style?: React.CSSProperties;
+  /** CSS generation options */
+  cssOptions?: {
+    /** Generate all classes including standard ones (default: false - runtime only) */
+    includeStandard?: boolean;
+    /** Custom filter function to determine which classes to process */
+    filter?: (className: string) => boolean;
+  };
 }
 
-export function NodeRenderer({ data, className = '', style = {} }: NodeRendererProps) {
-  const { className: processedClassName } = useCssma(data.styles || '');
+export function NodeRenderer({ data, className = '', style = {}, cssOptions }: NodeRendererProps) {
+  const { className: processedClassName, skippedClasses } = useCssmaRuntime(data.styles || '', cssOptions);
   
   const combinedClassName = [processedClassName, className].filter(Boolean).join(' ');
+
+  // Log skipped classes in development
+  if (process.env.NODE_ENV === 'development' && skippedClasses.length > 0) {
+    console.debug(`NodeRenderer [${data.type}]: Skipped standard classes:`, skippedClasses);
+  }
 
   const renderChildren = () => {
     if (!data.children || data.children.length === 0) {
@@ -19,7 +31,7 @@ export function NodeRenderer({ data, className = '', style = {} }: NodeRendererP
     }
 
     return data.children.map((child, index) => (
-      <NodeRenderer key={index} data={child} />
+      <NodeRenderer key={index} data={child} cssOptions={cssOptions} />
     ));
   };
 

@@ -1,6 +1,7 @@
 // Hooks
 export {
   useCssma,
+  useCssmaRuntime,
   useTailwind,
   useDynamicTailwind,
   useCssmaMultiple

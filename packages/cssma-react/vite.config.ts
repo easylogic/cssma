@@ -23,7 +23,8 @@ export default defineConfig({
       external: [
         'react',
         'react-dom',
-        'cssma'
+        'cssma',
+        'cssma/dynamic'
       ],
       output: {
         globals: {
