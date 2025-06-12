@@ -1,4 +1,13 @@
 // Parser Types
+
+export interface ParsedClassName {
+  className: string;
+  property: string;
+  value: string | number | number[] | string[];
+  variant: 'arbitrary' | 'preset';
+}
+
+
 export interface ParsedStyle {
   property: string;
   value: number | number[] | string | FigmaColor | FigmaFontName | FigmaLineHeight | Shadow[] | {

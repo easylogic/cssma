@@ -23,8 +23,10 @@ export type {
   ParsedStyle
 };
 
-export * from './parser';
+export * from './parser/class-names';
+export * from './parser/index';
 export * from './converter';
+export * from './converter/class-names';
 
 
 export * from './apply/applyCssStyles';

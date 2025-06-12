@@ -1,5 +1,6 @@
 import { parseStyles } from '../parser';
 import { ParsedStyle } from '../types';
+import { convertClassNamesToCSS, CSSConversion } from '../converter/class-names';
 import { createHash } from 'crypto';
 
 /**
@@ -26,7 +27,7 @@ function generateCssClassName(tailwindClass: string): string {
 }
 
 /**
- * Convert parsed styles to CSS properties
+ * Convert parsed styles to CSS properties (legacy)
  */
 function parsedStylesToCSSProperties(parsedStyles: ParsedStyle[]): string {
   const cssProperties: string[] = [];
@@ -63,10 +64,114 @@ function parsedStylesToCSSProperties(parsedStyles: ParsedStyle[]): string {
 }
 
 /**
+ * Convert CSS conversions to CSS properties (new converter system)
+ */
+function cssConversionsToCSSProperties(conversions: CSSConversion[]): string {
+  const cssProperties: string[] = [];
+  
+  conversions.forEach(({ cssProperty, cssValue }) => {
+    cssProperties.push(`  ${cssProperty}: ${cssValue};`);
+  });
+
+  return cssProperties.join('\n');
+}
+
+/**
  * Check if a Tailwind class is dynamic (contains [...] pattern)
  */
 export function isDynamicClass(tailwindClass: string): boolean {
   return /\[[^\]]+\]/.test(tailwindClass);
+}
+
+/**
+ * Check if a class is likely to be in standard Tailwind CSS
+ */
+export function isStandardClass(className: string): boolean {
+  // Standard utility patterns that are typically included in Tailwind CSS
+  const standardPatterns = [
+    // Layout
+    /^(block|inline|inline-block|flex|inline-flex|grid|inline-grid|hidden)$/,
+    /^(static|fixed|absolute|relative|sticky)$/,
+    
+    // Flexbox & Grid
+    /^(flex-row|flex-col|flex-wrap|flex-nowrap)$/,
+    /^(justify-start|justify-end|justify-center|justify-between|justify-around|justify-evenly)$/,
+    /^(items-start|items-end|items-center|items-baseline|items-stretch)$/,
+    /^(grid-cols-\d+|grid-rows-\d+)$/,
+    
+    // Spacing (common values)
+    /^[pm][trblxy]?-\d{1,2}$/,  // p-4, mt-8, px-6, etc. (up to 2 digits)
+    
+    // Sizing (common values)
+    /^[wh]-\d{1,2}$/,  // w-4, h-8, etc.
+    /^[wh]-(auto|full|screen|min|max|fit)$/,
+    
+    // Colors (standard palette)
+    /^(bg|text|border)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3}$/,
+    
+    // Typography
+    /^text-(xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl|8xl|9xl)$/,
+    /^font-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black)$/,
+    /^(text-left|text-center|text-right|text-justify)$/,
+    
+    // Borders
+    /^border(-\d)?$/,
+    /^rounded(-sm|-md|-lg|-xl|-2xl|-3xl|-full)?$/,
+    
+    // Effects
+    /^shadow(-sm|-md|-lg|-xl|-2xl|-inner|-none)?$/,
+    /^opacity-\d{1,3}$/,
+    
+    // Common z-index values
+    /^z-(0|10|20|30|40|50|auto)$/,
+    
+    // Overflow
+    /^overflow-(auto|hidden|visible|scroll)$/,
+    /^overflow-[xy]-(auto|hidden|visible|scroll)$/
+  ];
+  
+  return standardPatterns.some(pattern => pattern.test(className));
+}
+
+/**
+ * Check if a class needs runtime generation
+ */
+export function needsRuntime(className: string): boolean {
+  // Always generate arbitrary values
+  if (isDynamicClass(className)) {
+    return true;
+  }
+  
+  // Check specific patterns that need runtime generation
+  
+  // Gradient system (CSS variables)
+  if (/^(from|via|to)-/.test(className)) return true;
+  if (/^bg-linear-to-/.test(className)) return true;
+  if (/^bg-radial-/.test(className)) return true;
+  if (/^bg-conic-/.test(className)) return true;
+  
+  // Complex flexbox values
+  if (/^flex-(grow|shrink)(-\d+)?$/.test(className)) return true;
+  if (/^flex-\d+$/.test(className)) return true;
+  
+  // Individual border directions
+  if (/^border-[trblxy](-\d+)?$/.test(className)) return true;
+  
+  // Uncommon z-index values (not in standard set)
+  if (/^-?z-\d+$/.test(className) && !/^z-(0|10|20|30|40|50|auto)$/.test(className)) {
+    return true;
+  }
+  
+  // Custom spacing values
+  if (/^[pm][trblxy]?-\d{3,}$/.test(className)) return true;  // Large spacing values (3+ digits)
+  
+  // Custom sizing values
+  if (/^[wh]-\d{3,}$/.test(className)) return true;  // Large size values
+  
+  // Non-standard colors or custom values
+  if (/^(bg|text|border)-\w+-\d{4,}$/.test(className)) return true;  // 4+ digit color values
+  
+  return false;
 }
 
 /**
@@ -103,24 +208,91 @@ export function generateDynamicClassStyles(dynamicClasses: string[]): {
 
   dynamicClasses.forEach(tailwindClass => {
     try {
-      // Parse the individual class
-      const parsedStyles = parseStyles(tailwindClass);
+      // Try new converter system first
+      const conversions = convertClassNamesToCSS(tailwindClass);
       
-      if (parsedStyles.length > 0) {
+      if (conversions.length > 0) {
         // Generate CSS class name (escaped)
         const cssClassName = generateCssClassName(tailwindClass);
         
-        // Convert parsed styles to CSS properties
-        const cssProperties = parsedStylesToCSSProperties(parsedStyles);
+        // Convert CSS conversions to CSS properties
+        const cssProperties = cssConversionsToCSSProperties(conversions);
 
         // Create CSS rule
         const cssRule = `.${cssClassName} {\n${cssProperties}\n}`;
         cssRules.push(cssRule);
         processedClasses.push(tailwindClass); // 원본 클래스명 유지
+      } else {
+        // Fallback to legacy parser for unsupported classes
+        const parsedStyles = parseStyles(tailwindClass);
+        
+        if (parsedStyles.length > 0) {
+          // Generate CSS class name (escaped)
+          const cssClassName = generateCssClassName(tailwindClass);
+          
+          // Convert parsed styles to CSS properties
+          const cssProperties = parsedStylesToCSSProperties(parsedStyles);
+
+          // Create CSS rule
+          const cssRule = `.${cssClassName} {\n${cssProperties}\n}`;
+          cssRules.push(cssRule);
+          processedClasses.push(tailwindClass); // 원본 클래스명 유지
+        }
       }
     } catch (error) {
       console.warn(`Failed to parse dynamic class: ${tailwindClass}`, error);
       // 파싱 실패한 클래스도 원본 그대로 유지
+      processedClasses.push(tailwindClass);
+    }
+  });
+
+  return { cssRules, processedClasses };
+}
+
+/**
+ * Generate CSS rules for all classes (both static and dynamic)
+ */
+export function generateAllClassStyles(tailwindClasses: string): {
+  cssRules: string[];
+  processedClasses: string[];
+} {
+  const classes = tailwindClasses.split(/\s+/).filter(Boolean);
+  const cssRules: string[] = [];
+  const processedClasses: string[] = [];
+
+  classes.forEach(tailwindClass => {
+    try {
+      // Use new converter system for all classes
+      const conversions = convertClassNamesToCSS(tailwindClass);
+      
+      if (conversions.length > 0) {
+        // Generate CSS class name (escaped)
+        const cssClassName = generateCssClassName(tailwindClass);
+        
+        // Convert CSS conversions to CSS properties
+        const cssProperties = cssConversionsToCSSProperties(conversions);
+
+        // Create CSS rule
+        const cssRule = `.${cssClassName} {\n${cssProperties}\n}`;
+        cssRules.push(cssRule);
+        processedClasses.push(tailwindClass);
+      } else {
+        // Fallback to legacy parser for unsupported classes
+        const parsedStyles = parseStyles(tailwindClass);
+        
+        if (parsedStyles.length > 0) {
+          const cssClassName = generateCssClassName(tailwindClass);
+          const cssProperties = parsedStylesToCSSProperties(parsedStyles);
+          const cssRule = `.${cssClassName} {\n${cssProperties}\n}`;
+          cssRules.push(cssRule);
+          processedClasses.push(tailwindClass);
+        } else {
+          // Keep unsupported classes as-is
+          processedClasses.push(tailwindClass);
+        }
+      }
+    } catch (error) {
+      console.warn(`Failed to process class: ${tailwindClass}`, error);
       processedClasses.push(tailwindClass);
     }
   });
@@ -161,6 +333,141 @@ export function generateHybridStyles(tailwindClasses: string): {
     styleContent,
     hash
   };
+}
+
+/**
+ * Options for style generation
+ */
+export interface GenerateOptions {
+  /** Only generate styles for classes that need runtime generation (default: false) */
+  runtimeOnly?: boolean;
+  /** Skip standard classes that are likely already defined (default: false) */
+  skipStandard?: boolean;
+  /** Custom filter function to determine which classes to process */
+  filter?: (className: string) => boolean;
+}
+
+/**
+ * Generate CSS rules with filtering options
+ */
+export function generateStyles(
+  classes: string, 
+  options: GenerateOptions = {}
+): {
+  cssRules: string[];
+  processedClasses: string[];
+  skippedClasses: string[];
+} {
+  const classList = classes.split(/\s+/).filter(Boolean);
+  const cssRules: string[] = [];
+  const processedClasses: string[] = [];
+  const skippedClasses: string[] = [];
+
+  classList.forEach(className => {
+    let shouldProcess = true;
+
+    // Apply filters
+    if (options.runtimeOnly && !needsRuntime(className)) {
+      shouldProcess = false;
+    }
+    
+    if (options.skipStandard && isStandardClass(className)) {
+      shouldProcess = false;
+    }
+    
+    if (options.filter && !options.filter(className)) {
+      shouldProcess = false;
+    }
+
+    if (!shouldProcess) {
+      skippedClasses.push(className);
+      return;
+    }
+
+    try {
+      // Use new converter system for all classes
+      const conversions = convertClassNamesToCSS(className);
+      
+      if (conversions.length > 0) {
+        // Generate CSS class name (escaped)
+        const cssClassName = generateCssClassName(className);
+        
+        // Convert CSS conversions to CSS properties
+        const cssProperties = cssConversionsToCSSProperties(conversions);
+
+        // Create CSS rule
+        const cssRule = `.${cssClassName} {\n${cssProperties}\n}`;
+        cssRules.push(cssRule);
+        processedClasses.push(className);
+      } else {
+        // Fallback to legacy parser for unsupported classes
+        const parsedStyles = parseStyles(className);
+        
+        if (parsedStyles.length > 0) {
+          const cssClassName = generateCssClassName(className);
+          const cssProperties = parsedStylesToCSSProperties(parsedStyles);
+          const cssRule = `.${cssClassName} {\n${cssProperties}\n}`;
+          cssRules.push(cssRule);
+          processedClasses.push(className);
+        } else {
+          // Keep unsupported classes as-is
+          skippedClasses.push(className);
+        }
+      }
+    } catch (error) {
+      console.warn(`Failed to process class: ${className}`, error);
+      skippedClasses.push(className);
+    }
+  });
+
+  return { cssRules, processedClasses, skippedClasses };
+}
+
+/**
+ * Generate CSS with all classes
+ */
+export function generateCss(
+  classes: string,
+  options: GenerateOptions = {}
+): {
+  className: string;
+  styleContent: string;
+  hash: string;
+  skippedClasses: string[];
+} {
+  const { cssRules, processedClasses, skippedClasses } = generateStyles(classes, options);
+  
+  // Combine all classes (including skipped ones for the final className)
+  const allClasses = [...processedClasses, ...skippedClasses];
+  const className = allClasses.join(' ');
+  
+  // Generate style content
+  const styleContent = cssRules.join('\n\n');
+  
+  // Generate hash for deduplication
+  const hash = createHash('md5').update(styleContent || className).digest('hex').substring(0, 8);
+  
+  return {
+    className,
+    styleContent,
+    hash,
+    skippedClasses
+  };
+}
+
+/**
+ * Generate only runtime-needed styles (optimized for existing Tailwind sites)
+ */
+export function generateRuntimeCss(classes: string): {
+  className: string;
+  styleContent: string;
+  hash: string;
+  skippedClasses: string[];
+} {
+  return generateCss(classes, {
+    runtimeOnly: true,
+    skipStandard: true
+  });
 }
 
 /**
