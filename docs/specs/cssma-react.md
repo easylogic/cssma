@@ -94,7 +94,6 @@ function ComponentWithCustomFilter() {
     </>
   );
 }
-```
 
 ### `useCssma(styles: string)`
 
