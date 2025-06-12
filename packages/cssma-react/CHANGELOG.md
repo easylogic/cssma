@@ -1,5 +1,13 @@
 # cssma-react
 
+## 0.1.2
+
+### Patch Changes
+
+- bb25357: update class names converter
+- Updated dependencies [bb25357]
+  - cssma@0.1.6
+
 ## 0.1.1
 
 ### Patch Changes

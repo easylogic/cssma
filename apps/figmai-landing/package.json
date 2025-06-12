@@ -1,6 +1,6 @@
 {
   "name": "figmai-landing",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "FigmAI - AI-Powered Design Tools Landing Page",
   "private": true,
   "scripts": {
