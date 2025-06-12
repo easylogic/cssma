@@ -551,4 +551,4 @@ NodeRenderer [TEXT]: Skipped standard classes: ['text-white', 'font-bold']
 - **SSR Optimization**: Enhanced server-side rendering support
 - **DevTools Integration**: Browser extension for debugging
 - **Theme Integration**: Better integration with design systems
-- **Performance Analytics**: Built-in performance monitoring 
+- **Performance Analytics**: Built-in performance monitoring
