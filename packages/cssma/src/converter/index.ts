@@ -14,6 +14,22 @@ import { convertSpacingToFigma } from './spacing';
 import { convertTextToFigma } from './text';
 import { convertTransformToFigma } from './transform';
 
+// CSS converters
+import { convertAspectToCss } from './css/aspect';
+import { convertBackgroundToCss, convertGradientToCss, convertImageToCss } from './css/background';
+import { convertBlendToCss } from './css/blend';
+import { convertBorderToCss } from './css/border';
+import { convertFilterToCss } from './css/filter';
+import { convertFontToCss } from './css/font';
+import { convertLayoutToCss } from './css/layout';
+import { convertOverflowToCss } from './css/overflow';
+import { convertPositionToCss } from './css/position';
+import { convertShadowToCss } from './css/shadow';
+import { convertShapeToCss } from './css/shape';
+import { convertSpacingToCss } from './css/spacing';
+import { convertTextToCss } from './css/text';
+import { convertTransformToCss } from './css/transform';
+
 const FONT_PROPERTIES = ['fontSize', 'fontFamily', 'fontWeight', 'fontStyle'];
 const TEXT_PROPERTIES = ['color', 'textAlign', 'textDecoration', 'letterSpacing', 'lineHeight'];
 
@@ -54,7 +70,12 @@ export function convertStylesToFigma(
     }
 
     
-    if (style.property === 'position') {
+    if (style.property === 'position' || 
+        style.property === 'top' ||
+        style.property === 'right' ||
+        style.property === 'bottom' ||
+        style.property === 'left' ||
+        style.property === 'zIndex') {
       positionStyles.push(style);
       continue;
     }
@@ -182,4 +203,160 @@ export function convertStylesToFigma(
   }
 
   return result as FigmaStyleProperties;
+}
+
+export function convertStylesToCss(styles: ParsedStyle[]): Record<string, string> {
+  const result: Record<string, string> = {};
+  let backgroundStyles: ParsedStyle[] = [];
+  let fontStyles: ParsedStyle[] = [];
+  let textStyles: ParsedStyle[] = [];
+  let positionStyles: ParsedStyle[] = [];
+
+  // Group styles by category
+  for (const style of styles) {
+    // Background and gradient styles
+    if (style.property.startsWith('gradient') || 
+        (style.property === 'backgroundColor' && !style.property.startsWith('text')) ||
+        style.property === 'backgroundBlendMode' || 
+        style.property === 'backgroundImage' ||
+        style.property === 'backgroundSize' ||
+        style.property === 'backgroundRepeat' ||
+        style.property === 'backgroundPosition') {
+      backgroundStyles.push(style);
+      continue;
+    }
+    
+    // Font styles
+    if (FONT_PROPERTIES.includes(style.property)) {
+      fontStyles.push(style);
+      continue;
+    }
+ 
+    // Text styles
+    if (TEXT_PROPERTIES.includes(style.property) || 
+        style.property.startsWith('text') || 
+        style.property === 'color') {
+      textStyles.push(style);
+      continue;
+    }
+
+    // Position styles (group these for complex positioning)
+    if (style.property === 'position' || 
+        style.property === 'top' ||
+        style.property === 'right' ||
+        style.property === 'bottom' ||
+        style.property === 'left' ||
+        style.property === 'zIndex') {
+      positionStyles.push(style);
+      continue;
+    }
+
+    let converted: Record<string, string> = {};
+
+    // Convert individual style properties
+    if (style.property.startsWith('aspect')) {
+      converted = convertAspectToCss(style);
+    } else if (style.property.includes('blendMode')) {
+      converted = convertBlendToCss(style);
+    } else if (style.property.startsWith('border') || style.property.startsWith('stroke') || style.property === 'dashPattern') {
+      converted = convertBorderToCss(style);
+    } else if (style.property.includes('blur') || style.property === 'dropShadow') {
+      converted = convertFilterToCss(style);
+    } else if (
+      style.property.startsWith('layout') 
+      || style.property === 'width' 
+      || style.property === 'height'
+      || style.property === 'min-width'
+      || style.property === 'min-height'
+      || style.property === 'max-width'
+      || style.property === 'max-height'
+      || style.property === 'flex-row'
+      || style.property === 'flex-col'
+      || style.property === 'grid'
+      || style.property === 'counterAxisAlignItems'
+      || style.property === 'primaryAxisAlignItems'
+    ) {
+      converted = convertLayoutToCss(style);
+    } else if (style.property === 'overflow') {
+      converted = convertOverflowToCss(style);
+    } else if (style.property.includes('boxShadow')) {
+      converted = convertShadowToCss(style);
+    } else if (style.property === 'opacity') {
+      converted = convertShapeToCss(style);
+    } else if (
+      style.property.startsWith('padding') 
+      || style.property === 'gap'
+      || style.property === 'counterAxisSpacing'
+      || style.property === 'itemSpacing'
+    ) {
+      converted = convertSpacingToCss(style);
+    } else if (style.property === 'rotation') {
+      converted = convertTransformToCss(style);
+    }
+
+    // Merge converted styles
+    Object.assign(result, converted);
+  }
+
+  // Process grouped styles
+  if (positionStyles.length > 0) {
+    const positionResult = convertPositionToCss(positionStyles);
+    Object.assign(result, positionResult);
+  }
+
+  if (fontStyles.length > 0) {
+    const fontResult = convertFontToCss(fontStyles);
+    Object.assign(result, fontResult);
+  }
+
+  if (textStyles.length > 0) {
+    for (const style of textStyles) {
+      const textResult = convertTextToCss(style);
+      Object.assign(result, textResult);
+    }
+  }
+
+  // Handle background styles (including gradients)
+  if (backgroundStyles.length > 0) {
+    // Group background styles similar to Figma converter
+    const backgroundGroups: ParsedStyle[][] = [];
+    let currentGroup: ParsedStyle[] = [];
+
+    for (const style of backgroundStyles) {
+      if (style.property === 'backgroundColor' || style.property === 'backgroundImage') {
+        // Start new background group
+        if (currentGroup.length > 0) {
+          backgroundGroups.push(currentGroup);
+        }
+        currentGroup = [style];
+      } else {
+        // Add property to current group
+        currentGroup.push(style);
+      }
+    }
+
+    // Add the last group
+    if (currentGroup.length > 0) {
+      backgroundGroups.push(currentGroup);
+    }
+
+    // Process each group individually
+    for (const group of backgroundGroups) {
+      let backgroundResult: Record<string, string> = {};
+
+      if (group[0].property === 'backgroundColor') {  
+        if (group[0].value === 'linear' || group[0].value === 'radial' || group[0].value === 'conic') {
+          backgroundResult = convertGradientToCss(group);
+        } else {
+          backgroundResult = convertBackgroundToCss(group);
+        }
+      } else if (group[0].property === 'backgroundImage') {
+        backgroundResult = convertImageToCss(group);
+      }
+
+      Object.assign(result, backgroundResult);
+    }
+  }
+
+  return result;
 } 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { templateCategories, coreTemplates } from '@/lib/template-data-core';
+import { templateCategories, templates } from '@/lib/template-data';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   const sortBy = searchParams.get('sortBy') || 'popular'; // popular, newest, name, complexity
 
   try {
-    let filteredTemplates = [...coreTemplates];
+    let filteredTemplates = [...templates];
 
     // Apply filters
     if (category) {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Template, TemplateFilter } from '@/types/template';
 
 interface UseTemplatesParams {
@@ -19,13 +19,16 @@ interface TemplatesResponse {
     hasNextPage: boolean;
     hasPrevPage: boolean;
   };
-  filters: any;
+  filters?: Record<string, unknown>;
 }
 
 export function useTemplates(params: UseTemplatesParams = {}) {
   const [data, setData] = useState<TemplatesResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Serialize params to avoid dependency issues
+  const serializedParams = useMemo(() => JSON.stringify(params), [params]);
 
   const fetchTemplates = useCallback(async () => {
     try {
@@ -44,6 +47,27 @@ export function useTemplates(params: UseTemplatesParams = {}) {
       
       if (params.filter?.tags && params.filter.tags.length > 0) {
         searchParams.set('tags', params.filter.tags.join(','));
+      }
+      
+      if (params.filter?.rating) {
+        searchParams.set('rating', params.filter.rating.toString());
+      }
+      
+      if (params.filter?.featured) {
+        searchParams.set('featured', 'true');
+      }
+      
+      if (params.filter?.favorites) {
+        searchParams.set('favorites', 'true');
+      }
+      
+      if (params.filter?.usageRange) {
+        if (params.filter.usageRange.min) {
+          searchParams.set('usageMin', params.filter.usageRange.min.toString());
+        }
+        if (params.filter.usageRange.max) {
+          searchParams.set('usageMax', params.filter.usageRange.max.toString());
+        }
       }
       
       if (params.searchQuery) {
@@ -75,7 +99,7 @@ export function useTemplates(params: UseTemplatesParams = {}) {
     } finally {
       setLoading(false);
     }
-  }, [params.filter, params.searchQuery, params.page, params.limit, params.sortBy]);
+  }, [serializedParams]);
 
   useEffect(() => {
     fetchTemplates();
@@ -95,8 +119,10 @@ export function useTemplates(params: UseTemplatesParams = {}) {
 }
 
 export function useFeaturedTemplates() {
+  const [featuredFilter] = useState({ featured: true });
+  
   return useTemplates({
-    filter: { featured: true },
+    filter: featuredFilter,
     limit: 6
   });
 }
