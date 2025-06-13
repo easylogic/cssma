@@ -1,5 +1,12 @@
 # cssma-react
 
+## 1.0.0
+
+### Patch Changes
+
+- Updated dependencies [caeda4f]
+  - cssma@0.2.0
+
 ## 0.1.5
 
 ### Patch Changes
