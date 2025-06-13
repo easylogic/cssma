@@ -1,5 +1,12 @@
 # cssma-plugin
 
+## 1.0.4
+
+### Patch Changes
+
+- Updated dependencies [027c590]
+  - cssma@0.1.8
+
 ## 1.0.3
 
 ### Patch Changes
