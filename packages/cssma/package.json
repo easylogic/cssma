@@ -1,6 +1,6 @@
 {
   "name": "cssma",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Convert Tailwind CSS-like tokens to Figma styles",
   "main": "src/index.ts",
   "types": "src/index.ts",
