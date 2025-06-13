@@ -53,3 +53,29 @@ export * from './generators/css';
 
 // Dynamic Style System
 export * from './dynamic';
+
+// Animation system
+export { parseAnimationClassName } from './parser/class-names/animation';
+export { convertAnimationToCSS, ANIMATION_KEYFRAMES } from './converter/css/animation';
+export { convertAnimationToFigma, extractAnimationMetadata } from './converter/animation';
+export { figmaAnimationToCss, suggestTransitionClasses } from './figma-to-css/animation';
+
+// Main conversion functions
+export { 
+  convertStylesToFigma, 
+  convertStylesToCss,
+  generatePrototypingInfo,
+  type FigmaConversionResult
+} from './converter';
+export { figmaToCss, figmaToCssWithAnimations } from './figma-to-css';
+
+// Figma prototyping
+export { 
+  convertAnimationToFigmaReactions, 
+  generatePrototypeSuggestions,
+  type FigmaReaction,
+  type FigmaTransition,
+  type FigmaEasing,
+  type FigmaTrigger,
+  type FigmaAction
+} from './figma/prototyping';
