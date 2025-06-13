@@ -159,6 +159,32 @@ figma.currentPage.appendChild(frame);
 'shadow-[0_4px_8px_rgba(0,0,0,0.1)]'  // custom shadow values
 ```
 
+#### Animations & Transitions
+```typescript
+// Transitions
+'transition'        // transition: all 150ms ease
+'transition-colors' // transition: color, background-color, border-color, text-decoration-color, fill, stroke
+'transition-opacity' // transition: opacity
+'transition-transform' // transition: transform
+
+// Duration
+'duration-200'      // transition-duration: 200ms
+'duration-300'      // transition-duration: 300ms
+'duration-[500ms]'  // transition-duration: 500ms
+
+// Timing Functions
+'ease-linear'       // transition-timing-function: linear
+'ease-in'          // transition-timing-function: cubic-bezier(0.4, 0, 1, 1)
+'ease-out'         // transition-timing-function: cubic-bezier(0, 0, 0.2, 1)
+'ease-in-out'      // transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1)
+
+// Animations
+'animate-spin'      // spin animation (360° rotation)
+'animate-ping'      // ping animation (scale + opacity)
+'animate-pulse'     // pulse animation (opacity fade)
+'animate-bounce'    // bounce animation (translate + scale)
+```
+
 ### Common Patterns
 
 #### Design System Components
