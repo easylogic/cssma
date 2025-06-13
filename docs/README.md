@@ -1,110 +1,196 @@
-# CSS-to-Figma Documentation
+# FigmaikR Documentation 📚
 
-CSS-to-Figma is a library that converts Tailwind CSS styles to Figma styles and vice versa.
+Welcome to the FigmaikR project documentation. This directory contains comprehensive planning, development guides, and technical specifications for the entire FigmaikR ecosystem.
 
-## 📖 Documentation Structure
+## 📋 Planning & Development
 
-### Core Specifications
-- **[Layout](specs/layout.md)** - Auto Layout, Flexbox, Sizing
-- **[Background](specs/background.md)** - Colors, Gradients, Images
-- **[Typography](specs/typography.md)** - Text, Fonts, Alignment
-- **[Position](specs/position.md)** - Positioning, Constraints
-- **[Border](specs/border.md)** - Borders, Corner Radius
-- **[Effects](specs/effects.md)** - Shadows, Blur, Opacity
-- **[Colors](specs/colors.md)** - Color System, Presets
-- **[Variables](specs/variables.md)** - Figma Variable Binding
-- **[Vectors](specs/vectors.md)** - Vector Nodes, SVG Paths
-- **[Dynamic Conversion](specs/dynamic-conversion.md)** - ✨ **NEW** Real-time CSS processing with caching
+### 🗺️ [Development Roadmap](./ROADMAP.md)
+**Complete project roadmap with phases, priorities, and timeline**
+- Current status and completed features
+- 4-phase development plan (Q1-Q4 2024)
+- Priority matrix and success metrics
+- Technical debt and maintenance planning
+- Community and contribution strategy
 
-### React Integration
-- **[CSSMA React](specs/cssma-react.md)** - ✨ **NEW** React hooks and components for dynamic CSS processing
+### ✅ [Development Checklist](./CHECKLIST.md)
+**Detailed checklists for each package and development phase**
+- Package-specific progress tracking
+- Phase-based development checklists
+- Quality assurance requirements
+- Success metrics and review processes
+- Weekly and monthly review templates
 
-### Conversion Specifications
-- **[Figma to CSS](specs/figma-to-css.md)** - ✨ **NEW** Comprehensive Figma → CSS conversion guide
+### 🎯 [Next Actions](./NEXT-ACTIONS.md)
+**Immediate action items and quarterly sprint planning**
+- High-priority tasks with timelines
+- Specific implementation details
+- Monthly breakdown for Q3 2025
+- Risk mitigation strategies
+- Success criteria and metrics
 
-### API Reference
-- **[Apply Styles API](specs/apply-styles.md)** - ✨ **NEW** Core function for applying CSS styles to Figma nodes
-- **[Conversion Functions](api/conversion.md)** - `processCssStyles`, `figmaToCss`
-- **[TypeScript Types](api/types.md)** - Type Definitions
+### 🚀 [Release Plan](./RELEASE-PLAN.md)
+**Comprehensive release strategy and versioning**
+- Release timeline with specific dates
+- Version progression (v0.2.0 → v1.0.0)
+- Alpha/Beta release cycles
+- Release criteria and quality gates
+- Risk management and rollback plans
 
-### Examples & Guides
-- **[Basic Usage](examples/basic-usage.md)** - Getting Started
-- **[Components](examples/components.md)** - Component Examples
-- **[Best Practices](examples/best-practices.md)** - Guidelines
+### 📋 [How to Proceed](./HOW-TO-PROCEED.md)
+**Step-by-step execution guide for immediate next steps**
+- Daily action items for first week
+- Development environment setup
+- Technical implementation steps
+- Progress tracking methods
+- Success metrics and checkpoints
 
-## 🚀 Quick Start
+## 📦 Package Documentation
 
-### Core Library
-```typescript
-import { processCssStyles, figmaToCss } from 'cssma';
+### Core Packages
+- **[cssma](../packages/cssma/README.md)** - Core CSS ↔ Figma conversion library
+- **[cssma-react](../packages/cssma-react/README.md)** - React hooks and components
+- **[cssma-generators](../packages/cssma-generators/README.md)** - Code generation utilities
 
-// Tailwind CSS → Figma
-const styles = processCssStyles('flex-col w-full bg-[#FF0000] rounded-lg');
-// Apply to Figma node...
+### Applications
+- **[cssma-plugin](../apps/cssma-plugin/README.md)** - Figma plugin application
+- **[figmai-landing](../apps/figmai-landing/README.md)** - Marketing website
 
-// Figma → Tailwind CSS
-const tailwindClasses = figmaToCss({
-  layoutMode: "VERTICAL",
-  fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0 } }],
-  cornerRadius: 8
-});
-```
+## 🔧 Technical Specifications
 
-### React Integration
-```tsx
-import { useCssma, NodeRenderer } from 'cssma-react';
+### 📖 [CSS/Tailwind to Figma Specification](./specs/cssma-react.md)
+Detailed technical specification for the cssma-react package including:
+- Hook APIs and usage patterns
+- Component architecture
+- Runtime optimization system
+- Performance benchmarks
 
-function MyComponent() {
-  const { className, styleContent } = useCssma('w-[400px] bg-blue-500 hover:bg-blue-600');
-  
-  return (
-    <>
-      <style>{styleContent}</style>
-      <div className={className}>Dynamic styled content</div>
-    </>
-  );
-}
-```
+### 🚀 [Dynamic Conversion System](./specs/dynamic-conversion.md)
+Comprehensive guide to the dynamic CSS conversion system:
+- Runtime optimization techniques
+- Smart filtering algorithms
+- Performance improvements (36% CSS reduction)
+- Integration patterns
 
-## 🎯 Core Features
+## 🎯 Current Focus Areas
 
-1. **Bidirectional Conversion** - CSS ↔ Figma
-2. **React Integration** - Hooks and components for React apps
-3. **Dynamic Processing** - Real-time CSS class processing with caching
-4. **Comprehensive Coverage** - Layout, Colors, Typography, Effects
-5. **Variable Support** - Figma variable binding
-6. **Type Safety** - Full TypeScript support
-7. **Performance Optimized** - Efficient conversion algorithms
+### Phase 2: Advanced Features (Q3 2025)
+We are currently in Phase 2 of development, focusing on:
 
-## 📦 Packages
+1. **Animation System** - CSS animations to Figma transitions
+2. **Component Library** - Pre-built React components with theme support
+3. **AI Integration** - Smart suggestions and accessibility analysis
+4. **Performance Optimization** - Enhanced runtime performance
 
-- **`cssma`** - Core library for CSS ↔ Figma conversion
-- **`cssma-react`** - React hooks and components for dynamic CSS processing
+### Immediate Priorities (July-September 2025)
+- ⚡ **cssma Animation System**: Implement CSS animation parsing and conversion
+- 🎨 **cssma-react Components**: Build foundation component library
+- 🤖 **AI-Powered Plugin**: Integrate Anthropic Claude for smart suggestions
 
-## 📋 Supported Properties
+## 📊 Project Status
 
-| Category | Tailwind Classes | Figma Properties |
-|----------|------------------|------------------|
-| Layout | `flex-col`, `w-full`, `gap-4` | `layoutMode`, `layoutSizingHorizontal` |
-| Colors | `bg-[#FF0000]`, `text-blue-500` | `fills`, `strokes` |
-| Typography | `text-lg`, `font-bold` | `fontSize`, `fontName` |
-| Effects | `shadow-lg`, `blur-sm` | `effects` |
-| Position | `absolute`, `center-x` | `constraints`, `layoutPositioning` |
+### ✅ Completed (Phase 1)
+- Complete class-names parser system (16 parsers)
+- CSS converter with comprehensive property mapping
+- React hooks and runtime optimization
+- Figma plugin with real-time conversion
+- 600+ test cases with 90%+ coverage
 
-## 🔧 Installation
+### 🔄 In Progress (Phase 2)
+- Animation system implementation
+- Component library foundation
+- AI service integration
+- Advanced export features
 
+### 📋 Planned (Phase 3-4)
+- Enterprise features and collaboration tools
+- CLI tools and VS Code extension
+- Community marketplace and templates
+- Advanced integrations and APIs
+
+## 🚀 Quick Start for Contributors
+
+### 1. Review Planning Documents
 ```bash
-# Core library
-npm install cssma
+# Read the roadmap to understand overall direction
+docs/ROADMAP.md
 
-# React integration
-npm install cssma-react cssma react react-dom
+# Check current priorities and tasks
+docs/NEXT-ACTIONS.md
+
+# Use checklists to track progress
+docs/CHECKLIST.md
 ```
 
-## 📝 Contributing
+### 2. Set Up Development Environment
+```bash
+# Install dependencies
+pnpm install
 
-We welcome contributions! Please see each spec file for detailed implementation requirements.
+# Start development mode
+pnpm dev
 
-## 📄 License
+# Run tests
+pnpm test
+```
 
-MIT License 
+### 3. Choose Your Focus Area
+- **Core Library**: Work on cssma package features
+- **React Integration**: Enhance cssma-react components
+- **Plugin Development**: Improve Figma plugin experience
+- **Documentation**: Help with guides and examples
+
+## 📈 Success Metrics
+
+### Technical Goals
+- **Performance**: <100ms conversion time
+- **Coverage**: 95%+ Tailwind CSS support
+- **Quality**: <1% bug rate in production
+- **Testing**: 90%+ code coverage
+
+### Business Goals
+- **Adoption**: 10K+ plugin installs
+- **Engagement**: 70%+ monthly active users
+- **Satisfaction**: 4.5+ star rating
+- **Community**: 1K+ GitHub stars
+
+## 🤝 Contributing
+
+### Development Workflow
+1. **Check Current Priorities**: Review [Next Actions](./NEXT-ACTIONS.md)
+2. **Pick a Task**: Choose from high-priority items
+3. **Follow Checklists**: Use [Development Checklist](./CHECKLIST.md)
+4. **Submit PR**: Follow our [Contributing Guide](../CONTRIBUTING.md)
+
+### Documentation Updates
+- Update checklists when completing tasks
+- Add new features to roadmap
+- Keep next actions current
+- Document lessons learned
+
+## 🔗 External Links
+
+- **[Main Repository](https://github.com/easylogic/figmaikr)**
+- **[NPM Package](https://www.npmjs.com/package/cssma)**
+- **[Figma Plugin](https://www.figma.com/community/plugin/cssma)**
+- **[Project Discussions](https://github.com/easylogic/figmaikr/discussions)**
+
+## 📅 Review Schedule
+
+### Weekly Reviews (Fridays)
+- Progress against next actions
+- Blocker identification and resolution
+- Priority adjustments
+- Next week planning
+
+### Monthly Reviews (Last Friday)
+- Roadmap progress assessment
+- Success metrics evaluation
+- Stakeholder feedback integration
+- Next month priority setting
+
+---
+
+**Last Updated**: June 2025  
+**Next Review**: Weekly (every Friday)
+
+*This documentation is actively maintained and reflects the current state of FigmaikR development. For questions or suggestions, please open a discussion or issue in the main repository.* 

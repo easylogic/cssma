@@ -1,5 +1,12 @@
 import { useEffect, useMemo } from 'react';
-import { generateHybridStyles, injectDynamicStyle } from 'cssma';
+import { 
+  generateHybridStyles, 
+  injectDynamicStyle, 
+  extractAnimationMetadata,
+  generatePrototypingInfo,
+  parseStyles,
+  FigmaReaction
+} from 'cssma';
 import { generateCss, generateRuntimeCss } from 'cssma/dynamic';
 
 /**
@@ -187,4 +194,60 @@ export function useCssmaMultiple(classGroups: string[] | Record<string, string>)
     });
     return returnObj;
   }
+}
+
+/**
+ * Specialized hook for animation-heavy components
+ * Provides prototyping metadata and Figma reaction suggestions
+ */
+export function useCssmaWithAnimations(classes: string) {
+  const result = useMemo(() => {
+    if (!classes || classes.trim() === '') {
+      return {
+        staticClassName: '',
+        dynamicClassName: '',
+        combinedClassName: '',
+        styleContent: '',
+        hash: '',
+        prototyping: {
+          reactions: [],
+          recommendations: [],
+          animationMetadata: {
+            hasAnimations: false,
+            animationTypes: [],
+            transitionProperties: [],
+            duration: undefined,
+            easing: undefined,
+          }
+        }
+      };
+    }
+
+    const baseResult = generateHybridStyles(classes);
+    
+    // Generate prototyping information
+    const parsedStyles = parseStyles(classes);
+    const prototypingInfo = generatePrototypingInfo(parsedStyles);
+
+    return {
+      ...baseResult,
+      prototyping: prototypingInfo
+    };
+  }, [classes]);
+
+  // Inject dynamic styles into the document
+  useEffect(() => {
+    if (result.styleContent && result.hash) {
+      injectDynamicStyle(result.hash, result.styleContent);
+    }
+  }, [result.styleContent, result.hash]);
+
+  return {
+    className: result.combinedClassName,
+    staticClassName: result.staticClassName,
+    dynamicClassName: result.dynamicClassName,
+    styleContent: result.styleContent,
+    hash: result.hash,
+    prototyping: result.prototyping
+  };
 } 

@@ -13,6 +13,8 @@ import { convertShapeToFigma } from './shape';
 import { convertSpacingToFigma } from './spacing';
 import { convertTextToFigma } from './text';
 import { convertTransformToFigma } from './transform';
+import { convertAnimationToFigma, extractAnimationMetadata } from './animation';
+import { convertAnimationToFigmaReactions, generatePrototypeSuggestions, FigmaReaction } from '../figma/prototyping';
 
 // CSS converters
 import { convertAspectToCss } from './css/aspect';
@@ -29,6 +31,7 @@ import { convertShapeToCss } from './css/shape';
 import { convertSpacingToCss } from './css/spacing';
 import { convertTextToCss } from './css/text';
 import { convertTransformToCss } from './css/transform';
+import { convertAnimationToCSS } from './css/animation';
 
 const FONT_PROPERTIES = ['fontSize', 'fontFamily', 'fontWeight', 'fontStyle'];
 const TEXT_PROPERTIES = ['color', 'textAlign', 'textDecoration', 'letterSpacing', 'lineHeight'];
@@ -42,6 +45,7 @@ export function convertStylesToFigma(
   let fontStyles: ParsedStyle[] = [];
   let textStyles: ParsedStyle[] = [];
   let positionStyles: ParsedStyle[] = [];
+  let animationStyles: ParsedStyle[] = [];
 
   
   for (const style of styles) {
@@ -77,6 +81,13 @@ export function convertStylesToFigma(
         style.property === 'left' ||
         style.property === 'zIndex') {
       positionStyles.push(style);
+      continue;
+    }
+
+    // Animation styles (transitions and animations)
+    if (style.property.startsWith('transition') || 
+        style.property === 'animation') {
+      animationStyles.push(style);
       continue;
     }
 
@@ -150,6 +161,12 @@ export function convertStylesToFigma(
     }
   }
 
+  // Handle animation styles  
+  if (animationStyles.length > 0) {
+    const animationResult = convertAnimationToFigma(animationStyles);
+    Object.assign(result, animationResult);
+  }
+
   
   const fills: FigmaPaint[] = [];
   if (gradientStyles.length > 0) {
@@ -211,6 +228,7 @@ export function convertStylesToCss(styles: ParsedStyle[]): Record<string, string
   let fontStyles: ParsedStyle[] = [];
   let textStyles: ParsedStyle[] = [];
   let positionStyles: ParsedStyle[] = [];
+  let animationStyles: ParsedStyle[] = [];
 
   // Group styles by category
   for (const style of styles) {
@@ -248,6 +266,13 @@ export function convertStylesToCss(styles: ParsedStyle[]): Record<string, string
         style.property === 'left' ||
         style.property === 'zIndex') {
       positionStyles.push(style);
+      continue;
+    }
+
+    // Animation styles (transitions and animations) 
+    if (style.property.startsWith('transition') || 
+        style.property === 'animation') {
+      animationStyles.push(style);
       continue;
     }
 
@@ -316,6 +341,42 @@ export function convertStylesToCss(styles: ParsedStyle[]): Record<string, string
     }
   }
 
+  // Handle animation styles
+  if (animationStyles.length > 0) {
+    // Convert ParsedStyle[] to ParsedClassName[] for animation converter
+    const animationClassNames = animationStyles.map(style => {
+      // Ensure value is converted to string or valid ParsedClassName value type
+      let validValue: string | number | number[] | string[];
+      if (typeof style.value === 'string' || typeof style.value === 'number') {
+        validValue = style.value;
+      } else if (Array.isArray(style.value)) {
+        validValue = style.value as number[] | string[];
+      } else {
+        validValue = String(style.value);
+      }
+      
+      return {
+        className: `${style.property}-${validValue}`, // synthetic className
+        property: style.property,
+        value: validValue,
+        variant: (style.variant || 'preset') as 'arbitrary' | 'preset'
+      };
+    });
+    
+    const animationCSS = convertAnimationToCSS(animationClassNames);
+    if (animationCSS) {
+      // Parse the CSS string and extract properties
+      const lines = animationCSS.split('\n').filter(line => line.trim());
+      for (const line of lines) {
+        const match = line.match(/^(.+?):\s*(.+?);$/);
+        if (match) {
+          const [, property, value] = match;
+          result[property.trim()] = value.trim();
+        }
+      }
+    }
+  }
+
   // Handle background styles (including gradients)
   if (backgroundStyles.length > 0) {
     // Group background styles similar to Figma converter
@@ -359,4 +420,30 @@ export function convertStylesToCss(styles: ParsedStyle[]): Record<string, string
   }
 
   return result;
+}
+
+// Enhanced conversion result with prototyping information
+export interface FigmaConversionResult extends FigmaStyleProperties {
+  prototyping: {
+    reactions: FigmaReaction[];
+    recommendations: string[];
+    animationMetadata: any;
+  };
+}
+
+// Generate prototyping information from styles
+export function generatePrototypingInfo(styles: ParsedStyle[]): FigmaConversionResult['prototyping'] {
+  const animationStyles = styles.filter(style => 
+    style.property.startsWith('transition') || 
+    style.property === 'animation'
+  );
+
+  const prototypingSuggestions = generatePrototypeSuggestions(animationStyles);
+  const animationMetadata = extractAnimationMetadata(animationStyles);
+
+  return {
+    reactions: prototypingSuggestions.reactions,
+    recommendations: prototypingSuggestions.recommendations,
+    animationMetadata
+  };
 } 

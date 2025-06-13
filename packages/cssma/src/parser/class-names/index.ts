@@ -15,6 +15,7 @@ import { parseFontClassName } from './font';
 import { parseShadowClassName } from './shadow';
 import { parseFilterClassName } from './filter';
 import { parseShapeClassName } from './shape';
+import { parseAnimationClassName } from './animation';
 
 
 
@@ -37,6 +38,7 @@ export function parseClassName(className: string): ParsedClassName | null {
         parseShadowClassName,
         parseFilterClassName,
         parseShapeClassName,
+        parseAnimationClassName,
     ];
 
     for (const parser of parsers) {
