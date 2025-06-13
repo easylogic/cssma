@@ -207,6 +207,25 @@ const gridContainer = 'grid grid-cols-12 gap-[16] w-full';
 const gridItem = 'col-span-4 h-[200] bg-gray-100 rounded-lg';
 ```
 
+#### Animation Patterns
+```typescript
+// Interactive buttons with hover animations
+const animatedButton = 'px-[16] py-[8] bg-blue-500 text-white rounded-lg transition-all duration-300 ease-in-out hover:bg-blue-600 hover:scale-105';
+const pulseButton = 'px-[16] py-[8] bg-green-500 text-white rounded-lg animate-pulse hover:animate-none transition-all duration-200';
+
+// Loading states
+const spinner = 'w-[32] h-[32] border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin';
+const loadingDots = 'flex gap-[4]'; // Use with multiple animate-bounce elements with delay
+
+// Micro-interactions
+const hoverCard = 'p-[20] bg-white rounded-xl shadow-lg transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1';
+const slideIn = 'transform transition-transform duration-500 ease-out translate-x-[-100] animate-none'; // Add class to trigger
+
+// Form feedback
+const successFeedback = 'p-[12] bg-green-100 text-green-800 rounded-lg transition-opacity duration-300';
+const errorShake = 'transition-transform duration-150 ease-in-out hover:animate-bounce'; // Can be triggered programmatically
+```
+
 #### Responsive Patterns
 ```typescript
 // Container patterns
