@@ -1,7 +1,7 @@
 ---
-description: 개발 워크플로우 및 자동화 가이드, GitHub Actions 워크플로우
+description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
 # FigmaikR Development Workflow Guide
 
