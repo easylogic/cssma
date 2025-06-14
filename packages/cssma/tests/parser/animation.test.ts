@@ -143,6 +143,39 @@ describe('parseAnimationClassName', () => {
         variant: 'arbitrary',
       });
     });
+
+    test('parses all preset duration values', () => {
+      const durations = ['100', '150', '200', '500', '700'];
+      durations.forEach(duration => {
+        const result = parseAnimationClassName(`duration-${duration}`);
+        expect(result).toEqual({
+          className: `duration-${duration}`,
+          property: 'transition-duration',
+          value: `${duration}ms`,
+          variant: 'preset',
+        });
+      });
+    });
+
+    test('handles arbitrary duration with decimal values', () => {
+      const result = parseAnimationClassName('duration-[1.5s]');
+      expect(result).toEqual({
+        className: 'duration-[1.5s]',
+        property: 'transition-duration',
+        value: '1.5s',
+        variant: 'arbitrary',
+      });
+    });
+
+    test('handles arbitrary duration with fractional ms', () => {
+      const result = parseAnimationClassName('duration-[16.67ms]');
+      expect(result).toEqual({
+        className: 'duration-[16.67ms]',
+        property: 'transition-duration',
+        value: '16.67ms',
+        variant: 'arbitrary',
+      });
+    });
   });
 
   describe('delay classes', () => {
@@ -172,6 +205,39 @@ describe('parseAnimationClassName', () => {
         className: 'delay-[500ms]',
         property: 'transition-delay',
         value: '500ms',
+        variant: 'arbitrary',
+      });
+    });
+
+    test('parses all preset delay values', () => {
+      const delays = ['75', '100', '200', '300', '500', '700', '1000'];
+      delays.forEach(delay => {
+        const result = parseAnimationClassName(`delay-${delay}`);
+        expect(result).toEqual({
+          className: `delay-${delay}`,
+          property: 'transition-delay',
+          value: `${delay}ms`,
+          variant: 'preset',
+        });
+      });
+    });
+
+    test('handles arbitrary delay without unit', () => {
+      const result = parseAnimationClassName('delay-[800]');
+      expect(result).toEqual({
+        className: 'delay-[800]',
+        property: 'transition-delay',
+        value: '800ms',
+        variant: 'arbitrary',
+      });
+    });
+
+    test('handles arbitrary delay with seconds', () => {
+      const result = parseAnimationClassName('delay-[3s]');
+      expect(result).toEqual({
+        className: 'delay-[3s]',
+        property: 'transition-delay',
+        value: '3s',
         variant: 'arbitrary',
       });
     });
@@ -215,6 +281,25 @@ describe('parseAnimationClassName', () => {
         property: 'transition-timing-function',
         value: 'cubic-bezier(0.4, 0, 0.2, 1)',
         variant: 'preset',
+      });
+    });
+
+    test('handles all easing functions correctly', () => {
+      const easingFunctions = [
+        { className: 'ease-linear', value: 'linear' },
+        { className: 'ease-in', value: 'cubic-bezier(0.4, 0, 1, 1)' },
+        { className: 'ease-out', value: 'cubic-bezier(0, 0, 0.2, 1)' },
+        { className: 'ease-in-out', value: 'cubic-bezier(0.4, 0, 0.2, 1)' },
+      ];
+
+      easingFunctions.forEach(({ className, value }) => {
+        const result = parseAnimationClassName(className);
+        expect(result).toEqual({
+          className,
+          property: 'transition-timing-function',
+          value,
+          variant: 'preset',
+        });
       });
     });
   });
@@ -269,6 +354,85 @@ describe('parseAnimationClassName', () => {
         variant: 'preset',
       });
     });
+
+    test('handles all animation types correctly', () => {
+      const animations = [
+        { className: 'animate-none', value: 'none' },
+        { className: 'animate-spin', value: 'spin 1s linear infinite' },
+        { className: 'animate-ping', value: 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite' },
+        { className: 'animate-pulse', value: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' },
+        { className: 'animate-bounce', value: 'bounce 1s infinite' },
+      ];
+
+      animations.forEach(({ className, value }) => {
+        const result = parseAnimationClassName(className);
+        expect(result).toEqual({
+          className,
+          property: 'animation',
+          value,
+          variant: 'preset',
+        });
+      });
+    });
+  });
+
+  describe('edge cases and error handling', () => {
+    test('handles empty string', () => {
+      expect(parseAnimationClassName('')).toBeNull();
+    });
+
+    test('handles whitespace-only strings', () => {
+      expect(parseAnimationClassName('   ')).toBeNull();
+      expect(parseAnimationClassName('\t')).toBeNull();
+      expect(parseAnimationClassName('\n')).toBeNull();
+    });
+
+    test('handles malformed arbitrary values', () => {
+      expect(parseAnimationClassName('duration-[')).toBeNull();
+      expect(parseAnimationClassName('duration-]')).toBeNull();
+      expect(parseAnimationClassName('duration-[]')).toBeNull();
+      expect(parseAnimationClassName('delay-[invalid')).toBeNull();
+    });
+
+    test('handles case sensitivity', () => {
+      expect(parseAnimationClassName('TRANSITION')).toBeNull();
+      expect(parseAnimationClassName('Animate-spin')).toBeNull();
+      expect(parseAnimationClassName('DURATION-300')).toBeNull();
+    });
+
+    test('handles partial matches', () => {
+      expect(parseAnimationClassName('trans')).toBeNull();
+      expect(parseAnimationClassName('transition-')).toBeNull();
+      expect(parseAnimationClassName('animate-')).toBeNull();
+      expect(parseAnimationClassName('duration-')).toBeNull();
+    });
+
+    test('handles special characters in class names', () => {
+      expect(parseAnimationClassName('transition@')).toBeNull();
+      expect(parseAnimationClassName('duration-300!')).toBeNull();
+      expect(parseAnimationClassName('animate-spin#')).toBeNull();
+    });
+
+    test('handles very long arbitrary values', () => {
+      const longValue = 'a'.repeat(1000);
+      expect(parseAnimationClassName(`duration-[${longValue}]`)).toBeNull();
+    });
+
+    test('handles numeric edge cases in arbitrary values', () => {
+      expect(parseAnimationClassName('duration-[0]')).toEqual({
+        className: 'duration-[0]',
+        property: 'transition-duration',
+        value: '0ms',
+        variant: 'arbitrary',
+      });
+      
+      expect(parseAnimationClassName('duration-[999999]')).toEqual({
+        className: 'duration-[999999]',
+        property: 'transition-duration',
+        value: '999999ms',
+        variant: 'arbitrary',
+      });
+    });
   });
 
   describe('invalid classes', () => {
@@ -287,6 +451,62 @@ describe('parseAnimationClassName', () => {
     test('returns null for invalid duration values', () => {
       expect(parseAnimationClassName('duration-999')).toBeNull();
       expect(parseAnimationClassName('duration-abc')).toBeNull();
+    });
+
+    test('returns null for invalid easing functions', () => {
+      expect(parseAnimationClassName('ease-invalid')).toBeNull();
+      expect(parseAnimationClassName('ease-custom')).toBeNull();
+      expect(parseAnimationClassName('ease-')).toBeNull();
+    });
+
+    test('returns null for invalid delay values', () => {
+      expect(parseAnimationClassName('delay-999')).toBeNull();
+      expect(parseAnimationClassName('delay-abc')).toBeNull();
+      expect(parseAnimationClassName('delay-')).toBeNull();
+    });
+
+    test('returns null for invalid animate values', () => {
+      expect(parseAnimationClassName('animate-custom')).toBeNull();
+      expect(parseAnimationClassName('animate-invalid')).toBeNull();
+      expect(parseAnimationClassName('animate-')).toBeNull();
+    });
+  });
+
+  describe('performance tests', () => {
+    test('handles rapid successive calls efficiently', () => {
+      const start = performance.now();
+      
+      for (let i = 0; i < 1000; i++) {
+        parseAnimationClassName('transition');
+        parseAnimationClassName('duration-300');
+        parseAnimationClassName('animate-spin');
+        parseAnimationClassName('invalid-class');
+      }
+      
+      const end = performance.now();
+      const duration = end - start;
+      
+      expect(duration).toBeLessThan(100);
+    });
+
+    test('handles complex arbitrary values efficiently', () => {
+      const complexValues = [
+        'duration-[123.456ms]',
+        'delay-[0.5s]',
+        'duration-[1000]',
+        'delay-[999ms]',
+      ];
+
+      const start = performance.now();
+      
+      for (let i = 0; i < 100; i++) {
+        complexValues.forEach(value => parseAnimationClassName(value));
+      }
+      
+      const end = performance.now();
+      const duration = end - start;
+      
+      expect(duration).toBeLessThan(50);
     });
   });
 }); 
