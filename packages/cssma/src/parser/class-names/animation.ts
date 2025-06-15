@@ -1,65 +1,81 @@
 import { ParsedClassName } from "../../types";
 
 export function parseAnimationClassName(className: string): ParsedClassName | null {
+  // 🆕 Input validation and sanitization
+  if (!className || typeof className !== 'string') {
+    return null;
+  }
+
+  // Trim whitespace and check for empty string
+  const trimmedClassName = className.trim();
+  if (!trimmedClassName) {
+    return null;
+  }
+
+  // 🆕 Validate class name format (basic safety check)
+  if (trimmedClassName.length > 200 || /[^a-zA-Z0-9\-\[\]\.\_\:]/.test(trimmedClassName)) {
+    return null;
+  }
+
   // Handle transition classes
-  if (className.startsWith("transition")) {
-    if (className === "transition") {
+  if (trimmedClassName.startsWith("transition")) {
+    if (trimmedClassName === "transition") {
       return {
-        className,
+        className: trimmedClassName,
         property: "transition-property",
         value: "color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter",
         variant: "preset",
       };
     }
 
-    if (className === "transition-none") {
+    if (trimmedClassName === "transition-none") {
       return {
-        className,
+        className: trimmedClassName,
         property: "transition-property",
         value: "none",
         variant: "preset",
       };
     }
 
-    if (className === "transition-all") {
+    if (trimmedClassName === "transition-all") {
       return {
-        className,
+        className: trimmedClassName,
         property: "transition-property", 
         value: "all",
         variant: "preset",
       };
     }
 
-    if (className === "transition-colors") {
+    if (trimmedClassName === "transition-colors") {
       return {
-        className,
+        className: trimmedClassName,
         property: "transition-property",
         value: "color, background-color, border-color, text-decoration-color, fill, stroke",
         variant: "preset",
       };
     }
 
-    if (className === "transition-opacity") {
+    if (trimmedClassName === "transition-opacity") {
       return {
-        className,
+        className: trimmedClassName,
         property: "transition-property",
         value: "opacity",
         variant: "preset",
       };
     }
 
-    if (className === "transition-shadow") {
+    if (trimmedClassName === "transition-shadow") {
       return {
-        className,
+        className: trimmedClassName,
         property: "transition-property",
         value: "box-shadow",
         variant: "preset",
       };
     }
 
-    if (className === "transition-transform") {
+    if (trimmedClassName === "transition-transform") {
       return {
-        className,
+        className: trimmedClassName,
         property: "transition-property",
         value: "transform",
         variant: "preset",
@@ -68,14 +84,30 @@ export function parseAnimationClassName(className: string): ParsedClassName | nu
   }
 
   // Handle duration classes
-  if (className.startsWith("duration-")) {
-    const value = className.replace("duration-", "");
+  if (trimmedClassName.startsWith("duration-")) {
+    const value = trimmedClassName.replace("duration-", "");
+    
+    // 🆕 Enhanced validation for empty value
+    if (!value) {
+      return null;
+    }
     
     // Handle arbitrary values
     if (value.startsWith("[") && value.endsWith("]")) {
       const duration = value.slice(1, -1);
+      
+      // 🆕 Validate arbitrary value is not empty
+      if (!duration) {
+        return null;
+      }
+      
+      // 🆕 Enhanced validation for arbitrary duration values
+      if (!/^[\d\.]+(?:ms|s)?$/.test(duration)) {
+        return null;
+      }
+      
       return {
-        className,
+        className: trimmedClassName,
         property: "transition-duration",
         value: duration.includes("ms") || duration.includes("s") ? duration : `${duration}ms`,
         variant: "arbitrary",
@@ -97,7 +129,7 @@ export function parseAnimationClassName(className: string): ParsedClassName | nu
 
     if (value in durationMap) {
       return {
-        className,
+        className: trimmedClassName,
         property: "transition-duration",
         value: durationMap[value],
         variant: "preset",
@@ -106,14 +138,30 @@ export function parseAnimationClassName(className: string): ParsedClassName | nu
   }
 
   // Handle delay classes
-  if (className.startsWith("delay-")) {
-    const value = className.replace("delay-", "");
+  if (trimmedClassName.startsWith("delay-")) {
+    const value = trimmedClassName.replace("delay-", "");
+    
+    // 🆕 Enhanced validation for empty value
+    if (!value) {
+      return null;
+    }
     
     // Handle arbitrary values
     if (value.startsWith("[") && value.endsWith("]")) {
       const delay = value.slice(1, -1);
+      
+      // 🆕 Validate arbitrary value is not empty
+      if (!delay) {
+        return null;
+      }
+      
+      // 🆕 Enhanced validation for arbitrary delay values
+      if (!/^[\d\.]+(?:ms|s)?$/.test(delay)) {
+        return null;
+      }
+      
       return {
-        className,
+        className: trimmedClassName,
         property: "transition-delay",
         value: delay.includes("ms") || delay.includes("s") ? delay : `${delay}ms`,
         variant: "arbitrary",
@@ -135,7 +183,7 @@ export function parseAnimationClassName(className: string): ParsedClassName | nu
 
     if (value in delayMap) {
       return {
-        className,
+        className: trimmedClassName,
         property: "transition-delay",
         value: delayMap[value],
         variant: "preset",
@@ -144,7 +192,7 @@ export function parseAnimationClassName(className: string): ParsedClassName | nu
   }
 
   // Handle easing classes
-  if (className.startsWith("ease-")) {
+  if (trimmedClassName.startsWith("ease-")) {
     const easingMap: Record<string, string> = {
       "ease-linear": "linear",
       "ease-in": "cubic-bezier(0.4, 0, 1, 1)",
@@ -152,23 +200,28 @@ export function parseAnimationClassName(className: string): ParsedClassName | nu
       "ease-in-out": "cubic-bezier(0.4, 0, 0.2, 1)",
     };
 
-    if (className in easingMap) {
+    if (trimmedClassName in easingMap) {
       return {
-        className,
+        className: trimmedClassName,
         property: "transition-timing-function",
-        value: easingMap[className],
+        value: easingMap[trimmedClassName],
         variant: "preset",
       };
     }
   }
 
   // Handle animate classes
-  if (className.startsWith("animate-")) {
-    const animationType = className.replace("animate-", "");
+  if (trimmedClassName.startsWith("animate-")) {
+    const animationType = trimmedClassName.replace("animate-", "");
+
+    // 🆕 Enhanced validation for empty animation type
+    if (!animationType) {
+      return null;
+    }
 
     if (animationType === "none") {
       return {
-        className,
+        className: trimmedClassName,
         property: "animation",
         value: "none",
         variant: "preset",
@@ -184,7 +237,7 @@ export function parseAnimationClassName(className: string): ParsedClassName | nu
 
     if (animationType in animationMap) {
       return {
-        className,
+        className: trimmedClassName,
         property: "animation",
         value: animationMap[animationType],
         variant: "preset",
