@@ -1,5 +1,12 @@
 # cssma-react
 
+## 2.0.0
+
+### Patch Changes
+
+- Updated dependencies [59824c7]
+  - cssma@0.3.0
+
 ## 1.0.0
 
 ### Patch Changes
