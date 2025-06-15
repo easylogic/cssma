@@ -11,7 +11,10 @@
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",
     "changeset:status": "changeset status",
-    "release": "pnpm build && changeset publish"
+    "release": "pnpm build && changeset publish",
+    "ai:feature": "node scripts/ai-feature.js",
+    "ai:release": "node scripts/ai-release.js",
+    "ai:plan": "node scripts/ai-plan.js"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",

@@ -1,4 +1,7 @@
 
+// Export CSSMA class types for enhanced TypeScript support
+export * from './classes';
+
 export interface FigmaStyleProperties {
   // Layout properties
   layoutMode?: 'HORIZONTAL' | 'VERTICAL';
