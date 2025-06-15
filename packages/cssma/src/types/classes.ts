@@ -243,6 +243,9 @@ export type CSSMAClassName =
   | BackgroundColorClasses
   | string; // Allow for any string to maintain flexibility
 
+// Import ParsedStyle from main types to avoid duplication
+import type { ParsedStyle } from './index';
+
 // ===== Utility Types =====
 
 /**
