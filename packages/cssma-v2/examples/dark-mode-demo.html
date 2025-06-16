@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSSMA v2 - Dark Mode Demo</title>
+    <script src="../dist/cssma.min.js"></script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .card {
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        /* 라이트 모드 스타일 */
+        body {
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        
+        .card {
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 다크 모드 스타일 */
+        .dark body {
+            background-color: #121212;
+            color: #e9ecef;
+        }
+        
+        .dark .card {
+            background-color: #1e1e1e;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .theme-switcher {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            background-color: #e9ecef;
+            color: #212529;
+        }
+        
+        .dark button {
+            background-color: #343a40;
+            color: #e9ecef;
+        }
+        
+        button.active {
+            background-color: #228be6;
+            color: white;
+        }
+        
+        .dark button.active {
+            background-color: #4dabf7;
+            color: #212529;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CSSMA v2 - Dark Mode Demo</h1>
+        
+        <div class="theme-switcher">
+            <button id="light-mode">Light Mode</button>
+            <button id="dark-mode">Dark Mode</button>
+            <button id="system-mode">System Mode</button>
+            <button id="toggle-mode">Toggle Mode</button>
+        </div>
+        
+        <div class="card">
+            <h2>Dark Mode with CSSMA v2</h2>
+            <p>
+                This demo shows how to use the dark mode utilities in CSSMA v2.
+                You can switch between light mode, dark mode, system mode, or toggle the current mode.
+            </p>
+            <p>
+                The dark mode is implemented using the <code>.dark</code> class on the HTML element,
+                which is the default strategy in CSSMA v2.
+            </p>
+        </div>
+        
+        <div class="card">
+            <h2>Custom Class Example</h2>
+            <p>
+                You can also use a custom class name for dark mode, such as <code>.night-mode</code>
+                instead of <code>.dark</code>.
+            </p>
+            <div>
+                <button id="custom-class-toggle">Toggle Custom Class (.night-mode)</button>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Current Mode</h2>
+            <p id="current-mode-display">Checking current mode...</p>
+            <p id="system-preference-display">Checking system preference...</p>
+        </div>
+    </div>
+    
+    <script>
+        // 페이지 로드 시 다크모드 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            // CSSMA v2의 다크모드 유틸리티 함수 사용
+            cssma.initDarkMode({
+                defaultMode: 'system' // 'light', 'dark', 'system' 중 하나
+            });
+            
+            updateUI();
+            
+            // 버튼 이벤트 리스너 설정
+            document.getElementById('light-mode').addEventListener('click', function() {
+                cssma.toggleDarkMode('light');
+                updateUI();
+            });
+            
+            document.getElementById('dark-mode').addEventListener('click', function() {
+                cssma.toggleDarkMode('dark');
+                updateUI();
+            });
+            
+            document.getElementById('system-mode').addEventListener('click', function() {
+                cssma.toggleDarkMode('system');
+                updateUI();
+            });
+            
+            document.getElementById('toggle-mode').addEventListener('click', function() {
+                cssma.toggleDarkMode('toggle');
+                updateUI();
+            });
+            
+            // 커스텀 클래스 토글 버튼
+            document.getElementById('custom-class-toggle').addEventListener('click', function() {
+                const html = document.documentElement;
+                if (html.classList.contains('night-mode')) {
+                    html.classList.remove('night-mode');
+                } else {
+                    html.classList.add('night-mode');
+                }
+            });
+        });
+        
+        // UI 업데이트 함수
+        function updateUI() {
+            const isDark = cssma.isDarkMode();
+            const currentModeDisplay = document.getElementById('current-mode-display');
+            const systemPreferenceDisplay = document.getElementById('system-preference-display');
+            
+            // 현재 모드 표시
+            currentModeDisplay.textContent = `Current mode: ${isDark ? 'Dark' : 'Light'}`;
+            
+            // 시스템 설정 표시
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            systemPreferenceDisplay.textContent = `System preference: ${systemPrefersDark ? 'Dark' : 'Light'}`;
+            
+            // 활성 버튼 스타일 업데이트
+            const buttons = document.querySelectorAll('.theme-switcher button');
+            buttons.forEach(button => button.classList.remove('active'));
+            
+            // 로컬 스토리지에서 현재 테마 설정 확인
+            const savedTheme = localStorage.getItem('cssma-theme');
+            
+            if (savedTheme === 'dark') {
+                document.getElementById('dark-mode').classList.add('active');
+            } else if (savedTheme === 'light') {
+                document.getElementById('light-mode').classList.add('active');
+            } else {
+                document.getElementById('system-mode').classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html> 
