@@ -1989,50 +1989,27 @@ export class UnifiedParser {
 
   // 수정된 isStateModifier 함수
   private isStateModifier(modifier: string): boolean {
-    return ['hover', 'focus', 'active', 'disabled', 'visited', 'focus-within', 'focus-visible', 'group-hover', 'peer-hover', 'dark'].includes(modifier);
+    if (!this.config.enableStateModifiers) return false;
+    
+    // 설정에서 정의한 모디파이어 사용 (기본값 제공)
+    const stateModifiers = this.config.stateModifiers || [
+      'hover', 'focus', 'active', 'disabled', 'visited', 
+      'focus-within', 'focus-visible', 'group-hover', 
+      'peer-hover', 'dark'
+    ];
+    
+    return stateModifiers.includes(modifier as StateModifier);
   }
 
   // 수정된 isResponsiveModifier 함수
   private isResponsiveModifier(modifier: string): boolean {
-    return ['sm', 'md', 'lg', 'xl', '2xl'].includes(modifier);
-  }
-
-  private matchArbitraryValue(className: string): ClassNameMatch | null {
-    // 임의 값 패턴 매칭: w-[200px], bg-[#FF0000]
-    const arbitraryMatch = className.match(/^([a-z0-9_-]+)-\[(.*?)\]$/);
-    if (!arbitraryMatch) return null;
-
-    const property = arbitraryMatch[1];
-    const value = arbitraryMatch[2];
-
-    // 카테고리 결정
-    let category: StyleCategory = 'layout'; // 기본값
+    if (!this.config.enableResponsiveModifiers) return false;
     
-    // 속성에 따른 카테고리 결정
-    if (['p', 'px', 'py', 'pt', 'pr', 'pb', 'pl', 'm', 'mx', 'my', 'mt', 'mr', 'mb', 'ml', 'gap'].includes(property)) {
-      category = 'spacing';
-    } else if (['w', 'h', 'min-w', 'min-h', 'max-w', 'max-h'].includes(property)) {
-      category = 'layout';
-    } else if (['text', 'bg', 'background', 'border', 'fill', 'stroke'].includes(property)) {
-      category = 'colors';
-    } else if (['font', 'text'].includes(property)) {
-      category = 'typography';
-    } else if (['rounded', 'shadow', 'opacity', 'blur'].includes(property)) {
-      category = 'effects';
-    } else if (['top', 'right', 'bottom', 'left', 'inset'].includes(property)) {
-      category = 'position';
-    } else if (['rotate', 'scale', 'translate', 'skew'].includes(property)) {
-      category = 'transform';
-    } else if (['animate', 'transition', 'duration', 'delay', 'ease'].includes(property)) {
-      category = 'animation';
-    }
-
-    return {
-      className,
-      category,
-      property,
-      value,
-      isArbitrary: true
-    };
+    // 설정에서 정의한 모디파이어 사용 (기본값 제공)
+    const breakpointModifiers = this.config.breakpointModifiers || [
+      'sm', 'md', 'lg', 'xl', '2xl'
+    ];
+    
+    return breakpointModifiers.includes(modifier as BreakpointModifier);
   }
 } 
