@@ -132,10 +132,22 @@ export class TypographyParser {
       return true;
     }
 
+    // text-[...] 임의 값에서 색상 값 제외
+    const textArbitraryMatch = className.match(/^text-\[(.*?)\]$/);
+    if (textArbitraryMatch) {
+      const value = textArbitraryMatch[1];
+      // 색상 값인 경우 Typography가 아님
+      if (this.isColorValue(value)) {
+        return false;
+      }
+      // 색상이 아니면 Typography (폰트 크기)
+      return true;
+    }
+
     // 접두사 매치 (임의 값, 소수점 값 포함)
     const prefixPatterns = [
       /^text-(xs|sm|base|lg|xl|\d*xl)$/, // 폰트 크기 (명시적)
-      /^text-\[.*?\]$/, // 폰트 크기 임의 값
+      // text-[...] 패턴은 위에서 이미 처리됨
       /^font-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black|\d+)$/, // 폰트 두께
       /^font-\[.*?\]$/, // 폰트 두께/패밀리 임의 값
       /^font-(sans|serif|mono)$/, // 폰트 패밀리
@@ -158,8 +170,42 @@ export class TypographyParser {
   }
 
   /**
-   * 타이포그래피 클래스를 파싱합니다.
+   * 값이 색상 값인지 판단합니다.
    */
+  private static isColorValue(value: string): boolean {
+    // HEX 색상 (#FF0000, #F00)
+    if (/^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$/.test(value)) {
+      return true;
+    }
+    
+    // RGB/RGBA 함수 (rgb(255,0,0), rgba(255,0,0,0.5))
+    if (/^rgba?\(/.test(value)) {
+      return true;
+    }
+    
+    // HSL/HSLA 함수 (hsl(0,100%,50%), hsla(0,100%,50%,0.5))
+    if (/^hsla?\(/.test(value)) {
+      return true;
+    }
+    
+    // 색상 키워드들
+    const colorKeywords = [
+      'red', 'green', 'blue', 'yellow', 'orange', 'purple', 'pink', 'gray', 'black', 'white',
+      'transparent', 'current', 'inherit', 'initial', 'unset'
+    ];
+    
+    if (colorKeywords.includes(value.toLowerCase())) {
+      return true;
+    }
+    
+    // Tailwind 색상 패턴 (red-500, blue-300 등)
+    if (/^[a-z]+-\d+$/.test(value)) {
+      return true;
+    }
+    
+    return false;
+  }
+
   static parseTypography(className: string): { property: string; value: string; isArbitrary?: boolean } | null {
     // 정확한 매치 우선
     if (this.EXACT_PROPERTIES.includes(className)) {
