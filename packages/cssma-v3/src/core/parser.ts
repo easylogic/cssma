@@ -1,23 +1,47 @@
 /**
- * CSSParser - CSS 클래스 파서
+ * CSSParser - CSS 클래스 파서 (리팩토링된 버전)
  * 
  * 이 클래스는 CSS 클래스를 파싱하여 구조화된 데이터로 변환합니다.
  * 모든 기능(반응형, 상태 모디파이어, 임의 값 등)을 지원합니다.
+ * 
+ * 개별 파서들로 책임을 분리하여 유지보수성을 향상시켰습니다.
  */
 
-import { Config, ParsedClass, ParsedStyles, DesignPreset, StyleCategory, StateModifier, BreakpointModifier } from '../types';
+import { Config, ParsedClass, ParsedStyles, DesignPreset, StyleCategory, StateModifier, BreakpointModifier, ContainerQueryModifier } from '../types';
+import { 
+  LayoutParser, 
+  AnimationParser, 
+  SpacingParser, 
+  ColorParser, 
+  TypographyParser, 
+  EffectsParser, 
+  PositionParser, 
+  TransformParser,
+  SizingParser,
+  FlexboxGridParser,
+  FiltersParser,
+  InteractivityParser,
+  TablesParser,
+  SVGParser,
+  TransitionsParser,
+  BackgroundsParser,
+  BordersParser,
+  OverflowParser,
+  AccessibilityParser,
+  BlendModesParser
+} from './parsers';
 
 /**
- * CSS 클래스 문자열을 파싱하여 스타일 객체로 변환하는 파서
+ * CSS 클래스 파서
  */
 export class CSSParser {
   private config: Config;
   private preset: DesignPreset;
 
   /**
-   * CSSParser 생성자
-   * @param config 파서 설정
-   * @param preset 디자인 프리셋 (색상, 간격 등의 값 매핑)
+   * 파서를 초기화합니다.
+   * @param config 설정
+   * @param preset 디자인 프리셋
    */
   constructor(config: Config, preset: DesignPreset) {
     this.config = config;
@@ -25,19 +49,20 @@ export class CSSParser {
   }
 
   /**
-   * CSS 클래스 문자열을 파싱하여 스타일 객체로 변환합니다.
+   * CSS 클래스 문자열을 파싱합니다.
    * @param classString CSS 클래스 문자열
    * @returns 파싱된 스타일 객체
    */
   parse(classString: string): ParsedStyles {
-    const startTime = performance.now();
+    const startTime = Date.now();
+    const tokens = this.tokenizeInput(classString);
     
-    // 입력 문자열을 토큰으로 분리
-    const classNames = this.tokenizeInput(classString);
-    
-    // 결과 스타일 객체 초기화
     const result: ParsedStyles = {
-      spacing: {},
+      spacing: {
+        padding: {},
+        margin: {},
+        gap: {}
+      },
       colors: {},
       typography: {},
       layout: {},
@@ -45,345 +70,1005 @@ export class CSSParser {
       animation: {},
       position: {},
       transform: {},
+      sizing: {},
+      flexboxGrid: {},
+      filters: {},
+      interactivity: {},
+      tables: {},
+      svg: {},
+      transitions: {},
+      backgrounds: {},
+      borders: {},
+      overflow: {},
+      accessibility: {},
+      blendModes: {},
+      breakpoints: {},
+      containers: {},
+      states: {} as Record<string, Partial<ParsedStyles>>,
+      nestedStates: {},
+      specialSelectors: {},
       meta: {
-        originalClasses: classNames,
+        originalClasses: tokens,
         originalInput: classString,
-        preset: this.preset.name,
+        preset: this.preset.name || 'default',
         parseTime: 0,
-        warnings: [],
-      },
+        warnings: []
+      }
     };
-    
-    // 각 클래스 이름을 파싱
-    for (const className of classNames) {
-      const parsedClass = this.parseClassName(className);
+
+    // 각 토큰 처리
+    for (const token of tokens) {
+      const parsedClass = this.parseClassName(token);
       if (parsedClass) {
         this.applyParsedClassToStyles(parsedClass, result);
       }
     }
-    
-    // 파싱 시간 계산
-    const endTime = performance.now();
-    result.meta.parseTime = endTime - startTime;
-    
+
+    // 파싱 시간 기록
+    result.meta!.parseTime = Date.now() - startTime;
+
     return result;
   }
 
   /**
-   * 입력 문자열을 클래스 이름 토큰으로 분리합니다.
-   * @param input CSS 클래스 문자열
-   * @returns 클래스 이름 배열
+   * 클래스명을 파싱합니다. (테스트 호환 메서드)
+   * @param className 클래스명
+   * @returns 파싱된 클래스 객체
    */
-  private tokenizeInput(input: string): string[] {
-    if (!input || input.trim() === '') {
-      return [];
-    }
-    
-    // 공백으로 분리하고 빈 문자열 제거
-    return input.trim().split(/\s+/).filter(Boolean);
+  parseClass(className: string): ParsedClass | undefined {
+    return this.parseClassName(className);
   }
 
   /**
-   * 단일 클래스 이름을 파싱합니다.
-   * @param className 파싱할 클래스 이름
-   * @returns 파싱된 클래스 객체 또는 undefined
+   * 입력 문자열을 토큰으로 분리합니다.
+   * @param input 입력 문자열
+   * @returns 토큰 배열
+   */
+  private tokenizeInput(input: string): string[] {
+    return input
+      .trim()
+      .split(/\s+/)
+      .filter(token => token.length > 0);
+  }
+
+  /**
+   * 클래스명을 파싱합니다.
+   * @param className 클래스명
+   * @returns 파싱된 클래스 객체
    */
   parseClassName(className: string): ParsedClass | undefined {
     if (!className || className.trim() === '') {
       return undefined;
     }
-    
-    // 상태 및 반응형 모디파이어 파싱
-    const { baseClassName, stateModifier, breakpointModifier } = this.parseModifiers(className);
-    
-    // 타이포그래피 클래스 특수 처리 (예: text-lg)
-    const typographySizes = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl', '8xl', '9xl'];
-    if (baseClassName.startsWith('text-') && typographySizes.includes(baseClassName.substring(5))) {
-      return {
-        className,
-        category: 'typography',
-        property: 'text',
-        value: baseClassName.substring(5),
-        isArbitrary: false,
-        ...(stateModifier && { modifier: stateModifier }),
-        ...(breakpointModifier && { breakpoint: breakpointModifier }),
-      };
+
+    // Prefix 제거 (설정된 경우)
+    let processedClassName = className;
+    if (this.config.prefix && className.startsWith(this.config.prefix)) {
+      processedClassName = className.slice(this.config.prefix.length);
     }
-    
-    // 임의 값 파싱
-    const { isArbitrary, propertyName, value } = this.parseArbitraryValue(baseClassName);
-    
-    // 카테고리와 속성 결정
-    const { category, property } = this.determineCategoryAndProperty(propertyName, value);
-    
+
+    // 모디파이어를 파싱합니다.
+    const modifierResult = this.parseModifiers(processedClassName);
+    const { baseClassName } = modifierResult;
+
+    // 임의 값을 파싱합니다.
+    const arbitraryResult = this.parseArbitraryValue(baseClassName);
+    const { isArbitrary, propertyName, value, category } = arbitraryResult;
+
+    // 카테고리와 속성 결정 (이미 카테고리가 결정된 경우 우회)
+    const categoryResult = category 
+      ? { category, property: propertyName }
+      : this.determineCategoryAndProperty(propertyName, value);
+
     return {
-      className,
-      category,
-      property,
-      value,
-      isArbitrary,
-      ...(stateModifier && { modifier: stateModifier }),
-      ...(breakpointModifier && { breakpoint: breakpointModifier }),
+      original: className,
+      className: processedClassName,
+      baseClassName: baseClassName,
+      property: categoryResult.property,
+      value: value,
+      category: categoryResult.category,
+      isArbitrary: isArbitrary,
+      stateModifier: modifierResult.stateModifier,
+      breakpointModifier: modifierResult.breakpointModifier,
+      containerQueryModifier: modifierResult.containerQueryModifier,
+      stateModifiers: modifierResult.stateModifiers,
+      breakpointModifiers: modifierResult.breakpointModifiers,
+      specialSelector: modifierResult.specialSelector,
+      modifier: modifierResult.modifier,
+      breakpoint: this.getBreakpointName(modifierResult.breakpointModifier),
+      modifiers: {
+        state: modifierResult.stateModifiers,
+        breakpoint: this.getBreakpointName(modifierResult.breakpointModifier),
+        container: this.getContainerName(modifierResult.containerQueryModifier),
+        special: modifierResult.specialSelector
+      }
     };
   }
 
   /**
-   * 클래스 이름에서 모디파이어를 파싱합니다.
-   * @param className 파싱할 클래스 이름
-   * @returns 기본 클래스 이름과 모디파이어
+   * 모디파이어를 파싱합니다.
+   * @param className 클래스명
+   * @returns 파싱 결과
    */
   private parseModifiers(className: string): { 
     baseClassName: string; 
     stateModifier?: StateModifier; 
-    breakpointModifier?: BreakpointModifier 
+    breakpointModifier?: BreakpointModifier;
+    containerQueryModifier?: ContainerQueryModifier;
+    stateModifiers?: StateModifier[];
+    specialSelector?: {
+      type: 'nth-child' | 'nth-last-child' | 'nth-of-type' | 'nth-last-of-type';
+      value: string;
+    };
+    // 복합 브레이크포인트를 위한 필드 추가
+    breakpointModifiers?: BreakpointModifier[];
+    modifier?: string;
   } {
-    // 상태 모디파이어 목록
-    const stateModifiers: StateModifier[] = [
-      'hover', 'focus', 'active', 'disabled', 'visited',
-      'focus-within', 'focus-visible', 'group-hover', 'peer-hover', 'dark'
-    ];
-    
-    // 반응형 모디파이어 목록
-    const breakpointModifiers: BreakpointModifier[] = ['sm', 'md', 'lg', 'xl', '2xl'];
-    
     let baseClassName = className;
     let stateModifier: StateModifier | undefined;
     let breakpointModifier: BreakpointModifier | undefined;
-    
+    let containerQueryModifier: ContainerQueryModifier | undefined;
+    let stateModifiers: StateModifier[] = [];
+    let breakpointModifiers: BreakpointModifier[] = [];
+    let specialSelector: { type: 'nth-child' | 'nth-last-child' | 'nth-of-type' | 'nth-last-of-type'; value: string } | undefined;
+
     // 콜론으로 분리
     const parts = className.split(':');
-    
-    // 모디파이어가 있는 경우
-    if (parts.length > 1) {
-      baseClassName = parts[parts.length - 1];
-      
-      // 모디파이어 처리
-      for (let i = 0; i < parts.length - 1; i++) {
-        const modifier = parts[i] as string;
-        
-        if (stateModifiers.includes(modifier as StateModifier)) {
-          stateModifier = modifier as StateModifier;
-        } else if (breakpointModifiers.includes(modifier as BreakpointModifier)) {
-          breakpointModifier = modifier as BreakpointModifier;
-        }
-      }
-    }
-    
-    return { baseClassName, stateModifier, breakpointModifier };
-  }
+    baseClassName = parts[parts.length - 1]; // 마지막 부분이 실제 클래스
 
-  /**
-   * 클래스 이름에서 임의 값을 파싱합니다.
-   * @param className 파싱할 클래스 이름
-   * @returns 임의 값 파싱 결과
-   */
-  private parseArbitraryValue(className: string): { 
-    isArbitrary: boolean; 
-    propertyName: string; 
-    value: string 
-  } {
-    // 임의 값 패턴 (예: text-[#FF0000], p-[10px])
-    const arbitraryPattern = /^([a-z0-9-]+)-\[(.*)\]$/;
-    const match = className.match(arbitraryPattern);
-    
-    if (match && match.length >= 3) {
-      return {
-        isArbitrary: true,
-        propertyName: match[1],
-        value: match[2],
-      };
-    }
-    
-    // 단일 값 클래스 (예: flex, grid, block)
-    // 이러한 클래스는 값이 없음
-    const singleValueClasses = ['flex', 'grid', 'block', 'inline', 'hidden', 'static', 'fixed', 'absolute', 'relative', 'sticky'];
-    if (singleValueClasses.includes(className)) {
-      return {
-        isArbitrary: false,
-        propertyName: className,
-        value: '',
-      };
-    }
-    
-    // 일반 클래스 이름 파싱 (예: text-blue-500, p-4)
-    if (className.includes('-')) {
-      // 타이포그래피 클래스 특수 처리 (예: text-lg)
-      const typographySizes = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl', '8xl', '9xl'];
-      if (className.startsWith('text-') && typographySizes.includes(className.substring(5))) {
-        return {
-          isArbitrary: false,
-          propertyName: 'text',
-          value: className.substring(5),
+    // 모디파이어들 처리
+    for (let i = 0; i < parts.length - 1; i++) {
+      const modifier = parts[i];
+
+      // 컨테이너 쿼리 모디파이어 체크 (@로 시작)
+      if (modifier.startsWith('@')) {
+        const containerQuery = modifier.slice(1); // @ 제거
+        
+        // max- 접두사 체크
+        if (containerQuery.startsWith('max-')) {
+          const size = containerQuery.slice(4);
+          // 임의 값 ([...]) 직접 처리
+          if (size.startsWith('[') && size.endsWith(']')) {
+            containerQueryModifier = {
+              type: 'max-width',
+              value: size.slice(1, -1) // [] 제거
+            };
+          } else {
+            containerQueryModifier = {
+              type: 'max-width',
+              value: this.getScreenSize(size)
+            };
+          }
+        } else {
+          // min- 또는 일반 컨테이너 쿼리
+          let actualQuery = containerQuery;
+          
+          // min- 접두사 제거 (있는 경우)
+          if (containerQuery.startsWith('min-')) {
+            actualQuery = containerQuery.slice(4);
+          }
+          
+          // 임의 값 ([...]) 직접 처리
+          if (actualQuery.startsWith('[') && actualQuery.endsWith(']')) {
+            containerQueryModifier = {
+              type: 'min-width',
+              value: actualQuery.slice(1, -1) // [] 제거
+            };
+          } else if (actualQuery.includes('/')) {
+            // 명명된 컨테이너 쿼리 (예: md/sidebar)
+            containerQueryModifier = {
+              type: 'min-width',
+              value: actualQuery // 그대로 유지
+            };
+          } else {
+            containerQueryModifier = {
+              type: 'min-width',
+              value: this.getScreenSize(actualQuery)
+            };
+          }
+        }
+        continue;
+      }
+
+      // 반응형 모디파이어 체크
+      const breakpoints = ['sm', 'md', 'lg', 'xl', '2xl'];
+      const maxBreakpoints = ['max-sm', 'max-md', 'max-lg', 'max-xl', 'max-2xl'];
+      
+      if (breakpoints.includes(modifier)) {
+        const newBreakpoint = {
+          type: 'min-width' as const,
+          value: this.getScreenSize(modifier)
         };
+        
+        if (!breakpointModifier) {
+          breakpointModifier = newBreakpoint;
+        }
+        breakpointModifiers.push(newBreakpoint);
+        continue;
       }
       
-      // 특수 케이스: 색상 클래스 (text-blue-500)
-      if (className.includes('-blue-') || className.includes('-red-') || className.includes('-green-')) {
-        const parts = className.split('-');
-        if (parts.length >= 3) {
-          const property = parts[0];
-          const colorValue = parts.slice(1).join('-');
-          return {
-            isArbitrary: false,
-            propertyName: property,
-            value: colorValue,
+      if (maxBreakpoints.includes(modifier)) {
+        const size = modifier.replace('max-', '');
+        const newBreakpoint = {
+          type: 'max-width' as const,
+          value: this.getScreenSize(size)
+        };
+        
+        if (!breakpointModifier) {
+          breakpointModifier = newBreakpoint;
+        }
+        breakpointModifiers.push(newBreakpoint);
+        continue;
+      }
+
+      // 임의 브레이크포인트 체크 (min-[...], max-[...])
+      if (modifier.startsWith('min-[') && modifier.endsWith(']')) {
+        const value = modifier.slice(5, -1);
+        const newBreakpoint = {
+          type: 'min-width' as const,
+          value: value,
+          // 임의 브레이크포인트 표시용 플래그
+          isArbitrary: true
+        } as any;
+        
+        if (!breakpointModifier) {
+          breakpointModifier = newBreakpoint;
+        }
+        breakpointModifiers.push(newBreakpoint);
+        continue;
+      }
+      
+      if (modifier.startsWith('max-[') && modifier.endsWith(']')) {
+        const value = modifier.slice(5, -1);
+        const newBreakpoint = {
+          type: 'max-width' as const,
+          value: value,
+          // 임의 브레이크포인트 표시용 플래그
+          isArbitrary: true
+        } as any;
+        
+        if (!breakpointModifier) {
+          breakpointModifier = newBreakpoint;
+        }
+        breakpointModifiers.push(newBreakpoint);
+        continue;
+      }
+
+      // 특수 선택자 체크
+      // nth-[expression]: 패턴 (nth-[3n+1]:)
+      if (modifier.startsWith('nth-[') && modifier.endsWith(']')) {
+        const value = modifier.slice(5, -1);
+        specialSelector = {
+          type: 'nth-child',
+          value: value
+        };
+        continue;
+      }
+
+      // nth-{number}: 패턴 (nth-3:)
+      const nthMatch = modifier.match(/^nth-(\d+)$/);
+      if (nthMatch) {
+        specialSelector = {
+          type: 'nth-child',
+          value: nthMatch[1]
+        };
+        continue;
+      }
+
+      // nth-of-type-{number}: 패턴 (nth-of-type-3:)
+      const nthOfTypeMatch = modifier.match(/^nth-of-type-(\d+)$/);
+      if (nthOfTypeMatch) {
+        specialSelector = {
+          type: 'nth-of-type',
+          value: nthOfTypeMatch[1]
+        };
+        continue;
+      }
+
+      // 기존 괄호 패턴 (nth-child(3):) - 후위 호환성
+      if (modifier.includes('(') && modifier.includes(')')) {
+        const match = modifier.match(/^(nth-child|nth-last-child|nth-of-type|nth-last-of-type)\((.+)\)$/);
+        if (match) {
+          specialSelector = {
+            type: match[1] as any,
+            value: match[2]
           };
+          continue;
         }
       }
+
+      // 상태 모디파이어 체크
+      const states: string[] = [
+        'hover', 'focus', 'active', 'disabled', 'visited', 'checked',
+        'first', 'last', 'odd', 'even', 'focus-within', 'focus-visible',
+        'target', 'default', 'enabled', 'indeterminate', 'invalid',
+        'valid', 'optional', 'required', 'placeholder-shown', 'autofill',
+        'read-only', 'dark', 'light'
+      ];
       
-      const lastDashIndex = className.lastIndexOf('-');
-      const property = className.substring(0, lastDashIndex);
-      const value = className.substring(lastDashIndex + 1);
-      
-      return {
-        isArbitrary: false,
-        propertyName: property,
-        value: value,
-      };
+      if (states.includes(modifier)) {
+        if (!stateModifier) {
+          stateModifier = modifier as StateModifier;
+        }
+        stateModifiers.push(modifier as StateModifier);
+      }
     }
+
+    // Modifier 필드 설정 (테스트 호환성)
+    let modifierValue: string | undefined;
     
-    // 기본값 반환
+    // 복합 모디파이어 (예: md:hover)의 경우 상태 부분만 반환
+    if (breakpointModifier && stateModifier) {
+      // 다중 상태의 경우 마지막 상태만 사용
+      modifierValue = stateModifiers.length > 0 ? stateModifiers[stateModifiers.length - 1] : stateModifier;
+    }
+    // 상태 모디파이어만 있는 경우
+    else if (stateModifier || stateModifiers.length > 0) {
+      // 다중 상태의 경우 마지막 상태만 반환 (테스트 호환성)
+      modifierValue = stateModifiers.length > 0 ? stateModifiers[stateModifiers.length - 1] : stateModifier;
+    } else if (breakpointModifier) {
+      // 브레이크포인트 모디파이어만 있는 경우 - 브레이크포인트 이름 사용
+      const screens = this.preset.screens || {
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px'
+      };
+      
+      // 브레이크포인트 이름 찾기
+      const screenKey = Object.keys(screens).find(key => (screens as Record<string, string>)[key] === breakpointModifier.value);
+      
+      if (screenKey) {
+        modifierValue = breakpointModifier.type === 'max-width' ? `max-${screenKey}` : screenKey;
+      } else if (breakpointModifier.value.startsWith('[') && breakpointModifier.value.endsWith(']')) {
+        // 임의 브레이크포인트
+        const arbitraryValue = breakpointModifier.value.slice(1, -1);
+        modifierValue = breakpointModifier.type === 'max-width' ? `max-[${arbitraryValue}]` : `min-[${arbitraryValue}]`;
+      } else {
+        modifierValue = breakpointModifier.value;
+      }
+    }
+
     return {
-      isArbitrary: false,
-      propertyName: className,
-      value: '',
+      baseClassName,
+      stateModifier,
+      breakpointModifier,
+      containerQueryModifier,
+      stateModifiers: stateModifiers.length > 0 ? stateModifiers : undefined,
+      specialSelector,
+      breakpointModifiers: breakpointModifiers.length > 0 ? breakpointModifiers : undefined,
+      modifier: modifierValue
     };
   }
 
   /**
-   * 속성 이름과 값을 기반으로 카테고리와 속성을 결정합니다.
-   * @param propertyName 속성 이름
-   * @param value 속성 값
+   * 임의 값을 파싱합니다.
+   * @param className 클래스명
+   * @returns 파싱 결과
+   */
+  private parseArbitraryValue(className: string): { 
+    isArbitrary: boolean; 
+    propertyName: string; 
+    value: string;
+    category?: StyleCategory; // 카테고리가 이미 결정된 경우
+  } {
+    // Typography 클래스인지 먼저 확인 (임의 값 포함)
+    if (TypographyParser.isTypographyClass(className)) {
+      const parsed = TypographyParser.parseTypography(className);
+      if (parsed) {
+        // CSS 속성명을 Tailwind 접두사로 매핑
+        const cssToTailwindMap: Record<string, string> = {
+          'font-size': 'text',
+          'font-weight': 'font',
+          'font-family': 'font',
+          'letter-spacing': 'tracking',
+          'line-height': 'leading',
+          'text-align': 'text',
+          'text-decoration-line': parsed.property, // underline, line-through 등은 그대로
+          'text-decoration-style': 'decoration',
+          'text-decoration-thickness': 'decoration',
+          'text-underline-offset': 'underline-offset',
+          'text-indent': 'indent',
+          'text-transform': parsed.property, // uppercase, lowercase 등은 그대로
+          'font-style': parsed.property, // italic 등은 그대로
+        };
+
+        const mappedProperty = cssToTailwindMap[parsed.property] || parsed.property;
+
+        return {
+          isArbitrary: parsed.isArbitrary || false,
+          propertyName: mappedProperty,
+          value: parsed.value,
+          category: 'typography' // 카테고리를 명시적으로 설정
+        };
+      }
+    }
+
+    // [값] 형태의 임의 값 체크
+    const arbitraryMatch = className.match(/^(.+?)-\[(.+)\]$/);
+    
+    if (arbitraryMatch) {
+      return {
+        isArbitrary: true,
+        propertyName: arbitraryMatch[1],
+        value: arbitraryMatch[2]
+      };
+    }
+
+    // Spacing 클래스인지 확인하고 SpacingParser에게 위임
+    if (SpacingParser.isSpacingClass(className)) {
+      const parsed = SpacingParser.parseSpacing(className);
+      if (parsed) {
+        // 임의 값인지 확인 (대괄호로 감싸진 값)
+        const isArbitrary = parsed.value.startsWith('[') && parsed.value.endsWith(']');
+        return {
+          isArbitrary,
+          propertyName: parsed.property,
+          value: isArbitrary ? parsed.value.slice(1, -1) : parsed.value // 대괄호 제거
+        };
+      }
+    }
+
+    // 색상 클래스 특별 처리 (text-blue-500, bg-gray-100 등)
+    const colorPropertyRegex = /^(text|bg|border|ring|outline|accent|caret|decoration|divide|from|via|to|fill|stroke)-(.+)$/;
+    const colorMatch = className.match(colorPropertyRegex);
+    
+    if (colorMatch) {
+      const property = colorMatch[1];
+      const colorValue = colorMatch[2];
+      
+      // 색상 값인지 확인 (색상명-강도 패턴)
+      if (colorValue.match(/^[a-z]+-\d+$|^[a-z]+$|^current$|^transparent$|^inherit$|^initial$|^unset$/)) {
+        return {
+          isArbitrary: false,
+          propertyName: property,
+          value: colorValue
+        };
+      }
+    }
+
+    // CSS 변수 체크 (예: text-(--my-color), aspect-(--my-aspect-ratio))
+    const cssVarMatch = className.match(/^(.+?)-(--[\w-]+)$/);
+    
+    if (cssVarMatch) {
+      return {
+        isArbitrary: true,
+        propertyName: cssVarMatch[1],
+        value: `var(${cssVarMatch[2]})`
+      };
+    }
+
+    // 일반 분리 (propertyName-value)
+    const lastDashIndex = className.lastIndexOf('-');
+    if (lastDashIndex > 0) {
+      return {
+        isArbitrary: false,
+        propertyName: className.substring(0, lastDashIndex),
+        value: className.substring(lastDashIndex + 1)
+      };
+    }
+
+    // 값이 없는 속성 (예: flex, grid, hidden)
+    return {
+      isArbitrary: false,
+      propertyName: className,
+      value: ''
+    };
+  }
+
+  /**
+   * 카테고리와 속성을 결정합니다.
+   * @param propertyName 속성명
+   * @param value 값
    * @returns 카테고리와 속성
    */
-  private determineCategoryAndProperty(propertyName: string, value: string): { 
-    category: StyleCategory; 
-    property: string 
-  } {
-    // 간격 속성
-    const spacingProperties = ['p', 'pt', 'pr', 'pb', 'pl', 'px', 'py', 'm', 'mt', 'mr', 'mb', 'ml', 'mx', 'my', 'gap', 'gap-x', 'gap-y'];
-    
-    // 색상 속성
-    const colorProperties = ['text', 'bg', 'border', 'fill', 'stroke'];
-    
-    // 타이포그래피 속성
-    const typographyProperties = ['font', 'tracking', 'leading', 'align'];
-    
-    // 타이포그래피 값
-    const typographyValues = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl', '8xl', '9xl'];
-    
-    // 레이아웃 속성
-    const layoutProperties = ['w', 'h', 'min-w', 'min-h', 'max-w', 'max-h', 'display'];
-    
-    // 레이아웃 값
-    const layoutValues = ['flex', 'grid', 'block', 'inline', 'hidden'];
-    
-    // 효과 속성
-    const effectProperties = ['rounded', 'shadow', 'opacity', 'blur'];
-    
-    // 애니메이션 속성
-    const animationProperties = ['animate', 'duration', 'ease', 'delay'];
-    
-    // 위치 속성
-    const positionProperties = ['top', 'right', 'bottom', 'left', 'z'];
-    
-    // 위치 값
-    const positionValues = ['static', 'fixed', 'absolute', 'relative', 'sticky'];
-    
-    // 변형 속성
-    const transformProperties = ['scale', 'rotate', 'translate-x', 'translate-y', 'skew-x', 'skew-y', 'origin'];
-    
-    // 카테고리 결정
-    if (spacingProperties.includes(propertyName)) {
+  private determineCategoryAndProperty(propertyName: string, value: string): { category: StyleCategory, property: string } {
+    // 먼저 전체 클래스명으로 spacing 체크 (음수, 논리적 속성 등 포함)
+    const fullClassName = value ? `${propertyName}-${value}` : propertyName;
+    if (SpacingParser.isSpacingClass(fullClassName) || SpacingParser.isSpacingClass(propertyName)) {
       return { category: 'spacing', property: propertyName };
-    } else if (colorProperties.includes(propertyName)) {
-      return { category: 'colors', property: propertyName };
-    } else if (typographyProperties.includes(propertyName)) {
+    }
+
+    // Tables 관련 (우선 처리 - border-collapse 등이 borders와 겹치므로)
+    if (['border-collapse', 'border-separate', 'border-spacing', 'table-auto', 'table-fixed', 'caption'].includes(propertyName) ||
+        propertyName.startsWith('border-spacing-') || propertyName.startsWith('caption-')) {
+      return { category: 'tables', property: propertyName };
+    }
+
+    // Borders 관련 (새로 추가)
+    if (['border-solid', 'border-dashed', 'border-dotted', 'border-double', 'border-hidden', 'border-none',
+         'rounded-none', 'rounded-sm', 'rounded-md', 'rounded-lg', 'rounded-xl', 'rounded-2xl', 'rounded-3xl',
+         'rounded-full', 'ring-inset'].includes(propertyName) ||
+        propertyName.startsWith('border') || propertyName.startsWith('rounded') ||
+        propertyName.startsWith('divide-') || propertyName === 'ring' || propertyName.startsWith('ring-') ||
+        propertyName === 'outline' || propertyName.startsWith('outline-')) {
+      return { category: 'borders', property: propertyName };
+    }
+
+    // Transitions 관련 (새로 추가)
+    if (['transition', 'duration', 'delay', 'ease-linear', 'ease-in', 'ease-out', 'ease-in-out'].includes(propertyName) ||
+        propertyName.startsWith('transition-') || propertyName.startsWith('duration-') || 
+        propertyName.startsWith('delay-') || propertyName.startsWith('ease-')) {
+      return { category: 'transitions', property: propertyName };
+    }
+
+    // Backgrounds 관련 (새로 추가)
+    if (['bg-auto', 'bg-cover', 'bg-contain', 'bg-repeat', 'bg-no-repeat', 'bg-repeat-x', 'bg-repeat-y',
+         'bg-repeat-round', 'bg-repeat-space', 'bg-fixed', 'bg-local', 'bg-scroll', 'bg-clip-border',
+         'bg-clip-padding', 'bg-clip-content', 'bg-clip-text', 'bg-origin-border', 'bg-origin-padding',
+         'bg-origin-content'].includes(propertyName) ||
+        propertyName.startsWith('bg-gradient-') || propertyName.startsWith('from-') || 
+        propertyName.startsWith('via-') || propertyName.startsWith('to-') ||
+        propertyName === 'bg' || // Include bg color classes
+        (propertyName.startsWith('bg-') && !propertyName.match(/^bg-\d/)) ||
+        propertyName.match(/^bg-(bottom|center|left|right|top)/)) {
+      return { category: 'backgrounds', property: propertyName };
+    }
+
+    // Overflow 관련 (새로 추가)
+    if (['overflow-auto', 'overflow-hidden', 'overflow-clip', 'overflow-visible', 'overflow-scroll',
+         'overscroll-auto', 'overscroll-contain', 'overscroll-none', 'visible', 'invisible', 'collapse',
+         'truncate', 'text-ellipsis', 'text-clip', 'whitespace-normal', 'whitespace-nowrap', 'whitespace-pre',
+         'break-normal', 'break-words', 'break-all', 'break-keep'].includes(propertyName) ||
+        propertyName.startsWith('overflow-') || propertyName.startsWith('overscroll-') ||
+        propertyName.startsWith('object-') || propertyName.startsWith('whitespace-') ||
+        (propertyName.startsWith('break-') && !['break-after', 'break-before', 'break-inside'].includes(propertyName)) || propertyName.startsWith('hyphens-')) {
+      return { category: 'overflow', property: propertyName };
+    }
+
+    // Accessibility 관련 (새로 추가)
+    if (['sr-only', 'not-sr-only', 'forced-color-adjust-auto', 'forced-color-adjust-none'].includes(propertyName) ||
+        propertyName.startsWith('focus:') || propertyName.startsWith('focus-visible:') ||
+        propertyName.startsWith('focus-within:')) {
+      return { category: 'accessibility', property: propertyName };
+    }
+
+    // Blend modes 관련 (새로 추가)
+    if (propertyName.startsWith('mix-blend-') || propertyName.startsWith('bg-blend-')) {
+      return { category: 'blend-modes', property: propertyName };
+    }
+
+    // Flexbox & Grid 관련 (display, flex, grid 등)
+    if (['flex', 'flex-row', 'flex-col', 'flex-wrap', 'flex-nowrap', 'flex-1', 'flex-auto', 'flex-initial', 'flex-none',
+         'flex-grow', 'flex-shrink', 'basis', 'order', 'grid-cols', 'col', 'grid-rows', 'row', 'grid-flow',
+         'justify', 'items', 'self', 'content', 'place-content', 'place-items', 'place-self'].includes(propertyName) ||
+        propertyName.startsWith('col-') || propertyName.startsWith('row-') || propertyName.startsWith('grid-') ||
+        propertyName.startsWith('flex-') || propertyName.startsWith('basis-') || propertyName.startsWith('order-') ||
+        propertyName.startsWith('justify-') || propertyName.startsWith('items-') || propertyName.startsWith('self-') ||
+        propertyName.startsWith('content-') || propertyName.startsWith('place-')) {
+      return { category: 'flexbox-grid', property: propertyName };
+    }
+
+    // Display 관련 (Flexbox/Grid 파서에서 처리)
+    if (['block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'hidden', 'table'].includes(propertyName)) {
+      return { category: 'flexbox-grid', property: propertyName };
+    }
+
+    // Filters 관련
+    if (['blur', 'brightness', 'contrast', 'drop-shadow', 'grayscale', 'hue-rotate', 'invert', 'saturate', 'sepia',
+         'backdrop-blur', 'backdrop-brightness', 'backdrop-contrast', 'backdrop-grayscale', 'backdrop-hue-rotate',
+         'backdrop-invert', 'backdrop-opacity', 'backdrop-saturate', 'backdrop-sepia'].includes(propertyName) ||
+        propertyName.startsWith('blur-') || propertyName.startsWith('brightness-') || propertyName.startsWith('contrast-') ||
+        propertyName.startsWith('backdrop-')) {
+      return { category: 'filters', property: propertyName };
+    }
+
+    // Interactivity 관련
+    if (['accent', 'appearance', 'cursor', 'caret', 'pointer-events', 'resize', 'scroll', 'snap', 'touch', 'select', 'will-change'].includes(propertyName) ||
+        propertyName.startsWith('accent-') || propertyName.startsWith('appearance-') || propertyName.startsWith('cursor-') ||
+        propertyName.startsWith('caret-') || propertyName.startsWith('pointer-events-') || propertyName.startsWith('resize-') ||
+        propertyName.startsWith('scroll-') || propertyName.startsWith('snap-') || propertyName.startsWith('touch-') ||
+        propertyName.startsWith('select-') || propertyName.startsWith('will-change-')) {
+      return { category: 'interactivity', property: propertyName };
+    }
+
+    // SVG 관련
+    if (['fill', 'stroke'].includes(propertyName) || propertyName.startsWith('fill-') || propertyName.startsWith('stroke-')) {
+      return { category: 'svg', property: propertyName };
+    }
+
+    // 타이포그래피 관련 - TypographyParser 사용 (우선 처리)
+    if (TypographyParser.isTypographyClass(propertyName) || TypographyParser.isTypographyClass(`${propertyName}-${value}`)) {
+      // TypographyParser에서 반환한 CSS 속성명을 Tailwind 접두사로 매핑
+      const cssToTailwindMap: Record<string, string> = {
+        'font-size': 'text',
+        'font-weight': 'font',
+        'font-family': 'font',
+        'letter-spacing': 'tracking',
+        'line-height': 'leading',
+        'text-align': 'text',
+        'text-decoration-line': propertyName, // underline, line-through 등은 그대로
+        'text-decoration-style': 'decoration',
+        'text-decoration-thickness': 'decoration',
+        'text-underline-offset': 'underline-offset',
+        'text-indent': 'indent',
+        'text-transform': propertyName, // uppercase, lowercase 등은 그대로
+        'font-style': propertyName, // italic 등은 그대로
+      };
+
+      // Typography 클래스를 파싱해서 실제 CSS 속성 확인
+      const fullClassName = value ? `${propertyName}-${value}` : propertyName;
+      const parsed = TypographyParser.parseTypography(fullClassName);
+      
+      if (parsed && cssToTailwindMap[parsed.property]) {
+        return { category: 'typography', property: cssToTailwindMap[parsed.property] };
+      }
+      
       return { category: 'typography', property: propertyName };
-    } else if (propertyName === 'text' && typographyValues.includes(value)) {
+    }
+
+    // 타이포그래피 관련 (text는 크기일 수도 색상일 수도 있으므로 값으로 판단)
+    if (propertyName === 'text') {
+      // 폰트 크기 값들
+      const fontSizes = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl', '8xl', '9xl'];
+      // 텍스트 정렬 값들
+      const textAligns = ['left', 'center', 'right', 'justify', 'start', 'end'];
+      
+      if (fontSizes.includes(value) || textAligns.includes(value)) {
+        return { category: 'typography', property: propertyName };
+      } else {
+        return { category: 'colors', property: propertyName };
+      }
+    }
+
+    // 타이포그래피 속성명으로 체크 (TypographyParser가 파싱한 CSS 속성들)
+    if (['font-size', 'font-weight', 'font-family', 'letter-spacing', 'line-height', 
+         'text-decoration-style', 'text-decoration-thickness', 'text-underline-offset', 
+         'text-indent'].includes(propertyName)) {
       return { category: 'typography', property: propertyName };
-    } else if (layoutProperties.includes(propertyName) || layoutValues.includes(propertyName)) {
+    }
+
+    // 사이징 관련 (모든 width/height 관련 속성들)
+    if (['w', 'h', 'min-w', 'min-h', 'max-w', 'max-h', 'size'].includes(propertyName)) {
+      return { category: 'sizing', property: propertyName };
+    }
+
+    // 레이아웃 관련 (기존에 flexbox-grid로 이동된 것들 제외)
+    if (['aspect', 'columns', 'break-after', 'break-before', 'break-inside', 'box-decoration', 'box-border', 'box-content', 'float', 'clear', 'isolate', 'isolation'].includes(propertyName)) {
       return { category: 'layout', property: propertyName };
-    } else if (effectProperties.includes(propertyName)) {
+    }
+
+    // 효과 관련 (rounded, outline은 이제 borders 파서에서 처리)
+    if (['shadow', 'text-shadow', 'opacity'].includes(propertyName)) {
       return { category: 'effects', property: propertyName };
-    } else if (animationProperties.includes(propertyName)) {
+    }
+
+    // 애니메이션 관련 (transition, duration, delay, ease는 이제 transitions 파서에서 처리)
+    if (['animate', 'repeat', 'direction', 'fill'].includes(propertyName)) {
       return { category: 'animation', property: propertyName };
-    } else if (positionProperties.includes(propertyName) || positionValues.includes(propertyName)) {
+    }
+
+    // 위치 관련
+    if (['static', 'fixed', 'absolute', 'relative', 'sticky', 'top', 'right', 'bottom', 'left', 'inset', 'z'].includes(propertyName)) {
       return { category: 'position', property: propertyName };
-    } else if (transformProperties.includes(propertyName)) {
+    }
+
+    // 변형 관련
+    if (['scale', 'scale-x', 'scale-y', 'rotate', 'translate-x', 'translate-y', 'skew-x', 'skew-y', 'origin'].includes(propertyName)) {
       return { category: 'transform', property: propertyName };
     }
-    
-    // 기본값
+
+    // 기본값은 레이아웃으로 처리
     return { category: 'layout', property: propertyName };
   }
 
   /**
-   * 파싱된 클래스를 스타일 객체에 적용합니다.
+   * 파싱된 클래스를 스타일에 적용합니다.
    * @param parsedClass 파싱된 클래스
    * @param styles 스타일 객체
    */
   private applyParsedClassToStyles(parsedClass: ParsedClass, styles: ParsedStyles): void {
-    // 상태 모디파이어가 있는 경우
-    if (parsedClass.modifier && parsedClass.breakpoint) {
-      // 반응형 모디파이어가 먼저 적용되고, 그 다음에 상태 모디파이어 적용
-      if (!styles.breakpoints) {
-        styles.breakpoints = {} as Record<BreakpointModifier, Partial<ParsedStyles>>;
+    const { breakpointModifier, breakpointModifiers, containerQueryModifier, stateModifier, stateModifiers, specialSelector } = parsedClass;
+
+    // 복합 브레이크포인트 처리 (md:max-lg:flex)
+    if (breakpointModifiers && breakpointModifiers.length > 1) {
+      let currentLevel = styles;
+      
+      // 각 브레이크포인트를 순차적으로 중첩 적용
+      for (let i = 0; i < breakpointModifiers.length; i++) {
+        const breakpoint = breakpointModifiers[i];
+        const breakpointKey = this.getBreakpointKey(breakpoint);
+        
+        // 최상위 레벨에서는 breakpoints 객체 사용
+        if (i === 0) {
+          if (!currentLevel.breakpoints) {
+            currentLevel.breakpoints = {};
+          }
+          
+          if (!currentLevel.breakpoints[breakpointKey]) {
+            currentLevel.breakpoints[breakpointKey] = {
+              spacing: { padding: {}, margin: {}, gap: {} },
+              colors: {},
+              typography: {},
+              layout: {},
+              effects: {},
+              animation: {},
+              position: {},
+              transform: {},
+              sizing: {},
+              states: {} as Record<string, Partial<ParsedStyles>>,
+              nestedStates: {},
+              specialSelectors: {}
+            };
+          }
+          
+          currentLevel = currentLevel.breakpoints[breakpointKey] as any;
+        }
+        // 중첩 레벨에서는 breakpoints 필드에 추가
+        else {
+          if (!currentLevel.breakpoints) {
+            currentLevel.breakpoints = {};
+          }
+          
+          if (!currentLevel.breakpoints[breakpointKey]) {
+            currentLevel.breakpoints[breakpointKey] = {
+              spacing: { padding: {}, margin: {}, gap: {} },
+              colors: {},
+              typography: {},
+              layout: {},
+              effects: {},
+              animation: {},
+              position: {},
+              transform: {},
+              sizing: {}
+            };
+          }
+          
+          // 마지막 브레이크포인트가 아니면 계속 중첩
+          if (i < breakpointModifiers.length - 1) {
+            currentLevel = currentLevel.breakpoints[breakpointKey] as any;
+          } else {
+            // 마지막 브레이크포인트에서는 스타일 적용
+            this.applyStyleByCategory(parsedClass, currentLevel.breakpoints[breakpointKey]);
+          }
+        }
       }
-      
-      if (!styles.breakpoints[parsedClass.breakpoint]) {
-        styles.breakpoints[parsedClass.breakpoint] = {
-          spacing: {},
-          colors: {},
-          typography: {},
-          layout: {},
-          effects: {},
-          animation: {},
-          position: {},
-          transform: {},
-          meta: { ...styles.meta },
-        };
-      }
-      
-      // 반응형 스타일에 상태 모디파이어 적용
-      const breakpointStyles = styles.breakpoints[parsedClass.breakpoint] as ParsedStyles;
-      
-      if (!breakpointStyles.states) {
-        breakpointStyles.states = {};
-      }
-      
-      if (!breakpointStyles.states[parsedClass.modifier]) {
-        breakpointStyles.states[parsedClass.modifier] = {
-          spacing: {},
-          colors: {},
-          typography: {},
-          layout: {},
-          effects: {},
-          animation: {},
-          position: {},
-          transform: {},
-          meta: { ...styles.meta },
-        };
-      }
-      
-      // 재귀적으로 적용 (모든 모디파이어 제거)
-      this.applyParsedClassToStyles({
-        ...parsedClass,
-        modifier: undefined,
-        breakpoint: undefined,
-      }, breakpointStyles.states[parsedClass.modifier] as ParsedStyles);
-      
-      return;
     }
-    
-    // 상태 모디파이어가 있는 경우
-    if (parsedClass.modifier) {
+    // 단일 반응형 처리 (브레이크포인트)
+    else if (breakpointModifier) {
+      // 브레이크포인트 키를 테스트에서 기대하는 형식으로 생성
+      const breakpointKey = this.getBreakpointKey(breakpointModifier);
+
+      if (!styles.breakpoints) {
+        styles.breakpoints = {};
+      }
+
+      if (!styles.breakpoints[breakpointKey]) {
+        styles.breakpoints[breakpointKey] = {
+          spacing: {
+            padding: {},
+            margin: {},
+            gap: {}
+          },
+          colors: {},
+          typography: {},
+          layout: {},
+          effects: {},
+          animation: {},
+          position: {},
+          transform: {},
+          sizing: {},
+          states: {} as Record<string, Partial<ParsedStyles>>,
+          nestedStates: {},
+          specialSelectors: {}
+        };
+      }
+
+      // 특수 선택자 처리
+      if (specialSelector) {
+        const selectorKey = `${specialSelector.type}-${specialSelector.value}`;
+        if (!styles.breakpoints[breakpointKey].specialSelectors![selectorKey]) {
+          styles.breakpoints[breakpointKey].specialSelectors![selectorKey] = {
+            spacing: {},
+            colors: {},
+            typography: {},
+            layout: {},
+            effects: {},
+            animation: {},
+            position: {},
+            transform: {},
+            sizing: {}
+          };
+        }
+        this.applyStyleByCategory(parsedClass, styles.breakpoints[breakpointKey].specialSelectors![selectorKey]);
+      }
+      // 다중 상태 모디파이어 처리 (중첩 상태)
+      else if (stateModifiers && stateModifiers.length > 1) {
+        const nestedKey = stateModifiers.join(':');
+        if (!styles.breakpoints[breakpointKey].nestedStates![nestedKey]) {
+          styles.breakpoints[breakpointKey].nestedStates![nestedKey] = {
+            spacing: {},
+            colors: {},
+            typography: {},
+            layout: {},
+            effects: {},
+            animation: {},
+            position: {},
+            transform: {},
+            sizing: {}
+          };
+        }
+        this.applyStyleByCategory(parsedClass, styles.breakpoints[breakpointKey].nestedStates![nestedKey]);
+      }
+      // 단일 상태 모디파이어 처리
+      else if (stateModifier || (stateModifiers && stateModifiers.length === 1)) {
+        const stateKey = stateModifier || stateModifiers![0];
+        
+        if (!styles.breakpoints[breakpointKey].states![stateKey]) {
+          styles.breakpoints[breakpointKey].states![stateKey] = {
+            spacing: {},
+            colors: {},
+            typography: {},
+            layout: {},
+            effects: {},
+            animation: {},
+            position: {},
+            transform: {},
+            sizing: {},
+            flexboxGrid: {},
+            filters: {},
+            interactivity: {},
+            tables: {},
+            svg: {}
+          };
+        }
+        
+        this.applyStyleByCategory(parsedClass, styles.breakpoints[breakpointKey].states![stateKey]);
+      } else {
+        this.applyStyleByCategory(parsedClass, styles.breakpoints[breakpointKey]);
+      }
+    }
+    // 컨테이너 쿼리 처리
+    else if (containerQueryModifier) {
+      const containerKey = this.getContainerKey(containerQueryModifier);
+
+      if (!styles.containers) {
+        styles.containers = {};
+      }
+
+      if (!styles.containers[containerKey]) {
+        styles.containers[containerKey] = {
+          spacing: {},
+          colors: {},
+          typography: {},
+          layout: {},
+          effects: {},
+          animation: {},
+          position: {},
+          transform: {},
+          sizing: {},
+          states: {} as Record<string, Partial<ParsedStyles>>,
+          nestedStates: {},
+          specialSelectors: {}
+        };
+      }
+
+      // 특수 선택자나 중첩 상태 처리는 브레이크포인트와 동일
+      if (specialSelector) {
+        const selectorKey = `${specialSelector.type}-${specialSelector.value}`;
+        if (!styles.containers[containerKey].specialSelectors![selectorKey]) {
+          styles.containers[containerKey].specialSelectors![selectorKey] = {
+            spacing: {},
+            colors: {},
+            typography: {},
+            layout: {},
+            effects: {},
+            animation: {},
+            position: {},
+            transform: {},
+            sizing: {}
+          };
+        }
+        this.applyStyleByCategory(parsedClass, styles.containers[containerKey].specialSelectors![selectorKey]);
+      }
+      else if (stateModifiers && stateModifiers.length > 1) {
+        const nestedKey = stateModifiers.join(':');
+        if (!styles.containers[containerKey].nestedStates![nestedKey]) {
+          styles.containers[containerKey].nestedStates![nestedKey] = {
+            spacing: {},
+            colors: {},
+            typography: {},
+            layout: {},
+            effects: {},
+            animation: {},
+            position: {},
+            transform: {},
+            sizing: {}
+          };
+        }
+        this.applyStyleByCategory(parsedClass, styles.containers[containerKey].nestedStates![nestedKey]);
+      }
+      else if (stateModifier || (stateModifiers && stateModifiers.length === 1)) {
+        const stateKey = stateModifier || stateModifiers![0];
+        
+        if (!styles.containers[containerKey].states![stateKey]) {
+          styles.containers[containerKey].states![stateKey] = {
+            spacing: {},
+            colors: {},
+            typography: {},
+            layout: {},
+            effects: {},
+            animation: {},
+            position: {},
+            transform: {},
+            sizing: {},
+            flexboxGrid: {},
+            filters: {},
+            interactivity: {},
+            tables: {},
+            svg: {}
+          };
+        }
+        
+        this.applyStyleByCategory(parsedClass, styles.containers[containerKey].states![stateKey]);
+      } else {
+        this.applyStyleByCategory(parsedClass, styles.containers[containerKey]);
+      }
+    }
+    // 특수 선택자만 있는 경우
+    else if (specialSelector) {
+      const selectorKey = `${specialSelector.type}-${specialSelector.value}`;
+      
+      if (!styles.specialSelectors) {
+        styles.specialSelectors = {};
+      }
+      
+      if (!styles.specialSelectors[selectorKey]) {
+        styles.specialSelectors[selectorKey] = {
+          spacing: {},
+          colors: {},
+          typography: {},
+          layout: {},
+          effects: {},
+          animation: {},
+          position: {},
+          transform: {},
+          sizing: {}
+        };
+      }
+      
+      this.applyStyleByCategory(parsedClass, styles.specialSelectors[selectorKey]);
+    }
+    // 다중 상태 모디파이어만 있는 경우 (중첩 상태)
+    else if (stateModifiers && stateModifiers.length > 1) {
+      const nestedKey = stateModifiers.join(':');
+      
+      if (!styles.nestedStates) {
+        styles.nestedStates = {};
+      }
+      
+      if (!styles.nestedStates[nestedKey]) {
+        styles.nestedStates[nestedKey] = {
+          spacing: {},
+          colors: {},
+          typography: {},
+          layout: {},
+          effects: {},
+          animation: {},
+          position: {},
+          transform: {},
+          sizing: {},
+          flexboxGrid: {},
+          filters: {},
+          interactivity: {},
+          tables: {},
+          svg: {}
+        };
+      }
+      
+      this.applyStyleByCategory(parsedClass, styles.nestedStates[nestedKey]);
+    }
+    // 단일 상태 모디파이어만 있는 경우
+    else if (stateModifier || (stateModifiers && stateModifiers.length === 1)) {
+      const stateKey = stateModifier || stateModifiers![0];
+      
       if (!styles.states) {
-        styles.states = {};
+        styles.states = {} as Record<string, Partial<ParsedStyles>>;
       }
       
-      if (!styles.states[parsedClass.modifier]) {
-        styles.states[parsedClass.modifier] = {
+      if (!styles.states[stateKey]) {
+        styles.states[stateKey] = {
           spacing: {},
           colors: {},
           typography: {},
@@ -392,627 +1077,253 @@ export class CSSParser {
           animation: {},
           position: {},
           transform: {},
-          meta: { ...styles.meta },
+          sizing: {},
+          flexboxGrid: {},
+          filters: {},
+          interactivity: {},
+          tables: {},
+          svg: {}
         };
       }
       
-      // 재귀적으로 적용 (모디파이어 제거)
-      this.applyParsedClassToStyles({
-        ...parsedClass,
-        modifier: undefined,
-      }, styles.states[parsedClass.modifier] as ParsedStyles);
-      
-      return;
+      this.applyStyleByCategory(parsedClass, styles.states[stateKey]);
+    }
+    // 기본 스타일
+    else {
+      this.applyStyleByCategory(parsedClass, styles);
+    }
+  }
+
+  /**
+   * 브레이크포인트 키를 생성합니다.
+   */
+  private getBreakpointKey(breakpoint: BreakpointModifier): string {
+    // 임의 브레이크포인트인 경우 원래 형태 유지
+    if ((breakpoint as any).isArbitrary) {
+      return breakpoint.type === 'max-width' ? `max-[${breakpoint.value}]` : `min-[${breakpoint.value}]`;
+    }
+
+    // 값에서 원래 브레이크포인트 이름을 찾기
+    const screens = this.preset.screens || {
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px'
+    };
+
+    const screenKey = Object.keys(screens).find(key => screens[key] === breakpoint.value);
+    
+    if (screenKey) {
+      return breakpoint.type === 'max-width' ? `max-${screenKey}` : screenKey;
     }
     
-    // 반응형 모디파이어가 있는 경우
-    if (parsedClass.breakpoint) {
-      if (!styles.breakpoints) {
-        styles.breakpoints = {} as Record<BreakpointModifier, Partial<ParsedStyles>>;
-      }
-      
-      if (!styles.breakpoints[parsedClass.breakpoint]) {
-        styles.breakpoints[parsedClass.breakpoint] = {
-          spacing: {},
-          colors: {},
-          typography: {},
-          layout: {},
-          effects: {},
-          animation: {},
-          position: {},
-          transform: {},
-          meta: { ...styles.meta },
-        };
-      }
-      
-      // 재귀적으로 적용 (모디파이어 제거)
-      this.applyParsedClassToStyles({
-        ...parsedClass,
-        breakpoint: undefined,
-      }, styles.breakpoints[parsedClass.breakpoint] as ParsedStyles);
-      
-      return;
+    // 임의 값인 경우
+    return breakpoint.type === 'max-width' ? `max-[${breakpoint.value}]` : `min-[${breakpoint.value}]`;
+  }
+
+  /**
+   * 컨테이너 키를 생성합니다.
+   */
+  private getContainerKey(container: ContainerQueryModifier): string {
+    // 값에서 원래 컨테이너 이름을 찾기
+    const screens = this.preset.screens || {
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px'
+    };
+
+    const screenKey = Object.keys(screens).find(key => screens[key] === container.value);
+    
+    if (screenKey) {
+      return container.type === 'max-width' ? `@max-${screenKey}` : `@${screenKey}`;
     }
     
-    // 카테고리별로 스타일 적용
-    switch (parsedClass.category) {
-      case 'colors':
-        this.applyColorStyle(parsedClass, styles);
-        break;
+    // 임의 값인 경우
+    return container.type === 'max-width' ? `@max-[${container.value}]` : `@min-[${container.value}]`;
+  }
+
+  /**
+   * 스타일 카테고리에 따라 스타일을 적용합니다.
+   * @param parsedClass 파싱된 클래스
+   * @param styles 스타일 객체
+   */
+  private applyStyleByCategory(parsedClass: ParsedClass, styles: Partial<ParsedStyles>): void {
+    const { category } = parsedClass;
+    
+    switch (category) {
       case 'spacing':
-        this.applySpacingStyle(parsedClass, styles);
+        SpacingParser.applySpacingStyle(parsedClass, styles, this.preset);
+        break;
+      case 'colors':
+        ColorParser.applyColorStyle(parsedClass, styles, this.preset);
         break;
       case 'typography':
-        this.applyTypographyStyle(parsedClass, styles);
+        TypographyParser.applyTypographyStyle(parsedClass, styles, this.preset);
         break;
       case 'layout':
-        this.applyLayoutStyle(parsedClass, styles);
+        LayoutParser.applyLayoutStyle(parsedClass, styles);
         break;
       case 'effects':
-        this.applyEffectStyle(parsedClass, styles);
+        EffectsParser.applyEffectStyle(parsedClass, styles, this.preset);
         break;
       case 'animation':
-        this.applyAnimationStyle(parsedClass, styles);
+        AnimationParser.applyAnimationStyle(parsedClass, styles, this.preset);
         break;
       case 'position':
-        this.applyPositionStyle(parsedClass, styles);
+        PositionParser.applyPositionStyle(parsedClass, styles, this.preset);
         break;
       case 'transform':
-        this.applyTransformStyle(parsedClass, styles);
+        TransformParser.applyTransformStyle(parsedClass, styles, this.preset);
+        break;
+      case 'sizing':
+        SizingParser.applySizingStyle(parsedClass, styles, this.preset);
+        break;
+      case 'flexbox-grid':
+        FlexboxGridParser.applyFlexboxGridStyle(parsedClass, styles, this.preset);
+        break;
+      case 'filters':
+        FiltersParser.applyFiltersStyle(parsedClass, styles, this.preset);
+        break;
+      case 'interactivity':
+        InteractivityParser.applyInteractivityStyle(parsedClass, styles, this.preset);
+        break;
+      case 'tables':
+        TablesParser.applyTablesStyle(parsedClass, styles, this.preset);
+        break;
+      case 'svg':
+        SVGParser.applySVGStyle(parsedClass, styles, this.preset);
+        break;
+      case 'transitions':
+        TransitionsParser.applyTransitionsStyle(parsedClass, styles, this.preset);
+        break;
+      case 'backgrounds':
+        BackgroundsParser.applyBackgroundsStyle(parsedClass, styles, this.preset);
+        break;
+      case 'borders':
+        BordersParser.applyBordersStyle(parsedClass, styles, this.preset);
+        break;
+      case 'overflow':
+        OverflowParser.applyOverflowStyle(parsedClass, styles, this.preset);
+        break;
+      case 'accessibility':
+        AccessibilityParser.applyAccessibilityStyle(parsedClass, styles, this.preset);
+        break;
+      case 'blend-modes':
+        BlendModesParser.applyBlendModesStyle(parsedClass, styles, this.preset);
         break;
     }
   }
 
   /**
-   * 색상 스타일을 적용합니다.
-   * @param parsedClass 파싱된 클래스
-   * @param styles 스타일 객체
+   * 크기 값을 변환합니다.
+   * @param value 크기 값
+   * @returns 변환된 크기 값
    */
-  private applyColorStyle(parsedClass: ParsedClass, styles: ParsedStyles): void {
-    const { property, value, isArbitrary } = parsedClass;
-    
-    // 임의 값 처리
-    if (isArbitrary) {
-      // 임의 색상 값 처리 (예: text-[#FF0000])
-      const color = this.parseArbitraryColor(value);
-      if (color) {
-        styles.colors[property as keyof typeof styles.colors] = color;
-      }
-      return;
+  private convertSizeValue(value: string): string {
+    // 분수 값 처리 (예: w-1/2 => 50%)
+    if (value.includes('/')) {
+      const [numerator, denominator] = value.split('/').map(Number);
+      return `${(numerator / denominator) * 100}%`;
     }
     
-    // 프리셋 색상 처리 (예: text-blue-500)
-    if (value.includes('-')) {
-      const [colorName, shade] = value.split('-');
-      const colorPalette = this.preset.colors[colorName];
-      
-      if (colorPalette && colorPalette[shade]) {
-        styles.colors[property as keyof typeof styles.colors] = colorPalette[shade];
-      }
+    // 프리셋 값 처리
+    if (value in this.preset.spacing) {
+      return `${this.preset.spacing[value]}px`;
     }
+    
+    // 특수 값 처리
+    if (value === 'auto') return 'auto';
+    if (value === 'full') return '100%';
+    if (value === 'screen') return '100vw';
+    if (value === 'min') return 'min-content';
+    if (value === 'max') return 'max-content';
+    if (value === 'fit') return 'fit-content';
+    
+    return value;
   }
 
   /**
-   * 임의 색상 값을 파싱합니다.
-   * @param value 임의 색상 값
-   * @returns 색상 객체
+   * 화면 크기를 가져옵니다.
+   * @param size 화면 크기
+   * @returns 화면 크기 값
    */
-  private parseArbitraryColor(value: string): { r: number; g: number; b: number; a?: number } | undefined {
-    // HEX 색상 처리
-    if (value.startsWith('#')) {
-      return this.hexToRgb(value);
-    }
+  private getScreenSize(size: string): string {
+    const defaultScreens = {
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px'
+    };
     
-    // RGB/RGBA 색상 처리
-    if (value.startsWith('rgb')) {
-      return this.rgbToColor(value);
-    }
-    
-    return undefined;
+    const screens = this.preset.screens || defaultScreens;
+    return (screens as Record<string, string>)[size] || size;
   }
 
   /**
-   * HEX 색상을 RGB 색상으로 변환합니다.
-   * @param hex HEX 색상
-   * @returns RGB 색상 객체
+   * 브레이크포인트 이름을 가져옵니다.
+   * @param breakpoint 브레이크포인트
+   * @returns 브레이크포인트 이름
    */
-  private hexToRgb(hex: string): { r: number; g: number; b: number; a?: number } {
-    // #RGB 또는 #RGBA 형식
-    if (hex.length === 4 || hex.length === 5) {
-      const r = parseInt(hex[1] + hex[1], 16) / 255;
-      const g = parseInt(hex[2] + hex[2], 16) / 255;
-      const b = parseInt(hex[3] + hex[3], 16) / 255;
-      const a = hex.length === 5 ? parseInt(hex[4] + hex[4], 16) / 255 : undefined;
-      
-      return { r, g, b, ...(a !== undefined && { a }) };
+  private getBreakpointName(breakpoint: BreakpointModifier | undefined): string {
+    if (!breakpoint) return '';
+
+    // 임의 브레이크포인트인 경우 원래 형태 유지
+    if ((breakpoint as any).isArbitrary) {
+      return breakpoint.type === 'max-width' ? `max-[${breakpoint.value}]` : `min-[${breakpoint.value}]`;
     }
+
+    const screens = this.preset.screens || {
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px'
+    };
+
+    // 알려진 화면 크기인지 확인
+    const screenKey = Object.keys(screens).find(key => screens[key] === breakpoint.value);
     
-    // #RRGGBB 또는 #RRGGBBAA 형식
-    const r = parseInt(hex.slice(1, 3), 16) / 255;
-    const g = parseInt(hex.slice(3, 5), 16) / 255;
-    const b = parseInt(hex.slice(5, 7), 16) / 255;
-    const a = hex.length >= 9 ? parseInt(hex.slice(7, 9), 16) / 255 : undefined;
-    
-    return { r, g, b, ...(a !== undefined && { a }) };
+    if (screenKey) {
+      return breakpoint.type === 'max-width' ? `max-${screenKey}` : screenKey;
+    }
+
+    // 임의 값인 경우
+    return breakpoint.type === 'max-width' ? `max-[${breakpoint.value}]` : `min-[${breakpoint.value}]`;
   }
 
   /**
-   * RGB/RGBA 색상 문자열을 색상 객체로 변환합니다.
-   * @param rgb RGB/RGBA 색상 문자열
-   * @returns 색상 객체
+   * 컨테이너 이름을 가져옵니다.
+   * @param container 컨테이너
+   * @returns 컨테이너 이름
    */
-  private rgbToColor(rgb: string): { r: number; g: number; b: number; a?: number } {
-    // 괄호 안의 값만 추출
-    const values = rgb.match(/\(([^)]+)\)/)?.[1].split(',').map(v => parseFloat(v.trim()));
-    
-    if (!values || values.length < 3) {
-      return { r: 0, g: 0, b: 0 };
-    }
-    
-    const r = values[0] / 255;
-    const g = values[1] / 255;
-    const b = values[2] / 255;
-    const a = values.length > 3 ? values[3] : undefined;
-    
-    return { r, g, b, ...(a !== undefined && { a }) };
-  }
+  private getContainerName(container: ContainerQueryModifier | undefined): string {
+    if (!container) return '';
 
-  /**
-   * 간격 스타일을 적용합니다.
-   * @param parsedClass 파싱된 클래스
-   * @param styles 스타일 객체
-   */
-  private applySpacingStyle(parsedClass: ParsedClass, styles: ParsedStyles): void {
-    const { property, value, isArbitrary } = parsedClass;
-    
-    // 값 가져오기
-    let spacingValue: number;
-    
-    if (isArbitrary) {
-      // 임의 값 처리 (예: p-[10px])
-      spacingValue = this.parseArbitrarySpacing(value);
-    } else {
-      // 프리셋 값 처리 (예: p-4)
-      spacingValue = this.preset.spacing[value] || 0;
+    // 명명된 컨테이너인 경우 (예: md/sidebar)
+    if (container.value.includes('/')) {
+      return `@${container.value}`;
     }
-    
-    // 속성에 따라 스타일 적용
-    if (property === 'p') {
-      // 패딩 (모든 방향)
-      styles.spacing.padding = {
-        top: spacingValue,
-        right: spacingValue,
-        bottom: spacingValue,
-        left: spacingValue,
-      };
-    } else if (property === 'pt') {
-      // 패딩 상단
-      styles.spacing.padding = {
-        ...styles.spacing.padding,
-        top: spacingValue,
-      };
-    } else if (property === 'pr') {
-      // 패딩 우측
-      styles.spacing.padding = {
-        ...styles.spacing.padding,
-        right: spacingValue,
-      };
-    } else if (property === 'pb') {
-      // 패딩 하단
-      styles.spacing.padding = {
-        ...styles.spacing.padding,
-        bottom: spacingValue,
-      };
-    } else if (property === 'pl') {
-      // 패딩 좌측
-      styles.spacing.padding = {
-        ...styles.spacing.padding,
-        left: spacingValue,
-      };
-    } else if (property === 'px') {
-      // 패딩 좌우
-      styles.spacing.padding = {
-        ...styles.spacing.padding,
-        left: spacingValue,
-        right: spacingValue,
-      };
-    } else if (property === 'py') {
-      // 패딩 상하
-      styles.spacing.padding = {
-        ...styles.spacing.padding,
-        top: spacingValue,
-        bottom: spacingValue,
-      };
-    } else if (property === 'm') {
-      // 마진 (모든 방향)
-      styles.spacing.margin = {
-        top: spacingValue,
-        right: spacingValue,
-        bottom: spacingValue,
-        left: spacingValue,
-      };
-    } else if (property === 'mt') {
-      // 마진 상단
-      styles.spacing.margin = {
-        ...styles.spacing.margin,
-        top: spacingValue,
-      };
-    } else if (property === 'mr') {
-      // 마진 우측
-      styles.spacing.margin = {
-        ...styles.spacing.margin,
-        right: spacingValue,
-      };
-    } else if (property === 'mb') {
-      // 마진 하단
-      styles.spacing.margin = {
-        ...styles.spacing.margin,
-        bottom: spacingValue,
-      };
-    } else if (property === 'ml') {
-      // 마진 좌측
-      styles.spacing.margin = {
-        ...styles.spacing.margin,
-        left: spacingValue,
-      };
-    } else if (property === 'mx') {
-      // 마진 좌우
-      styles.spacing.margin = {
-        ...styles.spacing.margin,
-        left: spacingValue,
-        right: spacingValue,
-      };
-    } else if (property === 'my') {
-      // 마진 상하
-      styles.spacing.margin = {
-        ...styles.spacing.margin,
-        top: spacingValue,
-        bottom: spacingValue,
-      };
-    } else if (property === 'gap') {
-      // 갭 (모든 방향)
-      styles.spacing.gap = {
-        row: spacingValue,
-        column: spacingValue,
-      };
-    } else if (property === 'gap-x') {
-      // 갭 (가로)
-      styles.spacing.gap = {
-        ...styles.spacing.gap,
-        column: spacingValue,
-      };
-    } else if (property === 'gap-y') {
-      // 갭 (세로)
-      styles.spacing.gap = {
-        ...styles.spacing.gap,
-        row: spacingValue,
-      };
-    }
-  }
 
-  /**
-   * 임의 간격 값을 파싱합니다.
-   * @param value 임의 간격 값
-   * @returns 간격 값 (픽셀)
-   */
-  private parseArbitrarySpacing(value: string): number {
-    // 단위 추출
-    const match = value.match(/^(\d+(?:\.\d+)?)(px|rem|em|%)?$/);
-    
-    if (!match) {
-      return 0;
-    }
-    
-    const num = parseFloat(match[1]);
-    const unit = match[2] || 'px';
-    
-    // 단위에 따라 변환
-    switch (unit) {
-      case 'px':
-        return num;
-      case 'rem':
-        return num * 16; // 1rem = 16px 가정
-      case 'em':
-        return num * 16; // 1em = 16px 가정
-      case '%':
-        return num * 0.01 * 16; // % 단위는 근사치로 처리
-      default:
-        return num;
-    }
-  }
+    const screens = this.preset.screens || {
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px'
+    };
 
-  /**
-   * 타이포그래피 스타일을 적용합니다.
-   * @param parsedClass 파싱된 클래스
-   * @param styles 스타일 객체
-   */
-  private applyTypographyStyle(parsedClass: ParsedClass, styles: ParsedStyles): void {
-    const { property, value, isArbitrary } = parsedClass;
+    // 알려진 화면 크기인지 확인
+    const screenKey = Object.keys(screens).find(key => (screens as Record<string, string>)[key] === container.value);
     
-    // 폰트 크기 (예: text-lg)
-    if (property === 'text' && !isArbitrary) {
-      const typographySizes = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl', '8xl', '9xl'];
-      if (typographySizes.includes(value)) {
-        // 테스트 프리셋에서 사용하는 값으로 직접 매핑
-        const fontSizeMap: Record<string, number> = {
-          'xs': 12,
-          'sm': 14,
-          'base': 16,
-          'lg': 18,
-          'xl': 20,
-          '2xl': 24,
-          '3xl': 30,
-          '4xl': 36,
-          '5xl': 48,
-          '6xl': 60,
-          '7xl': 72,
-          '8xl': 96,
-          '9xl': 128
-        };
-        
-        styles.typography.fontSize = fontSizeMap[value];
-      }
-      
-      // 텍스트 정렬 (예: text-center)
-      if (['left', 'center', 'right', 'justify'].includes(value)) {
-        styles.typography.textAlign = value as 'left' | 'center' | 'right' | 'justify';
-      }
-    } else if (property === 'font') {
-      if (value === 'bold') {
-        // 폰트 두께 (예: font-bold)
-        styles.typography.fontWeight = 700;
-      } else if (value === 'medium') {
-        styles.typography.fontWeight = 500;
-      } else if (value === 'normal') {
-        styles.typography.fontWeight = 400;
-      } else if (value in this.preset.typography.fontFamily) {
-        // 폰트 패밀리 (예: font-sans)
-        styles.typography.fontFamily = this.preset.typography.fontFamily[value];
-      }
-    } else if (property === 'tracking') {
-      // 자간 (예: tracking-wide)
-      if (value === 'wide') {
-        styles.typography.letterSpacing = 0.025;
-      } else if (value === 'wider') {
-        styles.typography.letterSpacing = 0.05;
-      } else if (value === 'widest') {
-        styles.typography.letterSpacing = 0.1;
-      } else if (value === 'tight') {
-        styles.typography.letterSpacing = -0.025;
-      } else if (value === 'tighter') {
-        styles.typography.letterSpacing = -0.05;
-      } else if (value === 'normal') {
-        styles.typography.letterSpacing = 0;
-      }
-    } else if (property === 'leading') {
-      // 행간 (예: leading-tight)
-      if (value === 'tight') {
-        styles.typography.lineHeight = 1.25;
-      } else if (value === 'snug') {
-        styles.typography.lineHeight = 1.375;
-      } else if (value === 'normal') {
-        styles.typography.lineHeight = 1.5;
-      } else if (value === 'relaxed') {
-        styles.typography.lineHeight = 1.625;
-      } else if (value === 'loose') {
-        styles.typography.lineHeight = 2;
-      } else if (!isNaN(Number(value))) {
-        styles.typography.lineHeight = Number(value);
-      }
+    if (screenKey) {
+      return container.type === 'max-width' ? `@max-${screenKey}` : `@${screenKey}`;
     }
-  }
 
-  /**
-   * 레이아웃 스타일을 적용합니다.
-   * @param parsedClass 파싱된 클래스
-   * @param styles 스타일 객체
-   */
-  private applyLayoutStyle(parsedClass: ParsedClass, styles: ParsedStyles): void {
-    const { property, value, isArbitrary } = parsedClass;
-    
-    // 디스플레이 속성
-    if (['flex', 'grid', 'block', 'inline', 'hidden'].includes(property)) {
-      if (property === 'hidden') {
-        styles.layout.display = 'none';
-      } else {
-        styles.layout.display = property as 'flex' | 'grid' | 'block' | 'inline';
-      }
-      return;
-    }
-    
-    // 너비/높이 속성
-    if (property === 'w') {
-      // 너비
-      if (!isArbitrary && value in this.preset.layout.width) {
-        styles.layout.width = this.preset.layout.width[value];
-      } else if (isArbitrary) {
-        styles.layout.width = value;
-      }
-    } else if (property === 'h') {
-      // 높이
-      if (!isArbitrary && value in this.preset.layout.height) {
-        styles.layout.height = this.preset.layout.height[value];
-      } else if (isArbitrary) {
-        styles.layout.height = value;
-      }
-    } else if (property === 'min-w') {
-      // 최소 너비
-      if (!isArbitrary && value in this.preset.layout.minWidth) {
-        styles.layout.minWidth = this.preset.layout.minWidth[value];
-      } else if (isArbitrary) {
-        styles.layout.minWidth = value;
-      }
-    } else if (property === 'min-h') {
-      // 최소 높이
-      if (!isArbitrary && value in this.preset.layout.minHeight) {
-        styles.layout.minHeight = this.preset.layout.minHeight[value];
-      } else if (isArbitrary) {
-        styles.layout.minHeight = value;
-      }
-    } else if (property === 'max-w') {
-      // 최대 너비
-      if (!isArbitrary && value in this.preset.layout.maxWidth) {
-        styles.layout.maxWidth = this.preset.layout.maxWidth[value];
-      } else if (isArbitrary) {
-        styles.layout.maxWidth = value;
-      }
-    } else if (property === 'max-h') {
-      // 최대 높이
-      if (!isArbitrary && value in this.preset.layout.maxHeight) {
-        styles.layout.maxHeight = this.preset.layout.maxHeight[value];
-      } else if (isArbitrary) {
-        styles.layout.maxHeight = value;
-      }
-    }
+    // 임의 값인 경우
+    return container.type === 'max-width' ? `@max-[${container.value}]` : `@min-[${container.value}]`;
   }
-
-  /**
-   * 효과 스타일을 적용합니다.
-   * @param parsedClass 파싱된 클래스
-   * @param styles 스타일 객체
-   */
-  private applyEffectStyle(parsedClass: ParsedClass, styles: ParsedStyles): void {
-    const { property, value, isArbitrary } = parsedClass;
-    
-    if (property === 'rounded') {
-      // 테두리 반경
-      if (!isArbitrary && value in this.preset.effects.borderRadius) {
-        styles.effects.borderRadius = this.preset.effects.borderRadius[value];
-      } else if (isArbitrary) {
-        styles.effects.borderRadius = parseInt(value);
-      }
-    } else if (property === 'shadow') {
-      // 그림자
-      if (!isArbitrary && value in this.preset.effects.boxShadow) {
-        const shadow = this.preset.effects.boxShadow[value];
-        styles.effects.boxShadow = shadow ? [shadow] : [];
-      } else if (isArbitrary) {
-        styles.effects.boxShadow = [value];
-      }
-    } else if (property === 'opacity') {
-      // 불투명도
-      if (!isArbitrary && value in this.preset.effects.opacity) {
-        styles.effects.opacity = this.preset.effects.opacity[value];
-      } else if (isArbitrary) {
-        styles.effects.opacity = parseFloat(value) / 100;
-      }
-    } else if (property === 'blur') {
-      // 흐림 효과
-      if (!isArbitrary && value in this.preset.effects.blur) {
-        styles.effects.blur = this.preset.effects.blur[value];
-      } else if (isArbitrary) {
-        styles.effects.blur = parseInt(value);
-      }
-    }
-  }
-
-  /**
-   * 애니메이션 스타일을 적용합니다.
-   * @param parsedClass 파싱된 클래스
-   * @param styles 스타일 객체
-   */
-  private applyAnimationStyle(parsedClass: ParsedClass, styles: ParsedStyles): void {
-    const { property, value, isArbitrary } = parsedClass;
-    
-    if (property === 'animate' && !isArbitrary) {
-      // 애니메이션 프리셋
-      const preset = this.preset.animation?.presets?.[value];
-      if (preset) {
-        styles.animation = {
-          ...styles.animation,
-          name: preset.name,
-          duration: preset.duration,
-          timingFunction: preset.timingFunction,
-          iterationCount: preset.iterationCount,
-          direction: preset.direction,
-          fillMode: preset.fillMode,
-          keyframes: preset.keyframes,
-        };
-      }
-    } else if (property === 'duration' && !isArbitrary) {
-      // 애니메이션 지속 시간
-      const duration = this.preset.animation?.durations?.[value];
-      if (duration !== undefined) {
-        styles.animation.duration = duration;
-      }
-    } else if (property === 'ease' && !isArbitrary) {
-      // 애니메이션 타이밍 함수
-      const easing = this.preset.animation?.easings?.[value];
-      if (easing) {
-        styles.animation.timingFunction = easing;
-      }
-    } else if (property === 'delay' && !isArbitrary) {
-      // 애니메이션 지연 시간
-      const delay = parseInt(value);
-      if (!isNaN(delay)) {
-        styles.animation.delay = delay;
-      }
-    }
-  }
-
-  /**
-   * 위치 스타일을 적용합니다.
-   * @param parsedClass 파싱된 클래스
-   * @param styles 스타일 객체
-   */
-  private applyPositionStyle(parsedClass: ParsedClass, styles: ParsedStyles): void {
-    const { property, value, isArbitrary } = parsedClass;
-    
-    // 위치 속성
-    if (['static', 'fixed', 'absolute', 'relative', 'sticky'].includes(property)) {
-      styles.position.position = property as 'static' | 'fixed' | 'absolute' | 'relative' | 'sticky';
-      return;
-    }
-    
-    // 위치 값
-    if (['top', 'right', 'bottom', 'left'].includes(property)) {
-      if (!isArbitrary) {
-        const spacing = this.preset.spacing[value];
-        if (spacing !== undefined) {
-          styles.position[property as keyof typeof styles.position] = spacing;
-        }
-      } else {
-        styles.position[property as keyof typeof styles.position] = value;
-      }
-    } else if (property === 'z') {
-      // z-index
-      styles.position.zIndex = parseInt(value);
-    }
-  }
-
-  /**
-   * 변형 스타일을 적용합니다.
-   * @param parsedClass 파싱된 클래스
-   * @param styles 스타일 객체
-   */
-  private applyTransformStyle(parsedClass: ParsedClass, styles: ParsedStyles): void {
-    const { property, value, isArbitrary } = parsedClass;
-    
-    if (property === 'scale') {
-      // 스케일
-      const scale = parseFloat(value);
-      if (!isNaN(scale)) {
-        // scale-150 => 1.5로 변환
-        styles.transform.scale = scale / 100;
-      }
-    } else if (property === 'rotate') {
-      // 회전
-      styles.transform.rotate = value;
-    } else if (property === 'translate-x') {
-      // X축 이동
-      styles.transform.translateX = value;
-    } else if (property === 'translate-y') {
-      // Y축 이동
-      styles.transform.translateY = value;
-    } else if (property === 'skew-x') {
-      // X축 기울기
-      styles.transform.skewX = value;
-    } else if (property === 'skew-y') {
-      // Y축 기울기
-      styles.transform.skewY = value;
-    } else if (property === 'origin') {
-      // 변형 원점
-      styles.transform.transformOrigin = value;
-    }
-  }
-} 
+}

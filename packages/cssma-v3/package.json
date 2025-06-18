@@ -1,0 +1,32 @@
+{
+  "name": "cssma-v3",
+  "version": "0.1.0",
+  "description": "CSS/Tailwind to Figma converter - Version 3",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [
+    "css",
+    "tailwind",
+    "figma",
+    "converter",
+    "parser"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "dependencies": {
+    "tsx": "^4.20.3"
+  }
+}
