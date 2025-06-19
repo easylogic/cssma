@@ -12,7 +12,8 @@ describe('CSSParser - 레이아웃', () => {
       expect(result).toBeDefined();
       expect(result?.className).toBe('flex');
       expect(result?.category).toBe('flexbox-grid');
-      expect(result?.property).toBe('flex');
+      expect(result?.property).toBe('display');
+      expect(result?.value).toBe('flex');
     });
     
     it('grid 클래스를 파싱할 수 있어야 함', () => {
@@ -21,7 +22,8 @@ describe('CSSParser - 레이아웃', () => {
       expect(result).toBeDefined();
       expect(result?.className).toBe('grid');
       expect(result?.category).toBe('flexbox-grid');
-      expect(result?.property).toBe('grid');
+      expect(result?.property).toBe('display');
+      expect(result?.value).toBe('grid');
     });
     
     it('block 클래스를 파싱할 수 있어야 함', () => {
@@ -30,7 +32,8 @@ describe('CSSParser - 레이아웃', () => {
       expect(result).toBeDefined();
       expect(result?.className).toBe('block');
       expect(result?.category).toBe('flexbox-grid');
-      expect(result?.property).toBe('block');
+      expect(result?.property).toBe('display');
+      expect(result?.value).toBe('block');
     });
     
     it('width 클래스를 파싱할 수 있어야 함 (sizing 카테고리)', () => {

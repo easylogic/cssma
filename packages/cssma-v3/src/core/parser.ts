@@ -453,32 +453,65 @@ export class CSSParser {
     value: string;
     category?: StyleCategory; // 카테고리가 이미 결정된 경우
   } {
+    // Display 관련 클래스들은 분리하지 않고 그대로 처리
+    const displayClasses = [
+      'table-caption', 'table-cell', 'table-column', 'table-column-group', 'table-footer-group',
+      'table-header-group', 'table-row-group', 'table-row', 'inline-block', 'inline-flex', 
+      'inline-grid', 'inline-table', 'flow-root', 'sr-only', 'not-sr-only', 'list-item',
+      'block', 'inline', 'flex', 'grid', 'hidden', 'table', 'contents'
+    ];
+    
+    if (displayClasses.includes(className)) {
+      // sr-only와 not-sr-only는 특별 처리
+      if (className === 'sr-only' || className === 'not-sr-only') {
+        return {
+          isArbitrary: false,
+          propertyName: 'srOnly',
+          value: className === 'sr-only' ? 'true' : 'false',
+          category: 'flexbox-grid'
+        };
+      }
+      
+      // 나머지 display 클래스들은 property를 'display'로 설정
+      return {
+        isArbitrary: false,
+        propertyName: 'display',
+        value: className,
+        category: 'flexbox-grid'
+      };
+    }
+
     // Typography 클래스인지 먼저 확인 (임의 값 포함)
     if (TypographyParser.isTypographyClass(className)) {
       const parsed = TypographyParser.parseTypography(className);
       if (parsed) {
-        // CSS 속성명을 Tailwind 접두사로 매핑
-        const cssToTailwindMap: Record<string, string> = {
-          'font-size': 'text',
-          'font-weight': 'font',
-          'font-family': 'font',
-          'letter-spacing': 'tracking',
-          'line-height': 'leading',
-          'text-align': 'text',
-          'text-decoration-line': parsed.property, // underline, line-through 등은 그대로
-          'text-decoration-style': 'decoration',
-          'text-decoration-thickness': 'decoration',
-          'text-underline-offset': 'underline-offset',
-          'text-indent': 'indent',
-          'text-transform': parsed.property, // uppercase, lowercase 등은 그대로
-          'font-style': parsed.property, // italic 등은 그대로
-        };
-
-        const mappedProperty = cssToTailwindMap[parsed.property] || parsed.property;
+        // className에서 Tailwind prefix 추출
+        let tailwindProperty = className.split('-')[0]; // 'text-lg' -> 'text'
+        
+        // 특수 케이스 처리
+        if (className.startsWith('font-')) {
+          tailwindProperty = 'font';
+        } else if (className.startsWith('tracking-')) {
+          tailwindProperty = 'tracking';
+        } else if (className.startsWith('leading-')) {
+          tailwindProperty = 'leading';
+        } else if (className.startsWith('decoration-')) {
+          tailwindProperty = 'decoration';
+        } else if (className.startsWith('underline-offset-')) {
+          tailwindProperty = 'underline-offset';
+        } else if (className.startsWith('indent-')) {
+          tailwindProperty = 'indent';
+        } else if (['uppercase', 'lowercase', 'capitalize', 'normal-case'].includes(className)) {
+          tailwindProperty = className;
+        } else if (['underline', 'overline', 'line-through', 'no-underline'].includes(className)) {
+          tailwindProperty = className;
+        } else if (['italic', 'not-italic'].includes(className)) {
+          tailwindProperty = className;
+        }
 
         return {
           isArbitrary: parsed.isArbitrary || false,
-          propertyName: mappedProperty,
+          propertyName: tailwindProperty,
           value: parsed.value,
           category: 'typography' // 카테고리를 명시적으로 설정
         };
@@ -611,6 +644,7 @@ export class CSSParser {
          'overscroll-auto', 'overscroll-contain', 'overscroll-none', 'visible', 'invisible', 'collapse',
          'truncate', 'text-ellipsis', 'text-clip', 'whitespace-normal', 'whitespace-nowrap', 'whitespace-pre',
          'break-normal', 'break-words', 'break-all', 'break-keep'].includes(propertyName) ||
+        propertyName === 'overflow' || propertyName === 'overscroll' ||
         propertyName.startsWith('overflow-') || propertyName.startsWith('overscroll-') ||
         propertyName.startsWith('object-') || propertyName.startsWith('whitespace-') ||
         (propertyName.startsWith('break-') && !['break-after', 'break-before', 'break-inside'].includes(propertyName)) || propertyName.startsWith('hyphens-')) {
@@ -629,19 +663,30 @@ export class CSSParser {
       return { category: 'blend-modes', property: propertyName };
     }
 
-    // Flexbox & Grid 관련 (display, flex, grid 등)
-    if (['flex', 'flex-row', 'flex-col', 'flex-wrap', 'flex-nowrap', 'flex-1', 'flex-auto', 'flex-initial', 'flex-none',
-         'flex-grow', 'flex-shrink', 'basis', 'order', 'grid-cols', 'col', 'grid-rows', 'row', 'grid-flow',
-         'justify', 'items', 'self', 'content', 'place-content', 'place-items', 'place-self'].includes(propertyName) ||
-        propertyName.startsWith('col-') || propertyName.startsWith('row-') || propertyName.startsWith('grid-') ||
-        propertyName.startsWith('flex-') || propertyName.startsWith('basis-') || propertyName.startsWith('order-') ||
-        propertyName.startsWith('justify-') || propertyName.startsWith('items-') || propertyName.startsWith('self-') ||
-        propertyName.startsWith('content-') || propertyName.startsWith('place-')) {
+    // Display 관련 (Flexbox/Grid 파서에서 처리)
+    if (['block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'hidden', 'table',
+         'table-caption', 'table-cell', 'table-column', 'table-column-group', 'table-footer-group',
+         'table-header-group', 'table-row-group', 'table-row', 'flow-root', 'contents', 'list-item',
+         'sr-only', 'not-sr-only', 'inline-table'].includes(propertyName)) {
       return { category: 'flexbox-grid', property: propertyName };
     }
 
-    // Display 관련 (Flexbox/Grid 파서에서 처리)
-    if (['block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'hidden', 'table'].includes(propertyName)) {
+    // display property가 넘어온 경우 특별 처리
+    if (propertyName === 'display') {
+      return { category: 'flexbox-grid', property: 'display' };
+    }
+
+    // Flexbox & Grid 관련 (display, flex, grid 등)
+    if (['flex', 'flex-row', 'flex-col', 'flex-wrap', 'flex-nowrap', 'flex-1', 'flex-auto', 'flex-initial', 'flex-none',
+         'flex-grow', 'flex-shrink', 'basis', 'order', 'grid-cols', 'col', 'grid-rows', 'row', 'grid-flow',
+         'justify', 'items', 'self', 'content', 'place-content', 'place-items', 'place-self',
+         'grow', 'shrink', 'auto-cols', 'auto-rows', 'col-start', 'col-end', 'row-start', 'row-end'].includes(propertyName) ||
+        propertyName.startsWith('flex-') || propertyName.startsWith('grid-') || propertyName.startsWith('col-') || 
+        propertyName.startsWith('row-') || propertyName.startsWith('gap') || propertyName.startsWith('auto-cols-') ||
+        propertyName.startsWith('auto-rows-') || propertyName.startsWith('justify-') || propertyName.startsWith('items-') ||
+        propertyName.startsWith('self-') || propertyName.startsWith('content-') || propertyName.startsWith('place-') ||
+        propertyName.startsWith('basis-') || propertyName.startsWith('order-') || propertyName.startsWith('grow-') ||
+        propertyName.startsWith('shrink-')) {
       return { category: 'flexbox-grid', property: propertyName };
     }
 
@@ -670,31 +715,6 @@ export class CSSParser {
 
     // 타이포그래피 관련 - TypographyParser 사용 (우선 처리)
     if (TypographyParser.isTypographyClass(propertyName) || TypographyParser.isTypographyClass(`${propertyName}-${value}`)) {
-      // TypographyParser에서 반환한 CSS 속성명을 Tailwind 접두사로 매핑
-      const cssToTailwindMap: Record<string, string> = {
-        'font-size': 'text',
-        'font-weight': 'font',
-        'font-family': 'font',
-        'letter-spacing': 'tracking',
-        'line-height': 'leading',
-        'text-align': 'text',
-        'text-decoration-line': propertyName, // underline, line-through 등은 그대로
-        'text-decoration-style': 'decoration',
-        'text-decoration-thickness': 'decoration',
-        'text-underline-offset': 'underline-offset',
-        'text-indent': 'indent',
-        'text-transform': propertyName, // uppercase, lowercase 등은 그대로
-        'font-style': propertyName, // italic 등은 그대로
-      };
-
-      // Typography 클래스를 파싱해서 실제 CSS 속성 확인
-      const fullClassName = value ? `${propertyName}-${value}` : propertyName;
-      const parsed = TypographyParser.parseTypography(fullClassName);
-      
-      if (parsed && cssToTailwindMap[parsed.property]) {
-        return { category: 'typography', property: cssToTailwindMap[parsed.property] };
-      }
-      
       return { category: 'typography', property: propertyName };
     }
 
@@ -739,8 +759,9 @@ export class CSSParser {
       return { category: 'animation', property: propertyName };
     }
 
-    // 위치 관련
-    if (['static', 'fixed', 'absolute', 'relative', 'sticky', 'top', 'right', 'bottom', 'left', 'inset', 'z'].includes(propertyName)) {
+    // Position 관련 (static, absolute, relative, fixed, sticky, top, left, z-index 등)
+    if (['static', 'fixed', 'absolute', 'relative', 'sticky'].includes(propertyName) ||
+        ['top', 'right', 'bottom', 'left', 'inset', 'inset-x', 'inset-y', 'z'].includes(propertyName)) {
       return { category: 'position', property: propertyName };
     }
 

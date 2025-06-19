@@ -23,18 +23,27 @@ export class PositionParser {
       styles.position = {};
     }
 
-    const { property, value, isArbitrary } = parsedClass;
+    const { property, value, isArbitrary, baseClassName } = parsedClass;
 
-    if (['top', 'right', 'bottom', 'left'].includes(property)) {
-      this.handlePositionValue(property, value, isArbitrary || false, styles.position, preset);
-    } else if (property === 'static' || property === 'fixed' || property === 'absolute' || 
-               property === 'relative' || property === 'sticky') {
-      styles.position.position = property;
-      styles.position.type = property;
-    } else if (property.startsWith('inset')) {
-      this.handleInsetValue(value, isArbitrary || false, styles.position, preset);
-    } else if (property === 'z') {
-      this.handleZIndex(value, isArbitrary || false, styles.position);
+    // Handle negative values (e.g., -top-4, -inset-4)
+    const isNegative = baseClassName.startsWith('-');
+    const cleanProperty = isNegative ? baseClassName.substring(1).split('-')[0] : property;
+    const cleanValue = isNegative ? baseClassName.substring(1).split('-').slice(1).join('-') : value;
+
+    if (['top', 'right', 'bottom', 'left'].includes(cleanProperty)) {
+      this.handlePositionValue(cleanProperty, cleanValue, isArbitrary || false, styles.position, preset, isNegative);
+    } else if (cleanProperty === 'static' || cleanProperty === 'fixed' || cleanProperty === 'absolute' || 
+               cleanProperty === 'relative' || cleanProperty === 'sticky') {
+      styles.position.position = cleanProperty;
+      styles.position.type = cleanProperty;
+    } else if (cleanProperty === 'inset') {
+      this.handleInsetValue(cleanValue, isArbitrary || false, styles.position, preset, isNegative);
+    } else if (cleanProperty === 'inset-x' || baseClassName.startsWith('inset-x-')) {
+      this.handleInsetXValue(cleanValue, isArbitrary || false, styles.position, preset, isNegative);
+    } else if (cleanProperty === 'inset-y' || baseClassName.startsWith('inset-y-')) {
+      this.handleInsetYValue(cleanValue, isArbitrary || false, styles.position, preset, isNegative);
+    } else if (cleanProperty === 'z') {
+      this.handleZIndex(cleanValue, isArbitrary || false, styles.position);
     }
   }
 
@@ -46,7 +55,8 @@ export class PositionParser {
     value: string,
     isArbitrary: boolean,
     position: PositionStyles,
-    preset: DesignPreset
+    preset: DesignPreset,
+    isNegative: boolean = false
   ): void {
     let positionValue: number | string;
 
@@ -70,6 +80,14 @@ export class PositionParser {
           positionValue = value;
         }
       }
+    }
+
+    // Handle negative values
+    if (isNegative && typeof positionValue === 'number') {
+      positionValue = -positionValue;
+    } else if (isNegative && typeof positionValue === 'string' && !isNaN(parseFloat(positionValue))) {
+      // Handle string values like "16px" -> "-16px"
+      positionValue = `-${positionValue}`;
     }
 
     // 속성에 따라 설정
@@ -96,7 +114,8 @@ export class PositionParser {
     value: string,
     isArbitrary: boolean,
     position: PositionStyles,
-    preset: DesignPreset
+    preset: DesignPreset,
+    isNegative: boolean = false
   ): void {
     let insetValue: number | string;
 
@@ -118,11 +137,90 @@ export class PositionParser {
       }
     }
 
+    // Handle negative values
+    if (isNegative && typeof insetValue === 'number') {
+      insetValue = -insetValue;
+    } else if (isNegative && typeof insetValue === 'string' && !isNaN(parseFloat(insetValue))) {
+      insetValue = `-${insetValue}`;
+    }
+
     // 모든 방향에 적용
     position.top = insetValue;
     position.right = insetValue;
     position.bottom = insetValue;
     position.left = insetValue;
+  }
+
+  /**
+   * inset-x 값을 처리합니다 (좌우 방향)
+   */
+  private static handleInsetXValue(
+    value: string,
+    isArbitrary: boolean,
+    position: PositionStyles,
+    preset: DesignPreset,
+    isNegative: boolean = false
+  ): void {
+    let insetValue: number | string;
+
+    if (isArbitrary) {
+      insetValue = this.parseArbitraryValue(value);
+    } else if (value === 'auto') {
+      insetValue = 'auto';
+    } else if (value === 'full') {
+      insetValue = '100%';
+    } else if (value in preset.spacing) {
+      insetValue = preset.spacing[value];
+    } else {
+      insetValue = value;
+    }
+
+    // Handle negative values
+    if (isNegative && typeof insetValue === 'number') {
+      insetValue = -insetValue;
+    } else if (isNegative && typeof insetValue === 'string' && !isNaN(parseFloat(insetValue))) {
+      insetValue = `-${insetValue}`;
+    }
+
+    // 좌우 방향에만 적용
+    position.left = insetValue;
+    position.right = insetValue;
+  }
+
+  /**
+   * inset-y 값을 처리합니다 (상하 방향)
+   */
+  private static handleInsetYValue(
+    value: string,
+    isArbitrary: boolean,
+    position: PositionStyles,
+    preset: DesignPreset,
+    isNegative: boolean = false
+  ): void {
+    let insetValue: number | string;
+
+    if (isArbitrary) {
+      insetValue = this.parseArbitraryValue(value);
+    } else if (value === 'auto') {
+      insetValue = 'auto';
+    } else if (value === 'full') {
+      insetValue = '100%';
+    } else if (value in preset.spacing) {
+      insetValue = preset.spacing[value];
+    } else {
+      insetValue = value;
+    }
+
+    // Handle negative values
+    if (isNegative && typeof insetValue === 'number') {
+      insetValue = -insetValue;
+    } else if (isNegative && typeof insetValue === 'string' && !isNaN(parseFloat(insetValue))) {
+      insetValue = `-${insetValue}`;
+    }
+
+    // 상하 방향에만 적용
+    position.top = insetValue;
+    position.bottom = insetValue;
   }
 
   /**

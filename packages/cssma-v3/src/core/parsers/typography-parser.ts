@@ -150,6 +150,7 @@ export class TypographyParser {
       // text-[...] 패턴은 위에서 이미 처리됨
       /^font-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black|\d+)$/, // 폰트 두께
       /^font-\[.*?\]$/, // 폰트 두께/패밀리 임의 값
+      /^font-\([^:]+:[^)]+\)$/, // CSS 변수 문법: font-(family-name:--my-font)
       /^font-(sans|serif|mono)$/, // 폰트 패밀리
       /^tracking-(tighter|tight|normal|wide|wider|widest)$/, // 자간
       /^tracking-\[.*?\]$/, // 자간 임의 값
@@ -188,7 +189,7 @@ export class TypographyParser {
       return true;
     }
     
-    // 색상 키워드들
+    // 색상 키워들
     const colorKeywords = [
       'red', 'green', 'blue', 'yellow', 'orange', 'purple', 'pink', 'gray', 'black', 'white',
       'transparent', 'current', 'inherit', 'initial', 'unset'
@@ -206,118 +207,145 @@ export class TypographyParser {
     return false;
   }
 
+  /**
+   * 타이포그래피 클래스를 파싱합니다.
+   */
   static parseTypography(className: string): { property: string; value: string; isArbitrary?: boolean } | null {
-    // 정확한 매치 우선
+    // 정확한 매치 우선 처리
     if (this.EXACT_PROPERTIES.includes(className)) {
-      return {
-        property: className,
-        value: '',
-        isArbitrary: false
+      return { property: className, value: '' };
+    }
+
+    // CSS 변수 문법 처리: font-(family-name:--my-font)
+    const cssVarMatch = className.match(/^font-\(([^:]+):([^)]+)\)$/);
+    if (cssVarMatch) {
+      const [, property, customProp] = cssVarMatch;
+      return { 
+        property: 'fontFamily', 
+        value: `${property}:var(${customProp})`, 
+        isArbitrary: true 
       };
     }
 
-    // 값이 있는 속성들 파싱
-    const patterns = [
-      // 폰트 크기 (text-lg, text-[20px])
-      { regex: /^text-(xs|sm|base|lg|xl|\d*xl)$/, property: 'font-size', extractValue: true },
-      { regex: /^text-\[(.*?)\]$/, property: 'font-size', extractValue: true, isArbitrary: true },
-      
-      // 폰트 두께 (font-bold, font-[500])
-      { regex: /^font-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black|\d+)$/, property: 'font-weight', extractValue: true },
-      
-      // 폰트 패밀리 (font-sans, font-[Arial])
-      { regex: /^font-(sans|serif|mono)$/, property: 'font-family', extractValue: true },
-      
-      // 자간 (tracking-wide, tracking-[0.1em])
-      { regex: /^tracking-(tighter|tight|normal|wide|wider|widest)$/, property: 'letter-spacing', extractValue: true },
-      { regex: /^tracking-\[(.*?)\]$/, property: 'letter-spacing', extractValue: true, isArbitrary: true },
-      
-      // 행간 (leading-normal, leading-[1.5])
-      { regex: /^leading-(none|tight|snug|normal|relaxed|loose|\d+)$/, property: 'line-height', extractValue: true },
-      { regex: /^leading-\[(.*?)\]$/, property: 'line-height', extractValue: true, isArbitrary: true },
-      
-      // 텍스트 장식 스타일 (decoration-solid, decoration-[wavy])
-      { regex: /^decoration-(solid|double|dotted|dashed|wavy)$/, property: 'text-decoration-style', extractValue: true },
-      { regex: /^decoration-\[(.*?)\]$/, property: 'text-decoration-style', extractValue: true },
-      
-      // 텍스트 장식 두께 (decoration-2, decoration-[3px])
-      { regex: /^decoration-(auto|from-font|\d+)$/, property: 'text-decoration-thickness', extractValue: true },
-      
-      // 밑줄 오프셋 (underline-offset-4, underline-offset-[2px])
-      { regex: /^underline-offset-(auto|\d+)$/, property: 'text-underline-offset', extractValue: true },
-      { regex: /^underline-offset-\[(.*?)\]$/, property: 'text-underline-offset', extractValue: true },
-      
-      // 텍스트 들여쓰기 (indent-4, indent-[2rem])
-      { regex: /^indent-(\d+)$/, property: 'text-indent', extractValue: true },
-      { regex: /^indent-\[(.*?)\]$/, property: 'text-indent', extractValue: true },
-      
-      // 텍스트 정렬 (text-center, text-left)
-      { regex: /^text-(left|center|right|justify|start|end)$/, property: 'text-align', extractValue: true },
-      
-      // 텍스트 변형 (uppercase, lowercase, capitalize)
-      { regex: /^(uppercase|lowercase|capitalize|normal-case)$/, property: 'text-transform', extractValue: false },
-      
-      // 텍스트 장식 (underline, line-through, no-underline)
-      { regex: /^(underline|overline|line-through|no-underline)$/, property: 'text-decoration-line', extractValue: false },
-      
-      // 텍스트 장식 스타일 (decoration-solid, decoration-dashed)
-      { regex: /^decoration-(solid|dashed|dotted|double|wavy)$/, property: 'text-decoration-style', extractValue: true },
-      
-      // 텍스트 장식 두께 (decoration-1, decoration-[3px])
-      { regex: /^decoration-(auto|from-font|0|1|2|4|8)$/, property: 'text-decoration-thickness', extractValue: true },
-      { regex: /^decoration-\[(.*?)\]$/, property: 'text-decoration-thickness', extractValue: true, isArbitrary: true },
-      
-      // 밑줄 오프셋 (underline-offset-auto, underline-offset-[3px])
-      { regex: /^underline-offset-(auto|0|1|2|4|8)$/, property: 'text-underline-offset', extractValue: true },
-      { regex: /^underline-offset-\[(.*?)\]$/, property: 'text-underline-offset', extractValue: true, isArbitrary: true },
-      
-      // 텍스트 들여쓰기 (indent-4, indent-[2rem])
-      { regex: /^indent-(0|px|0\.5|1|1\.5|2|2\.5|3|3\.5|4|5|6|7|8|9|10|11|12|14|16|20|24|28|32|36|40|44|48|52|56|60|64|72|80|96)$/, property: 'text-indent', extractValue: true },
-      { regex: /^indent-\[(.*?)\]$/, property: 'text-indent', extractValue: true, isArbitrary: true },
-      
-      // 폰트 스타일 (italic, not-italic)
-      { regex: /^(italic|not-italic)$/, property: 'font-style', extractValue: false }
-    ];
-
-    for (const pattern of patterns) {
-      const match = className.match(pattern.regex);
-      if (match) {
-        let value = '';
-        
-        if (pattern.extractValue && match[1]) {
-          value = match[1];
-        } else if (!pattern.extractValue) {
-          // 값이 없는 경우 클래스명 자체를 값으로 사용
-          value = className;
-        }
-        
-        return {
-          property: pattern.property,
-          value,
-          isArbitrary: pattern.isArbitrary || false
-        };
-      }
+    // 텍스트 크기 (text-*)
+    const textSizeMatch = className.match(/^text-(xs|sm|base|lg|xl|\d*xl)$/);
+    if (textSizeMatch) {
+      return { property: 'fontSize', value: textSizeMatch[1] };
     }
 
-    // 스마트한 font-[...] 임의 값 처리
+    // 임의 값 텍스트 크기 (text-[...])
+    const textArbitraryMatch = className.match(/^text-\[(.*?)\]$/);
+    if (textArbitraryMatch) {
+      const value = textArbitraryMatch[1];
+      // 색상 값 제외 (이미 isTypographyClass에서 필터링되었지만 안전장치)
+      if (this.isColorValue(value)) {
+        return null;
+      }
+      return { property: 'fontSize', value: this.parseArbitraryValue(value), isArbitrary: true };
+    }
+
+    // 폰트 두께 (font-*)
+    const fontWeightMatch = className.match(/^font-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black|\d+)$/);
+    if (fontWeightMatch) {
+      return { property: 'fontWeight', value: fontWeightMatch[1] };
+    }
+
+    // 폰트 패밀리 기본값 (font-sans/serif/mono)
+    const fontFamilyMatch = className.match(/^font-(sans|serif|mono)$/);
+    if (fontFamilyMatch) {
+      return { property: 'fontFamily', value: fontFamilyMatch[1] };
+    }
+
+    // 임의 값 폰트 (font-[...])
     const fontArbitraryMatch = className.match(/^font-\[(.*?)\]$/);
     if (fontArbitraryMatch) {
       const value = fontArbitraryMatch[1];
+      const cleanValue = this.parseArbitraryValue(value);
       
-      // 값의 내용을 분석해서 font-weight vs font-family 결정
-      if (this.isFontWeightValue(value)) {
-        return {
-          property: 'font-weight',
-          value,
-          isArbitrary: true
-        };
+      // 폰트 두께와 폰트 패밀리 구분
+      if (this.isFontWeightValue(cleanValue)) {
+        return { property: 'fontWeight', value: cleanValue, isArbitrary: true };
       } else {
-        return {
-          property: 'font-family',
-          value,
-          isArbitrary: true
-        };
+        return { property: 'fontFamily', value: cleanValue, isArbitrary: true };
       }
+    }
+
+    // 자간 (tracking-*)
+    const trackingMatch = className.match(/^tracking-(tighter|tight|normal|wide|wider|widest)$/);
+    if (trackingMatch) {
+      return { property: 'letterSpacing', value: trackingMatch[1] };
+    }
+
+    // 임의 값 자간 (tracking-[...])
+    const trackingArbitraryMatch = className.match(/^tracking-\[(.*?)\]$/);
+    if (trackingArbitraryMatch) {
+      return { property: 'letterSpacing', value: this.parseArbitraryValue(trackingArbitraryMatch[1]), isArbitrary: true };
+    }
+
+    // 행간 (leading-*)
+    const leadingMatch = className.match(/^leading-(none|tight|snug|normal|relaxed|loose|\d+)$/);
+    if (leadingMatch) {
+      return { property: 'lineHeight', value: leadingMatch[1] };
+    }
+
+    // 임의 값 행간 (leading-[...])
+    const leadingArbitraryMatch = className.match(/^leading-\[(.*?)\]$/);
+    if (leadingArbitraryMatch) {
+      return { property: 'lineHeight', value: this.parseArbitraryValue(leadingArbitraryMatch[1]), isArbitrary: true };
+    }
+
+    // 텍스트 정렬 (text-align)
+    const textAlignMatch = className.match(/^text-(left|center|right|justify|start|end)$/);
+    if (textAlignMatch) {
+      return { property: 'text-align', value: textAlignMatch[1] };
+    }
+
+    // 텍스트 장식 스타일 (decoration-*)
+    const decorationStyleMatch = className.match(/^decoration-(solid|double|dotted|dashed|wavy)$/);
+    if (decorationStyleMatch) {
+      return { property: 'textDecorationStyle', value: decorationStyleMatch[1] };
+    }
+
+    // 임의 값 텍스트 장식 스타일 (decoration-[...])
+    const decorationStyleArbitraryMatch = className.match(/^decoration-\[(.*?)\]$/);
+    if (decorationStyleArbitraryMatch) {
+      return { property: 'textDecorationStyle', value: this.parseArbitraryValue(decorationStyleArbitraryMatch[1]), isArbitrary: true };
+    }
+
+    // 텍스트 장식 두께 (decoration-*)
+    const decorationThicknessMatch = className.match(/^decoration-(auto|from-font|\d+)$/);
+    if (decorationThicknessMatch) {
+      return { property: 'textDecorationThickness', value: decorationThicknessMatch[1] };
+    }
+
+    // 밑줄 오프셋 (underline-offset-*)
+    const underlineOffsetMatch = className.match(/^underline-offset-(auto|\d+)$/);
+    if (underlineOffsetMatch) {
+      return { property: 'textUnderlineOffset', value: underlineOffsetMatch[1] };
+    }
+
+    // 임의 값 밑줄 오프셋 (underline-offset-[...])
+    const underlineOffsetArbitraryMatch = className.match(/^underline-offset-\[(.*?)\]$/);
+    if (underlineOffsetArbitraryMatch) {
+      return { property: 'textUnderlineOffset', value: this.parseArbitraryValue(underlineOffsetArbitraryMatch[1]), isArbitrary: true };
+    }
+
+    // 텍스트 들여쓰기 (indent-*)
+    const indentMatch = className.match(/^indent-(\d+)$/);
+    if (indentMatch) {
+      return { property: 'textIndent', value: indentMatch[1] };
+    }
+
+    // 임의 값 텍스트 들여쓰기 (indent-[...])
+    const indentArbitraryMatch = className.match(/^indent-\[(.*?)\]$/);
+    if (indentArbitraryMatch) {
+      return { property: 'textIndent', value: this.parseArbitraryValue(indentArbitraryMatch[1]), isArbitrary: true };
+    }
+
+    // 수직 정렬 (align-*)
+    const verticalAlignMatch = className.match(/^align-(baseline|top|middle|bottom|text-top|text-bottom|sub|super)$/);
+    if (verticalAlignMatch) {
+      return { property: 'verticalAlign', value: verticalAlignMatch[1] };
     }
 
     return null;
@@ -356,63 +384,65 @@ export class TypographyParser {
       styles.typography = {};
     }
     
-    const parsed = this.parseTypography(parsedClass.baseClassName);
-    if (!parsed) return;
-
+    // 원래 Tailwind 접두사 기반으로 직접 처리 (parseTypography 결과 무시)
     // 속성별 처리
-    switch (parsed.property) {
-      case 'font-size':
+    switch (property) {
+      case 'text':
         this.applyFontSize(value, isArbitrary, styles.typography, preset);
         break;
         
-      case 'font-weight':
-        this.applyFontWeight(value, isArbitrary, styles.typography);
-        break;
+             case 'font':
+         // font-sans/serif/mono vs font-bold 구분
+         const fontFamilies = ['sans', 'serif', 'mono'];
+         if (fontFamilies.includes(value)) {
+           this.applyFontFamily(value, isArbitrary, styles.typography, preset);
+         } else if (isArbitrary) {
+           // 임의 값인 경우 폰트 두께인지 폰트 패밀리인지 판단
+           if (this.isFontWeightValue(value)) {
+             this.applyFontWeight(value, isArbitrary, styles.typography);
+           } else {
+             this.applyFontFamily(value, isArbitrary, styles.typography, preset);
+           }
+         } else {
+           this.applyFontWeight(value, isArbitrary, styles.typography);
+         }
+         break;
         
-      case 'font-family':
-        this.applyFontFamily(value, isArbitrary, styles.typography, preset);
-        break;
-        
-      case 'letter-spacing':
+      case 'tracking':
         this.applyLetterSpacing(value, isArbitrary, styles.typography);
         break;
         
-      case 'line-height':
+      case 'leading':
         this.applyLineHeight(value, isArbitrary, styles.typography);
         break;
         
-      case 'text-align':
-        // 텍스트 정렬 처리 추가
-        if (isArbitrary) {
-          styles.typography.textAlign = this.parseArbitraryValue(value) as any;
+      case 'decoration':
+        // decoration-dashed (스타일) vs decoration-2 (두께) 구분
+        const decorationStyles = ['solid', 'double', 'dotted', 'dashed', 'wavy'];
+        if (decorationStyles.includes(value)) {
+          this.applyTextDecorationStyle(value, isArbitrary, styles.typography);
         } else {
-          const validAligns = ['left', 'center', 'right', 'justify', 'start', 'end'];
-          if (validAligns.includes(value)) {
-            styles.typography.textAlign = value as any;
-          }
+          this.applyTextDecorationThickness(value, isArbitrary, styles.typography);
         }
         break;
         
-      case 'text-decoration-style':
-        this.applyTextDecorationStyle(value, isArbitrary, styles.typography);
-        break;
-        
-      case 'text-decoration-thickness':
-        this.applyTextDecorationThickness(value, isArbitrary, styles.typography);
-        break;
-        
-      case 'text-underline-offset':
+      case 'underline-offset':
         this.applyTextUnderlineOffset(value, isArbitrary, styles.typography);
         break;
         
-      case 'text-indent':
+      case 'indent':
         this.applyTextIndent(value, isArbitrary, styles.typography);
         break;
         
-      // 값이 없는 속성들
+      // 값이 없는 속성들 (italic, uppercase 등)
       default:
-        this.applyExactProperty(parsed.property, styles.typography);
+        this.applyExactProperty(property, styles.typography);
         break;
+    }
+    
+    // text-center, text-left 등 텍스트 정렬 특별 처리
+    if (property === 'text' && ['left', 'center', 'right', 'justify', 'start', 'end'].includes(value)) {
+      styles.typography.textAlign = value as any;
     }
   }
 
@@ -438,12 +468,13 @@ export class TypographyParser {
    */
   private static applyFontWeight(value: string, isArbitrary: boolean, typography: EnhancedTypographyStyles): void {
     if (isArbitrary) {
-      const parsed = this.parseArbitraryValue(value);
-      typography.fontWeight = typeof parsed === 'string' ? parseInt(parsed) : parsed;
-    } else if (this.FONT_WEIGHT_SCALE[value]) {
-      typography.fontWeight = this.FONT_WEIGHT_SCALE[value];
-    } else if (!isNaN(Number(value))) {
-      typography.fontWeight = Number(value);
+      // 임의 값은 문자열로 유지 (테스트 기대값과 일치)
+      typography.fontWeight = value;
+    } else {
+      const weight = this.FONT_WEIGHT_SCALE[value];
+      if (weight !== undefined) {
+        typography.fontWeight = weight; // 테스트가 숫자 기대
+      }
     }
   }
 
@@ -484,12 +515,18 @@ export class TypographyParser {
    */
   private static applyLineHeight(value: string, isArbitrary: boolean, typography: EnhancedTypographyStyles): void {
     if (isArbitrary) {
-      typography.lineHeight = this.parseArbitraryValue(value);
-    } else if (this.LINE_HEIGHT_SCALE[value]) {
-      typography.lineHeight = this.LINE_HEIGHT_SCALE[value];
-    } else if (!isNaN(Number(value))) {
-      // 숫자 값은 그대로 사용 (상대값)
-      typography.lineHeight = Number(value);
+      // 임의 값에서 숫자인 경우 숫자로, 아니면 문자열로
+      const numValue = parseFloat(value);
+      if (!isNaN(numValue) && value === numValue.toString()) {
+        typography.lineHeight = numValue; // 테스트가 1.5 숫자를 기대
+      } else {
+        typography.lineHeight = value;
+      }
+    } else {
+      const height = this.LINE_HEIGHT_SCALE[value];
+      if (height !== undefined) {
+        typography.lineHeight = height;
+      }
     }
   }
 
@@ -525,11 +562,15 @@ export class TypographyParser {
    */
   private static applyTextUnderlineOffset(value: string, isArbitrary: boolean, typography: EnhancedTypographyStyles): void {
     if (isArbitrary) {
-      typography.textUnderlineOffset = this.parseArbitraryValue(value);
-    } else if (value === 'auto') {
-      typography.textUnderlineOffset = 'auto';
-    } else if (!isNaN(Number(value))) {
-      typography.textUnderlineOffset = `${Number(value) * 4}px`; // 4px 기준
+      typography.textUnderlineOffset = value;
+    } else {
+      // Tailwind v4: underline-offset-4 = 1px * 4 = 4px
+      const numValue = parseInt(value);
+      if (!isNaN(numValue)) {
+        typography.textUnderlineOffset = `${numValue}px`;
+      } else {
+        typography.textUnderlineOffset = value; // 'auto' 등
+      }
     }
   }
 
@@ -538,9 +579,13 @@ export class TypographyParser {
    */
   private static applyTextIndent(value: string, isArbitrary: boolean, typography: EnhancedTypographyStyles): void {
     if (isArbitrary) {
-      typography.textIndent = this.parseArbitraryValue(value);
-    } else if (!isNaN(Number(value))) {
-      typography.textIndent = `${Number(value) * 4}px`; // 4px 기준
+      typography.textIndent = value;
+    } else {
+      // Tailwind v4: indent-4 = 0.25rem * 4 = 1rem
+      const numValue = parseInt(value);
+      if (!isNaN(numValue)) {
+        typography.textIndent = `${numValue * 0.25}rem`;
+      }
     }
   }
 
@@ -562,47 +607,151 @@ export class TypographyParser {
       case 'normal-case':
         typography.textTransform = 'none';
         break;
-        
-      // 텍스트 장식
+
+      // 텍스트 장식 - textDecorationLine 사용
       case 'underline':
-        typography.textDecoration = 'underline';
+        typography.textDecorationLine = 'underline';
         break;
       case 'overline':
-        typography.textDecoration = 'overline';
+        typography.textDecorationLine = 'overline';
         break;
       case 'line-through':
-        typography.textDecoration = 'line-through';
+        typography.textDecorationLine = 'line-through';
         break;
       case 'no-underline':
-        typography.textDecoration = 'none';
+        typography.textDecorationLine = 'none';
         break;
-        
-      // 텍스트 정렬
-      case 'text-left':
-        typography.textAlign = 'left';
+
+      // 수직 정렬
+      case 'align-baseline':
+        typography.verticalAlign = 'baseline';
         break;
-      case 'text-center':
-        typography.textAlign = 'center';
+      case 'align-top':
+        typography.verticalAlign = 'top';
         break;
-      case 'text-right':
-        typography.textAlign = 'right';
+      case 'align-middle':
+        typography.verticalAlign = 'middle';
         break;
-      case 'text-justify':
-        typography.textAlign = 'justify';
+      case 'align-bottom':
+        typography.verticalAlign = 'bottom';
         break;
-      case 'text-start':
-        typography.textAlign = 'start';
+      case 'align-text-top':
+        typography.verticalAlign = 'text-top';
         break;
-      case 'text-end':
-        typography.textAlign = 'end';
+      case 'align-text-bottom':
+        typography.verticalAlign = 'text-bottom';
         break;
-        
+      case 'align-sub':
+        typography.verticalAlign = 'sub';
+        break;
+      case 'align-super':
+        typography.verticalAlign = 'super';
+        break;
+
+      // 화이트스페이스
+      case 'whitespace-normal':
+        typography.whiteSpace = 'normal';
+        break;
+      case 'whitespace-nowrap':
+        typography.whiteSpace = 'nowrap';
+        break;
+      case 'whitespace-pre':
+        typography.whiteSpace = 'pre';
+        break;
+      case 'whitespace-pre-line':
+        typography.whiteSpace = 'pre-line';
+        break;
+      case 'whitespace-pre-wrap':
+        typography.whiteSpace = 'pre-wrap';
+        break;
+      case 'whitespace-break-spaces':
+        typography.whiteSpace = 'break-spaces';
+        break;
+
+      // 단어 분리
+      case 'break-normal':
+        typography.overflowWrap = 'normal';
+        typography.wordBreak = 'normal';
+        break;
+      case 'break-words':
+        typography.overflowWrap = 'break-word';
+        break;
+      case 'break-all':
+        typography.wordBreak = 'break-all';
+        break;
+      case 'break-keep':
+        typography.wordBreak = 'keep-all';
+        break;
+
+      // 하이픈
+      case 'hyphens-none':
+        typography.hyphens = 'none';
+        break;
+      case 'hyphens-manual':
+        typography.hyphens = 'manual';
+        break;
+      case 'hyphens-auto':
+        typography.hyphens = 'auto';
+        break;
+
       // 폰트 스타일
       case 'italic':
         typography.fontStyle = 'italic';
         break;
       case 'not-italic':
         typography.fontStyle = 'normal';
+        break;
+
+      // 폰트 변형
+      case 'normal-nums':
+        typography.fontVariantNumeric = 'normal';
+        break;
+      case 'ordinal':
+        typography.fontVariantNumeric = 'ordinal';
+        break;
+      case 'slashed-zero':
+        typography.fontVariantNumeric = 'slashed-zero';
+        break;
+      case 'lining-nums':
+        typography.fontVariantNumeric = 'lining-nums';
+        break;
+      case 'oldstyle-nums':
+        typography.fontVariantNumeric = 'oldstyle-nums';
+        break;
+      case 'proportional-nums':
+        typography.fontVariantNumeric = 'proportional-nums';
+        break;
+      case 'tabular-nums':
+        typography.fontVariantNumeric = 'tabular-nums';
+        break;
+      case 'diagonal-fractions':
+        typography.fontVariantNumeric = 'diagonal-fractions';
+        break;
+      case 'stacked-fractions':
+        typography.fontVariantNumeric = 'stacked-fractions';
+        break;
+
+      // 텍스트 오버플로우
+      case 'truncate':
+        typography.overflow = 'hidden';
+        typography.textOverflow = 'ellipsis';
+        typography.whiteSpace = 'nowrap';
+        break;
+      case 'text-ellipsis':
+        typography.textOverflow = 'ellipsis';
+        break;
+      case 'text-clip':
+        typography.textOverflow = 'clip';
+        break;
+
+      // 안티앨리어싱
+      case 'antialiased':
+        typography.WebkitFontSmoothing = 'antialiased';
+        typography.MozOsxFontSmoothing = 'grayscale';
+        break;
+      case 'subpixel-antialiased':
+        typography.WebkitFontSmoothing = 'auto';
+        typography.MozOsxFontSmoothing = 'auto';
         break;
     }
   }

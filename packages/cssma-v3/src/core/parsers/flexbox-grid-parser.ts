@@ -17,15 +17,43 @@ export class FlexboxGridParser {
     styles: { flexboxGrid?: FlexboxGridStyles }, 
     preset?: DesignPreset
   ): void {
-    const { property, value } = parsedClass;
-    
+    const result = this.parse(parsedClass.baseClassName);
+    if (!result) return;
+
     if (!styles.flexboxGrid) {
       styles.flexboxGrid = {};
     }
-    
+
+    // sr-only 특별 처리
+    if (parsedClass.baseClassName === 'sr-only') {
+      styles.flexboxGrid.position = 'absolute';
+      styles.flexboxGrid.width = '1px';
+      styles.flexboxGrid.height = '1px';
+      styles.flexboxGrid.padding = '0';
+      styles.flexboxGrid.margin = '-1px';
+      styles.flexboxGrid.overflow = 'hidden';
+      styles.flexboxGrid.clip = 'rect(0, 0, 0, 0)';
+      styles.flexboxGrid.whiteSpace = 'nowrap';
+      styles.flexboxGrid.borderWidth = '0';
+      return;
+    }
+
+    // not-sr-only 특별 처리
+    if (parsedClass.baseClassName === 'not-sr-only') {
+      styles.flexboxGrid.position = 'static';
+      styles.flexboxGrid.width = 'auto';
+      styles.flexboxGrid.height = 'auto';
+      styles.flexboxGrid.padding = '0';
+      styles.flexboxGrid.margin = '0';
+      styles.flexboxGrid.overflow = 'visible';
+      styles.flexboxGrid.clip = 'auto';
+      styles.flexboxGrid.whiteSpace = 'normal';
+      styles.flexboxGrid.borderWidth = '0';
+      return;
+    }
+
     // 개별 파서를 사용하여 속성 값 설정
-    const result = this.parse(parsedClass.baseClassName);
-    if (result) {
+    if (result.property) {
       switch (result.property) {
         case 'display':
           styles.flexboxGrid.display = result.value;
@@ -216,7 +244,7 @@ export class FlexboxGridParser {
 
   // Flex Grow
   static parseFlexGrow(className: string): ParsedStyle | null {
-    if (className === 'flex-grow') {
+    if (className === 'grow') {
       return {
         property: 'flexGrow',
         value: '1',
@@ -224,8 +252,8 @@ export class FlexboxGridParser {
       };
     }
 
-    if (className.startsWith('flex-grow-')) {
-      const value = className.slice(11);
+    if (className.startsWith('grow-')) {
+      const value = className.slice(5);
       return {
         property: 'flexGrow',
         value: value,
@@ -238,7 +266,7 @@ export class FlexboxGridParser {
 
   // Flex Shrink
   static parseFlexShrink(className: string): ParsedStyle | null {
-    if (className === 'flex-shrink') {
+    if (className === 'shrink') {
       return {
         property: 'flexShrink',
         value: '1',
@@ -246,8 +274,8 @@ export class FlexboxGridParser {
       };
     }
 
-    if (className.startsWith('flex-shrink-')) {
-      const value = className.slice(13);
+    if (className.startsWith('shrink-')) {
+      const value = className.slice(7);
       return {
         property: 'flexShrink',
         value: value,
@@ -846,31 +874,183 @@ export class FlexboxGridParser {
    * 메인 파싱 메서드 - 모든 flexbox/grid 관련 클래스를 파싱
    */
   static parse(className: string): ParsedStyle | null {
-    // 각 파싱 메서드를 순서대로 시도
-    return (
-      this.parseDisplay(className) ||
-      this.parseFlexDirection(className) ||
-      this.parseFlexWrap(className) ||
-      this.parseFlex(className) ||
-      this.parseFlexGrow(className) ||
-      this.parseFlexShrink(className) ||
-      this.parseFlexBasis(className) ||
-      this.parseOrder(className) ||
-      this.parseGridTemplateColumns(className) ||
-      this.parseGridColumn(className) ||
-      this.parseGridTemplateRows(className) ||
-      this.parseGridRow(className) ||
-      this.parseGridAutoFlow(className) ||
-      this.parseGap(className) ||
-      this.parseJustifyContent(className) ||
-      this.parseJustifyItems(className) ||
-      this.parseJustifySelf(className) ||
-      this.parseAlignContent(className) ||
-      this.parseAlignItems(className) ||
-      this.parseAlignSelf(className) ||
-      this.parsePlaceContent(className) ||
-      this.parsePlaceItems(className) ||
-      this.parsePlaceSelf(className)
-    );
+    // Special cases for sr-only
+    if (className === 'sr-only' || className === 'not-sr-only') {
+      return {
+        property: 'srOnly',
+        value: className === 'sr-only' ? 'true' : 'false',
+        variant: 'preset'
+      };
+    }
+    
+    // Display
+    const display = this.parseDisplay(className);
+    if (display) return display;
+
+    // Flex direction
+    const flexDirection = this.parseFlexDirection(className);
+    if (flexDirection) return flexDirection;
+
+    // Flex wrap
+    const flexWrap = this.parseFlexWrap(className);
+    if (flexWrap) return flexWrap;
+
+    // Flex
+    const flex = this.parseFlex(className);
+    if (flex) return flex;
+
+    // Flex grow - also handle 'grow' and 'grow-N'
+    if (className === 'grow') {
+      return { property: 'flexGrow', value: '1', variant: 'preset' };
+    }
+    if (className.startsWith('grow-')) {
+      const value = className.slice(5);
+      return { property: 'flexGrow', value: value, variant: 'preset' };
+    }
+    const flexGrow = this.parseFlexGrow(className);
+    if (flexGrow) return flexGrow;
+
+    // Flex shrink - also handle 'shrink' and 'shrink-N'
+    if (className === 'shrink') {
+      return { property: 'flexShrink', value: '1', variant: 'preset' };
+    }
+    if (className.startsWith('shrink-')) {
+      const value = className.slice(7);
+      return { property: 'flexShrink', value: value, variant: 'preset' };
+    }
+    const flexShrink = this.parseFlexShrink(className);
+    if (flexShrink) return flexShrink;
+
+    // Flex basis
+    const flexBasis = this.parseFlexBasis(className);
+    if (flexBasis) return flexBasis;
+
+    // Order
+    const order = this.parseOrder(className);
+    if (order) return order;
+
+    // Grid template columns
+    const gridTemplateColumns = this.parseGridTemplateColumns(className);
+    if (gridTemplateColumns) return gridTemplateColumns;
+
+    // Grid columns
+    const gridColumn = this.parseGridColumn(className);
+    if (gridColumn) return gridColumn;
+
+    // Grid template rows
+    const gridTemplateRows = this.parseGridTemplateRows(className);
+    if (gridTemplateRows) return gridTemplateRows;
+
+    // Grid rows
+    const gridRow = this.parseGridRow(className);
+    if (gridRow) return gridRow;
+
+    // Grid auto flow
+    const gridAutoFlow = this.parseGridAutoFlow(className);
+    if (gridAutoFlow) return gridAutoFlow;
+
+    // Gap
+    const gap = this.parseGap(className);
+    if (gap) return gap;
+
+    // Justify content
+    const justifyContent = this.parseJustifyContent(className);
+    if (justifyContent) return justifyContent;
+
+    // Justify items
+    const justifyItems = this.parseJustifyItems(className);
+    if (justifyItems) return justifyItems;
+
+    // Justify self
+    const justifySelf = this.parseJustifySelf(className);
+    if (justifySelf) return justifySelf;
+
+    // Align content
+    const alignContent = this.parseAlignContent(className);
+    if (alignContent) return alignContent;
+
+    // Align items
+    const alignItems = this.parseAlignItems(className);
+    if (alignItems) return alignItems;
+
+    // Align self
+    const alignSelf = this.parseAlignSelf(className);
+    if (alignSelf) return alignSelf;
+
+    // Place content
+    const placeContent = this.parsePlaceContent(className);
+    if (placeContent) return placeContent;
+
+    // Place items
+    const placeItems = this.parsePlaceItems(className);
+    if (placeItems) return placeItems;
+
+    // Place self
+    const placeSelf = this.parsePlaceSelf(className);
+    if (placeSelf) return placeSelf;
+
+    // Grid Auto Columns
+    if (className.startsWith('auto-cols-')) {
+      const value = className.slice(10);
+      
+      // Handle preset values
+      const autoColsMap: Record<string, string> = {
+        'auto': 'auto',
+        'min': 'min-content',
+        'max': 'max-content',
+        'fr': 'minmax(0, 1fr)'
+      };
+
+      if (value in autoColsMap) {
+        return {
+          property: 'gridAutoColumns',
+          value: autoColsMap[value],
+          variant: 'preset'
+        };
+      }
+
+      // Handle arbitrary values
+      if (value.startsWith('[') && value.endsWith(']')) {
+        const arbitraryValue = value.slice(1, -1);
+        return {
+          property: 'gridAutoColumns',
+          value: arbitraryValue,
+          variant: 'arbitrary'
+        };
+      }
+    }
+
+    // Grid Auto Rows
+    if (className.startsWith('auto-rows-')) {
+      const value = className.slice(10);
+      
+      // Handle preset values
+      const autoRowsMap: Record<string, string> = {
+        'auto': 'auto',
+        'min': 'min-content',
+        'max': 'max-content',
+        'fr': 'minmax(0, 1fr)'
+      };
+
+      if (value in autoRowsMap) {
+        return {
+          property: 'gridAutoRows',
+          value: autoRowsMap[value],
+          variant: 'preset'
+        };
+      }
+
+      // Handle arbitrary values
+      if (value.startsWith('[') && value.endsWith(']')) {
+        const arbitraryValue = value.slice(1, -1).replace(/_/g, ' ');
+        return {
+          property: 'gridAutoRows',
+          value: arbitraryValue,
+          variant: 'arbitrary'
+        };
+      }
+    }
+
+    return null;
   }
 } 

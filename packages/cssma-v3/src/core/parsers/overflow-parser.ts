@@ -66,7 +66,9 @@ export class OverflowParser {
     'object-right': 'right',
     'object-right-bottom': 'right bottom',
     'object-right-top': 'right top',
-    'object-top': 'top'
+    'object-top': 'top',
+    'object-top-left': 'top left',
+    'object-bottom-right': 'bottom right'
   };
 
   static parse(className: string): ParsedStyle | null {
@@ -289,16 +291,14 @@ export class OverflowParser {
       styles.overflow = {};
     }
 
-    // Handle multi-property cases
-    if (parsed.property.includes(',')) {
-      const properties = parsed.property.split(', ');
-      const values = Array.isArray(parsed.value) ? parsed.value : [parsed.value];
-      
-      properties.forEach((prop, index) => {
-        styles.overflow[prop.trim()] = values[index] || values[0];
-      });
-    } else {
-      styles.overflow[parsed.property] = parsed.value;
+    // Apply main property
+    styles.overflow[parsed.property] = parsed.value;
+
+    // Apply additional properties if they exist
+    if ('additionalProperties' in parsed && parsed.additionalProperties) {
+      for (const additional of parsed.additionalProperties) {
+        styles.overflow[additional.property] = additional.value;
+      }
     }
   }
 } 

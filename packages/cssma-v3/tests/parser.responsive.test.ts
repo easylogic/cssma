@@ -10,7 +10,8 @@ describe('CSSParser - 반응형(Responsive) 기능', () => {
       const result = parser.parseClassName('md:flex');
       expect(result).toBeDefined();
       expect(result?.className).toBe('md:flex');
-      expect(result?.property).toBe('flex');
+      expect(result?.property).toBe('display');
+      expect(result?.value).toBe('flex');
       expect(result?.breakpoint).toBe('md');
       expect(result?.modifiers?.breakpoint).toBe('md');
     });
@@ -28,7 +29,8 @@ describe('CSSParser - 반응형(Responsive) 기능', () => {
       const result = parser.parseClassName('max-md:flex');
       expect(result).toBeDefined();
       expect(result?.className).toBe('max-md:flex');
-      expect(result?.property).toBe('flex');
+      expect(result?.property).toBe('display');
+      expect(result?.value).toBe('flex');
       expect(result?.modifiers?.breakpoint).toBe('max-md');
     });
     
@@ -45,7 +47,8 @@ describe('CSSParser - 반응형(Responsive) 기능', () => {
       const result = parser.parseClassName('min-[640px]:flex');
       expect(result).toBeDefined();
       expect(result?.className).toBe('min-[640px]:flex');
-      expect(result?.property).toBe('flex');
+      expect(result?.property).toBe('display');
+      expect(result?.value).toBe('flex');
       expect(result?.modifiers?.breakpoint).toBe('min-[640px]');
     });
     
@@ -53,7 +56,8 @@ describe('CSSParser - 반응형(Responsive) 기능', () => {
       const result = parser.parseClassName('max-[1024px]:flex');
       expect(result).toBeDefined();
       expect(result?.className).toBe('max-[1024px]:flex');
-      expect(result?.property).toBe('flex');
+      expect(result?.property).toBe('display');
+      expect(result?.value).toBe('flex');
       expect(result?.modifiers?.breakpoint).toBe('max-[1024px]');
     });
     
@@ -70,7 +74,8 @@ describe('CSSParser - 반응형(Responsive) 기능', () => {
       const result = parser.parseClassName('@md:flex');
       expect(result).toBeDefined();
       expect(result?.className).toBe('@md:flex');
-      expect(result?.property).toBe('flex');
+      expect(result?.property).toBe('display');
+      expect(result?.value).toBe('flex');
       expect(result?.modifiers?.container).toBe('@md');
     });
     
@@ -78,7 +83,8 @@ describe('CSSParser - 반응형(Responsive) 기능', () => {
       const result = parser.parseClassName('@max-md:flex');
       expect(result).toBeDefined();
       expect(result?.className).toBe('@max-md:flex');
-      expect(result?.property).toBe('flex');
+      expect(result?.property).toBe('display');
+      expect(result?.value).toBe('flex');
       expect(result?.modifiers?.container).toBe('@max-md');
     });
     
@@ -86,7 +92,8 @@ describe('CSSParser - 반응형(Responsive) 기능', () => {
       const result = parser.parseClassName('@min-[320px]:flex');
       expect(result).toBeDefined();
       expect(result?.className).toBe('@min-[320px]:flex');
-      expect(result?.property).toBe('flex');
+      expect(result?.property).toBe('display');
+      expect(result?.value).toBe('flex');
       expect(result?.modifiers?.container).toBe('@min-[320px]');
     });
     
@@ -94,7 +101,8 @@ describe('CSSParser - 반응형(Responsive) 기능', () => {
       const result = parser.parseClassName('@md/sidebar:flex');
       expect(result).toBeDefined();
       expect(result?.className).toBe('@md/sidebar:flex');
-      expect(result?.property).toBe('flex');
+      expect(result?.property).toBe('display');
+      expect(result?.value).toBe('flex');
       expect(result?.modifiers?.container).toBe('@md/sidebar');
     });
     

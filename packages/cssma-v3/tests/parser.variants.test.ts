@@ -22,7 +22,8 @@ describe('CSSParser - 변형자(Variants) 기능', () => {
       const result = parser.parseClassName('md:flex');
       expect(result).toBeDefined();
       expect(result?.className).toBe('md:flex');
-      expect(result?.property).toBe('flex');
+      expect(result?.property).toBe('display');
+      expect(result?.value).toBe('flex');
       expect(result?.breakpoint).toBe('md');
       // 새 모디파이어 구조 확인
       expect(result?.modifiers?.breakpoint).toBe('md');

@@ -67,7 +67,8 @@ describe('CSSParser - 모디파이어', () => {
       expect(result?.className).toBe('md:flex');
       expect(result?.modifier).toBe('md');
       expect(result?.category).toBe('flexbox-grid');
-      expect(result?.property).toBe('flex');
+      expect(result?.property).toBe('display');
+      expect(result?.value).toBe('flex');
     });
     
     it('lg 모디파이어를 파싱할 수 있어야 함', () => {
@@ -77,7 +78,8 @@ describe('CSSParser - 모디파이어', () => {
       expect(result?.className).toBe('lg:hidden');
       expect(result?.modifier).toBe('lg');
       expect(result?.category).toBe('flexbox-grid');
-      expect(result?.property).toBe('hidden');
+      expect(result?.property).toBe('display');
+      expect(result?.value).toBe('none');
     });
     
     it('xl 모디파이어를 파싱할 수 있어야 함', () => {
