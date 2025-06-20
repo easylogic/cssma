@@ -11,7 +11,7 @@ describe('CSSParser - 모디파이어', () => {
       expect(result).toBeDefined();
       expect(result?.className).toBe('hover:text-blue-500');
       expect(result?.modifier).toBe('hover');
-      expect(result?.category).toBe('colors');
+      expect(result?.category).toBe('typography');
       expect(result?.property).toBe('text');
       expect(result?.value).toBe('blue-500');
     });
@@ -109,7 +109,7 @@ describe('CSSParser - 모디파이어', () => {
       expect(result).toBeDefined();
       expect(result?.className).toBe('md:hover:text-blue-500');
       expect(result?.modifier).toBe('hover');
-      expect(result?.category).toBe('colors');
+      expect(result?.category).toBe('typography');
       expect(result?.property).toBe('text');
       expect(result?.value).toBe('blue-500');
     });
@@ -120,10 +120,9 @@ describe('CSSParser - 모디파이어', () => {
       const result = parser.parse('hover:text-blue-500');
       expect(result.states).toBeDefined();
       expect(result.states?.hover).toBeDefined();
-      expect(result.states?.hover.colors?.text).toBeDefined();
-      expect(result.states?.hover.colors?.text?.r).toBeCloseTo(0.25);
-      expect(result.states?.hover.colors?.text?.g).toBeCloseTo(0.53);
-      expect(result.states?.hover.colors?.text?.b).toBeCloseTo(0.94);
+      expect(result.states?.hover.typography?.color).toBeDefined();
+      // 색상 값은 CSS 문자열 형태로 저장됨
+      expect(result.states?.hover.typography?.color).toBe('#3b82f6');
     });
     
     it('반응형 모디파이어 스타일을 적용할 수 있어야 함', () => {
@@ -140,24 +139,18 @@ describe('CSSParser - 모디파이어', () => {
       expect(result.breakpoints?.md).toBeDefined();
       expect(result.breakpoints?.md.states).toBeDefined();
       expect(result.breakpoints?.md.states?.hover).toBeDefined();
-      expect(result.breakpoints?.md.states?.hover.colors?.text).toBeDefined();
-      expect(result.breakpoints?.md.states?.hover.colors?.text?.r).toBeCloseTo(0.25);
-      expect(result.breakpoints?.md.states?.hover.colors?.text?.g).toBeCloseTo(0.53);
-      expect(result.breakpoints?.md.states?.hover.colors?.text?.b).toBeCloseTo(0.94);
+      expect(result.breakpoints?.md.states?.hover.typography?.color).toBeDefined();
+      expect(result.breakpoints?.md.states?.hover.typography?.color).toBe('#3b82f6');
     });
     
     it('여러 모디파이어 스타일을 함께 적용할 수 있어야 함', () => {
       const result = parser.parse('text-blue-500 hover:text-red-500 md:text-lg');
       
       // 기본 스타일
-      expect(result.colors?.text?.r).toBeCloseTo(0.25);
-      expect(result.colors?.text?.g).toBeCloseTo(0.53);
-      expect(result.colors?.text?.b).toBeCloseTo(0.94);
+      expect(result.typography?.color).toBe('#3b82f6');
       
       // 상태 모디파이어 스타일
-      expect(result.states?.hover.colors?.text?.r).toBeCloseTo(0.94);
-      expect(result.states?.hover.colors?.text?.g).toBeCloseTo(0.25);
-      expect(result.states?.hover.colors?.text?.b).toBeCloseTo(0.25);
+      expect(result.states?.hover.typography?.color).toBe('#ef4444');
       
       // 반응형 모디파이어 스타일
       expect(result.breakpoints?.md.typography?.fontSize).toBe(18);

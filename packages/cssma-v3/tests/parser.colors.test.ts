@@ -11,7 +11,7 @@ describe('CSSParser - 색상 (카테고리별)', () => {
       expect(result).toBeDefined();
       expect(result?.className).toBe('text-blue-500');
       expect(result?.category).toBe('typography');
-      expect(result?.property).toBe('text');
+      expect(result?.property).toBe('color');
       expect(result?.value).toBe('blue-500');
     });
     
@@ -20,7 +20,7 @@ describe('CSSParser - 색상 (카테고리별)', () => {
       expect(result).toBeDefined();
       expect(result?.className).toBe('text-[#FF0000]');
       expect(result?.category).toBe('typography');
-      expect(result?.property).toBe('text');
+      expect(result?.property).toBe('color');
       expect(result?.value).toBe('#FF0000');
       expect(result?.isArbitrary).toBe(true);
     });

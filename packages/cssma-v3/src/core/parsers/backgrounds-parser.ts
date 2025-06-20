@@ -124,7 +124,7 @@ export class BackgroundsParser {
     if (className.startsWith('bg-') && !className.includes('-to-') && !className.includes('-via-')) {
       // bg-red-500, bg-[#ff0000], bg-transparent, bg-current
       if (className.startsWith('bg-[') && className.endsWith(']')) {
-        const value = className.slice(3, -1); // Remove 'bg-[' and ']'
+        const value = className.slice(4, -1); // Remove 'bg-[' and ']'
         return {
           property: 'bg',
           value,
@@ -143,7 +143,7 @@ export class BackgroundsParser {
     // Gradient start color (from-)
     if (className.startsWith('from-')) {
       if (className.startsWith('from-[') && className.endsWith(']')) {
-        const value = className.slice(5, -1); // Remove 'from-[' and ']'
+        const value = className.slice(6, -1); // Remove 'from-[' and ']'
         return {
           property: 'from',
           value,
@@ -162,7 +162,7 @@ export class BackgroundsParser {
     // Gradient middle color (via-)
     if (className.startsWith('via-')) {
       if (className.startsWith('via-[') && className.endsWith(']')) {
-        const value = className.slice(4, -1); // Remove 'via-[' and ']'
+        const value = className.slice(5, -1); // Remove 'via-[' and ']'
         return {
           property: 'via',
           value,
@@ -181,7 +181,7 @@ export class BackgroundsParser {
     // Gradient end color (to-)
     if (className.startsWith('to-')) {
       if (className.startsWith('to-[') && className.endsWith(']')) {
-        const value = className.slice(3, -1); // Remove 'to-[' and ']'
+        const value = className.slice(4, -1); // Remove 'to-[' and ']'
         return {
           property: 'to',
           value,

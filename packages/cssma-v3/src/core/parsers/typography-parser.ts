@@ -15,6 +15,9 @@ export interface EnhancedTypographyStyles extends TypographyStyles {
   fontVariantNumeric?: string; // font-variant-numeric
   fontOpticalSizing?: 'auto' | 'none';
   
+  // 텍스트 색상
+  color?: string;
+  
   // 텍스트 장식 확장
   textDecorationThickness?: string;
   textUnderlineOffset?: string;
@@ -259,11 +262,24 @@ export class TypographyParser {
     const textArbitraryMatch = className.match(/^text-\[(.*?)\]$/);
     if (textArbitraryMatch) {
       const value = textArbitraryMatch[1];
-      // 색상 값 제외 (이미 isTypographyClass에서 필터링되었지만 안전장치)
+      // 색상 값인 경우 text 속성으로 처리
       if (this.isColorValue(value)) {
-        return null;
+        return { property: 'text', value: this.parseArbitraryValue(value), isArbitrary: true };
       }
+      // 크기 값인 경우 text 속성으로 처리
       return { property: 'text', value: this.parseArbitraryValue(value), isArbitrary: true };
+    }
+
+    // 텍스트 색상 (text-blue-500, text-red-300 등)
+    const textColorMatch = className.match(/^text-([a-z]+-\d+)$/);
+    if (textColorMatch) {
+      return { property: 'text', value: textColorMatch[1] };
+    }
+
+    // 기본 텍스트 색상 (text-black, text-white, text-transparent, text-current)
+    const basicTextColorMatch = className.match(/^text-(black|white|transparent|current)$/);
+    if (basicTextColorMatch) {
+      return { property: 'text', value: basicTextColorMatch[1] };
     }
 
     // 폰트 두께 (font-*)
@@ -401,28 +417,46 @@ export class TypographyParser {
       styles.typography = {};
     }
     
-    // 원래 Tailwind 접두사 기반으로 직접 처리 (parseTypography 결과 무시)
+    // 원래 Tailwind 접두사 기반으로 직접 처리
     // 속성별 처리
     switch (property) {
       case 'text':
-        this.applyFontSize(value, isArbitrary, styles.typography, preset);
+        // text-blue-500 (색상) vs text-lg (크기) vs text-center (정렬) 구분
+        const baseClassName = parsedClass.baseClassName;
+        
+        if (baseClassName.match(/^text-[a-z]+-\d+$/) || 
+            baseClassName.match(/^text-(black|white|transparent|current)$/) ||
+            (baseClassName.match(/^text-\[.*?\]$/) && isArbitrary && this.isColorValue(value))) {
+          // 텍스트 색상인 경우
+          this.applyTextColor(value, isArbitrary, styles.typography, preset);
+        } else if (baseClassName.match(/^text-(left|center|right|justify|start|end)$/)) {
+          // 텍스트 정렬인 경우
+          styles.typography.textAlign = value;
+        } else {
+          // 폰트 크기인 경우 (기본값)
+          this.applyFontSize(value, isArbitrary, styles.typography, preset);
+        }
         break;
         
-             case 'font':
-         // font-sans/serif/mono vs font-bold 구분
-         const fontFamilies = ['sans', 'serif', 'mono'];
-         if (fontFamilies.includes(value)) {
-           this.applyFontFamily(value, isArbitrary, styles.typography, preset);
-         } else if (isArbitrary) {
-           // 임의 값인 경우 폰트 두께인지 폰트 패밀리인지 판단
-           if (this.isFontWeightValue(value)) {
-        this.applyFontWeight(value, isArbitrary, styles.typography);
-           } else {
-        this.applyFontFamily(value, isArbitrary, styles.typography, preset);
-           }
-         } else {
-           this.applyFontWeight(value, isArbitrary, styles.typography);
-         }
+      case 'color':
+        this.applyTextColor(value, isArbitrary, styles.typography, preset);
+        break;
+        
+      case 'font':
+        // font-sans/serif/mono vs font-bold 구분
+        const fontFamilies = ['sans', 'serif', 'mono'];
+        if (fontFamilies.includes(value)) {
+          this.applyFontFamily(value, isArbitrary, styles.typography, preset);
+        } else if (isArbitrary) {
+          // 임의 값인 경우 폰트 두께인지 폰트 패밀리인지 판단
+          if (this.isFontWeightValue(value)) {
+            this.applyFontWeight(value, isArbitrary, styles.typography);
+          } else {
+            this.applyFontFamily(value, isArbitrary, styles.typography, preset);
+          }
+        } else {
+          this.applyFontWeight(value, isArbitrary, styles.typography);
+        }
         break;
         
       case 'tracking':
@@ -604,6 +638,111 @@ export class TypographyParser {
         typography.textIndent = `${numValue * 0.25}rem`;
       }
     }
+  }
+
+  /**
+   * 텍스트 색상을 적용합니다.
+   */
+  private static applyTextColor(value: string, isArbitrary: boolean, typography: EnhancedTypographyStyles, preset: DesignPreset): void {
+    if (isArbitrary) {
+      // 임의 값 색상 (rgb(255,0,0), #FF0000 등)
+      typography.color = value;
+    } else {
+      // Tailwind 색상 (blue-500, red-300 등) 또는 기본 색상 (black, white 등)
+      typography.color = this.resolveColor(value, preset);
+    }
+  }
+
+  /**
+   * 색상 값을 해결합니다.
+   */
+  private static resolveColor(value: string, preset: DesignPreset): string {
+    // 기본 색상들
+    const basicColors: Record<string, string> = {
+      'black': '#000000',
+      'white': '#ffffff',
+      'transparent': 'transparent',
+      'current': 'currentColor'
+    };
+
+    if (basicColors[value]) {
+      return basicColors[value];
+    }
+
+    // Tailwind 스타일 색상 (blue-500 등)
+    if (value.includes('-')) {
+      const [colorName, intensity] = value.split('-');
+      
+      // 프리셋에서 색상 찾기
+      if (preset.colors?.[colorName]?.[intensity]) {
+        const color = preset.colors[colorName][intensity];
+        // RGB 객체인 경우 hex로 변환
+        if (typeof color === 'object' && 'r' in color) {
+          return this.rgbToHex(color.r, color.g, color.b);
+        }
+        // 이미 문자열인 경우 그대로 반환
+        return color as string;
+      }
+      
+      // 기본 Tailwind 색상 팔레트 (일부)
+      const defaultColors: Record<string, Record<string, string>> = {
+        'blue': {
+          '50': '#eff6ff',
+          '100': '#dbeafe',
+          '200': '#bfdbfe',
+          '300': '#93c5fd',
+          '400': '#60a5fa',
+          '500': '#3b82f6',
+          '600': '#2563eb',
+          '700': '#1d4ed8',
+          '800': '#1e40af',
+          '900': '#1e3a8a'
+        },
+        'red': {
+          '50': '#fef2f2',
+          '100': '#fee2e2',
+          '200': '#fecaca',
+          '300': '#fca5a5',
+          '400': '#f87171',
+          '500': '#ef4444',
+          '600': '#dc2626',
+          '700': '#b91c1c',
+          '800': '#991b1b',
+          '900': '#7f1d1d'
+        },
+        'green': {
+          '50': '#f0fdf4',
+          '100': '#dcfce7',
+          '200': '#bbf7d0',
+          '300': '#86efac',
+          '400': '#4ade80',
+          '500': '#22c55e',
+          '600': '#16a34a',
+          '700': '#15803d',
+          '800': '#166534',
+          '900': '#14532d'
+        }
+      };
+
+      if (defaultColors[colorName]?.[intensity]) {
+        return defaultColors[colorName][intensity];
+      }
+    }
+
+    // 그대로 반환 (CSS 색상 키워드 등)
+    return value;
+  }
+
+  /**
+   * RGB 값을 hex string으로 변환합니다.
+   */
+  private static rgbToHex(r: number, g: number, b: number): string {
+    const toHex = (component: number) => {
+      const hex = Math.round(component * 255).toString(16);
+      return hex.length === 1 ? '0' + hex : hex;
+    };
+    
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
   }
 
   /**
@@ -855,6 +994,10 @@ export class TypographyParser {
 
     if (typography.textIndent !== undefined) {
       css['text-indent'] = typography.textIndent;
+    }
+
+    if (typography.color !== undefined) {
+      css['color'] = typography.color;
     }
 
     return css;

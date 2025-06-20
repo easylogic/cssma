@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { CSSParser } from '../src/core/parser';
+import { FlexboxGridParser } from '../src/core/parsers/flexbox-grid-parser';
 import { Config } from '../src/types';
 
 const config: Config = {

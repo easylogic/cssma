@@ -210,7 +210,7 @@ export class SpacingParser {
    */
   static applySpacingStyle(
     parsedClass: ParsedClass, 
-    styles: { spacing?: EnhancedSpacingStyles }, 
+    styles: { spacing?: EnhancedSpacingStyles; flexboxGrid?: any }, 
     preset: DesignPreset
   ): void {
     const { property, value, isArbitrary } = parsedClass;
@@ -228,6 +228,12 @@ export class SpacingParser {
     
     // 속성에 따라 스타일 적용
     this.applySpacingProperty(parsed.property, spacingValue, styles.spacing);
+    
+    // Gap 클래스의 경우 flexboxGrid에도 동시에 반영
+    if (parsed.property === 'gap' || parsed.property === 'gap-x' || parsed.property === 'gap-y' || 
+        parsed.property === 'column-gap' || parsed.property === 'row-gap') {
+      this.applyGapToFlexboxGrid(parsed.property, spacingValue, styles);
+    }
   }
 
   /**
@@ -263,6 +269,36 @@ export class SpacingParser {
     }
 
     return result;
+  }
+
+  /**
+   * Gap 값을 FlexboxGrid에도 동시 적용합니다.
+   */
+  private static applyGapToFlexboxGrid(
+    property: string,
+    value: number | string,
+    styles: { flexboxGrid?: any }
+  ): void {
+    if (!styles.flexboxGrid) {
+      styles.flexboxGrid = {};
+    }
+
+    // 값을 CSS 형식으로 변환
+    const cssValue = this.formatValue(value);
+
+    switch (property) {
+      case 'gap':
+        styles.flexboxGrid.gap = cssValue;
+        break;
+      case 'gap-x':
+      case 'column-gap':
+        styles.flexboxGrid.columnGap = cssValue;
+        break;
+      case 'gap-y':
+      case 'row-gap':
+        styles.flexboxGrid.rowGap = cssValue;
+        break;
+    }
   }
 
   /**

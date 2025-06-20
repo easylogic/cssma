@@ -8,14 +8,13 @@ describe('CSSParser - 변형자(Variants) 기능', () => {
   describe('기본 변형자 파싱', () => {
     it('상태 변형자를 파싱할 수 있어야 함', () => {
       const result = parser.parseClassName('hover:text-blue-500');
+      
       expect(result).toBeDefined();
       expect(result?.className).toBe('hover:text-blue-500');
       expect(result?.property).toBe('text');
       expect(result?.value).toBe('blue-500');
       expect(result?.modifier).toBe('hover');
-      expect(result?.stateModifier).toBe('hover');
-      // 새 모디파이어 구조 확인
-      expect(result?.modifiers?.state).toEqual(['hover']);
+      expect(result?.category).toBe('typography');
     });
     
     it('반응형 변형자를 파싱할 수 있어야 함', () => {

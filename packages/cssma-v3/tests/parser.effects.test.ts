@@ -75,9 +75,9 @@ describe('CSSParser - 효과(Effects)', () => {
     it('그림자 스타일을 적용할 수 있어야 함', () => {
       const result = parser.parse('shadow-md');
       expect(result.effects.boxShadow).toBeDefined();
-      expect(result.effects.boxShadow).toEqual([
+      expect(result.effects.boxShadow).toEqual(
         '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-      ]);
+      );
     });
     
     it('불투명도 스타일을 적용할 수 있어야 함', () => {

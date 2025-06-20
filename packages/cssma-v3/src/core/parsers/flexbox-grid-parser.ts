@@ -66,7 +66,7 @@ export class FlexboxGridParser {
       };
     }
 
-    // Display 클래스들은 property를 'display'로 설정
+    // Display 클래스들 - parseDisplay 결과를 사용
     const displayClasses = [
       'table-caption', 'table-cell', 'table-column', 'table-column-group', 'table-footer-group',
       'table-header-group', 'table-row-group', 'table-row', 'inline-block', 'inline-flex', 
@@ -75,9 +75,10 @@ export class FlexboxGridParser {
     ];
     
     if (displayClasses.includes(className)) {
+      const displayResult = this.parseDisplay(className);
       return {
         property: 'display',
-        value: className,
+        value: displayResult?.value || className,
         isArbitrary: false
       };
     }
@@ -224,6 +225,12 @@ export class FlexboxGridParser {
           break;
         case 'placeSelf':
           styles.flexboxGrid.placeSelf = result.value;
+          break;
+        case 'gridAutoColumns':
+          styles.flexboxGrid.gridAutoColumns = result.value;
+          break;
+        case 'gridAutoRows':
+          styles.flexboxGrid.gridAutoRows = result.value;
           break;
       }
     }
@@ -574,7 +581,7 @@ export class FlexboxGridParser {
 
     // Column start/end
     if (className.startsWith('col-start-')) {
-      const value = className.slice(11);
+      const value = className.slice(10);
       return {
         property: 'gridColumnStart',
         value: value === 'auto' ? 'auto' : value,
@@ -583,7 +590,7 @@ export class FlexboxGridParser {
     }
 
     if (className.startsWith('col-end-')) {
-      const value = className.slice(9);
+      const value = className.slice(8);
       return {
         property: 'gridColumnEnd',
         value: value === 'auto' ? 'auto' : value,
@@ -640,7 +647,7 @@ export class FlexboxGridParser {
 
     // Row start/end
     if (className.startsWith('row-start-')) {
-      const value = className.slice(11);
+      const value = className.slice(10);
       return {
         property: 'gridRowStart',
         value: value === 'auto' ? 'auto' : value,
@@ -649,7 +656,7 @@ export class FlexboxGridParser {
     }
 
     if (className.startsWith('row-end-')) {
-      const value = className.slice(9);
+      const value = className.slice(8);
       return {
         property: 'gridRowEnd',
         value: value === 'auto' ? 'auto' : value,
@@ -681,85 +688,7 @@ export class FlexboxGridParser {
     return null;
   }
 
-  // Gap
-  static parseGap(className: string): ParsedStyle | null {
-    if (!className.startsWith('gap')) return null;
-
-    const gapMap: Record<string, string> = {
-      'gap-0': '0px',
-      'gap-px': '1px',
-      'gap-0.5': '0.125rem',
-      'gap-1': '0.25rem',
-      'gap-1.5': '0.375rem',
-      'gap-2': '0.5rem',
-      'gap-2.5': '0.625rem',
-      'gap-3': '0.75rem',
-      'gap-3.5': '0.875rem',
-      'gap-4': '1rem',
-      'gap-5': '1.25rem',
-      'gap-6': '1.5rem',
-      'gap-7': '1.75rem',
-      'gap-8': '2rem',
-      'gap-9': '2.25rem',
-      'gap-10': '2.5rem',
-      'gap-11': '2.75rem',
-      'gap-12': '3rem',
-      'gap-14': '3.5rem',
-      'gap-16': '4rem',
-      'gap-20': '5rem',
-      'gap-24': '6rem',
-      'gap-28': '7rem',
-      'gap-32': '8rem',
-      'gap-36': '9rem',
-      'gap-40': '10rem',
-      'gap-44': '11rem',
-      'gap-48': '12rem',
-      'gap-52': '13rem',
-      'gap-56': '14rem',
-      'gap-60': '15rem',
-      'gap-64': '16rem',
-      'gap-72': '18rem',
-      'gap-80': '20rem',
-      'gap-96': '24rem'
-    };
-
-    // Regular gap
-    if (className in gapMap) {
-      return {
-        property: 'gap',
-        value: gapMap[className],
-        variant: 'preset'
-      };
-    }
-
-    // Gap X
-    if (className.startsWith('gap-x-')) {
-      const value = className.slice(6);
-      const gapKey = `gap-${value}` as keyof typeof gapMap;
-      if (gapKey in gapMap) {
-        return {
-          property: 'columnGap',
-          value: gapMap[gapKey],
-          variant: 'preset'
-        };
-      }
-    }
-
-    // Gap Y
-    if (className.startsWith('gap-y-')) {
-      const value = className.slice(6);
-      const gapKey = `gap-${value}` as keyof typeof gapMap;
-      if (gapKey in gapMap) {
-        return {
-          property: 'rowGap',
-          value: gapMap[gapKey],
-          variant: 'preset'
-        };
-      }
-    }
-
-    return null;
-  }
+  // Gap - 제거됨: SpacingParser에서 처리하고 FlexboxGrid로 연동됨
 
   // Justify Content
   static parseJustifyContent(className: string): ParsedStyle | null {
@@ -1032,9 +961,7 @@ export class FlexboxGridParser {
     const gridAutoFlow = this.parseGridAutoFlow(className);
     if (gridAutoFlow) return gridAutoFlow;
 
-    // Gap
-    const gap = this.parseGap(className);
-    if (gap) return gap;
+    // Gap - SpacingParser에서 처리되므로 제거됨
 
     // Justify content
     const justifyContent = this.parseJustifyContent(className);

@@ -1,7 +1,7 @@
 /**
  * Effects Parser - 효과 관련 CSS 속성 파서 (Filters 통합)
  * 
- * shadow, opacity, blur, border-radius와 모든 filter 속성을 통합 처리합니다.
+ * shadow, opacity, blur 와 모든 filter 속성을 통합 처리합니다.
  * CSS filter, backdrop-filter, box-shadow, text-shadow, opacity 등의 시각적 효과를 포함합니다.
  */
 
@@ -15,7 +15,9 @@ export class EffectsParser {
     // 정확한 매치 (Filters 통합)
     const exactMatches = [
       'shadow', 'shadow-none', 'opacity-0', 'opacity-100',
-      'grayscale', 'invert', 'sepia'
+      'grayscale', 'invert', 'sepia',
+      'backdrop-grayscale', 'backdrop-invert', 'backdrop-sepia',
+      'backdrop-blur', 'backdrop-brightness', 'backdrop-contrast', 'backdrop-hue-rotate', 'backdrop-opacity', 'backdrop-saturate',
     ];
     
     if (exactMatches.includes(className)) {
@@ -24,8 +26,6 @@ export class EffectsParser {
 
     // 패턴 매치 (Filters와 Effects 통합)
     const patterns = [
-      /^rounded(-\w+)*(-\d+|\[.+\])?$/, // border-radius (rounded, rounded-t, rounded-[10px])
-      /^(border|border-[tbrlxy])(-\d+|\[.+\])?$/, // border width
       /^shadow-/, // box shadow (shadow-sm, shadow-lg, shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)])
       /^text-shadow-/, // text shadow (text-shadow-sm, text-shadow-[2px_2px_4px_rgba(0,0,0,0.5)])
       /^opacity-/, // opacity (opacity-50, opacity-[0.5])
@@ -128,36 +128,6 @@ export class EffectsParser {
       };
     }
 
-    // rounded 처리
-    if (className.startsWith('rounded')) {
-      const value = className === 'rounded' ? 'DEFAULT' : className.slice('rounded-'.length);
-      return {
-        property: 'rounded',
-        value: value,
-        isArbitrary: false
-      };
-    }
-
-    // border 처리
-    if (className.startsWith('border')) {
-      if (className === 'border') {
-        return {
-          property: 'border',
-          value: '1',
-          isArbitrary: false
-        };
-      }
-      
-      const borderMatch = className.match(/^(border-[tbrlxy]?)(?:-(\w+))?$/);
-      if (borderMatch) {
-        return {
-          property: borderMatch[1],
-          value: borderMatch[2] || '1',
-          isArbitrary: false
-        };
-      }
-    }
-
     // drop-shadow 특별 처리
     if (className.startsWith('drop-shadow-')) {
       const value = className.slice('drop-shadow-'.length);
@@ -206,13 +176,7 @@ export class EffectsParser {
 
     const { property, value, isArbitrary } = parsedClass;
 
-    if (property.startsWith('rounded')) {
-      // 테두리 반경
-      this.handleBorderRadius(value, isArbitrary || false, styles.effects, preset);
-    } else if (property === 'border' || property.startsWith('border-')) {
-      // 테두리 너비
-      this.handleBorderWidth(property, value, isArbitrary || false, styles.effects);
-    } else if (property === 'shadow') {
+    if (property === 'shadow') {
       // 그림자
       this.handleBoxShadow(value, isArbitrary || false, styles.effects, preset);
     } else if (property === 'opacity') {
@@ -245,75 +209,6 @@ export class EffectsParser {
     // Backdrop Filter 속성들
     else if (property.startsWith('backdrop-')) {
       this.handleBackdropFilter(property, value, isArbitrary || false, styles.effects, preset);
-    }
-  }
-
-  /**
-   * 테두리 반경을 처리합니다.
-   */
-  private static handleBorderRadius(
-    value: string, 
-    isArbitrary: boolean, 
-    effects: EffectsStyles, 
-    preset: DesignPreset
-  ): void {
-    if (!isArbitrary && value in preset.effects.borderRadius) {
-      effects.borderRadius = preset.effects.borderRadius[value];
-    } else if (isArbitrary) {
-      effects.borderRadius = parseInt(value, 10) || 0;
-    } else {
-      // 숫자 값 처리 (예: rounded-8 => 8px)
-      const numericValue = parseInt(value, 10);
-      if (!isNaN(numericValue)) {
-        effects.borderRadius = numericValue;
-      }
-    }
-  }
-
-  /**
-   * 테두리 너비를 처리합니다.
-   */
-  private static handleBorderWidth(
-    property: string,
-    value: string, 
-    isArbitrary: boolean, 
-    effects: EffectsStyles
-  ): void {
-    const borderValue = isArbitrary ? parseInt(value, 10) : parseInt(value, 10);
-    
-    if (!effects.borderWidth) {
-      effects.borderWidth = {};
-    }
-    
-    switch (property) {
-      case 'border':
-        effects.borderWidth = {
-          top: borderValue,
-          right: borderValue,
-          bottom: borderValue,
-          left: borderValue,
-        };
-        break;
-      case 'border-t':
-        effects.borderWidth.top = borderValue;
-        break;
-      case 'border-r':
-        effects.borderWidth.right = borderValue;
-        break;
-      case 'border-b':
-        effects.borderWidth.bottom = borderValue;
-        break;
-      case 'border-l':
-        effects.borderWidth.left = borderValue;
-        break;
-      case 'border-x':
-        effects.borderWidth.left = borderValue;
-        effects.borderWidth.right = borderValue;
-        break;
-      case 'border-y':
-        effects.borderWidth.top = borderValue;
-        effects.borderWidth.bottom = borderValue;
-        break;
     }
   }
 
