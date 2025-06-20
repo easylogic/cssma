@@ -171,16 +171,13 @@ describe('New Parsers Debug Tests', () => {
     // Mock styles object
     const styles: any = { transitions: {} };
     
-    // Import TransitionsParser and test directly
-    const { TransitionsParser } = require('../src/core/parsers/transitions-parser');
-    
-    // Test direct parsing
-    const directParsed = TransitionsParser.parse('ease-in-out');
+    // Test direct parsing using the imported TransitionsParser
+    const directParsed = TransitionsParser.parseValue('ease-in-out');
     console.log('Direct transitions parser result:', directParsed);
     
     // Test apply method
     if (parsedClass) {
-      TransitionsParser.applyTransitionsStyle(parsedClass, styles, {});
+      TransitionsParser.applyTransitionsStyle(parsedClass, styles, preset);
       console.log('After applying transitions style:', styles);
     }
     

@@ -14,7 +14,7 @@ export class FlexboxGridParser {
     const displayClasses = [
       'table-caption', 'table-cell', 'table-column', 'table-column-group', 'table-footer-group',
       'table-header-group', 'table-row-group', 'table-row', 'inline-block', 'inline-flex', 
-      'inline-grid', 'inline-table', 'flow-root', 'sr-only', 'not-sr-only', 'list-item',
+      'inline-grid', 'inline-table', 'flow-root', 'list-item',
       'block', 'inline', 'flex', 'grid', 'hidden', 'table', 'contents'
     ];
     
@@ -57,14 +57,7 @@ export class FlexboxGridParser {
     const result = this.parse(className);
     if (!result) return null;
 
-    // sr-only 특별 처리
-    if (className === 'sr-only' || className === 'not-sr-only') {
-      return {
-        property: 'srOnly',
-        value: className === 'sr-only' ? 'true' : 'false',
-        isArbitrary: false
-      };
-    }
+
 
     // Display 클래스들 - parseDisplay 결과를 사용
     const displayClasses = [
@@ -108,33 +101,7 @@ export class FlexboxGridParser {
       styles.flexboxGrid = {};
     }
 
-    // sr-only 특별 처리
-    if (parsedClass.baseClassName === 'sr-only') {
-      styles.flexboxGrid.position = 'absolute';
-      styles.flexboxGrid.width = '1px';
-      styles.flexboxGrid.height = '1px';
-      styles.flexboxGrid.padding = '0';
-      styles.flexboxGrid.margin = '-1px';
-      styles.flexboxGrid.overflow = 'hidden';
-      styles.flexboxGrid.clip = 'rect(0, 0, 0, 0)';
-      styles.flexboxGrid.whiteSpace = 'nowrap';
-      styles.flexboxGrid.borderWidth = '0';
-      return;
-    }
 
-    // not-sr-only 특별 처리
-    if (parsedClass.baseClassName === 'not-sr-only') {
-      styles.flexboxGrid.position = 'static';
-      styles.flexboxGrid.width = 'auto';
-      styles.flexboxGrid.height = 'auto';
-      styles.flexboxGrid.padding = '0';
-      styles.flexboxGrid.margin = '0';
-      styles.flexboxGrid.overflow = 'visible';
-      styles.flexboxGrid.clip = 'auto';
-      styles.flexboxGrid.whiteSpace = 'normal';
-      styles.flexboxGrid.borderWidth = '0';
-      return;
-    }
 
     // 개별 파서를 사용하여 속성 값 설정
     if (result.property) {
@@ -886,15 +853,6 @@ export class FlexboxGridParser {
    * 메인 파싱 메서드 - 모든 flexbox/grid 관련 클래스를 파싱
    */
   static parse(className: string): ParsedStyle | null {
-    // Special cases for sr-only
-    if (className === 'sr-only' || className === 'not-sr-only') {
-      return {
-        property: 'srOnly',
-        value: className === 'sr-only' ? 'true' : 'false',
-        variant: 'preset'
-      };
-    }
-    
     // Display
     const display = this.parseDisplay(className);
     if (display) return display;

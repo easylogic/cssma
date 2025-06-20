@@ -262,7 +262,7 @@ export class TypographyParser {
     const textArbitraryMatch = className.match(/^text-\[(.*?)\]$/);
     if (textArbitraryMatch) {
       const value = textArbitraryMatch[1];
-      // 색상 값인 경우 text 속성으로 처리
+      // 색상 값인 경우도 text 속성으로 처리 (Tailwind 스타일)
       if (this.isColorValue(value)) {
         return { property: 'text', value: this.parseArbitraryValue(value), isArbitrary: true };
       }
@@ -270,7 +270,7 @@ export class TypographyParser {
       return { property: 'text', value: this.parseArbitraryValue(value), isArbitrary: true };
     }
 
-    // 텍스트 색상 (text-blue-500, text-red-300 등)
+    // 텍스트 색상 (text-blue-500, text-red-300 등) - property는 'text'로 통일
     const textColorMatch = className.match(/^text-([a-z]+-\d+)$/);
     if (textColorMatch) {
       return { property: 'text', value: textColorMatch[1] };

@@ -4,25 +4,25 @@ export class OverflowParser {
   private static readonly OVERFLOW_VALUES: Record<string, string> = {
     'overflow-auto': 'auto',
     'overflow-hidden': 'hidden',
-    'overflow-clip': 'clip',
     'overflow-visible': 'visible',
-    'overflow-scroll': 'scroll'
+    'overflow-scroll': 'scroll',
+    'overflow-clip': 'clip'
   };
 
   private static readonly OVERFLOW_X_VALUES: Record<string, string> = {
     'overflow-x-auto': 'auto',
     'overflow-x-hidden': 'hidden',
-    'overflow-x-clip': 'clip',
     'overflow-x-visible': 'visible',
-    'overflow-x-scroll': 'scroll'
+    'overflow-x-scroll': 'scroll',
+    'overflow-x-clip': 'clip'
   };
 
   private static readonly OVERFLOW_Y_VALUES: Record<string, string> = {
     'overflow-y-auto': 'auto',
     'overflow-y-hidden': 'hidden',
-    'overflow-y-clip': 'clip',
     'overflow-y-visible': 'visible',
-    'overflow-y-scroll': 'scroll'
+    'overflow-y-scroll': 'scroll',
+    'overflow-y-clip': 'clip'
   };
 
   private static readonly OVERSCROLL_VALUES: Record<string, string> = {
@@ -49,33 +49,30 @@ export class OverflowParser {
     'collapse': 'collapse'
   };
 
-  private static readonly OBJECT_FIT_VALUES: Record<string, string> = {
-    'object-contain': 'contain',
-    'object-cover': 'cover',
-    'object-fill': 'fill',
-    'object-none': 'none',
-    'object-scale-down': 'scale-down'
-  };
-
-  private static readonly OBJECT_POSITION_VALUES: Record<string, string> = {
-    'object-bottom': 'bottom',
-    'object-center': 'center',
-    'object-left': 'left',
-    'object-left-bottom': 'left bottom',
-    'object-left-top': 'left top',
-    'object-right': 'right',
-    'object-right-bottom': 'right bottom',
-    'object-right-top': 'right top',
-    'object-top': 'top',
-    'object-top-left': 'top left',
-    'object-bottom-right': 'bottom right'
-  };
-
   /**
    * 표준 인터페이스: 클래스가 overflow 관련인지 확인합니다.
    */
   static isValidClass(className: string): boolean {
-    // Overflow patterns
+    // 정확한 매치 우선 확인
+    const exactMatches = [
+      ...Object.keys(this.OVERFLOW_VALUES),
+      ...Object.keys(this.OVERFLOW_X_VALUES),
+      ...Object.keys(this.OVERFLOW_Y_VALUES),
+      ...Object.keys(this.OVERSCROLL_VALUES),
+      ...Object.keys(this.OVERSCROLL_X_VALUES),
+      ...Object.keys(this.OVERSCROLL_Y_VALUES),
+      ...Object.keys(this.VISIBILITY_VALUES),
+      // 추가 텍스트 관련 유틸리티들
+      'truncate', 'text-ellipsis', 'text-clip',
+      'whitespace-normal', 'whitespace-nowrap', 'whitespace-pre', 'whitespace-pre-line', 'whitespace-pre-wrap', 'whitespace-break-spaces',
+      'break-normal', 'break-words', 'break-all', 'break-keep'
+    ];
+    
+    if (exactMatches.includes(className)) {
+      return true;
+    }
+
+    // 패턴 매치
     const patterns = [
       /^overflow-/, // overflow-auto, overflow-hidden, overflow-visible, overflow-scroll, overflow-clip
       /^overflow-[xy]-/, // overflow-x-auto, overflow-y-hidden
@@ -237,21 +234,24 @@ export class OverflowParser {
       };
     }
 
-    // Object fit utilities
-    if (this.OBJECT_FIT_VALUES[className]) {
-      return {
-        property: 'objectFit',
-        value: this.OBJECT_FIT_VALUES[className],
-        variant: 'preset'
+    // 임의값 및 사용자 정의값 처리 (parseValue 사용)
+    const parsed = this.parseValue(className);
+    if (parsed) {
+      const propertyMap: Record<string, string> = {
+        'overflow': 'overflow',
+        'overflow-x': 'overflowX',
+        'overflow-y': 'overflowY',
+        'overscroll': 'overscrollBehavior',
+        'overscroll-x': 'overscrollBehaviorX',
+        'overscroll-y': 'overscrollBehaviorY'
       };
-    }
 
-    // Object position utilities
-    if (this.OBJECT_POSITION_VALUES[className]) {
+      const mappedProperty = propertyMap[parsed.property] || parsed.property;
+      
       return {
-        property: 'objectPosition',
-        value: this.OBJECT_POSITION_VALUES[className],
-        variant: 'preset'
+        property: mappedProperty,
+        value: parsed.value,
+        variant: parsed.isArbitrary ? 'arbitrary' : 'custom'
       };
     }
 

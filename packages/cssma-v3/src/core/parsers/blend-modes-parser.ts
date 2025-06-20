@@ -48,6 +48,50 @@ const PREFIX_CLASSES = [
 
 export class BlendModesParser {
 
+  /**
+   * 클래스명이 블렌드 모드 관련 클래스인지 확인합니다.
+   * @param className 클래스명
+   * @returns 블렌드 모드 관련 클래스 여부
+   */
+  static isValidClass(className: string): boolean {
+    // mix-blend 관련
+    if (className.startsWith('mix-blend-')) return true;
+    
+    // bg-blend 관련
+    if (className.startsWith('bg-blend-')) return true;
+    
+    return false;
+  }
+
+  /**
+   * 클래스명을 파싱하여 속성과 값을 추출합니다.
+   * @param className 클래스명
+   * @returns 파싱된 결과
+   */
+  static parseValue(className: string): { property: string; value: string; isArbitrary: boolean } | null {
+    // mix-blend 관련
+    if (className.startsWith('mix-blend-')) {
+      const value = className.slice('mix-blend-'.length);
+      return {
+        property: 'mix-blend-mode',
+        value: value,
+        isArbitrary: false
+      };
+    }
+    
+    // bg-blend 관련
+    if (className.startsWith('bg-blend-')) {
+      const value = className.slice('bg-blend-'.length);
+      return {
+        property: 'bg-blend-mode',
+        value: value,
+        isArbitrary: false
+      };
+    }
+    
+    return null;
+  }
+
   static isBlendModesClass(className: string): boolean {
     if (className in BLEND_MODES_CLASSES || PREFIX_CLASSES.some(prefix => className.startsWith(prefix))) {
       return true;

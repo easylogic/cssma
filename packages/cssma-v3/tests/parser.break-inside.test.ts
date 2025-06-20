@@ -24,7 +24,10 @@ describe('CSSParser - 브레이크 인사이드(Break Inside)', () => {
       expect(result?.value).toBe('avoid');
     });
     
+    it('break-inside-all 클래스를 파싱할 수 있어야 함', () => {
+      const result = parser.parseClassName('break-inside-all');
       expect(result).toBeDefined();
+      expect(result?.className).toBe('break-inside-all');
       expect(result?.category).toBe('layout');
       expect(result?.property).toBe('break-inside');
       expect(result?.value).toBe('all');
@@ -39,25 +42,37 @@ describe('CSSParser - 브레이크 인사이드(Break Inside)', () => {
       expect(result?.value).toBe('avoid-page');
     });
     
+    it('break-inside-page 클래스를 파싱할 수 있어야 함', () => {
+      const result = parser.parseClassName('break-inside-page');
       expect(result).toBeDefined();
+      expect(result?.className).toBe('break-inside-page');
       expect(result?.category).toBe('layout');
       expect(result?.property).toBe('break-inside');
       expect(result?.value).toBe('page');
     });
     
+    it('break-inside-left 클래스를 파싱할 수 있어야 함', () => {
+      const result = parser.parseClassName('break-inside-left');
       expect(result).toBeDefined();
+      expect(result?.className).toBe('break-inside-left');
       expect(result?.category).toBe('layout');
       expect(result?.property).toBe('break-inside');
       expect(result?.value).toBe('left');
     });
     
+    it('break-inside-right 클래스를 파싱할 수 있어야 함', () => {
+      const result = parser.parseClassName('break-inside-right');
       expect(result).toBeDefined();
+      expect(result?.className).toBe('break-inside-right');
       expect(result?.category).toBe('layout');
       expect(result?.property).toBe('break-inside');
       expect(result?.value).toBe('right');
     });
     
+    it('break-inside-column 클래스를 파싱할 수 있어야 함', () => {
+      const result = parser.parseClassName('break-inside-column');
       expect(result).toBeDefined();
+      expect(result?.className).toBe('break-inside-column');
       expect(result?.category).toBe('layout');
       expect(result?.property).toBe('break-inside');
       expect(result?.value).toBe('column');
@@ -75,6 +90,8 @@ describe('CSSParser - 브레이크 인사이드(Break Inside)', () => {
       expect(result.layout?.breakInside).toBe('avoid');
     });
     
+    it('break-inside-all 스타일을 적용할 수 있어야 함', () => {
+      const result = parser.parse('break-inside-all');
       expect(result.layout?.breakInside).toBe('all');
     });
     
@@ -83,19 +100,28 @@ describe('CSSParser - 브레이크 인사이드(Break Inside)', () => {
       expect(result.layout?.breakInside).toBe('avoid-page');
     });
     
+    it('break-inside-page 스타일을 적용할 수 있어야 함', () => {
+      const result = parser.parse('break-inside-page');
       expect(result.layout?.breakInside).toBe('page');
     });
     
+    it('break-inside-left 스타일을 적용할 수 있어야 함', () => {
+      const result = parser.parse('break-inside-left');
       expect(result.layout?.breakInside).toBe('left');
     });
     
+    it('break-inside-right 스타일을 적용할 수 있어야 함', () => {
+      const result = parser.parse('break-inside-right');
       expect(result.layout?.breakInside).toBe('right');
     });
     
+    it('break-inside-column 스타일을 적용할 수 있어야 함', () => {
+      const result = parser.parse('break-inside-column');
       expect(result.layout?.breakInside).toBe('column');
     });
     
     it('반응형 break-inside 스타일을 적용할 수 있어야 함', () => {
+      const result = parser.parse('md:break-inside-column');
       expect(result.breakpoints?.md?.layout?.breakInside).toBe('column');
     });
   });

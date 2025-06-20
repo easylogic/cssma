@@ -17,6 +17,63 @@ const PREFIX_CLASSES = [
 
 export class SVGParser {
 
+  /**
+   * 클래스명이 SVG 관련 클래스인지 확인합니다.
+   * @param className 클래스명
+   * @returns SVG 관련 클래스 여부
+   */
+  static isValidClass(className: string): boolean {
+    // fill 관련
+    if (className.startsWith('fill-')) return true;
+    
+    // stroke 관련
+    if (className.startsWith('stroke-')) return true;
+    
+    return false;
+  }
+
+  /**
+   * 클래스명을 파싱하여 속성과 값을 추출합니다.
+   * @param className 클래스명
+   * @returns 파싱된 결과
+   */
+  static parseValue(className: string): { property: string; value: string; isArbitrary: boolean } | null {
+    // fill 관련
+    if (className.startsWith('fill-')) {
+      const value = className.slice('fill-'.length);
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'fill',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+    
+    // stroke 관련
+    if (className.startsWith('stroke-')) {
+      const value = className.slice('stroke-'.length);
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      
+      // stroke-width인지 확인 (숫자로 시작하면 width)
+      if (/^\d/.test(value) || value === '0') {
+        return {
+          property: 'stroke-width',
+          value: isArbitrary ? value.slice(1, -1) : value,
+          isArbitrary
+        };
+      } else {
+        // stroke color
+        return {
+          property: 'stroke',
+          value: isArbitrary ? value.slice(1, -1) : value,
+          isArbitrary
+        };
+      }
+    }
+    
+    return null;
+  }
+
   static isSVGClass(className: string): boolean {
     if (className in SVG_CLASSES || PREFIX_CLASSES.some(prefix => className.startsWith(prefix))) {
       return true;

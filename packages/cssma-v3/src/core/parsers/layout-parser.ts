@@ -9,6 +9,210 @@ import { ParsedClass, LayoutStyles } from '../../types';
 
 export class LayoutParser {
   /**
+   * 클래스명이 레이아웃 관련 클래스인지 확인합니다.
+   * @param className 클래스명
+   * @returns 레이아웃 관련 클래스 여부
+   */
+  static isValidClass(className: string): boolean {
+    // display 관련
+    if (['flex', 'grid', 'block', 'inline', 'hidden', 'inline-block', 'inline-flex', 'inline-grid', 'table', 'table-cell', 'table-row', 'table-column', 'table-caption', 'list-item', 'contents', 'flow-root'].includes(className)) {
+      return true;
+    }
+    
+    // aspect-ratio 관련
+    if (className.startsWith('aspect-')) return true;
+    
+    // columns 관련
+    if (className.startsWith('columns-')) return true;
+    
+    // break-after 관련
+    if (className.startsWith('break-after-')) return true;
+    
+    // break-before 관련
+    if (className.startsWith('break-before-')) return true;
+    
+    // break-inside 관련
+    if (className.startsWith('break-inside-')) return true;
+    
+    // box-decoration-break 관련
+    if (className.startsWith('box-decoration-')) return true;
+    
+    // box-sizing 관련
+    if (['box-border', 'box-content'].includes(className)) return true;
+    
+    // float 관련
+    if (className.startsWith('float-')) return true;
+    
+    // clear 관련
+    if (className.startsWith('clear-')) return true;
+    
+    // isolation 관련
+    if (['isolate', 'isolation-auto'].includes(className)) return true;
+    if (className.startsWith('isolation-')) return true;
+    
+    // object-fit 관련
+    if (['object-contain', 'object-cover', 'object-fill', 'object-none', 'object-scale-down'].includes(className)) return true;
+    
+    // object-position 관련
+    if (['object-bottom', 'object-center', 'object-left', 'object-left-bottom', 'object-left-top', 
+         'object-right', 'object-right-bottom', 'object-right-top', 'object-top', 'object-top-left', 
+         'object-bottom-right'].includes(className)) return true;
+    
+    return false;
+  }
+
+  /**
+   * 클래스명을 파싱하여 속성과 값을 추출합니다.
+   * @param className 클래스명
+   * @returns 파싱된 결과
+   */
+  static parseValue(className: string): { property: string; value: string; isArbitrary: boolean } | null {
+    // display 관련
+    if (['flex', 'grid', 'block', 'inline', 'hidden', 'inline-block', 'inline-flex', 'inline-grid', 'table', 'table-cell', 'table-row', 'table-column', 'table-caption', 'list-item', 'contents', 'flow-root'].includes(className)) {
+      return { property: className, value: '', isArbitrary: false };
+    }
+    
+    // aspect-ratio 관련
+    if (className.startsWith('aspect-')) {
+      const value = className.slice('aspect-'.length);
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      const isCssVar = value.startsWith('(') && value.endsWith(')');
+      return {
+        property: 'aspect',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary: isArbitrary || isCssVar
+      };
+    }
+    
+    // columns 관련
+    if (className.startsWith('columns-')) {
+      const value = className.slice('columns-'.length);
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      const isCssVar = value.startsWith('(') && value.endsWith(')');
+      return {
+        property: 'columns',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary: isArbitrary || isCssVar
+      };
+    }
+    
+    // break-after 관련
+    if (className.startsWith('break-after-')) {
+      const value = className.slice('break-after-'.length);
+      return {
+        property: 'break-after',
+        value: value,
+        isArbitrary: false
+      };
+    }
+    
+    // break-before 관련
+    if (className.startsWith('break-before-')) {
+      const value = className.slice('break-before-'.length);
+      return {
+        property: 'break-before',
+        value: value,
+        isArbitrary: false
+      };
+    }
+    
+    // break-inside 관련
+    if (className.startsWith('break-inside-')) {
+      const value = className.slice('break-inside-'.length);
+      return {
+        property: 'break-inside',
+        value: value,
+        isArbitrary: false
+      };
+    }
+    
+    // box-decoration-break 관련
+    if (className.startsWith('box-decoration-')) {
+      const value = className.slice('box-decoration-'.length);
+      return {
+        property: 'box-decoration',
+        value: value,
+        isArbitrary: false
+      };
+    }
+    
+    // box-sizing 관련
+    if (className === 'box-border') {
+      return { property: 'box', value: 'border', isArbitrary: false };
+    }
+    if (className === 'box-content') {
+      return { property: 'box', value: 'content', isArbitrary: false };
+    }
+    
+    // float 관련
+    if (className.startsWith('float-')) {
+      const value = className.slice('float-'.length);
+      return {
+        property: 'float',
+        value: value,
+        isArbitrary: false
+      };
+    }
+    
+    // clear 관련
+    if (className.startsWith('clear-')) {
+      const value = className.slice('clear-'.length);
+      return {
+        property: 'clear',
+        value: value,
+        isArbitrary: false
+      };
+    }
+    
+    // isolation 관련
+    if (className === 'isolate') {
+      return { property: 'isolate', value: '', isArbitrary: false };
+    }
+    if (className.startsWith('isolation-')) {
+      const value = className.slice('isolation-'.length);
+      return {
+        property: 'isolation',
+        value: value,
+        isArbitrary: false
+      };
+    }
+    
+    // object-fit 관련
+    if (['object-contain', 'object-cover', 'object-fill', 'object-none', 'object-scale-down'].includes(className)) {
+      const value = className.slice('object-'.length);
+      return {
+        property: 'object',
+        value: value === 'scale-down' ? 'scale-down' : value,
+        isArbitrary: false
+      };
+    }
+    
+    // object-position 관련
+    if (['object-bottom', 'object-center', 'object-left', 'object-left-bottom', 'object-left-top', 
+         'object-right', 'object-right-bottom', 'object-right-top', 'object-top', 'object-top-left', 
+         'object-bottom-right'].includes(className)) {
+      const value = className.slice('object-'.length);
+      let position = value;
+      
+      // Convert compound positions
+      if (value === 'left-bottom') position = 'left bottom';
+      else if (value === 'left-top') position = 'left top';
+      else if (value === 'right-bottom') position = 'right bottom';
+      else if (value === 'right-top') position = 'right top';
+      else if (value === 'top-left') position = 'top left';
+      else if (value === 'bottom-right') position = 'bottom right';
+      
+      return {
+        property: 'object-position',
+        value: position,
+        isArbitrary: false
+      };
+    }
+    
+    return null;
+  }
+
+  /**
    * 레이아웃 스타일을 적용합니다.
    * @param parsedClass 파싱된 클래스
    * @param styles 스타일 객체
@@ -23,42 +227,6 @@ export class LayoutParser {
     // 디스플레이 속성
     if (['flex', 'grid', 'block', 'inline', 'hidden'].includes(property)) {
       styles.layout.display = property === 'hidden' ? 'none' : property as any;
-      return;
-    }
-    
-    // 너비 속성
-    if (property === 'w') {
-      styles.layout.width = this.convertSizeValue(value);
-      return;
-    }
-    
-    // 높이 속성
-    if (property === 'h') {
-      styles.layout.height = this.convertSizeValue(value, 'height');
-      return;
-    }
-    
-    // 최대 너비 속성
-    if (property === 'max-w') {
-      styles.layout.maxWidth = this.convertSizeValue(value);
-      return;
-    }
-    
-    // 최대 높이 속성
-    if (property === 'max-h') {
-      styles.layout.maxHeight = this.convertSizeValue(value);
-      return;
-    }
-    
-    // 최소 너비 속성
-    if (property === 'min-w') {
-      styles.layout.minWidth = this.convertSizeValue(value);
-      return;
-    }
-    
-    // 최소 높이 속성
-    if (property === 'min-h') {
-      styles.layout.minHeight = this.convertSizeValue(value);
       return;
     }
     
@@ -92,7 +260,7 @@ export class LayoutParser {
     
     // 브레이크 인사이드 속성
     if (property === 'break-inside') {
-      if (['auto', 'avoid', 'avoid-page', 'avoid-column'].includes(value)) {
+      if (['auto', 'avoid', 'avoid-page', 'avoid-column', 'all', 'page', 'left', 'right', 'column'].includes(value)) {
         styles.layout.breakInside = value as any;
       }
       return;
@@ -107,13 +275,12 @@ export class LayoutParser {
     }
     
     // 박스 사이징 속성
-    if (property === 'box-border') {
-      styles.layout.boxSizing = 'border-box';
-      return;
-    }
-    
-    if (property === 'box-content') {
-      styles.layout.boxSizing = 'content-box';
+    if (property === 'box') {
+      if (value === 'border') {
+        styles.layout.boxSizing = 'border-box';
+      } else if (value === 'content') {
+        styles.layout.boxSizing = 'content-box';
+      }
       return;
     }
     
@@ -155,6 +322,20 @@ export class LayoutParser {
       if (['auto', 'isolate'].includes(value)) {
         styles.layout.isolation = value as 'auto' | 'isolate';
       }
+      return;
+    }
+    
+    // object-fit 속성
+    if (property === 'object') {
+      if (['contain', 'cover', 'fill', 'none', 'scale-down'].includes(value)) {
+        styles.layout.objectFit = value as 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
+      }
+      return;
+    }
+    
+    // object-position 속성
+    if (property === 'object-position') {
+      styles.layout.objectPosition = value;
       return;
     }
   }

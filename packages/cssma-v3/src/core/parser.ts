@@ -55,6 +55,11 @@ export class CSSParser {
     // 테이블 관련 (border-collapse가 borders와 겹치므로 우선 처리)
     { parser: TablesParser, category: 'tables' },
     
+    // 애니메이션 관련 (transition이 layout과 겹치므로 우선 처리)
+    { parser: AnimationParser, category: 'animation' },
+    { parser: TransitionsParser, category: 'transitions' },
+    { parser: TransformParser, category: 'transform' },
+    
     // 레이아웃 관련
     { parser: FlexboxGridParser, category: 'flexbox-grid' },
     { parser: SizingParser, category: 'sizing' },
@@ -68,10 +73,7 @@ export class CSSParser {
     { parser: EffectsParser, category: 'effects' },
     { parser: BlendModesParser, category: 'blend-modes' },
     
-    // 동작 관련
-    { parser: TransitionsParser, category: 'transitions' },
-    { parser: AnimationParser, category: 'animation' },
-    { parser: TransformParser, category: 'transform' },
+    // 상호작용 관련
     { parser: InteractivityParser, category: 'interactivity' },
     
     // 기타

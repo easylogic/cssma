@@ -15,6 +15,7 @@ export class EffectsParser {
     // 정확한 매치 (Filters 통합)
     const exactMatches = [
       'shadow', 'shadow-none', 'opacity-0', 'opacity-100',
+      'text-shadow', // 기본 text-shadow 클래스
       'grayscale', 'invert', 'sepia',
       'backdrop-grayscale', 'backdrop-invert', 'backdrop-sepia',
       'backdrop-blur', 'backdrop-brightness', 'backdrop-contrast', 'backdrop-hue-rotate', 'backdrop-opacity', 'backdrop-saturate',
@@ -119,6 +120,14 @@ export class EffectsParser {
     }
 
     // text-shadow 특별 처리
+    if (className === 'text-shadow') {
+      return {
+        property: 'text-shadow',
+        value: 'DEFAULT',
+        isArbitrary: false
+      };
+    }
+    
     if (className.startsWith('text-shadow-')) {
       const value = className.slice('text-shadow-'.length);
       return {

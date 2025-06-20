@@ -86,9 +86,29 @@ export class AccessibilityParser {
       styles.accessibility = {};
     }
 
-    if (property === 'screenReader' && typeof value === 'object') {
-      // sr-only 스타일 적용
-      Object.assign(styles.accessibility, value);
+    if (property === 'screenReader') {
+      if (value === 'true') {
+        // sr-only 스타일 적용
+        styles.accessibility.position = 'absolute';
+        styles.accessibility.width = '1px';
+        styles.accessibility.height = '1px';
+        styles.accessibility.padding = '0';
+        styles.accessibility.margin = '-1px';
+        styles.accessibility.overflow = 'hidden';
+        styles.accessibility.clip = 'rect(0, 0, 0, 0)';
+        styles.accessibility.whiteSpace = 'nowrap';
+        styles.accessibility.borderWidth = '0';
+      } else if (value === 'false') {
+        // not-sr-only 스타일 적용
+        styles.accessibility.position = 'static';
+        styles.accessibility.width = 'auto';
+        styles.accessibility.height = 'auto';
+        styles.accessibility.padding = '0';
+        styles.accessibility.margin = '0';
+        styles.accessibility.overflow = 'visible';
+        styles.accessibility.clip = 'auto';
+        styles.accessibility.whiteSpace = 'normal';
+      }
     } else if (property === 'forcedColorAdjust' && typeof value === 'string') {
       // forced-color-adjust 스타일 적용
       styles.accessibility.forcedColorAdjust = value;
@@ -113,9 +133,10 @@ export class AccessibilityParser {
    * 표준 인터페이스: 클래스가 accessibility 관련인지 확인합니다.
    */
   static isValidClass(className: string): boolean {
-    // 정확한 매치만 인식 (다른 파서와의 충돌 방지)
+    // 접근성 관련 클래스들 (sr-only와 forced-color-adjust 모두 포함)
     const exactMatches = [
-      'sr-only', 'not-sr-only'
+      'sr-only', 'not-sr-only',
+      'forced-color-adjust-auto', 'forced-color-adjust-none'
     ];
     
     return exactMatches.includes(className);
@@ -137,14 +158,26 @@ export class AccessibilityParser {
     switch (className) {
       case 'sr-only':
         return {
-          property: 'sr-only',
+          property: 'screenReader',
           value: 'true',
           isArbitrary: false
         };
       case 'not-sr-only':
         return {
-          property: 'sr-only',
+          property: 'screenReader',
           value: 'false',
+          isArbitrary: false
+        };
+      case 'forced-color-adjust-auto':
+        return {
+          property: 'forcedColorAdjust',
+          value: 'auto',
+          isArbitrary: false
+        };
+      case 'forced-color-adjust-none':
+        return {
+          property: 'forcedColorAdjust',
+          value: 'none',
           isArbitrary: false
         };
       default:

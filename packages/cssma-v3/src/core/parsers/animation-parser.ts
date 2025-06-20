@@ -9,6 +9,144 @@ import { ParsedClass, AnimationStyles, DesignPreset } from '../../types';
 
 export class AnimationParser {
   /**
+   * 클래스명이 애니메이션 관련 클래스인지 확인합니다.
+   * @param className 클래스명
+   * @returns 애니메이션 관련 클래스 여부
+   */
+  static isValidClass(className: string): boolean {
+    // transition 관련
+    if (className === 'transition') return true;
+    if (className.startsWith('transition-')) return true;
+    
+    // animate 관련
+    if (className.startsWith('animate-')) return true;
+    
+    // duration 관련
+    if (className.startsWith('duration-')) return true;
+    
+    // timing function 관련
+    if (className.startsWith('ease-')) return true;
+    
+    // delay 관련
+    if (className.startsWith('delay-')) return true;
+    
+    // repeat/iteration count 관련
+    if (className.startsWith('repeat-')) return true;
+    
+    // animation direction 관련
+    if (className.startsWith('direction-')) return true;
+    
+    // animation fill mode 관련
+    if (className.startsWith('fill-')) return true;
+    
+    return false;
+  }
+
+  /**
+   * 클래스명을 파싱하여 속성과 값을 추출합니다.
+   * @param className 클래스명
+   * @returns 파싱된 결과
+   */
+  static parseValue(className: string): { property: string; value: string; isArbitrary: boolean } | null {
+    // transition 처리
+    if (className === 'transition') {
+      return { property: 'transition', value: '', isArbitrary: false };
+    }
+    
+    // transition-[property] 형태
+    if (className.startsWith('transition-')) {
+      const value = className.slice('transition-'.length);
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'transition',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+    
+    // animate-{name} 형태
+    if (className.startsWith('animate-')) {
+      const value = className.slice('animate-'.length);
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'animate',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+    
+    // duration-{value} 형태
+    if (className.startsWith('duration-')) {
+      const value = className.slice('duration-'.length);
+      // CSS 변수 형태인지 확인: duration-(my-var)
+      const isCssVar = value.startsWith('(') && value.endsWith(')');
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'duration',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary: isArbitrary || isCssVar
+      };
+    }
+    
+    // ease-{function} 형태
+    if (className.startsWith('ease-')) {
+      const value = className.slice('ease-'.length);
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'ease',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+    
+    // delay-{value} 형태
+    if (className.startsWith('delay-')) {
+      const value = className.slice('delay-'.length);
+      // CSS 변수 형태인지 확인: delay-(my-var)
+      const isCssVar = value.startsWith('(') && value.endsWith(')');
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'delay',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary: isArbitrary || isCssVar
+      };
+    }
+    
+    // repeat-{count} 형태
+    if (className.startsWith('repeat-')) {
+      const value = className.slice('repeat-'.length);
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'repeat',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+    
+    // direction-{value} 형태
+    if (className.startsWith('direction-')) {
+      const value = className.slice('direction-'.length);
+      return {
+        property: 'direction',
+        value: value,
+        isArbitrary: false
+      };
+    }
+    
+    // fill-{mode} 형태
+    if (className.startsWith('fill-')) {
+      const value = className.slice('fill-'.length);
+      return {
+        property: 'fill',
+        value: value,
+        isArbitrary: false
+      };
+    }
+    
+    return null;
+  }
+
+  /**
    * 애니메이션 스타일을 적용합니다.
    * @param parsedClass 파싱된 클래스
    * @param styles 스타일 객체

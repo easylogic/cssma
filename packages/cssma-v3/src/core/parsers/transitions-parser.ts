@@ -30,6 +30,76 @@ export class TransitionsParser {
     'ease-in-out': 'cubic-bezier(0.4, 0, 0.2, 1)'
   };
 
+  /**
+   * 클래스명이 트랜지션 관련 클래스인지 확인합니다.
+   * @param className 클래스명
+   * @returns 트랜지션 관련 클래스 여부
+   */
+  static isValidClass(className: string): boolean {
+    // transition properties
+    if (this.TRANSITION_PROPERTIES[className]) return true;
+    
+    // duration classes
+    if (className.startsWith('duration-')) return true;
+    
+    // delay classes
+    if (className.startsWith('delay-')) return true;
+    
+    // timing function classes
+    if (this.TIMING_FUNCTIONS[className]) return true;
+    
+    return false;
+  }
+
+  /**
+   * 클래스명을 파싱하여 속성과 값을 추출합니다.
+   * @param className 클래스명
+   * @returns 파싱된 결과
+   */
+  static parseValue(className: string): { property: string; value: string; isArbitrary: boolean } | null {
+    // transition properties
+    if (this.TRANSITION_PROPERTIES[className]) {
+      return {
+        property: 'transitionProperty',
+        value: this.TRANSITION_PROPERTIES[className],
+        isArbitrary: false
+      };
+    }
+
+    // duration classes
+    if (className.startsWith('duration-')) {
+      const value = className.slice('duration-'.length);
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'transitionDuration',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+
+    // delay classes
+    if (className.startsWith('delay-')) {
+      const value = className.slice('delay-'.length);
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'transitionDelay',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+
+    // timing function classes
+    if (this.TIMING_FUNCTIONS[className]) {
+      return {
+        property: 'transitionTimingFunction',
+        value: this.TIMING_FUNCTIONS[className],
+        isArbitrary: false
+      };
+    }
+
+    return null;
+  }
+
   static parse(className: string): ParsedStyle | null {
     // Transition properties
     if (this.TRANSITION_PROPERTIES[className]) {

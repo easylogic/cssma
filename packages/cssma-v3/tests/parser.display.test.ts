@@ -77,41 +77,41 @@ describe('Display Parser Tests', () => {
       // 1. 파싱 검증
       const result = parser.parseClassName('sr-only');
       expect(result).toBeTruthy();
-      expect(result?.category).toBe('flexbox-grid');
-      expect(result?.property).toBe('srOnly');
+      expect(result?.category).toBe('accessibility');
+      expect(result?.property).toBe('screenReader');
 
       // 2. 스타일 적용 검증 - 모든 sr-only 속성들
       const styles = parser.parse('sr-only');
-      expect(styles.flexboxGrid).toBeDefined();
-      expect(styles.flexboxGrid.position).toBe('absolute');
-      expect(styles.flexboxGrid.width).toBe('1px');
-      expect(styles.flexboxGrid.height).toBe('1px');
-      expect(styles.flexboxGrid.padding).toBe('0');
-      expect(styles.flexboxGrid.margin).toBe('-1px');
-      expect(styles.flexboxGrid.overflow).toBe('hidden');
-      expect(styles.flexboxGrid.clip).toBe('rect(0, 0, 0, 0)');
-      expect(styles.flexboxGrid.whiteSpace).toBe('nowrap');
-      expect(styles.flexboxGrid.borderWidth).toBe('0');
+      expect(styles.accessibility).toBeDefined();
+      expect(styles.accessibility.position).toBe('absolute');
+      expect(styles.accessibility.width).toBe('1px');
+      expect(styles.accessibility.height).toBe('1px');
+      expect(styles.accessibility.padding).toBe('0');
+      expect(styles.accessibility.margin).toBe('-1px');
+      expect(styles.accessibility.overflow).toBe('hidden');
+      expect(styles.accessibility.clip).toBe('rect(0, 0, 0, 0)');
+      expect(styles.accessibility.whiteSpace).toBe('nowrap');
+      expect(styles.accessibility.borderWidth).toBe('0');
     });
 
     test('not-sr-only should reset screen reader styles', () => {
       // 1. 파싱 검증
       const result = parser.parseClassName('not-sr-only');
       expect(result).toBeTruthy();
-      expect(result?.category).toBe('flexbox-grid');
-      expect(result?.property).toBe('srOnly');
+      expect(result?.category).toBe('accessibility');
+      expect(result?.property).toBe('screenReader');
 
       // 2. 스타일 적용 검증 - 모든 not-sr-only 속성들
       const styles = parser.parse('not-sr-only');
-      expect(styles.flexboxGrid).toBeDefined();
-      expect(styles.flexboxGrid.position).toBe('static');
-      expect(styles.flexboxGrid.width).toBe('auto');
-      expect(styles.flexboxGrid.height).toBe('auto');
-      expect(styles.flexboxGrid.padding).toBe('0');
-      expect(styles.flexboxGrid.margin).toBe('0');
-      expect(styles.flexboxGrid.overflow).toBe('visible');
-      expect(styles.flexboxGrid.clip).toBe('auto');
-      expect(styles.flexboxGrid.whiteSpace).toBe('normal');
+      expect(styles.accessibility).toBeDefined();
+      expect(styles.accessibility.position).toBe('static');
+      expect(styles.accessibility.width).toBe('auto');
+      expect(styles.accessibility.height).toBe('auto');
+      expect(styles.accessibility.padding).toBe('0');
+      expect(styles.accessibility.margin).toBe('0');
+      expect(styles.accessibility.overflow).toBe('visible');
+      expect(styles.accessibility.clip).toBe('auto');
+      expect(styles.accessibility.whiteSpace).toBe('normal');
     });
   });
 
@@ -167,9 +167,9 @@ describe('Display Parser Tests', () => {
       const styles = parser.parse('sm:not-sr-only');
       expect(styles.breakpoints).toBeDefined();
       expect(styles.breakpoints!['sm']).toBeDefined();
-      expect(styles.breakpoints!['sm'].flexboxGrid).toBeDefined();
-      expect(styles.breakpoints!['sm'].flexboxGrid!.position).toBe('static');
-      expect(styles.breakpoints!['sm'].flexboxGrid!.width).toBe('auto');
+      expect(styles.breakpoints!['sm'].accessibility).toBeDefined();
+      expect(styles.breakpoints!['sm'].accessibility!.position).toBe('static');
+      expect(styles.breakpoints!['sm'].accessibility!.width).toBe('auto');
     });
   });
 

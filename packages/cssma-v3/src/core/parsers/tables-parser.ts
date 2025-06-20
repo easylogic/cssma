@@ -20,6 +20,72 @@ const PREFIX_CLASSES = [
 
 export class TablesParser {
 
+  /**
+   * 클래스명이 테이블 관련 클래스인지 확인합니다.
+   * @param className 클래스명
+   * @returns 테이블 관련 클래스 여부
+   */
+  static isValidClass(className: string): boolean {
+    // border-collapse/separate
+    if (['border-collapse', 'border-separate'].includes(className)) return true;
+    
+    // border-spacing
+    if (className.startsWith('border-spacing-')) return true;
+    
+    // table-layout
+    if (['table-auto', 'table-fixed'].includes(className)) return true;
+    
+    // caption-side
+    if (className.startsWith('caption-')) return true;
+    
+    return false;
+  }
+
+  /**
+   * 클래스명을 파싱하여 속성과 값을 추출합니다.
+   * @param className 클래스명
+   * @returns 파싱된 결과
+   */
+  static parseValue(className: string): { property: string; value: string; isArbitrary: boolean } | null {
+    // border-collapse/separate
+    if (className === 'border-collapse') {
+      return { property: 'border-collapse', value: 'collapse', isArbitrary: false };
+    }
+    if (className === 'border-separate') {
+      return { property: 'border-separate', value: 'separate', isArbitrary: false };
+    }
+    
+    // border-spacing
+    if (className.startsWith('border-spacing-')) {
+      const value = className.slice('border-spacing-'.length);
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'border-spacing',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+    
+    // table-layout
+    if (className === 'table-auto') {
+      return { property: 'table-layout', value: 'auto', isArbitrary: false };
+    }
+    if (className === 'table-fixed') {
+      return { property: 'table-layout', value: 'fixed', isArbitrary: false };
+    }
+    
+    // caption-side
+    if (className.startsWith('caption-')) {
+      const value = className.slice('caption-'.length);
+      return {
+        property: 'caption-side',
+        value: value,
+        isArbitrary: false
+      };
+    }
+    
+    return null;
+  }
 
   /**
    * 테이블 관련 클래스인지 확인합니다.
