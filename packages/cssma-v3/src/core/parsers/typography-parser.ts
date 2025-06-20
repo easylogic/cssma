@@ -124,6 +124,31 @@ export class TypographyParser {
   ];
 
   /**
+   * 표준 인터페이스: 클래스가 typography 관련인지 확인합니다.
+   */
+  static isValidClass(className: string): boolean {
+    return this.isTypographyClass(className);
+  }
+
+  /**
+   * 표준 인터페이스: typography 클래스의 값을 파싱합니다.
+   */
+  static parseValue(className: string): {
+    property: string;
+    value: string;
+    isArbitrary: boolean;
+  } | null {
+    const parsed = this.parseTypography(className);
+    if (!parsed) return null;
+
+    return {
+      property: parsed.property,
+      value: parsed.value,
+      isArbitrary: parsed.isArbitrary || false
+    };
+  }
+
+  /**
    * 클래스가 타이포그래피 관련인지 확인합니다.
    */
   static isTypographyClass(className: string): boolean {
@@ -132,21 +157,18 @@ export class TypographyParser {
       return true;
     }
 
-    // text-[...] 임의 값에서 색상 값 제외
+    // text-[...] 임의 값 (색상 포함)
     const textArbitraryMatch = className.match(/^text-\[(.*?)\]$/);
     if (textArbitraryMatch) {
-      const value = textArbitraryMatch[1];
-      // 색상 값인 경우 Typography가 아님
-      if (this.isColorValue(value)) {
-        return false;
-      }
-      // 색상이 아니면 Typography (폰트 크기)
+      // 모든 text-[...] 패턴을 Typography에서 처리 (색상 포함)
       return true;
     }
 
     // 접두사 매치 (임의 값, 소수점 값 포함)
     const prefixPatterns = [
       /^text-(xs|sm|base|lg|xl|\d*xl)$/, // 폰트 크기 (명시적)
+      /^text-[a-z]+-\d+$/, // 텍스트 색상 (text-blue-500)
+      /^text-(black|white|transparent|current)$/, // 기본 텍스트 색상
       // text-[...] 패턴은 위에서 이미 처리됨
       /^font-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black|\d+)$/, // 폰트 두께
       /^font-\[.*?\]$/, // 폰트 두께/패밀리 임의 값
@@ -230,7 +252,7 @@ export class TypographyParser {
     // 텍스트 크기 (text-*)
     const textSizeMatch = className.match(/^text-(xs|sm|base|lg|xl|\d*xl)$/);
     if (textSizeMatch) {
-      return { property: 'fontSize', value: textSizeMatch[1] };
+      return { property: 'text', value: textSizeMatch[1] };
     }
 
     // 임의 값 텍스트 크기 (text-[...])
@@ -241,19 +263,19 @@ export class TypographyParser {
       if (this.isColorValue(value)) {
         return null;
       }
-      return { property: 'fontSize', value: this.parseArbitraryValue(value), isArbitrary: true };
+      return { property: 'text', value: this.parseArbitraryValue(value), isArbitrary: true };
     }
 
     // 폰트 두께 (font-*)
     const fontWeightMatch = className.match(/^font-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black|\d+)$/);
     if (fontWeightMatch) {
-      return { property: 'fontWeight', value: fontWeightMatch[1] };
+      return { property: 'font', value: fontWeightMatch[1] };
     }
 
     // 폰트 패밀리 기본값 (font-sans/serif/mono)
     const fontFamilyMatch = className.match(/^font-(sans|serif|mono)$/);
     if (fontFamilyMatch) {
-      return { property: 'fontFamily', value: fontFamilyMatch[1] };
+      return { property: 'font', value: fontFamilyMatch[1] };
     }
 
     // 임의 값 폰트 (font-[...])
@@ -262,84 +284,79 @@ export class TypographyParser {
       const value = fontArbitraryMatch[1];
       const cleanValue = this.parseArbitraryValue(value);
       
-      // 폰트 두께와 폰트 패밀리 구분
-      if (this.isFontWeightValue(cleanValue)) {
-        return { property: 'fontWeight', value: cleanValue, isArbitrary: true };
-      } else {
-        return { property: 'fontFamily', value: cleanValue, isArbitrary: true };
-      }
+      return { property: 'font', value: cleanValue, isArbitrary: true };
     }
 
     // 자간 (tracking-*)
     const trackingMatch = className.match(/^tracking-(tighter|tight|normal|wide|wider|widest)$/);
     if (trackingMatch) {
-      return { property: 'letterSpacing', value: trackingMatch[1] };
+      return { property: 'tracking', value: trackingMatch[1] };
     }
 
     // 임의 값 자간 (tracking-[...])
     const trackingArbitraryMatch = className.match(/^tracking-\[(.*?)\]$/);
     if (trackingArbitraryMatch) {
-      return { property: 'letterSpacing', value: this.parseArbitraryValue(trackingArbitraryMatch[1]), isArbitrary: true };
+      return { property: 'tracking', value: this.parseArbitraryValue(trackingArbitraryMatch[1]), isArbitrary: true };
     }
 
     // 행간 (leading-*)
     const leadingMatch = className.match(/^leading-(none|tight|snug|normal|relaxed|loose|\d+)$/);
     if (leadingMatch) {
-      return { property: 'lineHeight', value: leadingMatch[1] };
+      return { property: 'leading', value: leadingMatch[1] };
     }
 
     // 임의 값 행간 (leading-[...])
     const leadingArbitraryMatch = className.match(/^leading-\[(.*?)\]$/);
     if (leadingArbitraryMatch) {
-      return { property: 'lineHeight', value: this.parseArbitraryValue(leadingArbitraryMatch[1]), isArbitrary: true };
+      return { property: 'leading', value: this.parseArbitraryValue(leadingArbitraryMatch[1]), isArbitrary: true };
     }
 
     // 텍스트 정렬 (text-align)
     const textAlignMatch = className.match(/^text-(left|center|right|justify|start|end)$/);
     if (textAlignMatch) {
-      return { property: 'text-align', value: textAlignMatch[1] };
+      return { property: 'text', value: textAlignMatch[1] };
     }
 
     // 텍스트 장식 스타일 (decoration-*)
     const decorationStyleMatch = className.match(/^decoration-(solid|double|dotted|dashed|wavy)$/);
     if (decorationStyleMatch) {
-      return { property: 'textDecorationStyle', value: decorationStyleMatch[1] };
+      return { property: 'decoration', value: decorationStyleMatch[1] };
     }
 
     // 임의 값 텍스트 장식 스타일 (decoration-[...])
     const decorationStyleArbitraryMatch = className.match(/^decoration-\[(.*?)\]$/);
     if (decorationStyleArbitraryMatch) {
-      return { property: 'textDecorationStyle', value: this.parseArbitraryValue(decorationStyleArbitraryMatch[1]), isArbitrary: true };
+      return { property: 'decoration', value: this.parseArbitraryValue(decorationStyleArbitraryMatch[1]), isArbitrary: true };
     }
 
     // 텍스트 장식 두께 (decoration-*)
     const decorationThicknessMatch = className.match(/^decoration-(auto|from-font|\d+)$/);
     if (decorationThicknessMatch) {
-      return { property: 'textDecorationThickness', value: decorationThicknessMatch[1] };
+      return { property: 'decoration', value: decorationThicknessMatch[1] };
     }
 
     // 밑줄 오프셋 (underline-offset-*)
     const underlineOffsetMatch = className.match(/^underline-offset-(auto|\d+)$/);
     if (underlineOffsetMatch) {
-      return { property: 'textUnderlineOffset', value: underlineOffsetMatch[1] };
+      return { property: 'underline-offset', value: underlineOffsetMatch[1] };
     }
 
     // 임의 값 밑줄 오프셋 (underline-offset-[...])
     const underlineOffsetArbitraryMatch = className.match(/^underline-offset-\[(.*?)\]$/);
     if (underlineOffsetArbitraryMatch) {
-      return { property: 'textUnderlineOffset', value: this.parseArbitraryValue(underlineOffsetArbitraryMatch[1]), isArbitrary: true };
+      return { property: 'underline-offset', value: this.parseArbitraryValue(underlineOffsetArbitraryMatch[1]), isArbitrary: true };
     }
 
     // 텍스트 들여쓰기 (indent-*)
     const indentMatch = className.match(/^indent-(\d+)$/);
     if (indentMatch) {
-      return { property: 'textIndent', value: indentMatch[1] };
+      return { property: 'indent', value: indentMatch[1] };
     }
 
     // 임의 값 텍스트 들여쓰기 (indent-[...])
     const indentArbitraryMatch = className.match(/^indent-\[(.*?)\]$/);
     if (indentArbitraryMatch) {
-      return { property: 'textIndent', value: this.parseArbitraryValue(indentArbitraryMatch[1]), isArbitrary: true };
+      return { property: 'indent', value: this.parseArbitraryValue(indentArbitraryMatch[1]), isArbitrary: true };
     }
 
     // 수직 정렬 (align-*)
@@ -399,14 +416,14 @@ export class TypographyParser {
          } else if (isArbitrary) {
            // 임의 값인 경우 폰트 두께인지 폰트 패밀리인지 판단
            if (this.isFontWeightValue(value)) {
-             this.applyFontWeight(value, isArbitrary, styles.typography);
+        this.applyFontWeight(value, isArbitrary, styles.typography);
            } else {
-             this.applyFontFamily(value, isArbitrary, styles.typography, preset);
+        this.applyFontFamily(value, isArbitrary, styles.typography, preset);
            }
          } else {
            this.applyFontWeight(value, isArbitrary, styles.typography);
          }
-         break;
+        break;
         
       case 'tracking':
         this.applyLetterSpacing(value, isArbitrary, styles.typography);

@@ -71,6 +71,108 @@ export class OverflowParser {
     'object-bottom-right': 'bottom right'
   };
 
+  /**
+   * 표준 인터페이스: 클래스가 overflow 관련인지 확인합니다.
+   */
+  static isValidClass(className: string): boolean {
+    // Overflow patterns
+    const patterns = [
+      /^overflow-/, // overflow-auto, overflow-hidden, overflow-visible, overflow-scroll, overflow-clip
+      /^overflow-[xy]-/, // overflow-x-auto, overflow-y-hidden
+      /^overscroll-/, // overscroll-auto, overscroll-contain, overscroll-none
+      /^overscroll-[xy]-/, // overscroll-x-auto, overscroll-y-contain
+    ];
+
+    return patterns.some(pattern => pattern.test(className));
+  }
+
+  /**
+   * 표준 인터페이스: overflow 클래스의 값을 파싱합니다.
+   */
+  static parseValue(className: string): {
+    property: string;
+    value: string;
+    isArbitrary: boolean;
+  } | null {
+    if (!this.isValidClass(className)) {
+      return null;
+    }
+
+    // Overflow-x (overflow-x-)
+    const overflowXMatch = className.match(/^overflow-x-(.+)$/);
+    if (overflowXMatch) {
+      const value = overflowXMatch[1];
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'overflow-x',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+
+    // Overflow-y (overflow-y-)
+    const overflowYMatch = className.match(/^overflow-y-(.+)$/);
+    if (overflowYMatch) {
+      const value = overflowYMatch[1];
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'overflow-y',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+
+    // Overflow (overflow-)
+    const overflowMatch = className.match(/^overflow-(.+)$/);
+    if (overflowMatch) {
+      const value = overflowMatch[1];
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'overflow',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+
+    // Overscroll-x (overscroll-x-)
+    const overscrollXMatch = className.match(/^overscroll-x-(.+)$/);
+    if (overscrollXMatch) {
+      const value = overscrollXMatch[1];
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'overscroll-x',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+
+    // Overscroll-y (overscroll-y-)
+    const overscrollYMatch = className.match(/^overscroll-y-(.+)$/);
+    if (overscrollYMatch) {
+      const value = overscrollYMatch[1];
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'overscroll-y',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+
+    // Overscroll (overscroll-)
+    const overscrollMatch = className.match(/^overscroll-(.+)$/);
+    if (overscrollMatch) {
+      const value = overscrollMatch[1];
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'overscroll',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+
+    return null;
+  }
+
   static parse(className: string): ParsedStyle | null {
     // Overflow utilities
     if (this.OVERFLOW_VALUES[className]) {

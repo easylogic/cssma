@@ -8,6 +8,137 @@ import { ParsedClass, ParsedStyle, ParsedStyles, DesignPreset } from '../../type
 
 export class SizingParser {
   /**
+   * 표준 인터페이스: 클래스가 sizing 관련인지 확인합니다.
+   */
+  static isValidClass(className: string): boolean {
+    // Width patterns (w-)
+    if (/^w-/.test(className)) {
+      return true;
+    }
+    
+    // Height patterns (h-)
+    if (/^h-/.test(className)) {
+      return true;
+    }
+    
+    // Min/Max width patterns
+    if (/^(min-w|max-w)-/.test(className)) {
+      return true;
+    }
+    
+    // Min/Max height patterns
+    if (/^(min-h|max-h)-/.test(className)) {
+      return true;
+    }
+    
+    // Size pattern (size-)
+    if (/^size-/.test(className)) {
+      return true;
+    }
+    
+    return false;
+  }
+
+  /**
+   * 표준 인터페이스: sizing 클래스의 값을 파싱합니다.
+   */
+  static parseValue(className: string): {
+    property: string;
+    value: string;
+    isArbitrary: boolean;
+  } | null {
+    if (!this.isValidClass(className)) {
+      return null;
+    }
+
+    // Width (w-)
+    const widthMatch = className.match(/^w-(.+)$/);
+    if (widthMatch) {
+      const value = widthMatch[1];
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'w',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+
+    // Height (h-)
+    const heightMatch = className.match(/^h-(.+)$/);
+    if (heightMatch) {
+      const value = heightMatch[1];
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'h',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+
+    // Min-width (min-w-)
+    const minWidthMatch = className.match(/^min-w-(.+)$/);
+    if (minWidthMatch) {
+      const value = minWidthMatch[1];
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'min-w',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+
+    // Max-width (max-w-)
+    const maxWidthMatch = className.match(/^max-w-(.+)$/);
+    if (maxWidthMatch) {
+      const value = maxWidthMatch[1];
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'max-w',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+
+    // Min-height (min-h-)
+    const minHeightMatch = className.match(/^min-h-(.+)$/);
+    if (minHeightMatch) {
+      const value = minHeightMatch[1];
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'min-h',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+
+    // Max-height (max-h-)
+    const maxHeightMatch = className.match(/^max-h-(.+)$/);
+    if (maxHeightMatch) {
+      const value = maxHeightMatch[1];
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'max-h',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+
+    // Size (size-)
+    const sizeMatch = className.match(/^size-(.+)$/);
+    if (sizeMatch) {
+      const value = sizeMatch[1];
+      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      return {
+        property: 'size',
+        value: isArbitrary ? value.slice(1, -1) : value,
+        isArbitrary
+      };
+    }
+
+    return null;
+  }
+
+  /**
    * 크기 관련 클래스를 파싱합니다.
    * @param className 클래스명
    * @returns 파싱된 스타일 또는 null

@@ -19,7 +19,6 @@ import {
   TransformParser,
   SizingParser,
   FlexboxGridParser,
-  FiltersParser,
   InteractivityParser,
   TablesParser,
   SVGParser,
@@ -32,11 +31,53 @@ import {
 } from './parsers';
 
 /**
+ * 파서 정보 인터페이스
+ */
+interface ParserInfo {
+  parser: any;
+  category: StyleCategory;
+}
+
+/**
  * CSS 클래스 파서
  */
 export class CSSParser {
   private config: Config;
   private preset: DesignPreset;
+  
+  // 파서 맵핑 (우선순위 순서로 정렬)
+  private static readonly PARSER_MAP: ParserInfo[] = [
+    // 특수 케이스들 우선 처리
+    { parser: AccessibilityParser, category: 'accessibility' },
+    { parser: TypographyParser, category: 'typography' },
+    { parser: SpacingParser, category: 'spacing' },
+    
+    // 테이블 관련 (border-collapse가 borders와 겹치므로 우선 처리)
+    { parser: TablesParser, category: 'tables' },
+    
+    // 레이아웃 관련
+    { parser: FlexboxGridParser, category: 'flexbox-grid' },
+    { parser: SizingParser, category: 'sizing' },
+    { parser: PositionParser, category: 'position' },
+    { parser: LayoutParser, category: 'layout' },
+    { parser: OverflowParser, category: 'overflow' },
+    
+    // 시각적 효과 (각자 색상 포함, Filters 통합)
+    { parser: BordersParser, category: 'borders' },
+    { parser: BackgroundsParser, category: 'backgrounds' },
+    { parser: EffectsParser, category: 'effects' },
+    { parser: BlendModesParser, category: 'blend-modes' },
+    
+    // 동작 관련
+    { parser: TransitionsParser, category: 'transitions' },
+    { parser: AnimationParser, category: 'animation' },
+    { parser: TransformParser, category: 'transform' },
+    { parser: InteractivityParser, category: 'interactivity' },
+    
+    // 기타
+    { parser: SVGParser, category: 'svg' }
+    // ColorParser 제거: 각 개별 파서가 자신의 색상을 처리
+  ];
 
   /**
    * 파서를 초기화합니다.
@@ -151,23 +192,50 @@ export class CSSParser {
     const modifierResult = this.parseModifiers(processedClassName);
     const { baseClassName } = modifierResult;
 
-    // 임의 값을 파싱합니다.
-    const arbitraryResult = this.parseArbitraryValue(baseClassName);
-    const { isArbitrary, propertyName, value, category } = arbitraryResult;
+    // 각 파서에게 클래스 인식을 요청 (우선순위 순서)
+    for (const { parser, category } of CSSParser.PARSER_MAP) {
+      if (parser.isValidClass && parser.isValidClass(baseClassName)) {
+        // 해당 파서가 클래스를 인식했으므로 파싱 진행
+        const parseResult = parser.parseValue ? parser.parseValue(baseClassName) : this.fallbackParseValue(baseClassName);
+        
+        if (parseResult) {
+          return {
+            original: className,
+            className: processedClassName,
+            baseClassName: baseClassName,
+            property: parseResult.property || baseClassName,
+            value: parseResult.value || '',
+            category: category,
+            isArbitrary: parseResult.isArbitrary || false,
+            stateModifier: modifierResult.stateModifier,
+            breakpointModifier: modifierResult.breakpointModifier,
+            containerQueryModifier: modifierResult.containerQueryModifier,
+            stateModifiers: modifierResult.stateModifiers,
+            breakpointModifiers: modifierResult.breakpointModifiers,
+            specialSelector: modifierResult.specialSelector,
+            modifier: modifierResult.modifier,
+            breakpoint: this.getBreakpointName(modifierResult.breakpointModifier),
+            modifiers: {
+              state: modifierResult.stateModifiers,
+              breakpoint: this.getBreakpointName(modifierResult.breakpointModifier),
+              container: this.getContainerName(modifierResult.containerQueryModifier),
+              special: modifierResult.specialSelector
+            }
+          };
+        }
+      }
+    }
 
-    // 카테고리와 속성 결정 (이미 카테고리가 결정된 경우 우회)
-    const categoryResult = category 
-      ? { category, property: propertyName }
-      : this.determineCategoryAndProperty(propertyName, value);
-
+    // 어떤 파서도 인식하지 못한 경우, fallback 처리
+    const fallbackResult = this.fallbackParseValue(baseClassName);
     return {
       original: className,
       className: processedClassName,
       baseClassName: baseClassName,
-      property: categoryResult.property,
-      value: value,
-      category: categoryResult.category,
-      isArbitrary: isArbitrary,
+      property: fallbackResult.property,
+      value: fallbackResult.value,
+      category: 'layout', // 기본 카테고리
+      isArbitrary: fallbackResult.isArbitrary,
       stateModifier: modifierResult.stateModifier,
       breakpointModifier: modifierResult.breakpointModifier,
       containerQueryModifier: modifierResult.containerQueryModifier,
@@ -182,6 +250,54 @@ export class CSSParser {
         container: this.getContainerName(modifierResult.containerQueryModifier),
         special: modifierResult.specialSelector
       }
+    };
+  }
+
+  /**
+   * Fallback 값 파싱 (기존 parseArbitraryValue의 일부 로직)
+   */
+  private fallbackParseValue(className: string): {
+    property: string;
+    value: string;
+    isArbitrary: boolean;
+  } {
+    // [값] 형태의 임의 값 체크
+    const arbitraryMatch = className.match(/^(.+?)-\[(.+)\]$/);
+    
+    if (arbitraryMatch) {
+      return {
+        property: arbitraryMatch[1],
+        value: arbitraryMatch[2],
+        isArbitrary: true
+      };
+    }
+
+    // CSS 변수 체크 (예: text-(--my-color), aspect-(--my-aspect-ratio))
+    const cssVarMatch = className.match(/^(.+?)-(--[\w-]+)$/);
+    
+    if (cssVarMatch) {
+      return {
+        property: cssVarMatch[1],
+        value: `var(${cssVarMatch[2]})`,
+        isArbitrary: true
+      };
+    }
+
+    // 일반 분리 (propertyName-value)
+    const lastDashIndex = className.lastIndexOf('-');
+    if (lastDashIndex > 0) {
+      return {
+        property: className.substring(0, lastDashIndex),
+        value: className.substring(lastDashIndex + 1),
+        isArbitrary: false
+      };
+    }
+
+    // 값이 없는 속성 (예: flex, grid, hidden)
+    return {
+      property: className,
+      value: '',
+      isArbitrary: false
     };
   }
 
@@ -440,338 +556,6 @@ export class CSSParser {
       breakpointModifiers: breakpointModifiers.length > 0 ? breakpointModifiers : undefined,
       modifier: modifierValue
     };
-  }
-
-  /**
-   * 임의 값을 파싱합니다.
-   * @param className 클래스명
-   * @returns 파싱 결과
-   */
-  private parseArbitraryValue(className: string): { 
-    isArbitrary: boolean; 
-    propertyName: string; 
-    value: string;
-    category?: StyleCategory; // 카테고리가 이미 결정된 경우
-  } {
-    // Display 관련 클래스들은 분리하지 않고 그대로 처리
-    const displayClasses = [
-      'table-caption', 'table-cell', 'table-column', 'table-column-group', 'table-footer-group',
-      'table-header-group', 'table-row-group', 'table-row', 'inline-block', 'inline-flex', 
-      'inline-grid', 'inline-table', 'flow-root', 'sr-only', 'not-sr-only', 'list-item',
-      'block', 'inline', 'flex', 'grid', 'hidden', 'table', 'contents'
-    ];
-    
-    if (displayClasses.includes(className)) {
-      // sr-only와 not-sr-only는 특별 처리
-      if (className === 'sr-only' || className === 'not-sr-only') {
-        return {
-          isArbitrary: false,
-          propertyName: 'srOnly',
-          value: className === 'sr-only' ? 'true' : 'false',
-          category: 'flexbox-grid'
-        };
-      }
-      
-      // 나머지 display 클래스들은 property를 'display'로 설정
-      return {
-        isArbitrary: false,
-        propertyName: 'display',
-        value: className,
-        category: 'flexbox-grid'
-      };
-    }
-
-    // Typography 클래스인지 먼저 확인 (임의 값 포함)
-    if (TypographyParser.isTypographyClass(className)) {
-      const parsed = TypographyParser.parseTypography(className);
-      if (parsed) {
-        // className에서 Tailwind prefix 추출
-        let tailwindProperty = className.split('-')[0]; // 'text-lg' -> 'text'
-        
-        // 특수 케이스 처리
-        if (className.startsWith('font-')) {
-          tailwindProperty = 'font';
-        } else if (className.startsWith('tracking-')) {
-          tailwindProperty = 'tracking';
-        } else if (className.startsWith('leading-')) {
-          tailwindProperty = 'leading';
-        } else if (className.startsWith('decoration-')) {
-          tailwindProperty = 'decoration';
-        } else if (className.startsWith('underline-offset-')) {
-          tailwindProperty = 'underline-offset';
-        } else if (className.startsWith('indent-')) {
-          tailwindProperty = 'indent';
-        } else if (['uppercase', 'lowercase', 'capitalize', 'normal-case'].includes(className)) {
-          tailwindProperty = className;
-        } else if (['underline', 'overline', 'line-through', 'no-underline'].includes(className)) {
-          tailwindProperty = className;
-        } else if (['italic', 'not-italic'].includes(className)) {
-          tailwindProperty = className;
-        }
-
-        return {
-          isArbitrary: parsed.isArbitrary || false,
-          propertyName: tailwindProperty,
-          value: parsed.value,
-          category: 'typography' // 카테고리를 명시적으로 설정
-        };
-      }
-    }
-
-    // [값] 형태의 임의 값 체크
-    const arbitraryMatch = className.match(/^(.+?)-\[(.+)\]$/);
-    
-    if (arbitraryMatch) {
-      return {
-        isArbitrary: true,
-        propertyName: arbitraryMatch[1],
-        value: arbitraryMatch[2]
-      };
-    }
-
-    // Spacing 클래스인지 확인하고 SpacingParser에게 위임
-    if (SpacingParser.isSpacingClass(className)) {
-      const parsed = SpacingParser.parseSpacing(className);
-      if (parsed) {
-        // 임의 값인지 확인 (대괄호로 감싸진 값)
-        const isArbitrary = parsed.value.startsWith('[') && parsed.value.endsWith(']');
-        return {
-          isArbitrary,
-          propertyName: parsed.property,
-          value: isArbitrary ? parsed.value.slice(1, -1) : parsed.value // 대괄호 제거
-        };
-      }
-    }
-
-    // 색상 클래스 특별 처리 (text-blue-500, bg-gray-100 등)
-    const colorPropertyRegex = /^(text|bg|border|ring|outline|accent|caret|decoration|divide|from|via|to|fill|stroke)-(.+)$/;
-    const colorMatch = className.match(colorPropertyRegex);
-    
-    if (colorMatch) {
-      const property = colorMatch[1];
-      const colorValue = colorMatch[2];
-      
-      // 색상 값인지 확인 (색상명-강도 패턴)
-      if (colorValue.match(/^[a-z]+-\d+$|^[a-z]+$|^current$|^transparent$|^inherit$|^initial$|^unset$/)) {
-        return {
-          isArbitrary: false,
-          propertyName: property,
-          value: colorValue
-        };
-      }
-    }
-
-    // CSS 변수 체크 (예: text-(--my-color), aspect-(--my-aspect-ratio))
-    const cssVarMatch = className.match(/^(.+?)-(--[\w-]+)$/);
-    
-    if (cssVarMatch) {
-      return {
-        isArbitrary: true,
-        propertyName: cssVarMatch[1],
-        value: `var(${cssVarMatch[2]})`
-      };
-    }
-
-    // 일반 분리 (propertyName-value)
-    const lastDashIndex = className.lastIndexOf('-');
-    if (lastDashIndex > 0) {
-      return {
-        isArbitrary: false,
-        propertyName: className.substring(0, lastDashIndex),
-        value: className.substring(lastDashIndex + 1)
-      };
-    }
-
-    // 값이 없는 속성 (예: flex, grid, hidden)
-    return {
-      isArbitrary: false,
-      propertyName: className,
-      value: ''
-    };
-  }
-
-  /**
-   * 카테고리와 속성을 결정합니다.
-   * @param propertyName 속성명
-   * @param value 값
-   * @returns 카테고리와 속성
-   */
-  private determineCategoryAndProperty(propertyName: string, value: string): { category: StyleCategory, property: string } {
-    // 먼저 전체 클래스명으로 spacing 체크 (음수, 논리적 속성 등 포함)
-    const fullClassName = value ? `${propertyName}-${value}` : propertyName;
-    if (SpacingParser.isSpacingClass(fullClassName) || SpacingParser.isSpacingClass(propertyName)) {
-      return { category: 'spacing', property: propertyName };
-    }
-
-    // Tables 관련 (우선 처리 - border-collapse 등이 borders와 겹치므로)
-    if (['border-collapse', 'border-separate', 'border-spacing', 'table-auto', 'table-fixed', 'caption'].includes(propertyName) ||
-        propertyName.startsWith('border-spacing-') || propertyName.startsWith('caption-')) {
-      return { category: 'tables', property: propertyName };
-    }
-
-    // Borders 관련 (새로 추가)
-    if (['border-solid', 'border-dashed', 'border-dotted', 'border-double', 'border-hidden', 'border-none',
-         'rounded-none', 'rounded-sm', 'rounded-md', 'rounded-lg', 'rounded-xl', 'rounded-2xl', 'rounded-3xl',
-         'rounded-full', 'ring-inset'].includes(propertyName) ||
-        propertyName.startsWith('border') || propertyName.startsWith('rounded') ||
-        propertyName.startsWith('divide-') || propertyName === 'ring' || propertyName.startsWith('ring-') ||
-        propertyName === 'outline' || propertyName.startsWith('outline-')) {
-      return { category: 'borders', property: propertyName };
-    }
-
-    // Transitions 관련 (새로 추가)
-    if (['transition', 'duration', 'delay', 'ease-linear', 'ease-in', 'ease-out', 'ease-in-out'].includes(propertyName) ||
-        propertyName.startsWith('transition-') || propertyName.startsWith('duration-') || 
-        propertyName.startsWith('delay-') || propertyName.startsWith('ease-')) {
-      return { category: 'transitions', property: propertyName };
-    }
-
-    // Backgrounds 관련 (새로 추가)
-    if (['bg-auto', 'bg-cover', 'bg-contain', 'bg-repeat', 'bg-no-repeat', 'bg-repeat-x', 'bg-repeat-y',
-         'bg-repeat-round', 'bg-repeat-space', 'bg-fixed', 'bg-local', 'bg-scroll', 'bg-clip-border',
-         'bg-clip-padding', 'bg-clip-content', 'bg-clip-text', 'bg-origin-border', 'bg-origin-padding',
-         'bg-origin-content'].includes(propertyName) ||
-        propertyName.startsWith('bg-gradient-') || propertyName.startsWith('from-') || 
-        propertyName.startsWith('via-') || propertyName.startsWith('to-') ||
-        propertyName === 'bg' || // Include bg color classes
-        (propertyName.startsWith('bg-') && !propertyName.match(/^bg-\d/)) ||
-        propertyName.match(/^bg-(bottom|center|left|right|top)/)) {
-      return { category: 'backgrounds', property: propertyName };
-    }
-
-    // Overflow 관련 (새로 추가)
-    if (['overflow-auto', 'overflow-hidden', 'overflow-clip', 'overflow-visible', 'overflow-scroll',
-         'overscroll-auto', 'overscroll-contain', 'overscroll-none', 'visible', 'invisible', 'collapse',
-         'truncate', 'text-ellipsis', 'text-clip', 'whitespace-normal', 'whitespace-nowrap', 'whitespace-pre',
-         'break-normal', 'break-words', 'break-all', 'break-keep'].includes(propertyName) ||
-        propertyName === 'overflow' || propertyName === 'overscroll' ||
-        propertyName.startsWith('overflow-') || propertyName.startsWith('overscroll-') ||
-        propertyName.startsWith('object-') || propertyName.startsWith('whitespace-') ||
-        (propertyName.startsWith('break-') && !['break-after', 'break-before', 'break-inside'].includes(propertyName)) || propertyName.startsWith('hyphens-')) {
-      return { category: 'overflow', property: propertyName };
-    }
-
-    // Accessibility 관련 (새로 추가)
-    if (['sr-only', 'not-sr-only', 'forced-color-adjust-auto', 'forced-color-adjust-none'].includes(propertyName) ||
-        propertyName.startsWith('focus:') || propertyName.startsWith('focus-visible:') ||
-        propertyName.startsWith('focus-within:')) {
-      return { category: 'accessibility', property: propertyName };
-    }
-
-    // Blend modes 관련 (새로 추가)
-    if (propertyName.startsWith('mix-blend-') || propertyName.startsWith('bg-blend-')) {
-      return { category: 'blend-modes', property: propertyName };
-    }
-
-    // Display 관련 (Flexbox/Grid 파서에서 처리)
-    if (['block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'hidden', 'table',
-         'table-caption', 'table-cell', 'table-column', 'table-column-group', 'table-footer-group',
-         'table-header-group', 'table-row-group', 'table-row', 'flow-root', 'contents', 'list-item',
-         'sr-only', 'not-sr-only', 'inline-table'].includes(propertyName)) {
-      return { category: 'flexbox-grid', property: propertyName };
-    }
-
-    // display property가 넘어온 경우 특별 처리
-    if (propertyName === 'display') {
-      return { category: 'flexbox-grid', property: 'display' };
-    }
-
-    // Flexbox & Grid 관련 (display, flex, grid 등)
-    if (['flex', 'flex-row', 'flex-col', 'flex-wrap', 'flex-nowrap', 'flex-1', 'flex-auto', 'flex-initial', 'flex-none',
-         'flex-grow', 'flex-shrink', 'basis', 'order', 'grid-cols', 'col', 'grid-rows', 'row', 'grid-flow',
-         'justify', 'items', 'self', 'content', 'place-content', 'place-items', 'place-self',
-         'grow', 'shrink', 'auto-cols', 'auto-rows', 'col-start', 'col-end', 'row-start', 'row-end'].includes(propertyName) ||
-        propertyName.startsWith('flex-') || propertyName.startsWith('grid-') || propertyName.startsWith('col-') || 
-        propertyName.startsWith('row-') || propertyName.startsWith('gap') || propertyName.startsWith('auto-cols-') ||
-        propertyName.startsWith('auto-rows-') || propertyName.startsWith('justify-') || propertyName.startsWith('items-') ||
-        propertyName.startsWith('self-') || propertyName.startsWith('content-') || propertyName.startsWith('place-') ||
-        propertyName.startsWith('basis-') || propertyName.startsWith('order-') || propertyName.startsWith('grow-') ||
-        propertyName.startsWith('shrink-')) {
-      return { category: 'flexbox-grid', property: propertyName };
-    }
-
-    // Filters 관련
-    if (['blur', 'brightness', 'contrast', 'drop-shadow', 'grayscale', 'hue-rotate', 'invert', 'saturate', 'sepia',
-         'backdrop-blur', 'backdrop-brightness', 'backdrop-contrast', 'backdrop-grayscale', 'backdrop-hue-rotate',
-         'backdrop-invert', 'backdrop-opacity', 'backdrop-saturate', 'backdrop-sepia'].includes(propertyName) ||
-        propertyName.startsWith('blur-') || propertyName.startsWith('brightness-') || propertyName.startsWith('contrast-') ||
-        propertyName.startsWith('backdrop-')) {
-      return { category: 'filters', property: propertyName };
-    }
-
-    // Interactivity 관련
-    if (['accent', 'appearance', 'cursor', 'caret', 'pointer-events', 'resize', 'scroll', 'snap', 'touch', 'select', 'will-change'].includes(propertyName) ||
-        propertyName.startsWith('accent-') || propertyName.startsWith('appearance-') || propertyName.startsWith('cursor-') ||
-        propertyName.startsWith('caret-') || propertyName.startsWith('pointer-events-') || propertyName.startsWith('resize-') ||
-        propertyName.startsWith('scroll-') || propertyName.startsWith('snap-') || propertyName.startsWith('touch-') ||
-        propertyName.startsWith('select-') || propertyName.startsWith('will-change-')) {
-      return { category: 'interactivity', property: propertyName };
-    }
-
-    // SVG 관련
-    if (['fill', 'stroke'].includes(propertyName) || propertyName.startsWith('fill-') || propertyName.startsWith('stroke-')) {
-      return { category: 'svg', property: propertyName };
-    }
-
-    // 타이포그래피 관련 - TypographyParser 사용 (우선 처리)
-    if (TypographyParser.isTypographyClass(propertyName) || TypographyParser.isTypographyClass(`${propertyName}-${value}`)) {
-      return { category: 'typography', property: propertyName };
-    }
-
-    // 타이포그래피 관련 (text는 크기일 수도 색상일 수도 있으므로 값으로 판단)
-    if (propertyName === 'text') {
-      // 폰트 크기 값들
-      const fontSizes = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl', '8xl', '9xl'];
-      // 텍스트 정렬 값들
-      const textAligns = ['left', 'center', 'right', 'justify', 'start', 'end'];
-      
-      if (fontSizes.includes(value) || textAligns.includes(value)) {
-        return { category: 'typography', property: propertyName };
-      } else {
-        return { category: 'colors', property: propertyName };
-      }
-    }
-
-    // 타이포그래피 속성명으로 체크 (TypographyParser가 파싱한 CSS 속성들)
-    if (['font-size', 'font-weight', 'font-family', 'letter-spacing', 'line-height', 
-         'text-decoration-style', 'text-decoration-thickness', 'text-underline-offset', 
-         'text-indent'].includes(propertyName)) {
-      return { category: 'typography', property: propertyName };
-    }
-
-    // 사이징 관련 (모든 width/height 관련 속성들)
-    if (['w', 'h', 'min-w', 'min-h', 'max-w', 'max-h', 'size'].includes(propertyName)) {
-      return { category: 'sizing', property: propertyName };
-    }
-
-    // 레이아웃 관련 (기존에 flexbox-grid로 이동된 것들 제외)
-    if (['aspect', 'columns', 'break-after', 'break-before', 'break-inside', 'box-decoration', 'box-border', 'box-content', 'float', 'clear', 'isolate', 'isolation'].includes(propertyName)) {
-      return { category: 'layout', property: propertyName };
-    }
-
-    // 효과 관련 (rounded, outline은 이제 borders 파서에서 처리)
-    if (['shadow', 'text-shadow', 'opacity'].includes(propertyName)) {
-      return { category: 'effects', property: propertyName };
-    }
-
-    // 애니메이션 관련 (transition, duration, delay, ease는 이제 transitions 파서에서 처리)
-    if (['animate', 'repeat', 'direction', 'fill'].includes(propertyName)) {
-      return { category: 'animation', property: propertyName };
-    }
-
-    // Position 관련 (static, absolute, relative, fixed, sticky, top, left, z-index 등)
-    if (['static', 'fixed', 'absolute', 'relative', 'sticky'].includes(propertyName) ||
-        ['top', 'right', 'bottom', 'left', 'inset', 'inset-x', 'inset-y', 'z'].includes(propertyName)) {
-      return { category: 'position', property: propertyName };
-    }
-
-    // 변형 관련
-    if (['scale', 'scale-x', 'scale-y', 'rotate', 'translate-x', 'translate-y', 'skew-x', 'skew-y', 'origin'].includes(propertyName)) {
-      return { category: 'transform', property: propertyName };
-    }
-
-    // 기본값은 레이아웃으로 처리
-    return { category: 'layout', property: propertyName };
   }
 
   /**
@@ -1204,9 +988,6 @@ export class CSSParser {
         break;
       case 'flexbox-grid':
         FlexboxGridParser.applyFlexboxGridStyle(parsedClass, styles, this.preset);
-        break;
-      case 'filters':
-        FiltersParser.applyFiltersStyle(parsedClass, styles, this.preset);
         break;
       case 'interactivity':
         InteractivityParser.applyInteractivityStyle(parsedClass, styles, this.preset);

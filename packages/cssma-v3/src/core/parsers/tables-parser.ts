@@ -5,7 +5,35 @@
 
 import { ParsedStyle, ParsedClass, TablesStyles, DesignPreset } from '../../types';
 
+const TABLE_CLASSES = {
+  'border-collapse': 'collapse',
+  'border-separate': 'separate',
+  'border-spacing': 'spacing',
+  'table-auto': 'auto',
+  'table-fixed': 'fixed',
+  'caption': 'caption'
+};
+
+const PREFIX_CLASSES = [
+  'border-spacing-', 'caption-'
+];
+
 export class TablesParser {
+
+
+  /**
+   * 테이블 관련 클래스인지 확인합니다.
+   * @param className 클래스명
+   * @returns 테이블 관련 클래스인지 여부
+   */
+  static isTableClass(className: string): boolean {
+    if (className in TABLE_CLASSES || PREFIX_CLASSES.some(prefix => className.startsWith(prefix))) {
+      return true;
+    }
+
+    return false;
+  }
+
   /**
    * Tables 스타일을 적용합니다.
    * @param parsedClass 파싱된 클래스

@@ -5,7 +5,25 @@
 
 import { ParsedStyle, ParsedClass, SVGStyles, DesignPreset } from '../../types';
 
+const SVG_CLASSES = {
+  'fill': 'fill',
+  'stroke': 'stroke',
+};
+
+const PREFIX_CLASSES = [
+  'fill-',
+  'stroke-',
+];
+
 export class SVGParser {
+
+  static isSVGClass(className: string): boolean {
+    if (className in SVG_CLASSES || PREFIX_CLASSES.some(prefix => className.startsWith(prefix))) {
+      return true;
+    }
+
+    return false;
+  }
   /**
    * SVG 스타일을 적용합니다.
    * @param parsedClass 파싱된 클래스

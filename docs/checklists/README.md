@@ -83,15 +83,15 @@
 
 ### 🔤 Typography & Content
 - [x] **[Typography](./typography.md)** - 글꼴, 크기, 텍스트 스타일 ✅ (40/40 테스트 통과)
-- [ ] **[Colors](./colors.md)** - 완전한 색상 시스템 (95개 항목)
+- [ ] **[Colors](./colors.md)** - 완전한 색상 시스템 (95개 항목) 🔄 **진행 중** (3/9 테스트 통과 - 배경색상, 테두리색상 파싱 완료)
   - Default color palette (25 items)
   - Working with colors (30 items)
   - Customizing colors (25 items)
   - Color integration & usage (15 items)
 
 ### 🎭 Visual Effects
-- [ ] **[Backgrounds](./backgrounds.md)** - 배경 이미지, 색상, 그라데이션
-- [ ] **[Borders](./borders.md)** - 테두리, 둥근 모서리, 아웃라인
+- [ ] **[Backgrounds](./backgrounds.md)** - 배경 이미지, 색상, 그라데이션 🔄 **진행 중** (기본 배경색상 파싱 완료, 임의값 파싱 개선 필요)
+- [ ] **[Borders](./borders.md)** - 테두리, 둥근 모서리, 아웃라인 🔄 **진행 중** (기본 border-width, border-radius 파싱 완료 - Effects 테스트 12/12 통과)
 - [x] **[Effects](./effects.md)** - 그림자, 투명도, 블렌드 모드 ✅ (text-shadow 완료)
 - [ ] **[Filters](./filters.md)** - 블러, 밝기, 대비 등 필터 효과
 
@@ -161,7 +161,7 @@
 - [ ] Component Patterns (완료: 0/4)
 - [ ] Configuration & Customization (완료: 0/6)
 
-**전체 진행률: 32.8% (299/910 완료)** 
+**전체 진행률: 33.2% (302/910 완료)** 
 
 > **🎉 최근 완성**: Flexbox & Grid System ✅ - gap 계열 spacing/flexboxGrid 동시 반영, 전체 36개 테스트 통과, 100% 구현 완료
 > **🚨 주의**: 일부 integration 테스트에서 새로운 파서들과의 연동 이슈 존재 (21개 실패)

@@ -108,4 +108,47 @@ export class AccessibilityParser {
       className === 'forced-color-adjust-none'
     );
   }
+
+  /**
+   * 표준 인터페이스: 클래스가 accessibility 관련인지 확인합니다.
+   */
+  static isValidClass(className: string): boolean {
+    // 정확한 매치만 인식 (다른 파서와의 충돌 방지)
+    const exactMatches = [
+      'sr-only', 'not-sr-only'
+    ];
+    
+    return exactMatches.includes(className);
+  }
+
+  /**
+   * 표준 인터페이스: accessibility 클래스의 값을 파싱합니다.
+   */
+  static parseValue(className: string): {
+    property: string;
+    value: string;
+    isArbitrary: boolean;
+  } | null {
+    if (!this.isValidClass(className)) {
+      return null;
+    }
+
+    // sr-only 관련 클래스들
+    switch (className) {
+      case 'sr-only':
+        return {
+          property: 'sr-only',
+          value: 'true',
+          isArbitrary: false
+        };
+      case 'not-sr-only':
+        return {
+          property: 'sr-only',
+          value: 'false',
+          isArbitrary: false
+        };
+      default:
+        return null;
+    }
+  }
 } 

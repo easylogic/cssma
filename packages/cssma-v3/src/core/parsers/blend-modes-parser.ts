@@ -6,7 +6,55 @@
 
 import { ParsedStyle, BlendModesStyles } from '../../types';
 
+const BLEND_MODES_CLASSES = {
+  'mix-blend-normal': 'normal',
+  'mix-blend-multiply': 'multiply',
+  'mix-blend-screen': 'screen',
+  'mix-blend-overlay': 'overlay',
+  'mix-blend-darken': 'darken',
+  'mix-blend-lighten': 'lighten',
+  'mix-blend-color-dodge': 'color-dodge',
+  'mix-blend-color-burn': 'color-burn',
+  'mix-blend-hard-light': 'hard-light',
+  'mix-blend-soft-light': 'soft-light',
+  'mix-blend-difference': 'difference',
+  'mix-blend-exclusion': 'exclusion',
+  'mix-blend-hue': 'hue',
+  'mix-blend-saturation': 'saturation',
+  'mix-blend-color': 'color',
+  'mix-blend-luminosity': 'luminosity',
+  'bg-blend-normal': 'normal',
+  'bg-blend-multiply': 'multiply',
+  'bg-blend-screen': 'screen',
+  'bg-blend-overlay': 'overlay',
+  'bg-blend-darken': 'darken',
+  'bg-blend-lighten': 'lighten',
+  'bg-blend-color-dodge': 'color-dodge',
+  'bg-blend-color-burn': 'color-burn',
+  'bg-blend-hard-light': 'hard-light',
+  'bg-blend-soft-light': 'soft-light',
+  'bg-blend-difference': 'difference',
+  'bg-blend-exclusion': 'exclusion',
+  'bg-blend-hue': 'hue',
+  'bg-blend-saturation': 'saturation',
+  'bg-blend-color': 'color',
+  'bg-blend-luminosity': 'luminosity'
+};
+
+const PREFIX_CLASSES = [
+  'mix-blend-',
+  'bg-blend-'
+];
+
 export class BlendModesParser {
+
+  static isBlendModesClass(className: string): boolean {
+    if (className in BLEND_MODES_CLASSES || PREFIX_CLASSES.some(prefix => className.startsWith(prefix))) {
+      return true;
+    }
+    return false;
+  }
+
   /**
    * 블렌드 모드 클래스를 파싱합니다.
    * @param className CSS 클래스명
@@ -30,31 +78,10 @@ export class BlendModesParser {
    * Mix blend mode 유틸리티를 파싱합니다.
    */
   private static parseMixBlendMode(className: string): ParsedStyle | null {
-    const mode = className.replace('mix-blend-', '');
-    
-    const mixBlendModes: Record<string, string> = {
-      'normal': 'normal',
-      'multiply': 'multiply',
-      'screen': 'screen',
-      'overlay': 'overlay',
-      'darken': 'darken',
-      'lighten': 'lighten',
-      'color-dodge': 'color-dodge',
-      'color-burn': 'color-burn',
-      'hard-light': 'hard-light',
-      'soft-light': 'soft-light',
-      'difference': 'difference',
-      'exclusion': 'exclusion',
-      'hue': 'hue',
-      'saturation': 'saturation',
-      'color': 'color',
-      'luminosity': 'luminosity'
-    };
-
-    if (mode in mixBlendModes) {
+    if (className in BLEND_MODES_CLASSES) {
       return {
         property: 'mixBlendMode',
-        value: mixBlendModes[mode],
+        value: BLEND_MODES_CLASSES[className as keyof typeof BLEND_MODES_CLASSES],
         variant: 'preset'
       };
     }
@@ -66,31 +93,10 @@ export class BlendModesParser {
    * Background blend mode 유틸리티를 파싱합니다.
    */
   private static parseBackgroundBlendMode(className: string): ParsedStyle | null {
-    const mode = className.replace('bg-blend-', '');
-    
-    const backgroundBlendModes: Record<string, string> = {
-      'normal': 'normal',
-      'multiply': 'multiply',
-      'screen': 'screen',
-      'overlay': 'overlay',
-      'darken': 'darken',
-      'lighten': 'lighten',
-      'color-dodge': 'color-dodge',
-      'color-burn': 'color-burn',
-      'hard-light': 'hard-light',
-      'soft-light': 'soft-light',
-      'difference': 'difference',
-      'exclusion': 'exclusion',
-      'hue': 'hue',
-      'saturation': 'saturation',
-      'color': 'color',
-      'luminosity': 'luminosity'
-    };
-
-    if (mode in backgroundBlendModes) {
+    if (className in BLEND_MODES_CLASSES) {
       return {
         property: 'backgroundBlendMode',
-        value: backgroundBlendModes[mode],
+        value: BLEND_MODES_CLASSES[className as keyof typeof BLEND_MODES_CLASSES],
         variant: 'preset'
       };
     }

@@ -90,6 +90,34 @@ export class SpacingParser {
   ];
 
   /**
+   * 표준 인터페이스: 클래스가 spacing 관련인지 확인합니다.
+   */
+  static isValidClass(className: string): boolean {
+    return this.isSpacingClass(className);
+  }
+
+  /**
+   * 표준 인터페이스: spacing 클래스의 값을 파싱합니다.
+   */
+  static parseValue(className: string): {
+    property: string;
+    value: string;
+    isArbitrary: boolean;
+  } | null {
+    const parsed = this.parseSpacing(className);
+    if (!parsed) return null;
+
+    // 임의 값인지 확인 (대괄호로 감싸진 값)
+    const isArbitrary = parsed.value.startsWith('[') && parsed.value.endsWith(']');
+    
+    return {
+      property: parsed.property,
+      value: isArbitrary ? parsed.value.slice(1, -1) : parsed.value, // 대괄호 제거
+      isArbitrary
+    };
+  }
+
+  /**
    * 클래스가 spacing 관련인지 확인합니다.
    */
   static isSpacingClass(className: string): boolean {

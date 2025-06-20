@@ -7,6 +7,89 @@ import { ParsedStyle, ParsedClass, FlexboxGridStyles, DesignPreset } from '../..
 
 export class FlexboxGridParser {
   /**
+   * 표준 인터페이스: 클래스가 flexbox/grid 관련인지 확인합니다.
+   */
+  static isValidClass(className: string): boolean {
+    // Display 관련 클래스들
+    const displayClasses = [
+      'table-caption', 'table-cell', 'table-column', 'table-column-group', 'table-footer-group',
+      'table-header-group', 'table-row-group', 'table-row', 'inline-block', 'inline-flex', 
+      'inline-grid', 'inline-table', 'flow-root', 'sr-only', 'not-sr-only', 'list-item',
+      'block', 'inline', 'flex', 'grid', 'hidden', 'table', 'contents'
+    ];
+    
+    if (displayClasses.includes(className)) {
+      return true;
+    }
+
+    // Flexbox & Grid 관련 접두사 패턴
+    const patterns = [
+      /^flex(-row|-col|-wrap|-nowrap|-1|-auto|-initial|-none|$)/, // flex direction, wrap, flex shorthand
+      /^(grow|shrink)(-\d+)?$/, // flex grow/shrink
+      /^basis-/, // flex basis
+      /^order-/, // order
+      /^grid-cols-/, // grid template columns
+      /^col-/, // grid column
+      /^grid-rows-/, // grid template rows
+      /^row-/, // grid row
+      /^grid-flow-/, // grid auto flow
+      /^gap-/, // gap
+      /^justify-/, // justify content/items/self
+      /^items-/, // align items
+      /^self-/, // align/justify self
+      /^content-/, // align content
+      /^place-/, // place content/items/self
+      /^auto-cols-/, // grid auto columns
+      /^auto-rows-/ // grid auto rows
+    ];
+
+    return patterns.some(pattern => pattern.test(className));
+  }
+
+  /**
+   * 표준 인터페이스: flexbox/grid 클래스의 값을 파싱합니다.
+   */
+  static parseValue(className: string): {
+    property: string;
+    value: string;
+    isArbitrary: boolean;
+  } | null {
+    const result = this.parse(className);
+    if (!result) return null;
+
+    // sr-only 특별 처리
+    if (className === 'sr-only' || className === 'not-sr-only') {
+      return {
+        property: 'srOnly',
+        value: className === 'sr-only' ? 'true' : 'false',
+        isArbitrary: false
+      };
+    }
+
+    // Display 클래스들은 property를 'display'로 설정
+    const displayClasses = [
+      'table-caption', 'table-cell', 'table-column', 'table-column-group', 'table-footer-group',
+      'table-header-group', 'table-row-group', 'table-row', 'inline-block', 'inline-flex', 
+      'inline-grid', 'inline-table', 'flow-root', 'list-item',
+      'block', 'inline', 'flex', 'grid', 'hidden', 'table', 'contents'
+    ];
+    
+    if (displayClasses.includes(className)) {
+      return {
+        property: 'display',
+        value: className,
+        isArbitrary: false
+      };
+    }
+
+    return {
+      property: result.property,
+      value: result.value,
+      isArbitrary: result.variant === 'arbitrary'
+    };
+  }
+
+  /**
    * FlexboxGrid 스타일을 적용합니다.
    * @param parsedClass 파싱된 클래스
    * @param styles 스타일 객체

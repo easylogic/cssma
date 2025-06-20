@@ -8,6 +8,150 @@ import { ParsedClass, TransformStyles, DesignPreset } from '../../types';
 
 export class TransformParser {
   /**
+   * 표준 인터페이스: 클래스가 transform 관련인지 확인합니다.
+   */
+  static isValidClass(className: string): boolean {
+    // Transform patterns
+    const patterns = [
+      /^scale(-[xy])?-/, // scale-150, scale-x-50, scale-y-125, scale-[1.5]
+      /^rotate-/, // rotate-45, rotate-[30deg]
+      /^translate-[xy]-/, // translate-x-4, translate-y-8, translate-x-[10px]
+      /^skew-[xy]-/, // skew-x-6, skew-y-12, skew-x-[15deg]
+      /^origin-/, // origin-center, origin-top-left, origin-[50%_50%]
+    ];
+
+    return patterns.some(pattern => pattern.test(className));
+  }
+
+  /**
+   * 표준 인터페이스: transform 클래스의 값을 파싱합니다.
+   */
+  static parseValue(className: string): {
+    property: string;
+    value: string;
+    isArbitrary: boolean;
+  } | null {
+    if (!this.isValidClass(className)) {
+      return null;
+    }
+
+    // Scale patterns
+    const scaleMatch = className.match(/^scale(-[xy])?-(.+)$/);
+    if (scaleMatch) {
+      const axis = scaleMatch[1] || ''; // '', '-x', '-y'
+      let value = scaleMatch[2];
+      
+      // 임의 값 [...]
+      if (value.startsWith('[') && value.endsWith(']')) {
+        value = value.slice(1, -1);
+        return {
+          property: `scale${axis}`,
+          value: value,
+          isArbitrary: true
+        };
+      }
+      
+      return {
+        property: `scale${axis}`,
+        value: value,
+        isArbitrary: false
+      };
+    }
+
+    // Rotate pattern
+    const rotateMatch = className.match(/^rotate-(.+)$/);
+    if (rotateMatch) {
+      let value = rotateMatch[1];
+      
+      // 임의 값 [...]
+      if (value.startsWith('[') && value.endsWith(']')) {
+        value = value.slice(1, -1);
+        return {
+          property: 'rotate',
+          value: value,
+          isArbitrary: true
+        };
+      }
+      
+      return {
+        property: 'rotate',
+        value: value,
+        isArbitrary: false
+      };
+    }
+
+    // Translate patterns
+    const translateMatch = className.match(/^translate-([xy])-(.+)$/);
+    if (translateMatch) {
+      const axis = translateMatch[1]; // 'x' or 'y'
+      let value = translateMatch[2];
+      
+      // 임의 값 [...]
+      if (value.startsWith('[') && value.endsWith(']')) {
+        value = value.slice(1, -1);
+        return {
+          property: `translate-${axis}`,
+          value: value,
+          isArbitrary: true
+        };
+      }
+      
+      return {
+        property: `translate-${axis}`,
+        value: value,
+        isArbitrary: false
+      };
+    }
+
+    // Skew patterns
+    const skewMatch = className.match(/^skew-([xy])-(.+)$/);
+    if (skewMatch) {
+      const axis = skewMatch[1]; // 'x' or 'y'
+      let value = skewMatch[2];
+      
+      // 임의 값 [...]
+      if (value.startsWith('[') && value.endsWith(']')) {
+        value = value.slice(1, -1);
+        return {
+          property: `skew-${axis}`,
+          value: value,
+          isArbitrary: true
+        };
+      }
+      
+      return {
+        property: `skew-${axis}`,
+        value: value,
+        isArbitrary: false
+      };
+    }
+
+    // Origin pattern
+    const originMatch = className.match(/^origin-(.+)$/);
+    if (originMatch) {
+      let value = originMatch[1];
+      
+      // 임의 값 [...]
+      if (value.startsWith('[') && value.endsWith(']')) {
+        value = value.slice(1, -1);
+        return {
+          property: 'origin',
+          value: value,
+          isArbitrary: true
+        };
+      }
+      
+      return {
+        property: 'origin',
+        value: value,
+        isArbitrary: false
+      };
+    }
+
+    return null;
+  }
+
+  /**
    * 변형 스타일을 적용합니다.
    * @param parsedClass 파싱된 클래스
    * @param styles 스타일 객체

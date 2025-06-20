@@ -8,6 +8,137 @@ import { ParsedClass, ColorStyles, DesignPreset } from '../../types';
 
 export class ColorParser {
   /**
+   * 표준 인터페이스: 클래스가 color 관련인지 확인합니다.
+   */
+  static isValidClass(className: string): boolean {
+    // text-[색상값] 패턴 (typography가 아닌 색상)
+    const textArbitraryMatch = className.match(/^text-\[(.+)\]$/);
+    if (textArbitraryMatch) {
+      return this.isColorValue(textArbitraryMatch[1]);
+    }
+
+    // bg-[색상값] 패턴
+    const bgArbitraryMatch = className.match(/^bg-\[(.+)\]$/);
+    if (bgArbitraryMatch) {
+      return this.isColorValue(bgArbitraryMatch[1]);
+    }
+
+    // border-[색상값] 패턴 (단순 색상만, border-width는 제외)
+    const borderArbitraryMatch = className.match(/^border-\[(.+)\]$/);
+    if (borderArbitraryMatch) {
+      return this.isColorValue(borderArbitraryMatch[1]);
+    }
+
+    // 색상 관련 접두사 패턴
+    const patterns = [
+      /^text-[a-z]+-\d+$/, // text-blue-500, text-red-300
+      /^text-(black|white|transparent|current)$/, // 기본 색상
+      /^bg-[a-z]+-\d+$/, // bg-red-500, bg-blue-300
+      /^bg-(black|white|transparent|current)$/, // 기본 배경 색상
+      /^border-[a-z]+-\d+$/, // border-red-500, border-blue-300 (색상만)
+      /^border-(black|white|transparent|current)$/, // 기본 테두리 색상
+      /^(accent|caret|decoration|divide|fill|outline|placeholder|ring|shadow|stroke)-/, // 다른 색상 속성들
+    ];
+
+    return patterns.some(pattern => pattern.test(className));
+  }
+
+  /**
+   * 표준 인터페이스: color 클래스의 값을 파싱합니다.
+   */
+  static parseValue(className: string): {
+    property: string;
+    value: string;
+    isArbitrary: boolean;
+  } | null {
+    // 임의 값 처리
+    const arbitraryMatch = className.match(/^(.+?)-\[(.+)\]$/);
+    if (arbitraryMatch) {
+      return {
+        property: arbitraryMatch[1],
+        value: arbitraryMatch[2],
+        isArbitrary: true
+      };
+    }
+
+    // border-색상 특수 처리 (border-green-500 -> property: border, value: green-500)
+    if (className.startsWith('border-')) {
+      const borderMatch = className.match(/^border(-[tlbr])?(-[xy])?-(.+)$/);
+      if (borderMatch) {
+        const direction = (borderMatch[1] || '') + (borderMatch[2] || '');
+        const colorValue = borderMatch[3];
+        return {
+          property: `border${direction}`,
+          value: colorValue,
+          isArbitrary: false
+        };
+      }
+    }
+
+    // 일반 색상 클래스 처리 (text-blue-500, bg-red-500)
+    if (className.startsWith('text-')) {
+      const value = className.substring(5); // Remove 'text-'
+      return {
+        property: 'text',
+        value: value,
+        isArbitrary: false
+      };
+    }
+
+    if (className.startsWith('bg-')) {
+      const value = className.substring(3); // Remove 'bg-'
+      return {
+        property: 'bg',
+        value: value,
+        isArbitrary: false
+      };
+    }
+
+    // 기타 색상 클래스 처리
+    const lastDashIndex = className.lastIndexOf('-');
+    if (lastDashIndex === -1) {
+      return null;
+    }
+
+    const property = className.slice(0, lastDashIndex);
+    const value = className.slice(lastDashIndex + 1);
+
+    return {
+      property: property,
+      value: value,
+      isArbitrary: false
+    };
+  }
+
+  /**
+   * 값이 색상 값인지 확인합니다.
+   */
+  private static isColorValue(value: string): boolean {
+    // HEX 색상 (#FF0000, #F00)
+    if (/^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$/.test(value)) {
+      return true;
+    }
+    
+    // RGB/RGBA 함수
+    if (/^rgba?\(/.test(value)) {
+      return true;
+    }
+    
+    // HSL/HSLA 함수
+    if (/^hsla?\(/.test(value)) {
+      return true;
+    }
+    
+    // 색상 키워드
+    const colorKeywords = [
+      'red', 'green', 'blue', 'yellow', 'orange', 'purple', 'pink', 'gray', 'grey', 'black', 'white',
+      'transparent', 'current', 'inherit', 'initial', 'unset'
+    ];
+    
+    return colorKeywords.includes(value.toLowerCase());
+  }
+
+  /**
    * 색상 스타일을 적용합니다.
    * @param parsedClass 파싱된 클래스
    * @param styles 스타일 객체

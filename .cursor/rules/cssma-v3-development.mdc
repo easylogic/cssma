@@ -1,0 +1,227 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# CSSMA-V3 개발 워크플로우 규칙
+
+## 📋 프로젝트 구조 및 개발 가이드
+
+### 🎯 체크리스트 시작점
+- **메인 체크리스트**: [docs/checklists/README.md](mdc:docs/checklists/README.md)
+- 전체 진행률 추적 및 카테고리별 완성도 확인
+- Tailwind CSS v4.1 구현 상태 모니터링
+
+### 📚 카테고리별 체크리스트 참조
+각 기능 카테고리의 상세 체크리스트는 `docs/checklists/` 내부 파일들을 참조:
+
+#### 🎨 레이아웃 & 구조
+- [layout.md](mdc:docs/checklists/layout.md) - 요소 배치 및 레이아웃
+- [flexbox-grid.md](mdc:docs/checklists/flexbox-grid.md) - 플렉스박스와 그리드
+- [sizing.md](mdc:docs/checklists/sizing.md) - 너비, 높이, 크기 조정
+- [spacing.md](mdc:docs/checklists/spacing.md) - 마진, 패딩, 간격
+
+#### 🔤 타이포그래피 & 컨텐츠
+- [typography.md](mdc:docs/checklists/typography.md) - 글꼴, 크기, 텍스트 스타일
+- [colors.md](mdc:docs/checklists/colors.md) - 완전한 색상 시스템
+
+#### 🎭 시각적 효과
+- [backgrounds.md](mdc:docs/checklists/backgrounds.md) - 배경 이미지, 색상, 그라데이션
+- [borders.md](mdc:docs/checklists/borders.md) - 테두리, 둥근 모서리, 아웃라인
+- [effects.md](mdc:docs/checklists/effects.md) - 그림자, 투명도, 블렌드 모드
+- [filters.md](mdc:docs/checklists/filters.md) - 블러, 밝기, 대비 등 필터 효과
+
+#### 🎬 모션 & 변형
+- [animation.md](mdc:docs/checklists/animation.md) - 애니메이션 및 트랜지션
+- [transforms.md](mdc:docs/checklists/transforms.md) - 2D/3D 변형, 회전, 크기 조정
+
+#### 🎯 상호작용 & 동작
+- [interactivity.md](mdc:docs/checklists/interactivity.md) - 커서, 사용자 선택, 스크롤
+- [tables.md](mdc:docs/checklists/tables.md) - 테이블 레이아웃 및 스타일
+
+#### 🔧 특수 기능
+- [svg.md](mdc:docs/checklists/svg.md) - SVG 요소 스타일링
+- [accessibility.md](mdc:docs/checklists/accessibility.md) - 접근성 기능
+
+#### 🚀 핵심 개념
+- [core-concepts.md](mdc:docs/checklists/core-concepts.md) - 유틸리티 우선 접근법
+- [preflight.md](mdc:docs/checklists/preflight.md) - 기본 스타일 시스템
+- [adding-custom-styles.md](mdc:docs/checklists/adding-custom-styles.md) - 커스텀 스타일 추가
+- [detecting-classes.md](mdc:docs/checklists/detecting-classes.md) - 클래스 감지 및 런타임 처리
+- [functions-and-directives.md](mdc:docs/checklists/functions-and-directives.md) - CSS 함수와 지시어
+- [states.md](mdc:docs/checklists/states.md) - 상태 변형자
+- [responsive.md](mdc:docs/checklists/responsive.md) - 반응형 디자인
+- [dark-mode.md](mdc:docs/checklists/dark-mode.md) - 다크 모드
+- [theme-variables.md](mdc:docs/checklists/theme-variables.md) - 테마 변수
+
+### 🔧 카테고리별 파서 구현
+각 기능 카테고리의 파서는 `packages/cssma-v3/src/core/parsers/` 에서 구현:
+
+#### 기존 구현된 파서들
+- [typography-parser.ts](mdc:packages/cssma-v3/src/core/parsers/typography-parser.ts) - 타이포그래피 파서
+- [spacing-parser.ts](mdc:packages/cssma-v3/src/core/parsers/spacing-parser.ts) - 간격 파서
+- [sizing-parser.ts](mdc:packages/cssma-v3/src/core/parsers/sizing-parser.ts) - 크기 파서
+- [flexbox-grid-parser.ts](mdc:packages/cssma-v3/src/core/parsers/flexbox-grid-parser.ts) - 플렉스박스/그리드 파서
+- [position-parser.ts](mdc:packages/cssma-v3/src/core/parsers/position-parser.ts) - 위치 파서
+- [layout-parser.ts](mdc:packages/cssma-v3/src/core/parsers/layout-parser.ts) - 레이아웃 파서
+- [effects-parser.ts](mdc:packages/cssma-v3/src/core/parsers/effects-parser.ts) - 효과 파서
+- [animation-parser.ts](mdc:packages/cssma-v3/src/core/parsers/animation-parser.ts) - 애니메이션 파서
+- [transform-parser.ts](mdc:packages/cssma-v3/src/core/parsers/transform-parser.ts) - 변형 파서
+- [overflow-parser.ts](mdc:packages/cssma-v3/src/core/parsers/overflow-parser.ts) - 오버플로우 파서
+- [accessibility-parser.ts](mdc:packages/cssma-v3/src/core/parsers/accessibility-parser.ts) - 접근성 파서
+
+#### 진행 중인 파서들
+- [backgrounds-parser.ts](mdc:packages/cssma-v3/src/core/parsers/backgrounds-parser.ts) - 배경 파서
+- [borders-parser.ts](mdc:packages/cssma-v3/src/core/parsers/borders-parser.ts) - 테두리 파서
+- [filters-parser.ts](mdc:packages/cssma-v3/src/core/parsers/filters-parser.ts) - 필터 파서
+- [color-parser.ts](mdc:packages/cssma-v3/src/core/parsers/color-parser.ts) - 색상 파서 (개별 파서로 분산 예정)
+
+#### 기타 파서들
+- [interactivity-parser.ts](mdc:packages/cssma-v3/src/core/parsers/interactivity-parser.ts) - 상호작용 파서
+- [tables-parser.ts](mdc:packages/cssma-v3/src/core/parsers/tables-parser.ts) - 테이블 파서
+- [svg-parser.ts](mdc:packages/cssma-v3/src/core/parsers/svg-parser.ts) - SVG 파서
+- [transitions-parser.ts](mdc:packages/cssma-v3/src/core/parsers/transitions-parser.ts) - 트랜지션 파서
+- [blend-modes-parser.ts](mdc:packages/cssma-v3/src/core/parsers/blend-modes-parser.ts) - 블렌드 모드 파서
+
+### 🔄 통합 운영 파서 수정
+메인 파서 로직은 [packages/cssma-v3/src/core/parser.ts](mdc:packages/cssma-v3/src/core/parser.ts)에서 관리:
+- 파서 우선순위 설정 (PARSER_MAP)
+- 모디파이어 파싱 (반응형, 상태, 컨테이너 쿼리)
+- 카테고리별 스타일 적용 로직
+- 임의값 파싱 및 fallback 처리
+
+### 🧪 테스트 구조
+모든 테스트는 `packages/cssma-v3/tests/` 내부에 `parser.xxxx.test.ts` 형태로 작성:
+
+#### 기존 테스트 파일들
+- [parser.typography.test.ts](mdc:packages/cssma-v3/tests/parser.typography.test.ts) - 타이포그래피 테스트
+- [parser.spacing.test.ts](mdc:packages/cssma-v3/tests/parser.spacing.test.ts) - 간격 테스트
+- [parser.sizing.test.ts](mdc:packages/cssma-v3/tests/parser.sizing.test.ts) - 크기 테스트
+- [parser.flexbox-grid.test.ts](mdc:packages/cssma-v3/tests/parser.flexbox-grid.test.ts) - 플렉스박스/그리드 테스트
+- [parser.position.test.ts](mdc:packages/cssma-v3/tests/parser.position.test.ts) - 위치 테스트
+- [parser.layout.test.ts](mdc:packages/cssma-v3/tests/parser.layout.test.ts) - 레이아웃 테스트
+- [parser.effects.test.ts](mdc:packages/cssma-v3/tests/parser.effects.test.ts) - 효과 테스트
+- [parser.animation.test.ts](mdc:packages/cssma-v3/tests/parser.animation.test.ts) - 애니메이션 테스트
+- [parser.overflow.test.ts](mdc:packages/cssma-v3/tests/parser.overflow.test.ts) - 오버플로우 테스트
+
+#### 진행 중인 테스트들
+- [parser.colors.test.ts](mdc:packages/cssma-v3/tests/parser.colors.test.ts) - 색상 테스트 (3/9 통과)
+
+#### 필요한 테스트 파일들
+- `parser.backgrounds.test.ts` - 배경 테스트
+- `parser.borders.test.ts` - 테두리 테스트
+- `parser.filters.test.ts` - 필터 테스트
+- `parser.interactivity.test.ts` - 상호작용 테스트
+- `parser.tables.test.ts` - 테이블 테스트
+- `parser.svg.test.ts` - SVG 테스트
+
+## 🚀 개발 워크플로우
+
+### 1단계: 체크리스트 확인
+1. [README.md](mdc:docs/checklists/README.md)에서 전체 진행률 확인
+2. 다음 우선순위 카테고리 선택
+3. 해당 카테고리의 체크리스트 파일 검토
+
+### 2단계: 파서 구현
+1. `packages/cssma-v3/src/core/parsers/` 에서 해당 파서 구현/수정
+2. `isValidClass()` 메서드로 클래스 인식 로직 구현
+3. `parseValue()` 메서드로 값 파싱 로직 구현
+4. `applyXXXStyle()` 메서드로 스타일 적용 로직 구현
+
+### 3단계: 통합 파서 업데이트
+1. [parser.ts](mdc:packages/cssma-v3/src/core/parser.ts)의 PARSER_MAP에 새 파서 추가
+2. 우선순위 순서 조정 (특수 케이스 우선)
+3. 카테고리별 스타일 적용 로직 추가
+
+### 4단계: 테스트 작성
+1. `packages/cssma-v3/tests/parser.xxxx.test.ts` 파일 생성
+2. 클래스 파싱 테스트 (isValidClass, parseValue)
+3. 스타일 적용 테스트 (applyXXXStyle)
+4. 반응형/상태 모디파이어 테스트
+5. 임의값 파싱 테스트
+
+### 5단계: 테스트 실행 및 검증
+```bash
+npm run test -- parser.xxxx.test.ts
+```
+
+### 6단계: 체크리스트 업데이트
+1. 완료된 항목들을 체크리스트에서 ✅ 표시
+2. [README.md](mdc:docs/checklists/README.md)의 전체 진행률 업데이트
+3. 다음 우선순위 항목 식별
+
+## 🎯 현재 상태 (2025.01.06)
+
+### ✅ 완료된 카테고리
+- Layout System (171/171) ✅
+- Flexbox & Grid System (49/49) ✅  
+- Typography (40/40) ✅
+- Sizing (완료)
+- Spacing (완료)
+- Effects & Filters (14/10) ✅
+- Animation (완료)
+- Transforms (완료)
+- Accessibility (완료)
+
+### 🔄 진행 중인 카테고리
+- **Colors System (3/9 테스트 통과)** - 배경색상, 테두리색상 파싱 완료
+- **Backgrounds** - 기본 배경색상 파싱 완료, 임의값 파싱 개선 필요
+- **Borders** - 기본 border-width, border-radius 파싱 완료
+- **Filters** - 파서 구현 완료, 테스트 작성 필요
+
+### 📊 전체 진행률
+**33.2% (302/910 완료)**
+
+## ⚠️ 주요 이슈
+
+### 1. 색상 시스템 아키텍처
+- ColorParser를 개별 카테고리로 분산 (Typography의 텍스트 색상, Backgrounds의 배경 색상, Borders의 테두리 색상)
+- 각 파서가 자신의 색상 클래스를 직접 처리
+
+### 2. 임의값 파싱 이슈
+- `fallbackParseValue` 메서드에서 대괄호 제거 문제
+- `[rgb(255,0,0)]` → `rgb(255,0,0)` 올바른 변환 필요
+
+### 3. 카테고리 분류 이슈
+- 텍스트 색상이 `layout` 대신 `typography`로 분류되어야 함
+- 파서 우선순위 조정 필요
+
+## 📝 개발 가이드라인
+
+### 파서 구현 패턴
+```typescript
+export class XXXParser {
+  static isValidClass(className: string): boolean {
+    // 클래스 인식 로직
+  }
+  
+  static parseValue(className: string): ParseResult | null {
+    // 값 파싱 로직
+  }
+  
+  static applyXXXStyle(parsedClass: ParsedClass, styles: Partial<ParsedStyles>, preset: DesignPreset): void {
+    // 스타일 적용 로직
+  }
+}
+```
+
+### 테스트 구조 패턴
+```typescript
+describe('XXX Parser', () => {
+  describe('Class Recognition', () => {
+    // isValidClass 테스트
+  });
+  
+  describe('Value Parsing', () => {
+    // parseValue 테스트
+  });
+  
+  describe('Style Application', () => {
+    // applyXXXStyle 테스트
+  });
+  
+  describe('Responsive & States', () => {
+    // 모디파이어 테스트
+  });
+});
+```

@@ -1,5 +1,34 @@
 import { ParsedStyle } from '../../types';
 
+const BACKGROUND_CLASSES = {
+  'bg-auto': 'auto',
+  'bg-cover': 'cover',
+  'bg-contain': 'contain',
+  'bg-repeat': 'repeat',
+  'bg-no-repeat': 'no-repeat',
+  'bg-repeat-x': 'repeat-x',
+  'bg-repeat-y': 'repeat-y',
+  'bg-repeat-round': 'round',
+  'bg-repeat-space': 'space',
+  'bg-fixed': 'fixed',
+  'bg-local': 'local',
+  'bg-scroll': 'scroll',
+  'bg-clip-border': 'border-box',
+  'bg-clip-padding': 'padding-box',
+  'bg-clip-content': 'content-box',
+  'bg-clip-text': 'text',
+  'bg-origin-border': 'border-box',
+  'bg-origin-padding': 'padding-box',
+  'bg-origin-content': 'content-box'
+};
+
+const PREFIX_CLASSES = [
+  'bg-',
+  'from-',
+  'via-',
+  'to-'
+];
+
 export class BackgroundsParser {
   private static readonly COLOR_PALETTE = [
     'slate', 'gray', 'zinc', 'neutral', 'stone', 'red', 'orange', 'amber',
@@ -63,6 +92,121 @@ export class BackgroundsParser {
     'bg-gradient-to-l': 'to left',
     'bg-gradient-to-tl': 'to top left'
   };
+
+  /**
+   * 표준 인터페이스: 클래스가 background 관련인지 확인합니다.
+   */
+  static isValidClass(className: string): boolean {
+    // Background patterns (색상 포함)
+    const patterns = [
+      /^bg-/, // bg-red-500, bg-transparent, bg-gradient-to-r, bg-fixed, etc.
+      /^from-/, // from-red-500 (gradient start)
+      /^via-/, // via-blue-500 (gradient middle)
+      /^to-/, // to-green-500 (gradient end)
+    ];
+
+    return patterns.some(pattern => pattern.test(className));
+  }
+
+  /**
+   * 표준 인터페이스: background 클래스의 값을 파싱합니다.
+   */
+  static parseValue(className: string): {
+    property: string;
+    value: string;
+    isArbitrary: boolean;
+  } | null {
+    if (!this.isValidClass(className)) {
+      return null;
+    }
+
+    // Background color patterns
+    if (className.startsWith('bg-') && !className.includes('-to-') && !className.includes('-via-')) {
+      // bg-red-500, bg-[#ff0000], bg-transparent, bg-current
+      if (className.startsWith('bg-[') && className.endsWith(']')) {
+        const value = className.slice(3, -1); // Remove 'bg-[' and ']'
+        return {
+          property: 'bg',
+          value,
+          isArbitrary: true
+        };
+      }
+      
+      const value = className.substring(3); // Remove 'bg-'
+      return {
+        property: 'bg',
+        value,
+        isArbitrary: false
+      };
+    }
+
+    // Gradient start color (from-)
+    if (className.startsWith('from-')) {
+      if (className.startsWith('from-[') && className.endsWith(']')) {
+        const value = className.slice(5, -1); // Remove 'from-[' and ']'
+        return {
+          property: 'from',
+          value,
+          isArbitrary: true
+        };
+      }
+      
+      const value = className.substring(5); // Remove 'from-'
+      return {
+        property: 'from',
+        value,
+        isArbitrary: false
+      };
+    }
+
+    // Gradient middle color (via-)
+    if (className.startsWith('via-')) {
+      if (className.startsWith('via-[') && className.endsWith(']')) {
+        const value = className.slice(4, -1); // Remove 'via-[' and ']'
+        return {
+          property: 'via',
+          value,
+          isArbitrary: true
+        };
+      }
+      
+      const value = className.substring(4); // Remove 'via-'
+      return {
+        property: 'via',
+        value,
+        isArbitrary: false
+      };
+    }
+
+    // Gradient end color (to-)
+    if (className.startsWith('to-')) {
+      if (className.startsWith('to-[') && className.endsWith(']')) {
+        const value = className.slice(3, -1); // Remove 'to-[' and ']'
+        return {
+          property: 'to',
+          value,
+          isArbitrary: true
+        };
+      }
+      
+      const value = className.substring(3); // Remove 'to-'
+      return {
+        property: 'to',
+        value,
+        isArbitrary: false
+      };
+    }
+
+    return null;
+  }
+
+  static isBackgroundClass(className: string): boolean {
+    if (className in BACKGROUND_CLASSES || PREFIX_CLASSES.some(prefix => className.startsWith(prefix))) {
+      return true;
+    }
+
+    return false;
+  }
 
   static parse(className: string): ParsedStyle | null {
     // Background size

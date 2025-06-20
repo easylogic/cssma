@@ -5,7 +5,169 @@
 
 import { ParsedStyle, ParsedClass, InteractivityStyles, DesignPreset } from '../../types';
 
+const INTERACTIVITY_CLASSES = {
+  'accent': 'accent',
+  'appearance': 'appearance',
+  'cursor': 'cursor',
+  'caret': 'caret',
+  'pointer-events': 'pointer-events',
+  'resize': 'resize',
+  'scroll': 'scroll',
+  'snap': 'snap',
+  'touch': 'touch',
+  'select': 'select',
+  'will-change': 'will-change',
+};
+
+const PREFIX_CLASSES = [
+  'accent-',
+  'appearance-',
+  'cursor-',
+  'caret-',
+  'pointer-events-',
+  'resize-',
+  'scroll-',
+  'snap-',
+  'touch-',
+  'select-',
+  'will-change-',
+];
+
 export class InteractivityParser {
+  /**
+   * 표준 인터페이스: 클래스가 interactivity 관련인지 확인합니다.
+   */
+  static isValidClass(className: string): boolean {
+    // Interactivity patterns
+    const patterns = [
+      /^accent-/, // accent-red-500, accent-[#ff0000]
+      /^appearance-/, // appearance-none, appearance-auto
+      /^cursor-/, // cursor-pointer, cursor-not-allowed, cursor-[url()]
+      /^caret-/, // caret-red-500, caret-[#ff0000]
+      /^pointer-events-/, // pointer-events-none, pointer-events-auto
+      /^resize/, // resize, resize-x, resize-y, resize-none
+      /^scroll-/, // scroll-smooth, scroll-auto, scroll-m-4, scroll-p-8
+      /^select-/, // select-none, select-text, select-all, select-auto
+      /^touch-/, // touch-auto, touch-none, touch-pan-x, touch-pan-y
+      /^user-select-/, // user-select-none, user-select-text, user-select-all
+      /^will-change-/, // will-change-auto, will-change-scroll, will-change-contents
+    ];
+
+    return patterns.some(pattern => pattern.test(className));
+  }
+
+  /**
+   * 표준 인터페이스: interactivity 클래스의 값을 파싱합니다.
+   */
+  static parseValue(className: string): {
+    property: string;
+    value: string;
+    isArbitrary: boolean;
+  } | null {
+    if (!this.isValidClass(className)) {
+      return null;
+    }
+
+    // Simple prefix patterns
+    const simplePatterns = [
+      'accent', 'appearance', 'cursor', 'caret', 'pointer-events',
+      'select', 'user-select', 'will-change'
+    ];
+    
+    for (const pattern of simplePatterns) {
+      if (className.startsWith(`${pattern}-`)) {
+        const valueStr = className.substring(pattern.length + 1);
+        
+        // Arbitrary value [...]
+        if (valueStr.startsWith('[') && valueStr.endsWith(']')) {
+          const value = valueStr.slice(1, -1);
+          return {
+            property: pattern,
+            value,
+            isArbitrary: true
+          };
+        }
+        
+        return {
+          property: pattern,
+          value: valueStr,
+          isArbitrary: false
+        };
+      }
+    }
+
+    // Resize patterns (resize, resize-x, resize-y, resize-none)
+    if (className.startsWith('resize')) {
+      if (className === 'resize') {
+        return {
+          property: 'resize',
+          value: 'both',
+          isArbitrary: false
+        };
+      }
+      
+      const valueStr = className.substring(7); // Remove 'resize-'
+      return {
+        property: 'resize',
+        value: valueStr,
+        isArbitrary: false
+      };
+    }
+
+    // Scroll patterns (scroll-smooth, scroll-m-4, scroll-p-8)
+    if (className.startsWith('scroll-')) {
+      const parts = className.split('-');
+      if (parts.length >= 2) {
+        const scrollType = parts[1]; // smooth, auto, m, p, etc.
+        const value = parts.slice(2).join('-') || '';
+        
+        // Scroll behavior (scroll-smooth, scroll-auto)
+        if (scrollType === 'smooth' || scrollType === 'auto') {
+          return {
+            property: 'scroll-behavior',
+            value: scrollType,
+            isArbitrary: false
+          };
+        }
+        
+        // Scroll margin/padding (scroll-m-4, scroll-p-8)
+        if (scrollType === 'm' || scrollType === 'p') {
+          return {
+            property: `scroll-${scrollType}`,
+            value: value || 'default',
+            isArbitrary: false
+          };
+        }
+        
+        // Other scroll properties
+        return {
+          property: `scroll-${scrollType}`,
+          value: value || 'default',
+          isArbitrary: false
+        };
+      }
+    }
+
+    // Touch patterns (touch-auto, touch-none, touch-pan-x)
+    if (className.startsWith('touch-')) {
+      const valueStr = className.substring(6); // Remove 'touch-'
+      return {
+        property: 'touch-action',
+        value: valueStr,
+        isArbitrary: false
+      };
+    }
+
+    return null;
+  }
+
+  static isInteractivityClass(className: string): boolean {
+    if (className in INTERACTIVITY_CLASSES || PREFIX_CLASSES.some(prefix => className.startsWith(prefix))) {
+      return true;
+    }
+
+    return false;
+  }
   /**
    * Interactivity 스타일을 적용합니다.
    * @param parsedClass 파싱된 클래스
