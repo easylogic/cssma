@@ -114,7 +114,7 @@ describe('CSSParser - 변형자(Variants) 기능', () => {
       // 중첩된 상태 변형자 스타일 확인
       expect(result.nestedStates).toBeDefined();
       expect(result.nestedStates?.['hover:focus']).toBeDefined();
-      expect(result.nestedStates?.['hover:focus']?.colors?.text).toEqual({ r: 0.25, g: 0.53, b: 0.94 });
+      expect(result.nestedStates?.['hover:focus']?.typography?.color).toEqual({ r: 0.25, g: 0.53, b: 0.94 });
     });
     
     it('반응형 + 중첩 상태 변형자로 스타일을 적용할 수 있어야 함', () => {
@@ -125,7 +125,7 @@ describe('CSSParser - 변형자(Variants) 기능', () => {
       // 중첩된 상태 변형자 스타일 확인
       expect(result.breakpoints?.md.nestedStates).toBeDefined();
       expect(result.breakpoints?.md.nestedStates?.['hover:focus']).toBeDefined();
-      expect(result.breakpoints?.md.nestedStates?.['hover:focus']?.colors?.text).toEqual({ r: 0.25, g: 0.53, b: 0.94 });
+      expect(result.breakpoints?.md.nestedStates?.['hover:focus']?.typography?.color).toEqual({ r: 0.25, g: 0.53, b: 0.94 });
     });
     
     it('특수 선택자로 스타일을 적용할 수 있어야 함', () => {

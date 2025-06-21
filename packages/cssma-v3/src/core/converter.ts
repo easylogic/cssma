@@ -1,11 +1,11 @@
-  /**
-   * StyleConverter - CSS와 Figma 스타일 간의 변환기
-   * 
-   * 이 클래스는 파싱된 CSS 클래스를 Figma 스타일로 변환하고,
-   * Figma 스타일을 CSS 클래스로 변환하는 기능을 제공합니다.
-   */
+/**
+ * StyleConverter - CSS와 Figma 스타일 간의 변환기
+ * 
+ * 이 클래스는 파싱된 CSS 클래스를 Figma 스타일로 변환하고,
+ * Figma 스타일을 CSS 클래스로 변환하는 기능을 제공합니다.
+ */
 
-import { Color, FigmaColor, ParsedClass, ConversionResult, ParsedStyles, Config, DesignPreset } from '../types';
+import { Color, FigmaColor, ParsedClass, ConversionResult, ParsedStyles, Config, DesignPreset, ColorValue } from '../types';
 
 export class StyleConverter {
   private config: Config;
@@ -38,7 +38,7 @@ export class StyleConverter {
     
     // 색상 변환
     if (parsedData.colors) {
-      this.convertColors(parsedData.colors, figmaStyles);
+      this.convertColors(parsedData.colors, figmaStyles, parsedData);
     }
     
     // 타이포그래피 변환
@@ -126,8 +126,8 @@ export class StyleConverter {
     const cssObject: any = {};
     
     // 색상 변환
-    if (parsedStyles.colors?.text) {
-      cssObject.color = this.colorToRgb(parsedStyles.colors.text);
+    if (parsedStyles.typography?.color) {
+      cssObject.color = parsedStyles.typography.color;
     }
     if (parsedStyles.colors?.background) {
       cssObject.backgroundColor = this.colorToRgb(parsedStyles.colors.background);
@@ -200,8 +200,8 @@ export class StyleConverter {
     if (parsedStyles.effects?.opacity) {
       cssObject.opacity = parsedStyles.effects.opacity;
     }
-    if (parsedStyles.effects?.boxShadow && parsedStyles.effects.boxShadow.length > 0) {
-      cssObject.boxShadow = parsedStyles.effects.boxShadow.join(', ');
+    if (parsedStyles.effects?.boxShadow && parsedStyles.effects.boxShadow !== 'none') {
+      cssObject.boxShadow = parsedStyles.effects.boxShadow;
     }
     
     // 애니메이션 변환
@@ -315,7 +315,7 @@ export class StyleConverter {
     if (parsedStyles.colors?.text) {
       figmaStyles.textFill.push({
         type: 'SOLID',
-        color: this.convertColorToFigma(parsedStyles.colors.text),
+        color: parsedStyles.typography.color || {r: 0, g: 0, b: 0, a: 1},
         visible: true
       });
     }
@@ -346,9 +346,13 @@ export class StyleConverter {
   }
   
   /**
-   * Color 객체를 RGB 문자열로 변환합니다.
+   * 색상을 RGB 문자열로 변환합니다.
    */
-  private colorToRgb(color: Color): string {
+  private colorToRgb(color: ColorValue): string {
+    if (typeof color === 'string') {
+      return color; // 이미 CSS 색상 문자열인 경우
+    }
+    
     const r = Math.round(color.r * 255);
     const g = Math.round(color.g * 255);
     const b = Math.round(color.b * 255);
@@ -358,7 +362,7 @@ export class StyleConverter {
   /**
    * CSS 색상을 Figma 색상으로 변환합니다.
    */
-  private convertColors(colors: any, figmaStyles: any): void {
+  private convertColors(colors: any, figmaStyles: any, parsedStyles?: ParsedStyles): void {
     // 배경색 변환
     if (colors.background) {
       figmaStyles.fills.push({
@@ -370,8 +374,9 @@ export class StyleConverter {
     }
     
     // 텍스트 색상 변환
-    if (colors.text) {
-      figmaStyles.typography.color = this.convertColorToFigma(colors.text);
+    if (parsedStyles?.typography?.color) {
+      figmaStyles.typography = figmaStyles.typography || {};
+      figmaStyles.typography.color = parsedStyles.typography.color;
     }
   }
   
@@ -626,15 +631,60 @@ export class StyleConverter {
   }
   
   /**
-   * CSS 색상을 Figma 색상으로 변환합니다.
+   * 색상을 Figma 색상으로 변환합니다.
    */
-  private convertColorToFigma(color: Color): FigmaColor {
+  private convertColorToFigma(color: ColorValue): FigmaColor {
+    if (typeof color === 'string') {
+      // CSS 색상 문자열을 Color 객체로 변환하는 로직 필요
+      // 간단한 경우만 처리 (hex, rgb 등)
+      if (color.startsWith('#')) {
+        return this.hexToFigmaColor(color);
+      } else if (color.startsWith('rgb')) {
+        return this.rgbStringToFigmaColor(color);
+      } else {
+        // 기본값 반환
+        return { r: 0, g: 0, b: 0, a: 1 };
+      }
+    }
+    
     return {
       r: color.r,
       g: color.g,
       b: color.b,
-      a: color.a
+      a: color.a !== undefined ? color.a : 1
     };
+  }
+
+  /**
+   * Hex 색상을 Figma 색상으로 변환합니다.
+   */
+  private hexToFigmaColor(hex: string): FigmaColor {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    if (result) {
+      return {
+        r: parseInt(result[1], 16) / 255,
+        g: parseInt(result[2], 16) / 255,
+        b: parseInt(result[3], 16) / 255,
+        a: 1
+      };
+    }
+    return { r: 0, g: 0, b: 0, a: 1 };
+  }
+
+  /**
+   * RGB 문자열을 Figma 색상으로 변환합니다.
+   */
+  private rgbStringToFigmaColor(rgb: string): FigmaColor {
+    const match = rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (match) {
+      return {
+        r: parseInt(match[1]) / 255,
+        g: parseInt(match[2]) / 255,
+        b: parseInt(match[3]) / 255,
+        a: 1
+      };
+    }
+    return { r: 0, g: 0, b: 0, a: 1 };
   }
   
   /**

@@ -135,18 +135,8 @@ export const DEFAULT_PRESET: DesignPreset = {
     },
   },
   effects: {
-    borderRadius: {
-      'none': 0,
-      'sm': 2,
-      'default': 4,
-      'md': 6,
-      'lg': 8,
-      'xl': 12,
-      '2xl': 16,
-      '3xl': 24,
-      'full': 9999,
-    },
     boxShadow: {
+      'none': 'none',
       'sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
       'default': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
       'md': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
@@ -154,7 +144,55 @@ export const DEFAULT_PRESET: DesignPreset = {
       'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
       '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
       'inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+    },
+    textShadow: {
       'none': 'none',
+      'sm': '0 1px 2px rgba(0, 0, 0, 0.1)',
+      'default': '0 2px 4px rgba(0, 0, 0, 0.1)',
+      'md': '0 4px 6px rgba(0, 0, 0, 0.1)',
+      'lg': '0 10px 15px rgba(0, 0, 0, 0.1)',
+      'xl': '0 20px 25px rgba(0, 0, 0, 0.1)',
+      '2xl': '0 25px 50px rgba(0, 0, 0, 0.1)',
+      'inner': 'inset 0 2px 4px rgba(0, 0, 0, 0.1)',
+    },
+    blur: {
+      'none': 0,
+      'sm': 4,
+      'default': 8,
+      'md': 12,
+      'lg': 16,
+      'xl': 24,
+      '2xl': 40,
+      '3xl': 64,
+    },
+    brightness: {
+      '0': 0,
+      '50': 0.5,
+      '100': 1,
+    },
+    contrast: {
+      '0': 0,
+      '50': 0.5,
+      '100': 1,
+    },
+    grayscale: {
+      '0': 0,
+      '50': 0.5,
+      '100': 1,
+    },
+    saturate: {
+      '0': 0,
+      '50': 0.5,
+      '100': 1,
+    },
+    dropShadow: {
+      'none': 'none',
+      'sm': '0 1px 2px rgba(0, 0, 0, 0.1)',
+      'default': '0 2px 4px rgba(0, 0, 0, 0.1)',
+      'md': '0 4px 6px rgba(0, 0, 0, 0.1)',
+      'lg': '0 10px 15px rgba(0, 0, 0, 0.1)',
+      'xl': '0 20px 25px rgba(0, 0, 0, 0.1)',
+      '2xl': '0 25px 50px rgba(0, 0, 0, 0.1)',
     },
     opacity: {
       '0': 0,
@@ -173,15 +211,16 @@ export const DEFAULT_PRESET: DesignPreset = {
       '95': 0.95,
       '100': 1,
     },
-    blur: {
+    borderRadius: {
       'none': 0,
-      'sm': 4,
-      'default': 8,
-      'md': 12,
-      'lg': 16,
-      'xl': 24,
-      '2xl': 40,
-      '3xl': 64,
+      'sm': 2,
+      'default': 4,
+      'md': 6,
+      'lg': 8,
+      'xl': 12,
+      '2xl': 16,
+      '3xl': 24,
+      'full': 9999,
     },
   },
   layout: {
@@ -307,6 +346,278 @@ export const DEFAULT_PRESET: DesignPreset = {
       'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)',
     },
   },
+  screens: {
+    sm: '640px',
+    md: '768px',
+    lg: '1024px',
+    xl: '1280px',
+    '2xl': '1536px',
+  },
+  containers: {
+    sm: '640px',
+    md: '768px',
+    lg: '1024px',
+  },
+  borders: {
+    borderWidth: {
+      'none': '0',
+      'default': '1px',
+      'sm': '2px',
+      'md': '4px',
+      'lg': '8px',
+      'xl': '12px',
+      '2xl': '16px',
+      '3xl': '24px',
+      '4xl': '32px',
+      '5xl': '40px',
+      '6xl': '48px',
+      '7xl': '56px',
+      'full': '100%',
+      'min': 'min-content',
+      'max': 'max-content',
+      'fit': 'fit-content',
+    },
+    borderRadius: {
+      'none': '0',
+      'sm': '0.125rem',
+      'default': '0.25rem',
+      'md': '0.375rem',
+      'lg': '0.5rem',
+      'xl': '0.75rem',
+      '2xl': '1rem',
+      '3xl': '1.5rem',
+      'full': '9999px',
+    },
+    borderStyle: {
+      'none': 'none',
+      'solid': 'solid',
+      'dashed': 'dashed',
+      'dotted': 'dotted',
+      'double': 'double',
+    },
+  },
+  backgrounds: {
+    backgroundImage: {
+      'none': 'none',
+      'gradient-to-t': 'linear-gradient(to top, var(--tw-gradient-stops))',
+      'gradient-to-tr': 'linear-gradient(to top right, var(--tw-gradient-stops))',
+      'gradient-to-r': 'linear-gradient(to right, var(--tw-gradient-stops))',
+      'gradient-to-br': 'linear-gradient(to bottom right, var(--tw-gradient-stops))',
+      'gradient-to-b': 'linear-gradient(to bottom, var(--tw-gradient-stops))',
+      'gradient-to-bl': 'linear-gradient(to bottom left, var(--tw-gradient-stops))',
+      'gradient-to-l': 'linear-gradient(to left, var(--tw-gradient-stops))',
+      'gradient-to-tl': 'linear-gradient(to top left, var(--tw-gradient-stops))',
+    },
+    gradients: {
+      'none': 'transparent',
+      'current': 'currentColor',
+    },
+  },
+  
+  transitions: {
+    property: {
+      'none': 'none',
+      'all': 'all',
+      'default': 'color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter',
+      'colors': 'color, background-color, border-color, text-decoration-color, fill, stroke',
+      'opacity': 'opacity',
+      'shadow': 'box-shadow',
+      'transform': 'transform',
+    },
+    duration: {
+      '75': '75ms',
+      '100': '100ms',
+      '150': '150ms',
+      '200': '200ms',
+      '300': '300ms',
+      '500': '500ms',
+      '700': '700ms',
+      '1000': '1000ms',
+    },
+    timingFunction: {
+      'linear': 'linear',
+      'in': 'cubic-bezier(0.4, 0, 1, 1)',
+      'out': 'cubic-bezier(0, 0, 0.2, 1)',
+      'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)',
+    },
+    delay: {
+      '75': '75ms',
+      '100': '100ms',
+      '150': '150ms',
+      '200': '200ms',
+      '300': '300ms',
+      '500': '500ms',
+      '700': '700ms',
+      '1000': '1000ms',
+    },
+  },
+  
+  transforms: {
+    scale: {
+      '0': '0',
+      '50': '.5',
+      '75': '.75',
+      '90': '.9',
+      '95': '.95',
+      '100': '1',
+      '105': '1.05',
+      '110': '1.1',
+      '125': '1.25',
+      '150': '1.5',
+    },
+    rotate: {
+      '0': '0deg',
+      '1': '1deg',
+      '2': '2deg',
+      '3': '3deg',
+      '6': '6deg',
+      '12': '12deg',
+      '45': '45deg',
+      '90': '90deg',
+      '180': '180deg',
+    },
+    translate: {
+      '0': '0px',
+      '0.5': '2px',
+      '1': '4px',
+      '1.5': '6px',
+      '2': '8px',
+      '2.5': '10px',
+      '3': '12px',
+      '4': '16px',
+      '6': '24px',
+      '8': '32px',
+      '12': '48px',
+      '16': '64px',
+      '24': '96px',
+      '32': '128px',
+      '1/2': '50%',
+      '1/3': '33.333333%',
+      '2/3': '66.666667%',
+      '1/4': '25%',
+      '3/4': '75%',
+      'full': '100%',
+    },
+    skew: {
+      '0': '0deg',
+      '1': '1deg',
+      '2': '2deg',
+      '3': '3deg',
+      '6': '6deg',
+      '12': '12deg',
+    },
+  },
+      
+  // Tailwind CSS v4.1 새로운 기능들 추가
+  textShadow: {
+    'sm': '1px 1px 2px rgba(0, 0, 0, 0.3)',
+    'default': '2px 2px 4px rgba(0, 0, 0, 0.3)',
+    'md': '3px 3px 6px rgba(0, 0, 0, 0.3)',
+    'lg': '4px 4px 8px rgba(0, 0, 0, 0.3)',
+    'xl': '5px 5px 10px rgba(0, 0, 0, 0.3)',
+    'none': 'none',
+  },
+  
+  fontStretch: {
+    'ultra-condensed': 'ultra-condensed',
+    'extra-condensed': 'extra-condensed',
+    'condensed': 'condensed',
+    'semi-condensed': 'semi-condensed',
+    'normal': 'normal',
+    'semi-expanded': 'semi-expanded',
+    'expanded': 'expanded',
+    'extra-expanded': 'extra-expanded',
+    'ultra-expanded': 'ultra-expanded',
+  },
+
+  mask: {
+    'none': 'none',
+    'linear-gradient': 'linear-gradient(to bottom, black 0%, transparent 100%)',
+    'radial-gradient': 'radial-gradient(circle, black 50%, transparent 70%)',
+  },
+
+  accentColor: {
+    'auto': 'auto',
+    'inherit': 'inherit',
+    'current': 'currentColor',
+    'transparent': 'transparent',
+    'blue': '#3b82f6',
+    'red': '#ef4444',
+    'green': '#10b981',
+    'yellow': '#f59e0b',
+    'purple': '#8b5cf6',
+  },
+
+  fieldSizing: {
+    'content': 'content',
+    'fixed': 'fixed',
+  },
+
+  scrollBehavior: {
+    'auto': 'auto',
+    'smooth': 'smooth',
+  },
+
+  scrollSnapType: {
+    'none': 'none',
+    'x': 'x mandatory',
+    'y': 'y mandatory',
+    'both': 'both mandatory',
+    'x-proximity': 'x proximity',
+    'y-proximity': 'y proximity',
+  },
+
+  scrollSnapAlign: {
+    'start': 'start',
+    'end': 'end',
+    'center': 'center',
+    'none': 'none',
+  },
+
+  viewTransitionName: {
+    'none': 'none',
+    'auto': 'auto',
+  },
+
+  // Container Queries 확장
+  containerType: {
+    'normal': 'normal',
+    'size': 'size',
+    'inline-size': 'inline-size',
+  },
+
+  // Logical Properties 확장
+  logicalProperties: {
+    'block-start': 'block-start',
+    'block-end': 'block-end',
+    'inline-start': 'inline-start',
+    'inline-end': 'inline-end',
+  },
+
+  // Safe/Unsafe Alignment
+  safeAlignment: {
+    'safe-start': 'safe start',
+    'safe-end': 'safe end',
+    'safe-center': 'safe center',
+    'unsafe-start': 'unsafe start',
+    'unsafe-end': 'unsafe end',
+    'unsafe-center': 'unsafe center',
+  },
+
+  // Pointer 변형자
+  pointerVariants: {
+    'pointer-fine': '@media (pointer: fine)',
+    'pointer-coarse': '@media (pointer: coarse)',
+    'any-pointer-fine': '@media (any-pointer: fine)',
+    'any-pointer-coarse': '@media (any-pointer: coarse)',
+  },
+
+  // Grid Subgrid 지원
+  gridTemplateSubgrid: {
+    'subgrid': 'subgrid',
+    'masonry': 'masonry',
+  },
+
 };
 
 /**
@@ -354,22 +665,50 @@ export const MINIMAL_PRESET: DesignPreset = {
     },
   },
   effects: {
-    borderRadius: {
-      'none': 0,
-      'default': 4,
-    },
     boxShadow: {
       'none': 'none',
       'default': '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+    },
+    textShadow: {
+      'none': 'none',
+      'default': '0 2px 4px rgba(0, 0, 0, 0.1)',
+    },
+    blur: {
+      'none': 0,
+      'default': 8,
+    },
+    brightness: {
+      '0': 0,
+      '50': 0.5,
+      '100': 1,
+    },
+    contrast: {
+      '0': 0,
+      '50': 0.5,
+      '100': 1,
+    },
+    grayscale: {
+      '0': 0,
+      '50': 0.5,
+      '100': 1,
+    },
+    saturate: {
+      '0': 0,
+      '50': 0.5,
+      '100': 1,
+    },
+    dropShadow: {
+      'none': 'none',
+      'default': '0 2px 4px rgba(0, 0, 0, 0.1)',
     },
     opacity: {
       '0': 0,
       '50': 0.5,
       '100': 1,
     },
-    blur: {
+    borderRadius: {
       'none': 0,
-      'default': 8,
+      'default': 4,
     },
   },
   layout: {
@@ -418,6 +757,86 @@ export const MINIMAL_PRESET: DesignPreset = {
     easings: {
       'linear': 'linear',
       'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)',
+    },
+  },
+  screens: {
+    sm: '640px',
+    md: '768px',
+    lg: '1024px',
+  },
+  containers: {
+    sm: '640px',
+    md: '768px',
+    lg: '1024px',
+  },
+  borders: {
+    borderWidth: {
+      'none': '0',
+      'default': '1px',
+      'sm': '2px',
+    },
+    borderRadius: {
+      'none': '0',
+      'default': '0.25rem',
+      'md': '0.375rem',
+    },
+    borderStyle: {
+      'none': 'none',
+      'solid': 'solid',
+      'dashed': 'dashed',
+    },
+  },
+  backgrounds: {
+    backgroundImage: {
+      'none': 'none',
+      'gradient-to-r': 'linear-gradient(to right, var(--tw-gradient-stops))',
+    },
+    gradients: {
+      'none': 'transparent',
+      'current': 'currentColor',
+    },
+  },
+  transitions: {
+    property: {
+      'none': 'none',
+      'all': 'all',
+      'default': 'color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter',
+    },
+    duration: {
+      '150': '150ms',
+      '300': '300ms',
+      '500': '500ms',
+    },
+    timingFunction: {
+      'linear': 'linear',
+      'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)',
+    },
+    delay: {
+      '75': '75ms',
+      '150': '150ms',
+      '300': '300ms',
+    },
+  },
+  transforms: {
+    scale: {
+      '50': '.5',
+      '100': '1',
+      '150': '1.5',
+    },
+    rotate: {
+      '0': '0deg',
+      '45': '45deg',
+      '90': '90deg',
+    },
+    translate: {
+      '0': '0px',
+      '1': '4px',
+      '2': '8px',
+    },
+    skew: {
+      '0': '0deg',
+      '1': '1deg',
+      '2': '2deg',
     },
   },
 };

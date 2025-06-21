@@ -473,6 +473,26 @@ export class CSSParser {
         continue;
       }
 
+      // nth-child-{number}: 패턴 (nth-child-3:)
+      const nthChildMatch = modifier.match(/^nth-child-(\d+)$/);
+      if (nthChildMatch) {
+        specialSelector = {
+          type: 'nth-child',
+          value: nthChildMatch[1]
+        };
+        continue;
+      }
+
+      // nth-last-child-{number}: 패턴 (nth-last-child-3:)
+      const nthLastChildMatch = modifier.match(/^nth-last-child-(\d+)$/);
+      if (nthLastChildMatch) {
+        specialSelector = {
+          type: 'nth-last-child',
+          value: nthLastChildMatch[1]
+        };
+        continue;
+      }
+
       // nth-of-type-{number}: 패턴 (nth-of-type-3:)
       const nthOfTypeMatch = modifier.match(/^nth-of-type-(\d+)$/);
       if (nthOfTypeMatch) {

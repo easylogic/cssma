@@ -9,660 +9,426 @@
  * - Space-between 유틸리티
  */
 
-import { ParsedClass, SpacingStyles, DesignPreset } from '../../types';
+import { ParsedClass, ParsedStyle, DesignPreset } from '../../types';
 
-export interface EnhancedSpacingStyles extends SpacingStyles {
-  // 논리적 속성 지원
-  paddingInline?: number | { start?: number; end?: number };
-  paddingBlock?: number | { start?: number; end?: number };
-  marginInline?: number | { start?: number; end?: number };
-  marginBlock?: number | { start?: number; end?: number };
-  
-  // Space-between 지원
-  spaceBetween?: {
-    x?: number;
-    y?: number;
-    reverse?: boolean;
-  };
+/**
+ * Tailwind CSS v4.1 호환 Spacing Parser
+ * - Logical properties (padding-inline, padding-block) 지원
+ * - String/Number 혼합 타입 지원
+ * - 임의값 ([10px], [2.5rem]) 지원
+ */
+
+interface SpacingValue {
+  top?: string | number;
+  right?: string | number;
+  bottom?: string | number;
+  left?: string | number;
+  x?: string | number;
+  y?: string | number;
+  all?: string | number;
+  paddingInline?: string | number | { start?: string | number; end?: string | number };
+  paddingBlock?: string | number | { start?: string | number; end?: string | number };
+  marginInline?: string | number | { start?: string | number; end?: string | number };
+  marginBlock?: string | number | { start?: string | number; end?: string | number };
+}
+
+interface GridGap {
+  column?: string | number;
+  row?: string | number;
 }
 
 export class SpacingParser {
-  // Tailwind v4 default spacing scale (0.25rem base)
-  private static readonly SPACING_SCALE = {
+  // Tailwind CSS v4.1 기본 spacing 스케일 (0.25rem = 4px 기준)
+  private static readonly SPACING_SCALE: Record<string, number> = {
     '0': 0,
-    'px': 1,
-    '0.5': 2,
-    '1': 4,
-    '1.5': 6,
-    '2': 8,
-    '2.5': 10,
-    '3': 12,
-    '3.5': 14,
-    '4': 16,
-    '5': 20,
-    '6': 24,
-    '7': 28,
-    '8': 32,
-    '9': 36,
-    '10': 40,
-    '11': 44,
-    '12': 48,
-    '14': 56,
-    '16': 64,
-    '20': 80,
-    '24': 96,
-    '28': 112,
-    '32': 128,
-    '36': 144,
-    '40': 160,
-    '44': 176,
-    '48': 192,
-    '52': 208,
-    '56': 224,
-    '60': 240,
-    '64': 256,
-    '72': 288,
-    '80': 320,
-    '96': 384
+    'px': 1, // 1px 특수값
+    '0.5': 0.125,
+    '1': 0.25,
+    '1.5': 0.375,
+    '2': 0.5,
+    '2.5': 0.625,
+    '3': 0.75,
+    '3.5': 0.875,
+    '4': 1,
+    '5': 1.25,
+    '6': 1.5,
+    '7': 1.75,
+    '8': 2,
+    '9': 2.25,
+    '10': 2.5,
+    '11': 2.75,
+    '12': 3,
+    '14': 3.5,
+    '16': 4,
+    '20': 5,
+    '24': 6,
+    '28': 7,
+    '32': 8,
+    '36': 9,
+    '40': 10,
+    '44': 11,
+    '48': 12,
+    '52': 13,
+    '56': 14,
+    '60': 15,
+    '64': 16,
+    '72': 18,
+    '80': 20,
+    '96': 24,
   };
 
-  // 기본 인식 가능한 속성들
-  private static readonly EXACT_PROPERTIES = [
-    // Padding
-    'p', 'pt', 'pr', 'pb', 'pl', 'px', 'py',
-    'ps', 'pe', // 논리적 속성
-    'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
-    'padding-inline', 'padding-inline-start', 'padding-inline-end',
-    'padding-block', 'padding-block-start', 'padding-block-end',
-    
-    // Margin  
-    'm', 'mt', 'mr', 'mb', 'ml', 'mx', 'my',
-    'ms', 'me', // 논리적 속성
-    'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
-    'margin-inline', 'margin-inline-start', 'margin-inline-end',
-    'margin-block', 'margin-block-start', 'margin-block-end',
-    
-    // Gap
-    'gap', 'gap-x', 'gap-y', 'column-gap', 'row-gap',
-    
+  private static readonly PADDING_PATTERNS = [
+    // 모든 방향 padding
+    /^p-(.+)$/,
+    // X축 (horizontal) - padding-inline in v4.1
+    /^px-(.+)$/,
+    // Y축 (vertical) - padding-block in v4.1  
+    /^py-(.+)$/,
+    // 개별 방향
+    /^pt-(.+)$/,
+    /^pr-(.+)$/,
+    /^pb-(.+)$/,
+    /^pl-(.+)$/,
+    // Logical properties (v4.1 신규)
+    /^ps-(.+)$/, // padding-inline-start
+    /^pe-(.+)$/, // padding-inline-end
+    /^pb-(.+)$/, // padding-block-start (pt와 동일)
+    /^pb-(.+)$/, // padding-block-end (pb와 동일)
+  ];
+
+  private static readonly MARGIN_PATTERNS = [
+    // 모든 방향 margin
+    /^-?m-(.+)$/,
+    // X축 (horizontal) - margin-inline in v4.1
+    /^-?mx-(.+)$/,
+    // Y축 (vertical) - margin-block in v4.1
+    /^-?my-(.+)$/,
+    // 개별 방향
+    /^-?mt-(.+)$/,
+    /^-?mr-(.+)$/,
+    /^-?mb-(.+)$/,
+    /^-?ml-(.+)$/,
+    // Logical properties (v4.1 신규)
+    /^-?ms-(.+)$/, // margin-inline-start
+    /^-?me-(.+)$/, // margin-inline-end
     // Space between
-    'space-x', 'space-y', 'space-x-reverse', 'space-y-reverse'
+    /^-?space-x-(.+)$/,
+    /^-?space-y-(.+)$/,
+  ];
+
+  private static readonly GAP_PATTERNS = [
+    /^gap-(.+)$/,
+    /^gap-x-(.+)$/,
+    /^gap-y-(.+)$/,
   ];
 
   /**
-   * 표준 인터페이스: 클래스가 spacing 관련인지 확인합니다.
+   * 클래스명이 spacing 관련인지 확인
    */
   static isValidClass(className: string): boolean {
-    return this.isSpacingClass(className);
+    return [
+      ...this.PADDING_PATTERNS,
+      ...this.MARGIN_PATTERNS,
+      ...this.GAP_PATTERNS
+    ].some(pattern => pattern.test(className));
   }
 
   /**
-   * 표준 인터페이스: spacing 클래스의 값을 파싱합니다.
+   * spacing 값을 파싱 (Tailwind v4.1 방식)
    */
-  static parseValue(className: string): {
-    property: string;
-    value: string;
-    isArbitrary: boolean;
-  } | null {
-    const parsed = this.parseSpacing(className);
-    if (!parsed) return null;
+  private static parseSpacingValue(value: string): string | number {
+    // px 특수 처리
+    if (value === 'px') {
+      return '1px';
+    }
 
-    // 임의 값인지 확인 (대괄호로 감싸진 값)
-    const isArbitrary = parsed.value.startsWith('[') && parsed.value.endsWith(']');
-    
-    return {
-      property: parsed.property,
-      value: isArbitrary ? parsed.value.slice(1, -1) : parsed.value, // 대괄호 제거
-      isArbitrary
-    };
+    // 임의값 처리: [10px], [2.5rem], [calc(100% - 1rem)]
+    if (value.startsWith('[') && value.endsWith(']')) {
+      return value.slice(1, -1); // 대괄호 제거
+    }
+
+    // 기본 스케일에서 찾기
+    const scaleValue = this.SPACING_SCALE[value];
+    if (scaleValue !== undefined) {
+      return scaleValue === 1 && value === 'px' ? '1px' : scaleValue;
+    }
+
+    // 자동값
+    if (value === 'auto') {
+      return 'auto';
+    }
+
+    // 숫자 값 직접 처리
+    const numValue = parseFloat(value);
+    if (!isNaN(numValue)) {
+      return numValue;
+    }
+
+    return value; // 그대로 반환 (string)
   }
 
   /**
-   * 클래스가 spacing 관련인지 확인합니다.
+   * 클래스명을 파싱하여 SpacingValue 반환
    */
-  static isSpacingClass(className: string): boolean {
-    // 정확한 매치 우선
-    if (this.EXACT_PROPERTIES.includes(className)) {
-      return true;
+  static parseSpacing(className: string): SpacingValue | null {
+    // Padding 처리
+    let match = className.match(/^p-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { all: value };
     }
 
-    // 접두사 매치 (음수 값, 소수점 값, 임의 값 포함)
-    const prefixPatterns = [
-      /^-?(p|pt|pr|pb|pl|px|py|ps|pe)(-[\w\.\[\]\/\-]+)?$/, // padding
-      /^-?(m|mt|mr|mb|ml|mx|my|ms|me)(-[\w\.\[\]\/\-]+)?$/, // margin
-      /^(gap|gap-x|gap-y)(-[\w\.\[\]\/\-]+)?$/, // gap (음수 불가)
-      /^(space-x|space-y)(-[\w\.\[\]\/\-]+)?$/, // space-between (음수 불가)
-      /^(padding|margin)(-top|-right|-bottom|-left|-inline|-block|-inline-start|-inline-end|-block-start|-block-end)?(-[\w\.\[\]\/\-]+)?$/, // 전체 속성명
-      /^(column-gap|row-gap)(-[\w\.\[\]\/\-]+)?$/ // gap 전체 속성명
-    ];
-
-    return prefixPatterns.some(pattern => pattern.test(className));
-  }
-
-  /**
-   * spacing 클래스를 파싱합니다.
-   */
-  static parseSpacing(className: string): {
-    property: string;
-    value: string;
-    isNegative: boolean;
-    unit?: string;
-  } | null {
-    if (!this.isSpacingClass(className)) {
-      return null;
+    match = className.match(/^px-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { x: value, paddingInline: value };
     }
 
-    // 음수 값 처리
-    let isNegative = false;
-    let workingClassName = className;
-    
-    if (className.startsWith('-') && !className.startsWith('--')) {
-      isNegative = true;
-      workingClassName = className.slice(1);
+    match = className.match(/^py-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { y: value, paddingBlock: value };
     }
 
-    // 정확한 매치 (값 없는 속성들)
-    if (this.EXACT_PROPERTIES.includes(workingClassName)) {
-      return {
-        property: workingClassName,
-        value: '',
-        isNegative
-      };
+    match = className.match(/^pt-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { top: value };
     }
 
-    // 값이 있는 속성들 파싱
-    const patterns = [
-      // 단축 속성 - 임의 값, 소수점, 일반 값 모두 포함
-      { regex: /^(p|pt|pr|pb|pl|px|py|ps|pe)-([\w\.\[\]\/\-]+)$/, type: 'padding' },
-      { regex: /^(m|mt|mr|mb|ml|mx|my|ms|me)-([\w\.\[\]\/\-]+)$/, type: 'margin' },
-      { regex: /^(gap-x|gap-y)-([\w\.\[\]\/\-]+)$/, type: 'gap-directional' }, // gap-x, gap-y 먼저 처리
-      { regex: /^(gap)-([\w\.\[\]\/\-]+)$/, type: 'gap' }, // 단순 gap은 나중에 처리
-      { regex: /^(space-x|space-y)-([\w\.\[\]\/\-]+)$/, type: 'space' },
-      
-      // 전체 속성명
-      { regex: /^(padding|margin)(-top|-right|-bottom|-left|-inline|-block|-inline-start|-inline-end|-block-start|-block-end)?-([\w\.\[\]\/\-]+)$/, type: 'full' },
-      { regex: /^(column-gap|row-gap)-([\w\.\[\]\/\-]+)$/, type: 'gap-full' }
-    ];
+    match = className.match(/^pr-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { right: value };
+    }
 
-    for (const pattern of patterns) {
-      const match = workingClassName.match(pattern.regex);
-      if (match) {
-        const property = pattern.type === 'full' || pattern.type === 'gap-full' 
-          ? match[1] + (match[2] || '')
-          : pattern.type === 'gap-directional'
-          ? match[1] // gap-x, gap-y 그대로 유지
-          : match[1];
-        const value = pattern.type === 'full' ? match[3] : match[2];
-        
-        return {
-          property,
-          value,
-          isNegative
-        };
+    match = className.match(/^pb-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { bottom: value };
+    }
+
+    match = className.match(/^pl-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { left: value };
+    }
+
+    // Logical properties (v4.1)
+    match = className.match(/^ps-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { paddingInline: { start: value } };
+    }
+
+    match = className.match(/^pe-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { paddingInline: { end: value } };
+    }
+
+    // Margin 처리 (음수 포함)
+    match = className.match(/^(-?)m-(.+)$/);
+    if (match) {
+      const isNegative = match[1] === '-';
+      let value = this.parseSpacingValue(match[2]);
+      if (isNegative && typeof value === 'number') {
+        value = -value;
+      } else if (isNegative && typeof value === 'string' && !value.includes('calc')) {
+        value = `-${value}`;
       }
+      return { all: value };
+    }
+
+    match = className.match(/^(-?)mx-(.+)$/);
+    if (match) {
+      const isNegative = match[1] === '-';
+      let value = this.parseSpacingValue(match[2]);
+      if (isNegative && typeof value === 'number') {
+        value = -value;
+      } else if (isNegative && typeof value === 'string' && !value.includes('calc')) {
+        value = `-${value}`;
+      }
+      return { x: value, marginInline: value };
+    }
+
+    match = className.match(/^(-?)my-(.+)$/);
+    if (match) {
+      const isNegative = match[1] === '-';
+      let value = this.parseSpacingValue(match[2]);
+      if (isNegative && typeof value === 'number') {
+        value = -value;
+      } else if (isNegative && typeof value === 'string' && !value.includes('calc')) {
+        value = `-${value}`;
+      }
+      return { y: value, marginBlock: value };
     }
 
     return null;
   }
 
   /**
-   * 간격 스타일을 적용합니다.
+   * 값을 CSS 단위로 변환 (Tailwind v4.1 방식)
+   */
+  private static valueToCSS(value: string | number): string {
+    if (typeof value === 'string') {
+      // 이미 CSS 값인 경우 (px, rem, %, calc 등)
+      return value;
+    }
+
+    if (typeof value === 'number') {
+      if (value === 0) return '0';
+      return `${value}rem`; // Tailwind 기본 단위
+    }
+    
+    return '0';
+  }
+
+  /**
+   * ParsedStyle로 변환
+   */
+  static parseValue(className: string): ParsedStyle | null {
+    const spacingValue = this.parseSpacing(className);
+    if (!spacingValue) return null;
+
+    // 클래스 타입 결정
+    let property = 'spacing';
+    if (className.includes('gap')) property = 'gap';
+    else if (className.startsWith('m') || className.startsWith('-m')) property = 'margin';
+    else property = 'padding';
+
+    return {
+      property,
+      value: JSON.stringify(spacingValue), // SpacingValue 객체를 string으로 변환
+      variant: className.includes('[') ? 'arbitrary' : 'preset'
+    };
+  }
+
+  /**
+   * spacing 스타일을 적용 (Tailwind v4.1 호환)
    */
   static applySpacingStyle(
-    parsedClass: ParsedClass, 
-    styles: { spacing?: EnhancedSpacingStyles; flexboxGrid?: any }, 
+    parsedClass: ParsedClass,
+    styles: any,
     preset: DesignPreset
   ): void {
-    const { property, value, isArbitrary } = parsedClass;
+    // JSON string을 다시 SpacingValue 객체로 파싱
+    const spacingValue = JSON.parse(parsedClass.value) as SpacingValue;
     
     if (!styles.spacing) {
       styles.spacing = {};
     }
-    
-    // 메인 파서에서 이미 처리된 값들을 사용 (대괄호 제거된 상태)
-    const parsed = this.parseSpacing(parsedClass.baseClassName);
-    if (!parsed) return;
 
-    // 값 계산 - 메인 파서에서 처리된 value 사용
-    const spacingValue = this.calculateSpacingValue(value, isArbitrary, parsed.isNegative, preset);
-    
-    // 속성에 따라 스타일 적용
-    this.applySpacingProperty(parsed.property, spacingValue, styles.spacing);
-    
-    // Gap 클래스의 경우 flexboxGrid에도 동시에 반영
-    if (parsed.property === 'gap' || parsed.property === 'gap-x' || parsed.property === 'gap-y' || 
-        parsed.property === 'column-gap' || parsed.property === 'row-gap') {
-      this.applyGapToFlexboxGrid(parsed.property, spacingValue, styles);
+    // 모든 방향 처리
+    if (spacingValue.all !== undefined) {
+      const cssValue = this.valueToCSS(spacingValue.all);
+      if (parsedClass.original.startsWith('p')) {
+        styles.spacing.padding = cssValue;
+      } else if (parsedClass.original.startsWith('m')) {
+        styles.spacing.margin = cssValue;
+      }
+    }
+
+    // X축 (horizontal) 처리
+    if (spacingValue.x !== undefined) {
+      const cssValue = this.valueToCSS(spacingValue.x);
+      if (parsedClass.original.includes('p')) {
+        styles.spacing.paddingLeft = cssValue;
+        styles.spacing.paddingRight = cssValue;
+      } else if (parsedClass.original.includes('m')) {
+        styles.spacing.marginLeft = cssValue;
+        styles.spacing.marginRight = cssValue;
+      }
+    }
+
+    // Y축 (vertical) 처리
+    if (spacingValue.y !== undefined) {
+      const cssValue = this.valueToCSS(spacingValue.y);
+      if (parsedClass.original.includes('p')) {
+        styles.spacing.paddingTop = cssValue;
+        styles.spacing.paddingBottom = cssValue;
+      } else if (parsedClass.original.includes('m')) {
+        styles.spacing.marginTop = cssValue;
+        styles.spacing.marginBottom = cssValue;
+      }
+    }
+
+    // 개별 방향 처리
+    ['top', 'right', 'bottom', 'left'].forEach(side => {
+      const value = spacingValue[side as keyof SpacingValue];
+      if (value !== undefined) {
+        const cssValue = this.valueToCSS(value as string | number);
+        if (parsedClass.original.startsWith('p')) {
+          styles.spacing[`padding${side.charAt(0).toUpperCase() + side.slice(1)}`] = cssValue;
+        } else if (parsedClass.original.startsWith('m')) {
+          styles.spacing[`margin${side.charAt(0).toUpperCase() + side.slice(1)}`] = cssValue;
+        }
+      }
+    });
+
+    // Logical properties 처리 (v4.1)
+    if (spacingValue.paddingInline !== undefined) {
+      if (typeof spacingValue.paddingInline === 'object') {
+        if (spacingValue.paddingInline.start !== undefined) {
+          styles.spacing.paddingInlineStart = this.valueToCSS(spacingValue.paddingInline.start);
+        }
+        if (spacingValue.paddingInline.end !== undefined) {
+          styles.spacing.paddingInlineEnd = this.valueToCSS(spacingValue.paddingInline.end);
+        }
+      } else {
+        styles.spacing.paddingInline = this.valueToCSS(spacingValue.paddingInline);
+      }
+    }
+
+    if (spacingValue.paddingBlock !== undefined) {
+      if (typeof spacingValue.paddingBlock === 'object') {
+        if (spacingValue.paddingBlock.start !== undefined) {
+          styles.spacing.paddingBlockStart = this.valueToCSS(spacingValue.paddingBlock.start);
+        }
+        if (spacingValue.paddingBlock.end !== undefined) {
+          styles.spacing.paddingBlockEnd = this.valueToCSS(spacingValue.paddingBlock.end);
+        }
+      } else {
+        styles.spacing.paddingBlock = this.valueToCSS(spacingValue.paddingBlock);
+      }
+    }
+
+    // 마진 logical properties
+    if (spacingValue.marginInline !== undefined) {
+      if (typeof spacingValue.marginInline === 'object') {
+        if (spacingValue.marginInline.start !== undefined) {
+          styles.spacing.marginInlineStart = this.valueToCSS(spacingValue.marginInline.start);
+        }
+        if (spacingValue.marginInline.end !== undefined) {
+          styles.spacing.marginInlineEnd = this.valueToCSS(spacingValue.marginInline.end);
+        }
+      } else {
+        styles.spacing.marginInline = this.valueToCSS(spacingValue.marginInline);
+      }
+    }
+
+    if (spacingValue.marginBlock !== undefined) {
+      if (typeof spacingValue.marginBlock === 'object') {
+        if (spacingValue.marginBlock.start !== undefined) {
+          styles.spacing.marginBlockStart = this.valueToCSS(spacingValue.marginBlock.start);
+        }
+        if (spacingValue.marginBlock.end !== undefined) {
+          styles.spacing.marginBlockEnd = this.valueToCSS(spacingValue.marginBlock.end);
+        }
+      } else {
+        styles.spacing.marginBlock = this.valueToCSS(spacingValue.marginBlock);
+      }
     }
   }
 
   /**
-   * 간격 값을 계산합니다.
+   * 메인 파싱 메서드
    */
-  private static calculateSpacingValue(
-    value: string, 
-    isArbitrary: boolean, 
-    isNegative: boolean,
-    preset: DesignPreset
-  ): number | string {
-    let result: number | string;
-
-    if (isArbitrary) {
-      // 임의 값 처리 - 단위 유지
-      result = this.parseArbitraryValue(value);
-    } else if (value === '') {
-      // 값이 없는 경우 기본값
-      result = 0;
-    } else {
-      // 프리셋 값 또는 동적 spacing scale
-      result = this.getSpacingFromScale(value, preset);
+  static parse(className: string): ParsedStyle | null {
+    if (!this.isValidClass(className)) {
+      return null;
     }
 
-    // 음수 적용
-    if (isNegative && typeof result === 'number') {
-      result = -result;
-    } else if (isNegative && typeof result === 'string') {
-      // CSS 문자열 값에 음수 적용
-      if (!result.startsWith('-')) {
-        result = `-${result}`;
-      }
-    }
-
-    return result;
-  }
-
-  /**
-   * Gap 값을 FlexboxGrid에도 동시 적용합니다.
-   */
-  private static applyGapToFlexboxGrid(
-    property: string,
-    value: number | string,
-    styles: { flexboxGrid?: any }
-  ): void {
-    if (!styles.flexboxGrid) {
-      styles.flexboxGrid = {};
-    }
-
-    // 값을 CSS 형식으로 변환
-    const cssValue = this.formatValue(value);
-
-    switch (property) {
-      case 'gap':
-        styles.flexboxGrid.gap = cssValue;
-        break;
-      case 'gap-x':
-      case 'column-gap':
-        styles.flexboxGrid.columnGap = cssValue;
-        break;
-      case 'gap-y':
-      case 'row-gap':
-        styles.flexboxGrid.rowGap = cssValue;
-        break;
-    }
-  }
-
-  /**
-   * Spacing scale에서 값을 가져옵니다.
-   */
-  private static getSpacingFromScale(value: string, preset: DesignPreset): number {
-    // 1. 기본 스케일에서 찾기
-    if (this.SPACING_SCALE[value] !== undefined) {
-      return this.SPACING_SCALE[value];
-    }
-
-    // 2. 프리셋에서 찾기
-    if (preset.spacing && preset.spacing[value] !== undefined) {
-      return preset.spacing[value];
-    }
-
-    // 3. 동적 값 처리 (Tailwind v4의 동적 spacing)
-    const numValue = parseFloat(value);
-    if (!isNaN(numValue)) {
-      // 0.25rem 기반으로 계산 (4px)
-      return numValue * 4;
-    }
-
-    // 4. 기본값
-    return 0;
-  }
-
-  /**
-   * 임의 값을 파싱합니다.
-   */
-  private static parseArbitraryValue(value: string): string {
-    // CSS 값 그대로 반환 (단위 포함)
-    if (value.includes('px') || value.includes('rem') || value.includes('em') || 
-        value.includes('%') || value.includes('vh') || value.includes('vw') ||
-        value.includes('ch') || value.includes('ex')) {
-      return value;
-    }
-
-    // 단위 없는 숫자는 px로 가정
-    const numValue = parseFloat(value);
-    if (!isNaN(numValue)) {
-      return `${numValue}px`;
-    }
-
-    // CSS 변수나 기타 값들
-    return value;
-  }
-
-  /**
-   * 간격 속성을 적용합니다.
-   */
-  private static applySpacingProperty(
-    property: string, 
-    value: number | string, 
-    spacing: EnhancedSpacingStyles
-  ): void {
-    switch (property) {
-      // Padding - 기본 속성
-      case 'p':
-      case 'padding':
-        spacing.padding = {
-          top: value,
-          right: value,
-          bottom: value,
-          left: value,
-        };
-        break;
-      case 'pt':
-      case 'padding-top':
-        if (!spacing.padding) spacing.padding = {};
-        spacing.padding.top = value;
-        break;
-      case 'pr':
-      case 'padding-right':
-        if (!spacing.padding) spacing.padding = {};
-        spacing.padding.right = value;
-        break;
-      case 'pb':
-      case 'padding-bottom':
-        if (!spacing.padding) spacing.padding = {};
-        spacing.padding.bottom = value;
-        break;
-      case 'pl':
-      case 'padding-left':
-        if (!spacing.padding) spacing.padding = {};
-        spacing.padding.left = value;
-        break;
-      case 'px':
-        if (!spacing.padding) spacing.padding = {};
-        spacing.padding.left = value;
-        spacing.padding.right = value;
-        break;
-      case 'py':
-        if (!spacing.padding) spacing.padding = {};
-        spacing.padding.top = value;
-        spacing.padding.bottom = value;
-        break;
-
-      // Padding - 논리적 속성
-      case 'ps':
-      case 'padding-inline-start':
-        if (!spacing.paddingInline) spacing.paddingInline = {};
-        if (typeof spacing.paddingInline === 'number') {
-          spacing.paddingInline = { end: spacing.paddingInline, start: value };
-        } else {
-          spacing.paddingInline.start = value;
-        }
-        break;
-      case 'pe':
-      case 'padding-inline-end':
-        if (!spacing.paddingInline) spacing.paddingInline = {};
-        if (typeof spacing.paddingInline === 'number') {
-          spacing.paddingInline = { start: spacing.paddingInline, end: value };
-        } else {
-          spacing.paddingInline.end = value;
-        }
-        break;
-      case 'padding-inline':
-        spacing.paddingInline = value;
-        break;
-      case 'padding-block':
-        spacing.paddingBlock = value;
-        break;
-      case 'padding-block-start':
-        if (!spacing.paddingBlock) spacing.paddingBlock = {};
-        if (typeof spacing.paddingBlock === 'number') {
-          spacing.paddingBlock = { end: spacing.paddingBlock, start: value };
-        } else {
-          spacing.paddingBlock.start = value;
-        }
-        break;
-      case 'padding-block-end':
-        if (!spacing.paddingBlock) spacing.paddingBlock = {};
-        if (typeof spacing.paddingBlock === 'number') {
-          spacing.paddingBlock = { start: spacing.paddingBlock, end: value };
-        } else {
-          spacing.paddingBlock.end = value;
-        }
-        break;
-
-      // Margin - 기본 속성
-      case 'm':
-      case 'margin':
-        spacing.margin = {
-          top: value,
-          right: value,
-          bottom: value,
-          left: value,
-        };
-        break;
-      case 'mt':
-      case 'margin-top':
-        if (!spacing.margin) spacing.margin = {};
-        spacing.margin.top = value;
-        break;
-      case 'mr':
-      case 'margin-right':
-        if (!spacing.margin) spacing.margin = {};
-        spacing.margin.right = value;
-        break;
-      case 'mb':
-      case 'margin-bottom':
-        if (!spacing.margin) spacing.margin = {};
-        spacing.margin.bottom = value;
-        break;
-      case 'ml':
-      case 'margin-left':
-        if (!spacing.margin) spacing.margin = {};
-        spacing.margin.left = value;
-        break;
-      case 'mx':
-        if (!spacing.margin) spacing.margin = {};
-        spacing.margin.left = value;
-        spacing.margin.right = value;
-        break;
-      case 'my':
-        if (!spacing.margin) spacing.margin = {};
-        spacing.margin.top = value;
-        spacing.margin.bottom = value;
-        break;
-
-      // Margin - 논리적 속성
-      case 'ms':
-      case 'margin-inline-start':
-        if (!spacing.marginInline) spacing.marginInline = {};
-        if (typeof spacing.marginInline === 'number') {
-          spacing.marginInline = { end: spacing.marginInline, start: value };
-        } else {
-          spacing.marginInline.start = value;
-        }
-        break;
-      case 'me':
-      case 'margin-inline-end':
-        if (!spacing.marginInline) spacing.marginInline = {};
-        if (typeof spacing.marginInline === 'number') {
-          spacing.marginInline = { start: spacing.marginInline, end: value };
-        } else {
-          spacing.marginInline.end = value;
-        }
-        break;
-      case 'margin-inline':
-        spacing.marginInline = value;
-        break;
-      case 'margin-block':
-        spacing.marginBlock = value;
-        break;
-      case 'margin-block-start':
-        if (!spacing.marginBlock) spacing.marginBlock = {};
-        if (typeof spacing.marginBlock === 'number') {
-          spacing.marginBlock = { end: spacing.marginBlock, start: value };
-        } else {
-          spacing.marginBlock.start = value;
-        }
-        break;
-      case 'margin-block-end':
-        if (!spacing.marginBlock) spacing.marginBlock = {};
-        if (typeof spacing.marginBlock === 'number') {
-          spacing.marginBlock = { start: spacing.marginBlock, end: value };
-        } else {
-          spacing.marginBlock.end = value;
-        }
-        break;
-
-      // Gap
-      case 'gap':
-        spacing.gap = value;
-        break;
-      case 'gap-x':
-      case 'column-gap':
-        if (!spacing.gap) spacing.gap = {};
-        if (typeof spacing.gap === 'number') {
-          spacing.gap = { row: spacing.gap, column: value };
-        } else {
-          spacing.gap.column = value;
-        }
-        break;
-      case 'gap-y':
-      case 'row-gap':
-        if (!spacing.gap) spacing.gap = {};
-        if (typeof spacing.gap === 'number') {
-          spacing.gap = { row: value, column: spacing.gap };
-        } else {
-          spacing.gap.row = value;
-        }
-        break;
-
-      // Space between
-      case 'space-x':
-        if (!spacing.spaceBetween) spacing.spaceBetween = {};
-        spacing.spaceBetween.x = value;
-        break;
-      case 'space-y':
-        if (!spacing.spaceBetween) spacing.spaceBetween = {};
-        spacing.spaceBetween.y = value;
-        break;
-      case 'space-x-reverse':
-        if (!spacing.spaceBetween) spacing.spaceBetween = {};
-        spacing.spaceBetween.reverse = true;
-        break;
-      case 'space-y-reverse':
-        if (!spacing.spaceBetween) spacing.spaceBetween = {};
-        spacing.spaceBetween.reverse = true;
-        break;
-    }
-  }
-
-  /**
-   * CSS 속성으로 변환합니다.
-   */
-  static toCSSProperties(spacing: EnhancedSpacingStyles): Record<string, string> {
-    const css: Record<string, string> = {};
-
-    // Padding
-    if (spacing.padding) {
-      if (typeof spacing.padding === 'object') {
-        if (spacing.padding.top !== undefined) css['padding-top'] = this.formatValue(spacing.padding.top);
-        if (spacing.padding.right !== undefined) css['padding-right'] = this.formatValue(spacing.padding.right);
-        if (spacing.padding.bottom !== undefined) css['padding-bottom'] = this.formatValue(spacing.padding.bottom);
-        if (spacing.padding.left !== undefined) css['padding-left'] = this.formatValue(spacing.padding.left);
-      } else {
-        css['padding'] = this.formatValue(spacing.padding);
-      }
-    }
-
-    // Padding 논리적 속성
-    if (spacing.paddingInline) {
-      if (typeof spacing.paddingInline === 'object') {
-        if (spacing.paddingInline.start !== undefined) css['padding-inline-start'] = this.formatValue(spacing.paddingInline.start);
-        if (spacing.paddingInline.end !== undefined) css['padding-inline-end'] = this.formatValue(spacing.paddingInline.end);
-      } else {
-        css['padding-inline'] = this.formatValue(spacing.paddingInline);
-      }
-    }
-
-    if (spacing.paddingBlock) {
-      if (typeof spacing.paddingBlock === 'object') {
-        if (spacing.paddingBlock.start !== undefined) css['padding-block-start'] = this.formatValue(spacing.paddingBlock.start);
-        if (spacing.paddingBlock.end !== undefined) css['padding-block-end'] = this.formatValue(spacing.paddingBlock.end);
-      } else {
-        css['padding-block'] = this.formatValue(spacing.paddingBlock);
-      }
-    }
-
-    // Margin
-    if (spacing.margin) {
-      if (typeof spacing.margin === 'object') {
-        if (spacing.margin.top !== undefined) css['margin-top'] = this.formatValue(spacing.margin.top);
-        if (spacing.margin.right !== undefined) css['margin-right'] = this.formatValue(spacing.margin.right);
-        if (spacing.margin.bottom !== undefined) css['margin-bottom'] = this.formatValue(spacing.margin.bottom);
-        if (spacing.margin.left !== undefined) css['margin-left'] = this.formatValue(spacing.margin.left);
-      } else {
-        css['margin'] = this.formatValue(spacing.margin);
-      }
-    }
-
-    // Margin 논리적 속성
-    if (spacing.marginInline) {
-      if (typeof spacing.marginInline === 'object') {
-        if (spacing.marginInline.start !== undefined) css['margin-inline-start'] = this.formatValue(spacing.marginInline.start);
-        if (spacing.marginInline.end !== undefined) css['margin-inline-end'] = this.formatValue(spacing.marginInline.end);
-      } else {
-        css['margin-inline'] = this.formatValue(spacing.marginInline);
-      }
-    }
-
-    if (spacing.marginBlock) {
-      if (typeof spacing.marginBlock === 'object') {
-        if (spacing.marginBlock.start !== undefined) css['margin-block-start'] = this.formatValue(spacing.marginBlock.start);
-        if (spacing.marginBlock.end !== undefined) css['margin-block-end'] = this.formatValue(spacing.marginBlock.end);
-      } else {
-        css['margin-block'] = this.formatValue(spacing.marginBlock);
-      }
-    }
-
-    // Gap
-    if (spacing.gap) {
-      if (typeof spacing.gap === 'object') {
-        if (spacing.gap.row !== undefined) css['row-gap'] = this.formatValue(spacing.gap.row);
-        if (spacing.gap.column !== undefined) css['column-gap'] = this.formatValue(spacing.gap.column);
-      } else {
-        css['gap'] = this.formatValue(spacing.gap);
-      }
-    }
-
-    // Space between (CSS 변수나 선택자 기반 구현 필요)
-    if (spacing.spaceBetween) {
-      if (spacing.spaceBetween.x !== undefined) {
-        css['--space-x'] = this.formatValue(spacing.spaceBetween.x);
-      }
-      if (spacing.spaceBetween.y !== undefined) {
-        css['--space-y'] = this.formatValue(spacing.spaceBetween.y);
-      }
-    }
-
-    return css;
-  }
-
-  /**
-   * 값을 CSS 형식으로 포맷팅합니다.
-   */
-  private static formatValue(value: number | string): string {
-    if (typeof value === 'string') {
-      return value;
-    }
-    return value === 0 ? '0' : `${value}px`;
+    return this.parseValue(className);
   }
 } 

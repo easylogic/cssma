@@ -8,22 +8,25 @@
  * - 텍스트 관련 모든 유틸리티
  */
 
-import { ParsedClass, TypographyStyles, DesignPreset } from '../../types';
+import { 
+  ParsedClass, 
+  ParsedStyles, 
+  DesignPreset, 
+  TypographyStyles,
+  ColorValue
+} from '../../types';
 
 export interface EnhancedTypographyStyles extends TypographyStyles {
   // 확장된 폰트 속성
   fontVariantNumeric?: string; // font-variant-numeric
   fontOpticalSizing?: 'auto' | 'none';
   
-  // 텍스트 색상
-  color?: string;
+  // 텍스트 장식 확장 (TypographyStyles와 호환성 확보)
+  textDecorationThickness?: string | number; // TypographyStyles 타입과 일치
+  textUnderlineOffset?: string | number; // TypographyStyles 타입과 일치
   
-  // 텍스트 장식 확장
-  textDecorationThickness?: string;
-  textUnderlineOffset?: string;
-  
-  // 텍스트 간격 및 크기
-  textIndent?: string;
+  // 텍스트 간격 및 크기 (TypographyStyles와 호환성 확보)
+  textIndent?: string | number; // TypographyStyles 타입과 일치
   
   // 현대적 타이포그래피
   fontStretch?: string;
@@ -408,10 +411,11 @@ export class TypographyParser {
    */
   static applyTypographyStyle(
     parsedClass: ParsedClass, 
-    styles: { typography?: EnhancedTypographyStyles }, 
+    styles: Partial<ParsedStyles>, 
     preset: DesignPreset
   ): void {
-    const { property, value, isArbitrary } = parsedClass;
+    const { property, value } = parsedClass;
+    const isArbitrary = Boolean(parsedClass.isArbitrary); // undefined를 false로 변환
     
     if (!styles.typography) {
       styles.typography = {};
@@ -985,19 +989,19 @@ export class TypographyParser {
     }
 
     if (typography.textDecorationThickness !== undefined) {
-      css['text-decoration-thickness'] = typography.textDecorationThickness;
+      css['text-decoration-thickness'] = this.formatValue(typography.textDecorationThickness);
     }
 
     if (typography.textUnderlineOffset !== undefined) {
-      css['text-underline-offset'] = typography.textUnderlineOffset;
+      css['text-underline-offset'] = this.formatValue(typography.textUnderlineOffset);
     }
 
     if (typography.textIndent !== undefined) {
-      css['text-indent'] = typography.textIndent;
+      css['text-indent'] = this.formatValue(typography.textIndent);
     }
 
     if (typography.color !== undefined) {
-      css['color'] = typography.color;
+      css['color'] = typeof typography.color === 'string' ? typography.color : this.colorToString(typography.color);
     }
 
     return css;
@@ -1011,5 +1015,23 @@ export class TypographyParser {
       return value;
     }
     return value === 0 ? '0' : value.toString();
+  }
+
+  /**
+   * 색상을 CSS 형식으로 변환합니다.
+   */
+  private static colorToString(color: ColorValue): string {
+    // 이미 문자열인 경우
+    if (typeof color === 'string') {
+      return color;
+    }
+
+    // Color 객체인 경우 hex로 변환
+    if (typeof color === 'object' && 'r' in color) {
+      return this.rgbToHex(color.r, color.g, color.b);
+    }
+
+    // 기본값
+    return '#000000';
   }
 } 

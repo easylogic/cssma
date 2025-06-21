@@ -8,7 +8,7 @@
 export interface ParsedStyle {
   property: string;
   value: string;
-  variant: 'preset' | 'arbitrary';
+  variant: 'preset' | 'arbitrary' | 'custom';
   additionalProperties?: Array<{
     property: string;
     value: string;
@@ -28,7 +28,7 @@ export interface Config {
 }
 
 /**
- * 색상 타입
+ * 색상 타입 - RGB 객체 또는 CSS 색상 문자열 지원
  */
 export interface Color {
   r: number;
@@ -38,21 +38,26 @@ export interface Color {
 }
 
 /**
+ * 색상 값 타입 - Color 객체 또는 CSS 색상 문자열
+ */
+export type ColorValue = Color | string;
+
+/**
  * 간격 타입 (상하좌우)
  */
 export interface BoxSpacing {
-  top?: number;
-  right?: number;
-  bottom?: number;
-  left?: number;
+  top?: number | string;
+  right?: number | string;
+  bottom?: number | string;
+  left?: number | string;
 }
 
 /**
  * 그리드 간격 타입
  */
 export interface GridGap {
-  row?: number;
-  column?: number;
+  row?: number | string;
+  column?: number | string;
 }
 
 /**
@@ -99,7 +104,6 @@ export interface DesignPreset {
   version: string;
   colors: Record<string, Record<string, Color>>;
   spacing: Record<string, number>;
-  screens?: Record<string, string>;
   typography: {
     fontSize: Record<string, number>;
     fontWeight: Record<string, number>;
@@ -108,11 +112,16 @@ export interface DesignPreset {
     fontFamily: Record<string, string>;
   };
   effects: {
-    borderRadius: Record<string, number>;
     boxShadow: Record<string, string>;
-    opacity: Record<string, number>;
-    blur: Record<string, number>;
-    textShadow?: Record<string, string>;
+    textShadow: Record<string, string>;
+    blur: Record<string, string | number>;
+    brightness: Record<string, string | number>;
+    contrast: Record<string, string | number>;
+    grayscale: Record<string, string | number>;
+    saturate: Record<string, string | number>;
+    dropShadow: Record<string, string>;
+    opacity: Record<string, string | number>;
+    borderRadius: Record<string, string | number>;
   };
   layout: {
     width: Record<string, number | string>;
@@ -122,11 +131,65 @@ export interface DesignPreset {
     minWidth: Record<string, number | string>;
     minHeight: Record<string, number | string>;
   };
-  animation?: {
-    presets: Record<string, AnimationPreset>;
-    durations: Record<string, number>;
-    easings: Record<string, string>;
+  animation: {
+    presets: { [key: string]: AnimationPreset };
+    easings: { [key: string]: string };
+    durations: { [key: string]: number };
   };
+  screens?: {
+    sm?: string;
+    md?: string;
+    lg?: string;
+    xl?: string;
+    '2xl'?: string;
+    [key: string]: string | undefined;
+  };
+  containers?: {
+    sm?: string;
+    md?: string;
+    lg?: string;
+    [key: string]: string | undefined;
+  };
+  borders: {
+    borderWidth: Record<string, string>;
+    borderRadius: Record<string, string>;
+    borderStyle: Record<string, string>;
+  };
+  
+  backgrounds: {
+    backgroundImage: Record<string, string>;
+    gradients: Record<string, string>;
+  };
+  
+  transitions: {
+    property: Record<string, string>;
+    duration: Record<string, string>;
+    timingFunction: Record<string, string>;
+    delay: Record<string, string>;
+  };
+  
+  transforms: {
+    scale: Record<string, string>;
+    rotate: Record<string, string>;
+    translate: Record<string, string>;
+    skew: Record<string, string>;
+  };
+
+  // Tailwind CSS v4.1 새로운 기능들
+  textShadow?: Record<string, string>;
+  fontStretch?: Record<string, string>;
+  mask?: Record<string, string>;
+  accentColor?: Record<string, string>;
+  fieldSizing?: Record<string, string>;
+  scrollBehavior?: Record<string, string>;
+  scrollSnapType?: Record<string, string>;
+  scrollSnapAlign?: Record<string, string>;
+  viewTransitionName?: Record<string, string>;
+  containerType?: Record<string, string>;
+  logicalProperties?: Record<string, string>;
+  safeAlignment?: Record<string, string>;
+  pointerVariants?: Record<string, string>;
+  gridTemplateSubgrid?: Record<string, string>;
 }
 
 /**
@@ -180,7 +243,15 @@ export type StateModifier =
   | 'not' | 'has'
   // 의사 요소
   | 'before' | 'after' | 'placeholder' | 'selection' | 'marker'
-  | 'first-line' | 'first-letter' | 'backdrop' | 'file';
+  | 'first-line' | 'first-letter' | 'backdrop' | 'file'
+  // Tailwind CSS v4.1 새로운 변형자들
+  | 'pointer-fine' | 'pointer-coarse' | 'any-pointer-fine' | 'any-pointer-coarse'
+  | 'noscript' | 'inverted-colors' | 'details-content' | 'inert'
+  | 'starting' | 'popover-open'
+  // nth-* 변형자들
+  | 'nth-child' | 'nth-last-child' | 'nth-of-type' | 'nth-last-of-type'
+  // 기타 v4.1 변형자들
+  | 'in' | 'descendant';
 
 /**
  * 반응형 모디파이어 타입
@@ -294,68 +365,152 @@ export interface StyleMeta {
 export interface SpacingStyles {
   padding?: BoxSpacing;
   margin?: BoxSpacing;
-  gap?: GridGap | number;
+  gap?: GridGap | number | string;
+  // Tailwind CSS v4.1 추가 속성들
+  paddingInline?: number | string | { start?: number | string; end?: number | string; };
+  paddingBlock?: number | string | { start?: number | string; end?: number | string; };
+  marginInline?: number | string | { start?: number | string; end?: number | string; };
+  marginBlock?: number | string | { start?: number | string; end?: number | string; };
+  spaceBetween?: { x?: number | string; y?: number | string; };
 }
 
 /**
  * 색상 스타일 타입
  */
 export interface ColorStyles {
-  text?: Color;
-  background?: Color;
-  border?: Color;
-  fill?: Color;
-  stroke?: Color;
+  text?: ColorValue;
+  background?: ColorValue;
+  border?: ColorValue;
+  fill?: ColorValue;
+  stroke?: ColorValue;
 }
 
 /**
- * 타이포그래피 스타일 타입
+ * 텍스트 정렬 타입
+ */
+export type TextAlign = 'left' | 'center' | 'right' | 'justify' | 'start' | 'end' | string;
+
+/**
+ * 텍스트 변환 타입
+ */
+export type TextTransform = 'none' | 'uppercase' | 'lowercase' | 'capitalize' | 'full-width' | string;
+
+/**
+ * 타이포그래피 스타일 인터페이스
  */
 export interface TypographyStyles {
-  fontSize?: number;
-  fontWeight?: number;
-  lineHeight?: number;
-  letterSpacing?: number;
+  fontSize?: string | number;
+  fontWeight?: string | number;
+  lineHeight?: string | number;
+  letterSpacing?: string | number;
   fontFamily?: string;
-  textAlign?: 'left' | 'center' | 'right' | 'justify';
-  textDecoration?: 'none' | 'underline' | 'line-through' | 'overline';
-  textDecorationStyle?: 'solid' | 'double' | 'dotted' | 'dashed' | 'wavy';
-  textTransform?: 'none' | 'uppercase' | 'lowercase' | 'capitalize';
+  textAlign?: TextAlign;
+  textTransform?: TextTransform;
+  textDecoration?: string;
+  textDecorationColor?: ColorValue;
+  textDecorationStyle?: string;
+  textDecorationThickness?: string | number;
+  textUnderlineOffset?: string | number;
+  textIndent?: string | number;
+  textShadow?: string;
+  color?: ColorValue;
+  // Tailwind CSS v4.1 새로운 타이포그래피 기능들
+  fontStretch?: 'ultra-condensed' | 'extra-condensed' | 'condensed' | 'semi-condensed' | 'normal' | 'semi-expanded' | 'expanded' | 'extra-expanded' | 'ultra-expanded' | string;
+  colorScheme?: 'light' | 'dark' | 'light dark' | 'dark light' | 'normal' | string;
+  overflowWrap?: 'normal' | 'break-word' | 'anywhere';
+  hyphens?: 'none' | 'manual' | 'auto';
+  writingMode?: 'horizontal-tb' | 'vertical-rl' | 'vertical-lr';
+  textOrientation?: 'mixed' | 'upright' | 'sideways' | 'sideways-right' | 'use-glyph-orientation';
+  // 기존 v4.1 속성들
+  fontStyle?: 'normal' | 'italic' | 'oblique';
+  verticalAlign?: 'baseline' | 'top' | 'middle' | 'bottom' | 'text-top' | 'text-bottom' | 'sub' | 'super' | 'baseline-last' | string;
+  whiteSpace?: 'normal' | 'nowrap' | 'pre' | 'pre-line' | 'pre-wrap' | 'break-spaces';
+  textOverflow?: 'clip' | 'ellipsis';
+  overflow?: string;
+  textDecorationLine?: 'none' | 'underline' | 'overline' | 'line-through';
+  // Font smoothing
+  WebkitFontSmoothing?: 'auto' | 'antialiased';
+  MozOsxFontSmoothing?: 'auto' | 'grayscale';
 }
 
 /**
  * 레이아웃 스타일 타입
  */
 export interface LayoutStyles {
-  display?: 'flex' | 'block' | 'inline' | 'grid' | 'none';
-  width?: number | string;
-  height?: number | string;
-  maxWidth?: number | string;
-  maxHeight?: number | string;
-  minWidth?: number | string;
-  minHeight?: number | string;
-  flexDirection?: 'row' | 'column';
-  justifyContent?: string;
-  alignItems?: string;
-  gridTemplateColumns?: string;
-  gridTemplateRows?: string;
-  gridColumn?: string;
-  gridRow?: string;
-  gridColumnStart?: string;
-  gridColumnEnd?: string;
-  gridRowStart?: string;
-  gridRowEnd?: string;
-  gridAutoFlow?: string;
-  aspectRatio?: string;
+  display?: 'block' | 'inline-block' | 'inline' | 'flex' | 'inline-flex' | 'table' | 'table-cell' | 'table-row' | 'grid' | 'inline-grid' | 'none' | 'contents' | 'flow-root' | 'list-item' | string;
+  position?: 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky';
+  float?: 'left' | 'right' | 'none' | 'inline-start' | 'inline-end';
+  clear?: 'left' | 'right' | 'both' | 'none' | 'inline-start' | 'inline-end';
+  objectFit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
+  objectPosition?: string;
+  overflow?: 'auto' | 'hidden' | 'clip' | 'visible' | 'scroll';
+  overflowX?: 'auto' | 'hidden' | 'clip' | 'visible' | 'scroll';
+  overflowY?: 'auto' | 'hidden' | 'clip' | 'visible' | 'scroll';
+  // Tailwind CSS v4.1 새로운 레이아웃 기능들
+  overflowBlock?: 'auto' | 'hidden' | 'clip' | 'visible' | 'scroll';
+  overflowInline?: 'auto' | 'hidden' | 'clip' | 'visible' | 'scroll';
+  scrollBehavior?: 'auto' | 'smooth';
+  scrollSnapType?: string;
+  scrollSnapAlign?: 'none' | 'start' | 'end' | 'center';
+  scrollSnapStop?: 'normal' | 'always';
+  scrollMargin?: string;
+  scrollPadding?: string;
+  // Container 관련
+  containerType?: 'normal' | 'size' | 'inline-size';
+  containerName?: string;
+  // Aspect ratio
+  aspectRatio?: string | number;
+  // Isolation
+  isolation?: 'auto' | 'isolate';
+  // Mix blend mode
+  mixBlendMode?: string;
+  // Logical properties
+  marginBlock?: string | number;
+  marginInline?: string | number;
+  paddingBlock?: string | number;
+  paddingInline?: string | number;
+  borderBlock?: string;
+  borderInline?: string;
+  borderBlockWidth?: string | number;
+  borderInlineWidth?: string | number;
+  borderBlockColor?: ColorValue;
+  borderInlineColor?: ColorValue;
+  borderBlockStyle?: string;
+  borderInlineStyle?: string;
+  // 기본 크기 속성들
+  width?: string | number;
+  height?: string | number;
+  minWidth?: string | number;
+  minHeight?: string | number;
+  maxWidth?: string | number;
+  maxHeight?: string | number;
+  // 기본 간격 속성들
+  margin?: string | number;
+  marginTop?: string | number;
+  marginRight?: string | number;
+  marginBottom?: string | number;
+  marginLeft?: string | number;
+  padding?: string | number;
+  paddingTop?: string | number;
+  paddingRight?: string | number;
+  paddingBottom?: string | number;
+  paddingLeft?: string | number;
+  // 위치 속성들
+  top?: string | number;
+  right?: string | number;
+  bottom?: string | number;
+  left?: string | number;
+  inset?: string | number;
+  insetBlock?: string | number;
+  insetInline?: string | number;
+  zIndex?: number | string;
+  // 누락된 레이아웃 속성들
   columns?: string | number;
   breakAfter?: 'auto' | 'avoid' | 'all' | 'avoid-page' | 'page' | 'left' | 'right' | 'column';
   breakBefore?: 'auto' | 'avoid' | 'all' | 'avoid-page' | 'page' | 'left' | 'right' | 'column';
   breakInside?: 'auto' | 'avoid' | 'avoid-page' | 'avoid-column';
   boxDecorationBreak?: 'clone' | 'slice';
   boxSizing?: 'border-box' | 'content-box';
-  float?: 'left' | 'right' | 'none' | 'inline-start' | 'inline-end';
-  clear?: 'left' | 'right' | 'both' | 'none' | 'inline-start' | 'inline-end';
-  isolation?: 'isolate' | 'auto';
 }
 
 /**
@@ -364,15 +519,56 @@ export interface LayoutStyles {
 export interface EffectsStyles {
   borderRadius?: number;
   borderWidth?: BoxSpacing;
-  boxShadow?: string[];
+  boxShadow?: string;
   textShadow?: string;
-  opacity?: number;
-  blur?: number;
-  brightness?: number;
-  contrast?: number;
-  grayscale?: number;
-  saturate?: number;
+  opacity?: number | string;
   filter?: string;
+  backdropFilter?: string;
+  // Tailwind CSS v4.1 새로운 효과들
+  accentColor?: ColorValue;
+  caretColor?: ColorValue;
+  scrollbarColor?: string;
+  scrollbarWidth?: 'auto' | 'thin' | 'none';
+  colorScheme?: 'light' | 'dark' | 'light dark' | 'dark light' | 'normal';
+  fieldSizing?: 'content' | 'fixed';
+  // Ring 관련 색상 속성들 (focus outlines)
+  ringColor?: ColorValue;
+  ringOffsetColor?: ColorValue;
+  outlineColor?: ColorValue;
+  // Mask 관련 속성들
+  mask?: string;
+  maskImage?: string;
+  maskPosition?: string;
+  maskSize?: string;
+  maskRepeat?: string;
+  maskOrigin?: string;
+  maskClip?: string;
+  maskComposite?: string;
+  maskMode?: string;
+  // View Transition 관련
+  viewTransitionName?: string;
+  // Highlight 관련  
+  highlight?: ColorValue;
+  // CSS 필터 확장
+  brightness?: number | string;
+  contrast?: number | string;
+  grayscale?: number | string;
+  saturate?: number | string;
+  sepia?: number | string;
+  hueRotate?: number | string;
+  invert?: number | string;
+  blur?: string;
+  dropShadow?: string;
+  // Backdrop 필터 확장
+  backdropBrightness?: number | string;
+  backdropContrast?: number | string;
+  backdropGrayscale?: number | string;
+  backdropSaturate?: number | string;
+  backdropSepia?: number | string;
+  backdropHueRotate?: number | string;
+  backdropInvert?: number | string;
+  backdropBlur?: string;
+  backdropOpacity?: number | string;
 }
 
 /**
@@ -395,8 +591,8 @@ export interface AnimationStyles {
  * 위치 스타일 타입
  */
 export interface PositionStyles {
-  position?: 'static' | 'fixed' | 'absolute' | 'relative' | 'sticky';
-  type?: 'static' | 'fixed' | 'absolute' | 'relative' | 'sticky'; // 테스트 호환성
+  position?: 'static' | 'fixed' | 'absolute' | 'relative' | 'sticky' | string;
+  type?: 'static' | 'fixed' | 'absolute' | 'relative' | 'sticky' | string; // 테스트 호환성
   top?: number | string;
   right?: number | string;
   bottom?: number | string;
@@ -452,6 +648,8 @@ export interface FlexboxGridStyles {
   gridRowStart?: string;
   gridRowEnd?: string;
   gridAutoFlow?: string;
+  gridAutoColumns?: string;
+  gridAutoRows?: string;
   gap?: string;
   columnGap?: string;
   rowGap?: string;
@@ -650,7 +848,7 @@ export interface TransitionsStyles {
 }
 
 export interface BackgroundsStyles {
-  backgroundColor?: string;
+  backgroundColor?: ColorValue;
   backgroundImage?: string;
   backgroundSize?: string;
   backgroundPosition?: string;
@@ -672,11 +870,11 @@ export interface BordersStyles {
   borderInlineWidth?: string;
   borderBlockWidth?: string;
   borderStyle?: string;
-  borderColor?: string;
-  borderTopColor?: string;
-  borderRightColor?: string;
-  borderBottomColor?: string;
-  borderLeftColor?: string;
+  borderColor?: ColorValue;
+  borderTopColor?: ColorValue;
+  borderRightColor?: ColorValue;
+  borderBottomColor?: ColorValue;
+  borderLeftColor?: ColorValue;
   borderRadius?: string;
   borderTopLeftRadius?: string;
   borderTopRightRadius?: string;
@@ -685,16 +883,16 @@ export interface BordersStyles {
   divideXWidth?: string;
   divideYWidth?: string;
   divideStyle?: string;
-  divideColor?: string;
+  divideColor?: ColorValue;
   divideReverse?: string;
   ringWidth?: string;
-  ringColor?: string;
+  ringColor?: ColorValue;
   ringOffsetWidth?: string;
-  ringOffsetColor?: string;
+  ringOffsetColor?: ColorValue;
   ringInset?: string;
   outlineWidth?: string;
   outlineStyle?: string;
-  outlineColor?: string;
+  outlineColor?: ColorValue;
 }
 
 export interface OverflowStyles {
@@ -730,6 +928,16 @@ export interface AccessibilityStyles {
   focusWithinOutlineColor?: string;
   focusWithinRingWidth?: string;
   focusWithinRingColor?: string;
+  // sr-only 구현에 필요한 속성들
+  position?: string;
+  width?: string;
+  height?: string;
+  padding?: string;
+  margin?: string;
+  overflow?: string;
+  clip?: string;
+  whiteSpace?: string;
+  borderWidth?: string;
 }
 
 /**
@@ -739,4 +947,59 @@ export interface BlendModesStyles {
   mixBlendMode?: string;
   backgroundBlendMode?: string;
   isolation?: string;
+}
+
+export interface FlexboxStyles {
+  display?: 'flex' | 'inline-flex';
+  flexDirection?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
+  flexWrap?: 'wrap' | 'wrap-reverse' | 'nowrap';
+  flex?: string | number;
+  flexGrow?: number;
+  flexShrink?: number;
+  flexBasis?: string | number;
+  justifyContent?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly' | 'start' | 'end' | 'left' | 'right' | string;
+  alignItems?: 'stretch' | 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'start' | 'end' | 'self-start' | 'self-end' | string;
+  alignContent?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly' | 'stretch' | 'start' | 'end' | string;
+  alignSelf?: 'auto' | 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch' | 'start' | 'end' | 'self-start' | 'self-end' | string;
+  gap?: string | number;
+  rowGap?: string | number;
+  columnGap?: string | number;
+  // Tailwind CSS v4.1 새로운 flexbox 기능들
+  justifyItems?: 'stretch' | 'start' | 'end' | 'center' | 'baseline' | 'first baseline' | 'last baseline' | 'safe start' | 'safe end' | 'safe center' | 'unsafe start' | 'unsafe end' | 'unsafe center' | string;
+  justifySelf?: 'auto' | 'stretch' | 'start' | 'end' | 'center' | 'baseline' | 'first baseline' | 'last baseline' | 'safe start' | 'safe end' | 'safe center' | 'unsafe start' | 'unsafe end' | 'unsafe center' | string;
+  placeContent?: string;
+  placeItems?: string;
+  placeSelf?: string;
+  order?: number;
+}
+
+export interface GridStyles {
+  display?: 'grid' | 'inline-grid';
+  gridTemplateColumns?: 'subgrid' | 'masonry' | string;
+  gridTemplateRows?: 'subgrid' | 'masonry' | string;
+  gridTemplateAreas?: string;
+  gridTemplate?: string;
+  gridColumn?: string | number;
+  gridRow?: string | number;
+  gridColumnStart?: string | number;
+  gridColumnEnd?: string | number;
+  gridRowStart?: string | number;
+  gridRowEnd?: string | number;
+  gridAutoFlow?: 'row' | 'column' | 'dense' | 'row dense' | 'column dense';
+  gridAutoColumns?: string;
+  gridAutoRows?: string;
+  gridArea?: string;
+  gap?: string | number;
+  rowGap?: string | number;
+  columnGap?: string | number;
+  // Tailwind CSS v4.1 새로운 grid alignment 기능들
+  justifyContent?: 'start' | 'end' | 'center' | 'stretch' | 'space-around' | 'space-between' | 'space-evenly' | 'safe start' | 'safe end' | 'safe center' | 'unsafe start' | 'unsafe end' | 'unsafe center' | string;
+  alignContent?: 'start' | 'end' | 'center' | 'stretch' | 'space-around' | 'space-between' | 'space-evenly' | 'baseline' | 'first baseline' | 'last baseline' | 'safe start' | 'safe end' | 'safe center' | 'unsafe start' | 'unsafe end' | 'unsafe center' | string;
+  justifyItems?: 'start' | 'end' | 'center' | 'stretch' | 'baseline' | 'first baseline' | 'last baseline' | 'safe start' | 'safe end' | 'safe center' | 'unsafe start' | 'unsafe end' | 'unsafe center' | string;
+  alignItems?: 'start' | 'end' | 'center' | 'stretch' | 'baseline' | 'first baseline' | 'last baseline' | 'safe start' | 'safe end' | 'safe center' | 'unsafe start' | 'unsafe end' | 'unsafe center' | string;
+  justifySelf?: 'auto' | 'start' | 'end' | 'center' | 'stretch' | 'baseline' | 'first baseline' | 'last baseline' | 'safe start' | 'safe end' | 'safe center' | 'unsafe start' | 'unsafe end' | 'unsafe center' | string;
+  alignSelf?: 'auto' | 'start' | 'end' | 'center' | 'stretch' | 'baseline' | 'first baseline' | 'last baseline' | 'safe start' | 'safe end' | 'safe center' | 'unsafe start' | 'unsafe end' | 'unsafe center' | string;
+  placeContent?: string;
+  placeItems?: string;
+  placeSelf?: string;
 } 

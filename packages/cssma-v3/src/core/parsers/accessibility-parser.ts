@@ -17,17 +17,7 @@ export class AccessibilityParser {
     if (className === 'sr-only') {
       return {
         property: 'screenReader',
-        value: {
-          position: 'absolute',
-          width: '1px',
-          height: '1px',
-          padding: '0',
-          margin: '-1px',
-          overflow: 'hidden',
-          clip: 'rect(0, 0, 0, 0)',
-          whiteSpace: 'nowrap',
-          borderWidth: '0',
-        },
+        value: 'sr-only',
         variant: 'preset'
       };
     }
@@ -35,16 +25,7 @@ export class AccessibilityParser {
     if (className === 'not-sr-only') {
       return {
         property: 'screenReader',
-        value: {
-          position: 'static',
-          width: 'auto',
-          height: 'auto',
-          padding: '0',
-          margin: '0',
-          overflow: 'visible',
-          clip: 'auto',
-          whiteSpace: 'normal'
-        },
+        value: 'not-sr-only',
         variant: 'preset'
       };
     }

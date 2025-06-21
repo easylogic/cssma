@@ -144,7 +144,16 @@ export class SizingParser {
    * @returns 파싱된 스타일 또는 null
    */
   static parse(className: string): ParsedStyle | null {
-    return this.parseSizing(className);
+    const sizeStyles = this.parseSizing(className);
+    if (!sizeStyles) return null;
+
+    // Record<string, string>을 ParsedStyle로 변환
+    const [property, value] = Object.entries(sizeStyles)[0];
+    return {
+      property,
+      value,
+      variant: 'preset'
+    };
   }
 
   /**

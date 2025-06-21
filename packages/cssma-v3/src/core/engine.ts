@@ -216,10 +216,16 @@ export class StyleEngine {
         fontFamily: { 'sans': 'system-ui, sans-serif' }
       },
       effects: {
-        borderRadius: { 'default': 4 },
         boxShadow: { 'default': '0 1px 3px rgba(0,0,0,0.1)' },
+        textShadow: { 'default': '0 2px 4px rgba(0,0,0,0.1)' },
+        blur: { 'default': 8 },
+        brightness: { '100': 1 },
+        contrast: { '100': 1 },
+        grayscale: { '0': 0 },
+        saturate: { '100': 1 },
+        dropShadow: { 'default': '0 2px 4px rgba(0,0,0,0.1)' },
         opacity: { '100': 1 },
-        blur: { 'default': 8 }
+        borderRadius: { 'default': 4 },
       },
       layout: {
         width: { 'full': '100%' },
@@ -228,7 +234,46 @@ export class StyleEngine {
         maxHeight: { 'full': '100%' },
         minWidth: { 'full': '100%' },
         minHeight: { 'full': '100%' }
-      }
+      },
+      animation: {
+        presets: {
+          'spin': {
+            name: 'spin',
+            duration: 1000,
+            timingFunction: 'linear',
+            iterationCount: 'infinite',
+            keyframes: [
+              { offset: 0, transform: 'rotate(0deg)' },
+              { offset: 1, transform: 'rotate(360deg)' },
+            ],
+          },
+        },
+        durations: { '300': 300, '500': 500 },
+        easings: { 'linear': 'linear', 'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)' },
+      },
+      screens: { sm: '640px', md: '768px', lg: '1024px' },
+      containers: { sm: '640px', md: '768px', lg: '1024px' },
+      borders: {
+        borderWidth: { 'default': '1px' },
+        borderRadius: { 'default': '0.25rem' },
+        borderStyle: { 'solid': 'solid' },
+      },
+      backgrounds: {
+        backgroundImage: { 'none': 'none' },
+        gradients: { 'none': 'transparent' },
+      },
+      transitions: {
+        property: { 'default': 'all' },
+        duration: { '300': '300ms' },
+        timingFunction: { 'linear': 'linear' },
+        delay: { '75': '75ms' },
+      },
+      transforms: {
+        scale: { '100': '1' },
+        rotate: { '0': '0deg' },
+        translate: { '0': '0px' },
+        skew: { '0': '0deg' },
+      },
     };
   }
 }
