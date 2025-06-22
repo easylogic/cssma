@@ -1,21 +1,30 @@
 /**
  * CSSParser - CSS 클래스 파서 (리팩토링된 버전)
- * 
+ *
  * 이 클래스는 CSS 클래스를 파싱하여 구조화된 데이터로 변환합니다.
  * 모든 기능(반응형, 상태 모디파이어, 임의 값 등)을 지원합니다.
- * 
+ *
  * 개별 파서들로 책임을 분리하여 유지보수성을 향상시켰습니다.
  */
 
-import { Config, ParsedClass, ParsedStyles, DesignPreset, StyleCategory, StateModifier, BreakpointModifier, ContainerQueryModifier } from '../types';
-import { 
-  LayoutParser, 
-  AnimationParser, 
-  SpacingParser, 
-  ColorParser, 
-  TypographyParser, 
-  EffectsParser, 
-  PositionParser, 
+import {
+  Config,
+  ParsedClass,
+  ParsedStyles,
+  DesignPreset,
+  StyleCategory,
+  StateModifier,
+  BreakpointModifier,
+  ContainerQueryModifier,
+} from "../types";
+import {
+  LayoutParser,
+  AnimationParser,
+  SpacingParser,
+  ColorParser,
+  TypographyParser,
+  EffectsParser,
+  PositionParser,
   TransformParser,
   SizingParser,
   FlexboxGridParser,
@@ -27,8 +36,9 @@ import {
   BordersParser,
   OverflowParser,
   AccessibilityParser,
-  BlendModesParser
-} from './parsers';
+  BlendModesParser,
+} from "./parsers";
+import { ModifierParser, type ModifierParseResult } from "./parsers/modifiers";
 
 /**
  * 파서 정보 인터페이스
@@ -38,46 +48,109 @@ interface ParserInfo {
   category: StyleCategory;
 }
 
+// 상태 모디파이어 체크
+const states: string[] = [
+  "hover",
+  "focus",
+  "active",
+  "disabled",
+  "visited",
+  "checked",
+  "first",
+  "last",
+  "odd",
+  "even",
+  "focus-within",
+  "focus-visible",
+  "target",
+  "default",
+  "enabled",
+  "indeterminate",
+  "invalid",
+  "valid",
+  "optional",
+  "required",
+  "placeholder-shown",
+  "autofill",
+  "read-only",
+  "dark",
+  "light",
+
+  // v4.1 새로운 상태들
+  "details-content", // <details> 요소의 content
+  "in-range", // 범위 내 값
+  "out-of-range", // 범위 밖 값
+  "user-valid", // 사용자 상호작용 후 유효
+  "user-invalid", // 사용자 상호작용 후 무효
+  "first-of-type", // 같은 타입의 첫 번째
+  "last-of-type", // 같은 타입의 마지막
+  "only-of-type", // 같은 타입의 유일한 요소
+  "empty", // 빈 요소
+  "before", // ::before 의사 요소
+  "after", // ::after 의사 요소
+  "placeholder", // ::placeholder 의사 요소
+  "file", // ::file-selector-button 의사 요소
+  "marker", // ::marker 의사 요소
+  "selection", // ::selection 의사 요소
+  "first-line", // ::first-line 의사 요소
+  "first-letter", // ::first-letter 의사 요소
+  "backdrop", // ::backdrop 의사 요소
+
+  // 미디어 쿼리 상태들
+  "motion-safe", // prefers-reduced-motion: no-preference
+  "motion-reduce", // prefers-reduced-motion: reduce
+  "contrast-more", // prefers-contrast: more
+  "contrast-less", // prefers-contrast: less
+  "portrait", // orientation: portrait
+  "landscape", // orientation: landscape
+  "print", // print media
+  "forced-colors", // forced-colors: active
+  "inverted-colors", // inverted-colors: inverted
+  "scripting", // scripting: enabled
+  "starting", // @starting-style
+];
+
 /**
  * CSS 클래스 파서
  */
 export class CSSParser {
   private config: Config;
   private preset: DesignPreset;
-  
+  private modifierParser: ModifierParser; // ModifierParser 인스턴스
+
   // 파서 맵핑 (우선순위 순서로 정렬)
   private static readonly PARSER_MAP: ParserInfo[] = [
     // 특수 케이스들 우선 처리
-    { parser: AccessibilityParser, category: 'accessibility' },
-    { parser: TypographyParser, category: 'typography' },
-    { parser: SpacingParser, category: 'spacing' },
-    
+    { parser: AccessibilityParser, category: "accessibility" },
+    { parser: TypographyParser, category: "typography" },
+    { parser: SpacingParser, category: "spacing" },
+
     // 테이블 관련 (border-collapse가 borders와 겹치므로 우선 처리)
-    { parser: TablesParser, category: 'tables' },
-    
+    { parser: TablesParser, category: "tables" },
+
     // 애니메이션 관련 (transition이 layout과 겹치므로 우선 처리)
-    { parser: AnimationParser, category: 'animation' },
-    { parser: TransitionsParser, category: 'transitions' },
-    { parser: TransformParser, category: 'transform' },
-    
+    { parser: AnimationParser, category: "animation" },
+    { parser: TransitionsParser, category: "transitions" },
+    { parser: TransformParser, category: "transform" },
+
     // 레이아웃 관련
-    { parser: FlexboxGridParser, category: 'flexbox-grid' },
-    { parser: SizingParser, category: 'sizing' },
-    { parser: PositionParser, category: 'position' },
-    { parser: LayoutParser, category: 'layout' },
-    { parser: OverflowParser, category: 'overflow' },
-    
+    { parser: FlexboxGridParser, category: "flexbox-grid" },
+    { parser: SizingParser, category: "sizing" },
+    { parser: PositionParser, category: "position" },
+    { parser: LayoutParser, category: "layout" },
+    { parser: OverflowParser, category: "overflow" },
+
     // 시각적 효과 (각자 색상 포함, Filters 통합)
-    { parser: BordersParser, category: 'borders' },
-    { parser: BackgroundsParser, category: 'backgrounds' },
-    { parser: EffectsParser, category: 'effects' },
-    { parser: BlendModesParser, category: 'blend-modes' },
-    
+    { parser: BordersParser, category: "borders" },
+    { parser: BackgroundsParser, category: "backgrounds" },
+    { parser: EffectsParser, category: "effects" },
+    { parser: BlendModesParser, category: "blend-modes" },
+
     // 상호작용 관련
-    { parser: InteractivityParser, category: 'interactivity' },
-    
+    { parser: InteractivityParser, category: "interactivity" },
+
     // 기타
-    { parser: SVGParser, category: 'svg' }
+    { parser: SVGParser, category: "svg" },
     // ColorParser 제거: 각 개별 파서가 자신의 색상을 처리
   ];
 
@@ -89,6 +162,7 @@ export class CSSParser {
   constructor(config: Config, preset: DesignPreset) {
     this.config = config;
     this.preset = preset;
+    this.modifierParser = new ModifierParser(); // ModifierParser 인스턴스 생성
   }
 
   /**
@@ -99,12 +173,12 @@ export class CSSParser {
   parse(classString: string): ParsedStyles {
     const startTime = Date.now();
     const tokens = this.tokenizeInput(classString);
-    
+
     const result: ParsedStyles = {
       spacing: {
         padding: {},
         margin: {},
-        gap: {}
+        gap: {},
       },
       colors: {},
       typography: {},
@@ -133,10 +207,10 @@ export class CSSParser {
       meta: {
         originalClasses: tokens,
         originalInput: classString,
-        preset: this.preset.name || 'default',
+        preset: this.preset.name || "default",
         parseTime: 0,
-        warnings: []
-      }
+        warnings: [],
+      },
     };
 
     // 각 토큰 처리
@@ -171,7 +245,7 @@ export class CSSParser {
     return input
       .trim()
       .split(/\s+/)
-      .filter(token => token.length > 0);
+      .filter((token) => token.length > 0);
   }
 
   /**
@@ -180,7 +254,7 @@ export class CSSParser {
    * @returns 파싱된 클래스 객체
    */
   parseClassName(className: string): ParsedClass | undefined {
-    if (!className || className.trim() === '') {
+    if (!className || className.trim() === "") {
       return undefined;
     }
 
@@ -191,22 +265,24 @@ export class CSSParser {
     }
 
     // 모디파이어를 파싱합니다.
-    const modifierResult = this.parseModifiers(processedClassName);
+    const modifierResult = this.modifierParser.parseClassNameModifiers(processedClassName, this.preset);
     const { baseClassName } = modifierResult;
 
     // 각 파서에게 클래스 인식을 요청 (우선순위 순서)
     for (const { parser, category } of CSSParser.PARSER_MAP) {
       if (parser.isValidClass && parser.isValidClass(baseClassName)) {
         // 해당 파서가 클래스를 인식했으므로 파싱 진행
-        const parseResult = parser.parseValue ? parser.parseValue(baseClassName) : this.fallbackParseValue(baseClassName);
-        
+        const parseResult = parser.parseValue
+          ? parser.parseValue(baseClassName)
+          : this.fallbackParseValue(baseClassName);
+
         if (parseResult) {
           return {
             original: className,
             className: processedClassName,
             baseClassName: baseClassName,
             property: parseResult.property || baseClassName,
-            value: parseResult.value || '',
+            value: parseResult.value || "",
             category: category,
             isArbitrary: parseResult.isArbitrary || false,
             stateModifier: modifierResult.stateModifier,
@@ -216,13 +292,19 @@ export class CSSParser {
             breakpointModifiers: modifierResult.breakpointModifiers,
             specialSelector: modifierResult.specialSelector,
             modifier: modifierResult.modifier,
-            breakpoint: this.getBreakpointName(modifierResult.breakpointModifier),
+            breakpoint: this.getBreakpointName(
+              modifierResult.breakpointModifier
+            ),
             modifiers: {
               state: modifierResult.stateModifiers,
-              breakpoint: this.getBreakpointName(modifierResult.breakpointModifier),
-              container: this.getContainerName(modifierResult.containerQueryModifier),
-              special: modifierResult.specialSelector
-            }
+              breakpoint: this.getBreakpointName(
+                modifierResult.breakpointModifier
+              ),
+              container: this.getContainerName(
+                modifierResult.containerQueryModifier
+              ),
+              special: modifierResult.specialSelector,
+            },
           };
         }
       }
@@ -236,7 +318,7 @@ export class CSSParser {
       baseClassName: baseClassName,
       property: fallbackResult.property,
       value: fallbackResult.value,
-      category: 'layout', // 기본 카테고리
+      category: "layout", // 기본 카테고리
       isArbitrary: fallbackResult.isArbitrary,
       stateModifier: modifierResult.stateModifier,
       breakpointModifier: modifierResult.breakpointModifier,
@@ -250,8 +332,8 @@ export class CSSParser {
         state: modifierResult.stateModifiers,
         breakpoint: this.getBreakpointName(modifierResult.breakpointModifier),
         container: this.getContainerName(modifierResult.containerQueryModifier),
-        special: modifierResult.specialSelector
-      }
+        special: modifierResult.specialSelector,
+      },
     };
   }
 
@@ -265,318 +347,41 @@ export class CSSParser {
   } {
     // [값] 형태의 임의 값 체크
     const arbitraryMatch = className.match(/^(.+?)-\[(.+)\]$/);
-    
+
     if (arbitraryMatch) {
       return {
         property: arbitraryMatch[1],
         value: arbitraryMatch[2],
-        isArbitrary: true
+        isArbitrary: true,
       };
     }
 
     // CSS 변수 체크 (예: text-(--my-color), aspect-(--my-aspect-ratio))
     const cssVarMatch = className.match(/^(.+?)-(--[\w-]+)$/);
-    
+
     if (cssVarMatch) {
       return {
         property: cssVarMatch[1],
         value: `var(${cssVarMatch[2]})`,
-        isArbitrary: true
+        isArbitrary: true,
       };
     }
 
     // 일반 분리 (propertyName-value)
-    const lastDashIndex = className.lastIndexOf('-');
+    const lastDashIndex = className.lastIndexOf("-");
     if (lastDashIndex > 0) {
       return {
         property: className.substring(0, lastDashIndex),
         value: className.substring(lastDashIndex + 1),
-        isArbitrary: false
+        isArbitrary: false,
       };
     }
 
     // 값이 없는 속성 (예: flex, grid, hidden)
     return {
       property: className,
-      value: '',
-      isArbitrary: false
-    };
-  }
-
-  /**
-   * 모디파이어를 파싱합니다.
-   * @param className 클래스명
-   * @returns 파싱 결과
-   */
-  private parseModifiers(className: string): { 
-    baseClassName: string; 
-    stateModifier?: StateModifier; 
-    breakpointModifier?: BreakpointModifier;
-    containerQueryModifier?: ContainerQueryModifier;
-    stateModifiers?: StateModifier[];
-    specialSelector?: {
-      type: 'nth-child' | 'nth-last-child' | 'nth-of-type' | 'nth-last-of-type';
-      value: string;
-    };
-    // 복합 브레이크포인트를 위한 필드 추가
-    breakpointModifiers?: BreakpointModifier[];
-    modifier?: string;
-  } {
-    let baseClassName = className;
-    let stateModifier: StateModifier | undefined;
-    let breakpointModifier: BreakpointModifier | undefined;
-    let containerQueryModifier: ContainerQueryModifier | undefined;
-    let stateModifiers: StateModifier[] = [];
-    let breakpointModifiers: BreakpointModifier[] = [];
-    let specialSelector: { type: 'nth-child' | 'nth-last-child' | 'nth-of-type' | 'nth-last-of-type'; value: string } | undefined;
-
-    // 콜론으로 분리
-    const parts = className.split(':');
-    baseClassName = parts[parts.length - 1]; // 마지막 부분이 실제 클래스
-
-    // 모디파이어들 처리
-    for (let i = 0; i < parts.length - 1; i++) {
-      const modifier = parts[i];
-
-      // 컨테이너 쿼리 모디파이어 체크 (@로 시작)
-      if (modifier.startsWith('@')) {
-        const containerQuery = modifier.slice(1); // @ 제거
-        
-        // max- 접두사 체크
-        if (containerQuery.startsWith('max-')) {
-          const size = containerQuery.slice(4);
-          // 임의 값 ([...]) 직접 처리
-          if (size.startsWith('[') && size.endsWith(']')) {
-            containerQueryModifier = {
-              type: 'max-width',
-              value: size.slice(1, -1) // [] 제거
-            };
-          } else {
-            containerQueryModifier = {
-              type: 'max-width',
-              value: this.getScreenSize(size)
-            };
-          }
-        } else {
-          // min- 또는 일반 컨테이너 쿼리
-          let actualQuery = containerQuery;
-          
-          // min- 접두사 제거 (있는 경우)
-          if (containerQuery.startsWith('min-')) {
-            actualQuery = containerQuery.slice(4);
-          }
-          
-          // 임의 값 ([...]) 직접 처리
-          if (actualQuery.startsWith('[') && actualQuery.endsWith(']')) {
-            containerQueryModifier = {
-              type: 'min-width',
-              value: actualQuery.slice(1, -1) // [] 제거
-            };
-          } else if (actualQuery.includes('/')) {
-            // 명명된 컨테이너 쿼리 (예: md/sidebar)
-            containerQueryModifier = {
-              type: 'min-width',
-              value: actualQuery // 그대로 유지
-            };
-          } else {
-            containerQueryModifier = {
-              type: 'min-width',
-              value: this.getScreenSize(actualQuery)
-            };
-          }
-        }
-        continue;
-      }
-
-      // 반응형 모디파이어 체크
-      const breakpoints = ['sm', 'md', 'lg', 'xl', '2xl'];
-      const maxBreakpoints = ['max-sm', 'max-md', 'max-lg', 'max-xl', 'max-2xl'];
-      
-      if (breakpoints.includes(modifier)) {
-        const newBreakpoint = {
-          type: 'min-width' as const,
-          value: this.getScreenSize(modifier)
-        };
-        
-        if (!breakpointModifier) {
-          breakpointModifier = newBreakpoint;
-        }
-        breakpointModifiers.push(newBreakpoint);
-        continue;
-      }
-      
-      if (maxBreakpoints.includes(modifier)) {
-        const size = modifier.replace('max-', '');
-        const newBreakpoint = {
-          type: 'max-width' as const,
-          value: this.getScreenSize(size)
-        };
-        
-        if (!breakpointModifier) {
-          breakpointModifier = newBreakpoint;
-        }
-        breakpointModifiers.push(newBreakpoint);
-        continue;
-      }
-
-      // 임의 브레이크포인트 체크 (min-[...], max-[...])
-      if (modifier.startsWith('min-[') && modifier.endsWith(']')) {
-        const value = modifier.slice(5, -1);
-        const newBreakpoint = {
-          type: 'min-width' as const,
-          value: value,
-          // 임의 브레이크포인트 표시용 플래그
-          isArbitrary: true
-        } as any;
-        
-        if (!breakpointModifier) {
-          breakpointModifier = newBreakpoint;
-        }
-        breakpointModifiers.push(newBreakpoint);
-        continue;
-      }
-      
-      if (modifier.startsWith('max-[') && modifier.endsWith(']')) {
-        const value = modifier.slice(5, -1);
-        const newBreakpoint = {
-          type: 'max-width' as const,
-          value: value,
-          // 임의 브레이크포인트 표시용 플래그
-          isArbitrary: true
-        } as any;
-        
-        if (!breakpointModifier) {
-          breakpointModifier = newBreakpoint;
-        }
-        breakpointModifiers.push(newBreakpoint);
-        continue;
-      }
-
-      // 특수 선택자 체크
-      // nth-[expression]: 패턴 (nth-[3n+1]:)
-      if (modifier.startsWith('nth-[') && modifier.endsWith(']')) {
-        const value = modifier.slice(5, -1);
-        specialSelector = {
-          type: 'nth-child',
-          value: value
-        };
-        continue;
-      }
-
-      // nth-{number}: 패턴 (nth-3:)
-      const nthMatch = modifier.match(/^nth-(\d+)$/);
-      if (nthMatch) {
-        specialSelector = {
-          type: 'nth-child',
-          value: nthMatch[1]
-        };
-        continue;
-      }
-
-      // nth-child-{number}: 패턴 (nth-child-3:)
-      const nthChildMatch = modifier.match(/^nth-child-(\d+)$/);
-      if (nthChildMatch) {
-        specialSelector = {
-          type: 'nth-child',
-          value: nthChildMatch[1]
-        };
-        continue;
-      }
-
-      // nth-last-child-{number}: 패턴 (nth-last-child-3:)
-      const nthLastChildMatch = modifier.match(/^nth-last-child-(\d+)$/);
-      if (nthLastChildMatch) {
-        specialSelector = {
-          type: 'nth-last-child',
-          value: nthLastChildMatch[1]
-        };
-        continue;
-      }
-
-      // nth-of-type-{number}: 패턴 (nth-of-type-3:)
-      const nthOfTypeMatch = modifier.match(/^nth-of-type-(\d+)$/);
-      if (nthOfTypeMatch) {
-        specialSelector = {
-          type: 'nth-of-type',
-          value: nthOfTypeMatch[1]
-        };
-        continue;
-      }
-
-      // 기존 괄호 패턴 (nth-child(3):) - 후위 호환성
-      if (modifier.includes('(') && modifier.includes(')')) {
-        const match = modifier.match(/^(nth-child|nth-last-child|nth-of-type|nth-last-of-type)\((.+)\)$/);
-        if (match) {
-          specialSelector = {
-            type: match[1] as any,
-            value: match[2]
-          };
-          continue;
-        }
-      }
-
-      // 상태 모디파이어 체크
-      const states: string[] = [
-        'hover', 'focus', 'active', 'disabled', 'visited', 'checked',
-        'first', 'last', 'odd', 'even', 'focus-within', 'focus-visible',
-        'target', 'default', 'enabled', 'indeterminate', 'invalid',
-        'valid', 'optional', 'required', 'placeholder-shown', 'autofill',
-        'read-only', 'dark', 'light'
-      ];
-      
-      if (states.includes(modifier)) {
-        if (!stateModifier) {
-          stateModifier = modifier as StateModifier;
-        }
-        stateModifiers.push(modifier as StateModifier);
-      }
-    }
-
-    // Modifier 필드 설정 (테스트 호환성)
-    let modifierValue: string | undefined;
-    
-    // 복합 모디파이어 (예: md:hover)의 경우 상태 부분만 반환
-    if (breakpointModifier && stateModifier) {
-      // 다중 상태의 경우 마지막 상태만 사용
-      modifierValue = stateModifiers.length > 0 ? stateModifiers[stateModifiers.length - 1] : stateModifier;
-    }
-    // 상태 모디파이어만 있는 경우
-    else if (stateModifier || stateModifiers.length > 0) {
-      // 다중 상태의 경우 마지막 상태만 반환 (테스트 호환성)
-      modifierValue = stateModifiers.length > 0 ? stateModifiers[stateModifiers.length - 1] : stateModifier;
-    } else if (breakpointModifier) {
-      // 브레이크포인트 모디파이어만 있는 경우 - 브레이크포인트 이름 사용
-      const screens = this.preset.screens || {
-        'sm': '640px',
-        'md': '768px',
-        'lg': '1024px',
-        'xl': '1280px',
-        '2xl': '1536px'
-      };
-      
-      // 브레이크포인트 이름 찾기
-      const screenKey = Object.keys(screens).find(key => (screens as Record<string, string>)[key] === breakpointModifier.value);
-      
-      if (screenKey) {
-        modifierValue = breakpointModifier.type === 'max-width' ? `max-${screenKey}` : screenKey;
-      } else if (breakpointModifier.value.startsWith('[') && breakpointModifier.value.endsWith(']')) {
-        // 임의 브레이크포인트
-        const arbitraryValue = breakpointModifier.value.slice(1, -1);
-        modifierValue = breakpointModifier.type === 'max-width' ? `max-[${arbitraryValue}]` : `min-[${arbitraryValue}]`;
-      } else {
-        modifierValue = breakpointModifier.value;
-      }
-    }
-
-    return {
-      baseClassName,
-      stateModifier,
-      breakpointModifier,
-      containerQueryModifier,
-      stateModifiers: stateModifiers.length > 0 ? stateModifiers : undefined,
-      specialSelector,
-      breakpointModifiers: breakpointModifiers.length > 0 ? breakpointModifiers : undefined,
-      modifier: modifierValue
+      value: "",
+      isArbitrary: false,
     };
   }
 
@@ -585,24 +390,34 @@ export class CSSParser {
    * @param parsedClass 파싱된 클래스
    * @param styles 스타일 객체
    */
-  private applyParsedClassToStyles(parsedClass: ParsedClass, styles: ParsedStyles): void {
-    const { breakpointModifier, breakpointModifiers, containerQueryModifier, stateModifier, stateModifiers, specialSelector } = parsedClass;
+  private applyParsedClassToStyles(
+    parsedClass: ParsedClass,
+    styles: ParsedStyles
+  ): void {
+    const {
+      breakpointModifier,
+      breakpointModifiers,
+      containerQueryModifier,
+      stateModifier,
+      stateModifiers,
+      specialSelector,
+    } = parsedClass;
 
     // 복합 브레이크포인트 처리 (md:max-lg:flex)
     if (breakpointModifiers && breakpointModifiers.length > 1) {
       let currentLevel = styles;
-      
+
       // 각 브레이크포인트를 순차적으로 중첩 적용
       for (let i = 0; i < breakpointModifiers.length; i++) {
         const breakpoint = breakpointModifiers[i];
         const breakpointKey = this.getBreakpointKey(breakpoint);
-        
+
         // 최상위 레벨에서는 breakpoints 객체 사용
         if (i === 0) {
           if (!currentLevel.breakpoints) {
             currentLevel.breakpoints = {};
           }
-          
+
           if (!currentLevel.breakpoints[breakpointKey]) {
             currentLevel.breakpoints[breakpointKey] = {
               spacing: { padding: {}, margin: {}, gap: {} },
@@ -616,10 +431,10 @@ export class CSSParser {
               sizing: {},
               states: {} as Record<string, Partial<ParsedStyles>>,
               nestedStates: {},
-              specialSelectors: {}
+              specialSelectors: {},
             };
           }
-          
+
           currentLevel = currentLevel.breakpoints[breakpointKey] as any;
         }
         // 중첩 레벨에서는 breakpoints 필드에 추가
@@ -627,7 +442,7 @@ export class CSSParser {
           if (!currentLevel.breakpoints) {
             currentLevel.breakpoints = {};
           }
-          
+
           if (!currentLevel.breakpoints[breakpointKey]) {
             currentLevel.breakpoints[breakpointKey] = {
               spacing: { padding: {}, margin: {}, gap: {} },
@@ -638,16 +453,19 @@ export class CSSParser {
               animation: {},
               position: {},
               transform: {},
-              sizing: {}
+              sizing: {},
             };
           }
-          
+
           // 마지막 브레이크포인트가 아니면 계속 중첩
           if (i < breakpointModifiers.length - 1) {
             currentLevel = currentLevel.breakpoints[breakpointKey] as any;
           } else {
             // 마지막 브레이크포인트에서는 스타일 적용
-            this.applyStyleByCategory(parsedClass, currentLevel.breakpoints[breakpointKey]);
+            this.applyStyleByCategory(
+              parsedClass,
+              currentLevel.breakpoints[breakpointKey]
+            );
           }
         }
       }
@@ -666,7 +484,7 @@ export class CSSParser {
           spacing: {
             padding: {},
             margin: {},
-            gap: {}
+            gap: {},
           },
           colors: {},
           typography: {},
@@ -678,7 +496,7 @@ export class CSSParser {
           sizing: {},
           states: {} as Record<string, Partial<ParsedStyles>>,
           nestedStates: {},
-          specialSelectors: {}
+          specialSelectors: {},
         };
       }
 
@@ -695,14 +513,17 @@ export class CSSParser {
             animation: {},
             position: {},
             transform: {},
-            sizing: {}
+            sizing: {},
           };
         }
-        this.applyStyleByCategory(parsedClass, styles.breakpoints[breakpointKey].specialSelectors![selectorKey]);
+        this.applyStyleByCategory(
+          parsedClass,
+          styles.breakpoints[breakpointKey].specialSelectors![selectorKey]
+        );
       }
       // 다중 상태 모디파이어 처리 (중첩 상태)
       else if (stateModifiers && stateModifiers.length > 1) {
-        const nestedKey = stateModifiers.join(':');
+        const nestedKey = stateModifiers.join(":");
         if (!styles.breakpoints[breakpointKey].nestedStates![nestedKey]) {
           styles.breakpoints[breakpointKey].nestedStates![nestedKey] = {
             spacing: {},
@@ -713,15 +534,21 @@ export class CSSParser {
             animation: {},
             position: {},
             transform: {},
-            sizing: {}
+            sizing: {},
           };
         }
-        this.applyStyleByCategory(parsedClass, styles.breakpoints[breakpointKey].nestedStates![nestedKey]);
+        this.applyStyleByCategory(
+          parsedClass,
+          styles.breakpoints[breakpointKey].nestedStates![nestedKey]
+        );
       }
       // 단일 상태 모디파이어 처리
-      else if (stateModifier || (stateModifiers && stateModifiers.length === 1)) {
+      else if (
+        stateModifier ||
+        (stateModifiers && stateModifiers.length === 1)
+      ) {
         const stateKey = stateModifier || stateModifiers![0];
-        
+
         if (!styles.breakpoints[breakpointKey].states![stateKey]) {
           styles.breakpoints[breakpointKey].states![stateKey] = {
             spacing: {},
@@ -737,13 +564,19 @@ export class CSSParser {
             filters: {},
             interactivity: {},
             tables: {},
-            svg: {}
+            svg: {},
           };
         }
-        
-        this.applyStyleByCategory(parsedClass, styles.breakpoints[breakpointKey].states![stateKey]);
+
+        this.applyStyleByCategory(
+          parsedClass,
+          styles.breakpoints[breakpointKey].states![stateKey]
+        );
       } else {
-        this.applyStyleByCategory(parsedClass, styles.breakpoints[breakpointKey]);
+        this.applyStyleByCategory(
+          parsedClass,
+          styles.breakpoints[breakpointKey]
+        );
       }
     }
     // 컨테이너 쿼리 처리
@@ -767,7 +600,7 @@ export class CSSParser {
           sizing: {},
           states: {} as Record<string, Partial<ParsedStyles>>,
           nestedStates: {},
-          specialSelectors: {}
+          specialSelectors: {},
         };
       }
 
@@ -784,13 +617,15 @@ export class CSSParser {
             animation: {},
             position: {},
             transform: {},
-            sizing: {}
+            sizing: {},
           };
         }
-        this.applyStyleByCategory(parsedClass, styles.containers[containerKey].specialSelectors![selectorKey]);
-      }
-      else if (stateModifiers && stateModifiers.length > 1) {
-        const nestedKey = stateModifiers.join(':');
+        this.applyStyleByCategory(
+          parsedClass,
+          styles.containers[containerKey].specialSelectors![selectorKey]
+        );
+      } else if (stateModifiers && stateModifiers.length > 1) {
+        const nestedKey = stateModifiers.join(":");
         if (!styles.containers[containerKey].nestedStates![nestedKey]) {
           styles.containers[containerKey].nestedStates![nestedKey] = {
             spacing: {},
@@ -801,14 +636,19 @@ export class CSSParser {
             animation: {},
             position: {},
             transform: {},
-            sizing: {}
+            sizing: {},
           };
         }
-        this.applyStyleByCategory(parsedClass, styles.containers[containerKey].nestedStates![nestedKey]);
-      }
-      else if (stateModifier || (stateModifiers && stateModifiers.length === 1)) {
+        this.applyStyleByCategory(
+          parsedClass,
+          styles.containers[containerKey].nestedStates![nestedKey]
+        );
+      } else if (
+        stateModifier ||
+        (stateModifiers && stateModifiers.length === 1)
+      ) {
         const stateKey = stateModifier || stateModifiers![0];
-        
+
         if (!styles.containers[containerKey].states![stateKey]) {
           styles.containers[containerKey].states![stateKey] = {
             spacing: {},
@@ -824,11 +664,14 @@ export class CSSParser {
             filters: {},
             interactivity: {},
             tables: {},
-            svg: {}
+            svg: {},
           };
         }
-        
-        this.applyStyleByCategory(parsedClass, styles.containers[containerKey].states![stateKey]);
+
+        this.applyStyleByCategory(
+          parsedClass,
+          styles.containers[containerKey].states![stateKey]
+        );
       } else {
         this.applyStyleByCategory(parsedClass, styles.containers[containerKey]);
       }
@@ -836,11 +679,11 @@ export class CSSParser {
     // 특수 선택자만 있는 경우
     else if (specialSelector) {
       const selectorKey = `${specialSelector.type}-${specialSelector.value}`;
-      
+
       if (!styles.specialSelectors) {
         styles.specialSelectors = {};
       }
-      
+
       if (!styles.specialSelectors[selectorKey]) {
         styles.specialSelectors[selectorKey] = {
           spacing: {},
@@ -851,20 +694,23 @@ export class CSSParser {
           animation: {},
           position: {},
           transform: {},
-          sizing: {}
+          sizing: {},
         };
       }
-      
-      this.applyStyleByCategory(parsedClass, styles.specialSelectors[selectorKey]);
+
+      this.applyStyleByCategory(
+        parsedClass,
+        styles.specialSelectors[selectorKey]
+      );
     }
     // 다중 상태 모디파이어만 있는 경우 (중첩 상태)
     else if (stateModifiers && stateModifiers.length > 1) {
-      const nestedKey = stateModifiers.join(':');
-      
+      const nestedKey = stateModifiers.join(":");
+
       if (!styles.nestedStates) {
         styles.nestedStates = {};
       }
-      
+
       if (!styles.nestedStates[nestedKey]) {
         styles.nestedStates[nestedKey] = {
           spacing: {},
@@ -880,20 +726,20 @@ export class CSSParser {
           filters: {},
           interactivity: {},
           tables: {},
-          svg: {}
+          svg: {},
         };
       }
-      
+
       this.applyStyleByCategory(parsedClass, styles.nestedStates[nestedKey]);
     }
     // 단일 상태 모디파이어만 있는 경우
     else if (stateModifier || (stateModifiers && stateModifiers.length === 1)) {
       const stateKey = stateModifier || stateModifiers![0];
-      
+
       if (!styles.states) {
         styles.states = {} as Record<string, Partial<ParsedStyles>>;
       }
-      
+
       if (!styles.states[stateKey]) {
         styles.states[stateKey] = {
           spacing: {},
@@ -909,10 +755,10 @@ export class CSSParser {
           filters: {},
           interactivity: {},
           tables: {},
-          svg: {}
+          svg: {},
         };
       }
-      
+
       this.applyStyleByCategory(parsedClass, styles.states[stateKey]);
     }
     // 기본 스타일
@@ -927,26 +773,32 @@ export class CSSParser {
   private getBreakpointKey(breakpoint: BreakpointModifier): string {
     // 임의 브레이크포인트인 경우 원래 형태 유지
     if ((breakpoint as any).isArbitrary) {
-      return breakpoint.type === 'max-width' ? `max-[${breakpoint.value}]` : `min-[${breakpoint.value}]`;
+      return breakpoint.type === "max-width"
+        ? `max-[${breakpoint.value}]`
+        : `min-[${breakpoint.value}]`;
     }
 
     // 값에서 원래 브레이크포인트 이름을 찾기
     const screens = this.preset.screens || {
-      'sm': '640px',
-      'md': '768px',
-      'lg': '1024px',
-      'xl': '1280px',
-      '2xl': '1536px'
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
     };
 
-    const screenKey = Object.keys(screens).find(key => screens[key] === breakpoint.value);
-    
+    const screenKey = Object.keys(screens).find(
+      (key) => screens[key] === breakpoint.value
+    );
+
     if (screenKey) {
-      return breakpoint.type === 'max-width' ? `max-${screenKey}` : screenKey;
+      return breakpoint.type === "max-width" ? `max-${screenKey}` : screenKey;
     }
-    
+
     // 임의 값인 경우
-    return breakpoint.type === 'max-width' ? `max-[${breakpoint.value}]` : `min-[${breakpoint.value}]`;
+    return breakpoint.type === "max-width"
+      ? `max-[${breakpoint.value}]`
+      : `min-[${breakpoint.value}]`;
   }
 
   /**
@@ -955,21 +807,27 @@ export class CSSParser {
   private getContainerKey(container: ContainerQueryModifier): string {
     // 값에서 원래 컨테이너 이름을 찾기
     const screens = this.preset.screens || {
-      'sm': '640px',
-      'md': '768px',
-      'lg': '1024px',
-      'xl': '1280px',
-      '2xl': '1536px'
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
     };
 
-    const screenKey = Object.keys(screens).find(key => screens[key] === container.value);
-    
+    const screenKey = Object.keys(screens).find(
+      (key) => screens[key] === container.value
+    );
+
     if (screenKey) {
-      return container.type === 'max-width' ? `@max-${screenKey}` : `@${screenKey}`;
+      return container.type === "max-width"
+        ? `@max-${screenKey}`
+        : `@${screenKey}`;
     }
-    
+
     // 임의 값인 경우
-    return container.type === 'max-width' ? `@max-[${container.value}]` : `@min-[${container.value}]`;
+    return container.type === "max-width"
+      ? `@max-[${container.value}]`
+      : `@min-[${container.value}]`;
   }
 
   /**
@@ -977,65 +835,88 @@ export class CSSParser {
    * @param parsedClass 파싱된 클래스
    * @param styles 스타일 객체
    */
-  private applyStyleByCategory(parsedClass: ParsedClass, styles: Partial<ParsedStyles>): void {
+  private applyStyleByCategory(
+    parsedClass: ParsedClass,
+    styles: Partial<ParsedStyles>
+  ): void {
     const { category } = parsedClass;
-    
+
     switch (category) {
-      case 'spacing':
+      case "spacing":
         SpacingParser.applySpacingStyle(parsedClass, styles, this.preset);
         break;
-      case 'colors':
+      case "colors":
         ColorParser.applyColorStyle(parsedClass, styles, this.preset);
         break;
-      case 'typography':
+      case "typography":
         TypographyParser.applyTypographyStyle(parsedClass, styles, this.preset);
         break;
-      case 'layout':
+      case "layout":
         LayoutParser.applyLayoutStyle(parsedClass, styles);
         break;
-      case 'effects':
+      case "effects":
         EffectsParser.applyEffectStyle(parsedClass, styles, this.preset);
         break;
-      case 'animation':
+      case "animation":
         AnimationParser.applyAnimationStyle(parsedClass, styles, this.preset);
         break;
-      case 'position':
+      case "position":
         PositionParser.applyPositionStyle(parsedClass, styles, this.preset);
         break;
-      case 'transform':
+      case "transform":
         TransformParser.applyTransformStyle(parsedClass, styles, this.preset);
         break;
-      case 'sizing':
+      case "sizing":
         SizingParser.applySizingStyle(parsedClass, styles, this.preset);
         break;
-      case 'flexbox-grid':
-        FlexboxGridParser.applyFlexboxGridStyle(parsedClass, styles, this.preset);
+      case "flexbox-grid":
+        FlexboxGridParser.applyFlexboxGridStyle(
+          parsedClass,
+          styles,
+          this.preset
+        );
         break;
-      case 'interactivity':
-        InteractivityParser.applyInteractivityStyle(parsedClass, styles, this.preset);
+      case "interactivity":
+        InteractivityParser.applyInteractivityStyle(
+          parsedClass,
+          styles,
+          this.preset
+        );
         break;
-      case 'tables':
+      case "tables":
         TablesParser.applyTablesStyle(parsedClass, styles, this.preset);
         break;
-      case 'svg':
+      case "svg":
         SVGParser.applySVGStyle(parsedClass, styles, this.preset);
         break;
-      case 'transitions':
-        TransitionsParser.applyTransitionsStyle(parsedClass, styles, this.preset);
+      case "transitions":
+        TransitionsParser.applyTransitionsStyle(
+          parsedClass,
+          styles,
+          this.preset
+        );
         break;
-      case 'backgrounds':
-        BackgroundsParser.applyBackgroundsStyle(parsedClass, styles, this.preset);
+      case "backgrounds":
+        BackgroundsParser.applyBackgroundsStyle(
+          parsedClass,
+          styles,
+          this.preset
+        );
         break;
-      case 'borders':
+      case "borders":
         BordersParser.applyBordersStyle(parsedClass, styles, this.preset);
         break;
-      case 'overflow':
+      case "overflow":
         OverflowParser.applyOverflowStyle(parsedClass, styles, this.preset);
         break;
-      case 'accessibility':
-        AccessibilityParser.applyAccessibilityStyle(parsedClass, styles, this.preset);
+      case "accessibility":
+        AccessibilityParser.applyAccessibilityStyle(
+          parsedClass,
+          styles,
+          this.preset
+        );
         break;
-      case 'blend-modes':
+      case "blend-modes":
         BlendModesParser.applyBlendModesStyle(parsedClass, styles, this.preset);
         break;
     }
@@ -1048,24 +929,24 @@ export class CSSParser {
    */
   private convertSizeValue(value: string): string {
     // 분수 값 처리 (예: w-1/2 => 50%)
-    if (value.includes('/')) {
-      const [numerator, denominator] = value.split('/').map(Number);
+    if (value.includes("/")) {
+      const [numerator, denominator] = value.split("/").map(Number);
       return `${(numerator / denominator) * 100}%`;
     }
-    
+
     // 프리셋 값 처리
     if (value in this.preset.spacing) {
       return `${this.preset.spacing[value]}px`;
     }
-    
+
     // 특수 값 처리
-    if (value === 'auto') return 'auto';
-    if (value === 'full') return '100%';
-    if (value === 'screen') return '100vw';
-    if (value === 'min') return 'min-content';
-    if (value === 'max') return 'max-content';
-    if (value === 'fit') return 'fit-content';
-    
+    if (value === "auto") return "auto";
+    if (value === "full") return "100%";
+    if (value === "screen") return "100vw";
+    if (value === "min") return "min-content";
+    if (value === "max") return "max-content";
+    if (value === "fit") return "fit-content";
+
     return value;
   }
 
@@ -1076,13 +957,13 @@ export class CSSParser {
    */
   private getScreenSize(size: string): string {
     const defaultScreens = {
-      'sm': '640px',
-      'md': '768px',
-      'lg': '1024px',
-      'xl': '1280px',
-      '2xl': '1536px'
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
     };
-    
+
     const screens = this.preset.screens || defaultScreens;
     return (screens as Record<string, string>)[size] || size;
   }
@@ -1092,31 +973,39 @@ export class CSSParser {
    * @param breakpoint 브레이크포인트
    * @returns 브레이크포인트 이름
    */
-  private getBreakpointName(breakpoint: BreakpointModifier | undefined): string {
-    if (!breakpoint) return '';
+  private getBreakpointName(
+    breakpoint: BreakpointModifier | undefined
+  ): string {
+    if (!breakpoint) return "";
 
     // 임의 브레이크포인트인 경우 원래 형태 유지
     if ((breakpoint as any).isArbitrary) {
-      return breakpoint.type === 'max-width' ? `max-[${breakpoint.value}]` : `min-[${breakpoint.value}]`;
+      return breakpoint.type === "max-width"
+        ? `max-[${breakpoint.value}]`
+        : `min-[${breakpoint.value}]`;
     }
 
     const screens = this.preset.screens || {
-      'sm': '640px',
-      'md': '768px',
-      'lg': '1024px',
-      'xl': '1280px',
-      '2xl': '1536px'
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
     };
 
     // 알려진 화면 크기인지 확인
-    const screenKey = Object.keys(screens).find(key => screens[key] === breakpoint.value);
-    
+    const screenKey = Object.keys(screens).find(
+      (key) => screens[key] === breakpoint.value
+    );
+
     if (screenKey) {
-      return breakpoint.type === 'max-width' ? `max-${screenKey}` : screenKey;
+      return breakpoint.type === "max-width" ? `max-${screenKey}` : screenKey;
     }
 
     // 임의 값인 경우
-    return breakpoint.type === 'max-width' ? `max-[${breakpoint.value}]` : `min-[${breakpoint.value}]`;
+    return breakpoint.type === "max-width"
+      ? `max-[${breakpoint.value}]`
+      : `min-[${breakpoint.value}]`;
   }
 
   /**
@@ -1124,30 +1013,38 @@ export class CSSParser {
    * @param container 컨테이너
    * @returns 컨테이너 이름
    */
-  private getContainerName(container: ContainerQueryModifier | undefined): string {
-    if (!container) return '';
+  private getContainerName(
+    container: ContainerQueryModifier | undefined
+  ): string {
+    if (!container) return "";
 
     // 명명된 컨테이너인 경우 (예: md/sidebar)
-    if (container.value.includes('/')) {
+    if (container.value.includes("/")) {
       return `@${container.value}`;
     }
 
     const screens = this.preset.screens || {
-      'sm': '640px',
-      'md': '768px',
-      'lg': '1024px',
-      'xl': '1280px',
-      '2xl': '1536px'
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
     };
 
     // 알려진 화면 크기인지 확인
-    const screenKey = Object.keys(screens).find(key => (screens as Record<string, string>)[key] === container.value);
-    
+    const screenKey = Object.keys(screens).find(
+      (key) => (screens as Record<string, string>)[key] === container.value
+    );
+
     if (screenKey) {
-      return container.type === 'max-width' ? `@max-${screenKey}` : `@${screenKey}`;
+      return container.type === "max-width"
+        ? `@max-${screenKey}`
+        : `@${screenKey}`;
     }
 
     // 임의 값인 경우
-    return container.type === 'max-width' ? `@max-[${container.value}]` : `@min-[${container.value}]`;
+    return container.type === "max-width"
+      ? `@max-[${container.value}]`
+      : `@min-[${container.value}]`;
   }
 }

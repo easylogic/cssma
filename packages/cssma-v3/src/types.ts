@@ -96,13 +96,40 @@ export interface Transition {
   delay: number;
 }
 
+// 색상 팔레트 
+export interface ColorPalette {
+  blue: Record<string, Color>;
+  green: Record<string, Color>;
+  red: Record<string, Color>;
+  slate: Record<string, Color>;
+  gray: Record<string, Color>;
+  zinc: Record<string, Color>;
+  neutral: Record<string, Color>;
+  stone: Record<string, Color>;
+  orange: Record<string, Color>;
+  amber: Record<string, Color>;
+  yellow: Record<string, Color>;
+  lime: Record<string, Color>;
+  emerald: Record<string, Color>;
+  teal: Record<string, Color>;
+  cyan: Record<string, Color>;
+  sky: Record<string, Color>;
+  indigo: Record<string, Color>;
+  violet: Record<string, Color>;
+  purple: Record<string, Color>;
+  fuchsia: Record<string, Color>;
+  pink: Record<string, Color>;
+  rose: Record<string, Color>;
+  [key: string]: Record<string, Color> | undefined;
+}
+
 /**
  * 디자인 프리셋 타입
  */
 export interface DesignPreset {
   name: string;
   version: string;
-  colors: Record<string, Record<string, Color>>;
+  colors: ColorPalette;
   spacing: Record<string, number>;
   typography: {
     fontSize: Record<string, number>;
@@ -251,7 +278,23 @@ export type StateModifier =
   // nth-* 변형자들
   | 'nth-child' | 'nth-last-child' | 'nth-of-type' | 'nth-last-of-type'
   // 기타 v4.1 변형자들
-  | 'in' | 'descendant';
+  | 'in' | 'descendant'
+  
+  // v4.1 새로운 상태들
+  // 미디어 쿼리들
+  | 'motion-safe' | 'motion-reduce'
+  | 'contrast-more' | 'contrast-less'
+  | 'portrait' | 'landscape'
+  | 'print' | 'scripting'
+  
+  // 그룹/피어 상태들
+  | `group-${string}` | `peer-${string}`
+  
+  // 복합 선택자들
+  | `has-[${string}]` | `not-[${string}]` | `supports-[${string}]`
+  
+  // ARIA/데이터 속성들
+  | `aria-${string}` | `data-${string}`;
 
 /**
  * 반응형 모디파이어 타입
@@ -372,6 +415,10 @@ export interface SpacingStyles {
   marginInline?: number | string | { start?: number | string; end?: number | string; };
   marginBlock?: number | string | { start?: number | string; end?: number | string; };
   spaceBetween?: { x?: number | string; y?: number | string; };
+  spaceX?: number | string;
+  spaceY?: number | string;
+  spaceXReverse?: boolean;
+  spaceYReverse?: boolean;
 }
 
 /**
@@ -511,6 +558,28 @@ export interface LayoutStyles {
   breakInside?: 'auto' | 'avoid' | 'avoid-page' | 'avoid-column';
   boxDecorationBreak?: 'clone' | 'slice';
   boxSizing?: 'border-box' | 'content-box';
+
+  // Tailwind CSS v4.1 새로운 레이아웃 기능들
+  containerPosition?: 'static' | 'fixed' | 'absolute' | 'relative' | 'sticky';
+  containerAlignment?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
+  containerJustify?: 'start' | 'end' | 'center' | 'between' | 'around' | 'evenly';
+  containerItems?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
+
+  gridTemplateColumns?: 'subgrid' | 'masonry' | string;
+  gridTemplateRows?: 'subgrid' | 'masonry' | string;
+  gridTemplateAreas?: string;
+  gridTemplate?: string;
+  gridAutoFlow?: 'row' | 'column' | 'dense' | 'row dense' | 'column dense' | string;
+  gridAutoColumns?: string;
+  gridAutoRows?: string;
+
+  justifyContent?: string;
+  alignItems?: string;
+  alignContent?: string;
+  alignSelf?: string;
+  placeContent?: string;
+  placeItems?: string;
+  placeSelf?: string;
 }
 
 /**
