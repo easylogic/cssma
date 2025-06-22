@@ -264,11 +264,11 @@ export class CSSParser {
       processedClassName = className.slice(this.config.prefix.length);
     }
 
-    // 모디파이어를 파싱합니다.
-    const modifierResult = this.modifierParser.parseClassNameModifiers(processedClassName, this.preset);
-    const { baseClassName } = modifierResult;
+    // Parse modifiers using Tailwind CSS approach
+    const modifierResult = ModifierParser.parseModifierChain(processedClassName);
+    const baseClassName = modifierResult ? processedClassName.replace(modifierResult.modifierChain + ':', '') : processedClassName;
 
-    // 각 파서에게 클래스 인식을 요청 (우선순위 순서)
+    // 각 파서에게 baseClassName 인식을 요청 (우선순위 순서)
     for (const { parser, category } of CSSParser.PARSER_MAP) {
       if (parser.isValidClass && parser.isValidClass(baseClassName)) {
         // 해당 파서가 클래스를 인식했으므로 파싱 진행
@@ -285,31 +285,10 @@ export class CSSParser {
             value: parseResult.value || "",
             category: category,
             isArbitrary: parseResult.isArbitrary || false,
-            stateModifier: modifierResult.stateModifier,
-            breakpointModifier: modifierResult.breakpointModifier,
-            containerQueryModifier: modifierResult.containerQueryModifier,
-            stateModifiers: modifierResult.stateModifiers,
-            breakpointModifiers: modifierResult.breakpointModifiers,
-            specialSelector: modifierResult.specialSelector,
-            modifier: modifierResult.modifier,
-            breakpoint: this.getBreakpointName(
-              modifierResult.breakpointModifier
-            ),
-            modifiers: {
-              state: modifierResult.stateModifiers,
-              breakpoint: this.getBreakpointName(
-                modifierResult.breakpointModifier
-              ),
-              container: this.getContainerName(
-                modifierResult.containerQueryModifier
-              ),
-              special: modifierResult.specialSelector,
-            },
-            // New modifier fields
-            pseudoElementModifier: modifierResult.pseudoElementModifier,
-            ariaModifier: modifierResult.ariaModifier,
-            dataModifier: modifierResult.dataModifier,
-            motionModifier: modifierResult.motionModifier,
+            
+            // 🎯 Tailwind CSS 방식의 modifier 정보
+            modifierChain: modifierResult?.modifierChain,
+            modifiers: modifierResult?.modifiers,
           };
         }
       }
@@ -325,25 +304,10 @@ export class CSSParser {
       value: fallbackResult.value,
       category: "layout", // 기본 카테고리
       isArbitrary: fallbackResult.isArbitrary,
-      stateModifier: modifierResult.stateModifier,
-      breakpointModifier: modifierResult.breakpointModifier,
-      containerQueryModifier: modifierResult.containerQueryModifier,
-      stateModifiers: modifierResult.stateModifiers,
-      breakpointModifiers: modifierResult.breakpointModifiers,
-      specialSelector: modifierResult.specialSelector,
-      modifier: modifierResult.modifier,
-      breakpoint: this.getBreakpointName(modifierResult.breakpointModifier),
-      modifiers: {
-        state: modifierResult.stateModifiers,
-        breakpoint: this.getBreakpointName(modifierResult.breakpointModifier),
-        container: this.getContainerName(modifierResult.containerQueryModifier),
-        special: modifierResult.specialSelector,
-      },
-      // New modifier fields
-      pseudoElementModifier: modifierResult.pseudoElementModifier,
-      ariaModifier: modifierResult.ariaModifier,
-      dataModifier: modifierResult.dataModifier,
-      motionModifier: modifierResult.motionModifier,
+      
+      // 🎯 Tailwind CSS 방식의 modifier 정보
+      modifierChain: modifierResult?.modifierChain,
+      modifiers: modifierResult?.modifiers,
     };
   }
 

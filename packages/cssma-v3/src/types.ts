@@ -367,51 +367,34 @@ export interface ParsedClass {
   property: string;
   value: string;
   isArbitrary?: boolean;
-  stateModifier?: StateModifier;
-  breakpointModifier?: BreakpointModifier;
-  containerQueryModifier?: ContainerQueryModifier;
-  stateModifiers?: StateModifier[];
-  // 복합 브레이크포인트 지원
-  breakpointModifiers?: BreakpointModifier[];
-  specialSelector?: {
-    type: 'nth-child' | 'nth-last-child' | 'nth-of-type' | 'nth-last-of-type';
-    value: string;
-  };
-  // 단일 모디파이어 대신 모디파이어 배열 사용
-  modifiers?: {
-    state?: StateModifier[];
-    breakpoint?: string;
-    container?: string;
-    special?: {
-      type: 'nth-child' | 'nth-last-child' | 'nth-of-type' | 'nth-last-of-type';
-      value: string;
-    };
-  };
-  modifier?: string;
-  breakpoint?: string;
   
-  // New modifier types for CSSMA-V3 extended parsers
-  pseudoElementModifier?: {
-    type: 'pseudo-element';
-    element: string;
-    priority: number;
-  };
-  ariaModifier?: {
-    type: 'aria';
-    attribute: string;
-    value?: string;
-    priority: number;
-  };
-  dataModifier?: {
-    type: 'data';
-    attribute: string;
-    value?: string;
-    priority: number;
-  };
-  motionModifier?: {
-    type: 'motion';
-    preference: 'safe' | 'reduce';
-    priority: number;
+  // 🎯 Tailwind CSS 방식: 전체 modifier 체인
+  modifierChain?: string; // "md:motion-safe:before:hover"
+  
+  // 🎯 CSS 생성을 위한 파싱된 modifier 정보
+  modifiers?: {
+    // Media queries (우선순위: 1)
+    responsive?: string;      // "md", "lg", "xl"
+    container?: string;       // "@md", "@lg", "@xl"
+    motion?: string;          // "motion-safe", "motion-reduce"
+    
+    // Pseudo-classes (우선순위: 2)
+    state?: string[];         // ["hover", "focus", "active"]
+    
+    // Pseudo-elements (우선순위: 3)
+    pseudoElement?: string;   // "before", "after", "placeholder"
+    
+    // Attribute selectors (우선순위: 4)
+    aria?: string;            // "aria-checked", "aria-expanded"
+    data?: string;            // "data-active", "data-loading"
+    
+    // CSS 생성용 완전한 선택자 정보
+    selector?: {
+      mediaQueries: string[];   // ["@media (min-width: 768px)", "@media (prefers-reduced-motion: no-preference)"]
+      pseudoClasses: string[];  // [":hover", ":focus"]
+      pseudoElements: string[]; // ["::before"]
+      attributes: string[];     // ["[aria-checked='true']"]
+    };
   };
 }
 
