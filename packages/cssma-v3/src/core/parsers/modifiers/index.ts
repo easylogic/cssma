@@ -1,19 +1,32 @@
 /**
- * Unified Modifier Parser - 모든 모디파이어 파서의 통합 인터페이스
- * 
- * 분산된 모디파이어 파서들을 통합하여 관리하고
- * 기존 CSSParser와의 호환성을 유지합니다.
+ * Unified modifier parser for CSSMA-V3
+ * Integrates all modifier types following Tailwind CSS patterns
+ * Now supports arrays for multiple modifiers and proper priority ordering
  */
 
+import { StateModifierParser, type StateModifierResult } from './state-modifier-parser';
+import { ResponsiveModifierParser, type ResponsiveModifierResult } from './responsive-modifier-parser';
+import { ContainerModifierParser, type ContainerModifierResult } from './container-modifier-parser';
+import { PseudoElementModifierParser, type PseudoElementModifier } from './pseudo-element-modifier-parser';
+import { AriaModifierParser, type AriaModifier } from './aria-modifier-parser';
+import { DataModifierParser, type DataModifier } from './data-modifier-parser';
+import { MotionModifierParser, type MotionModifier } from './motion-modifier-parser';
 import { StateModifier, BreakpointModifier, ContainerQueryModifier, DesignPreset } from '../../../types';
-import { StateModifierParser, StateModifierResult } from './state-modifier-parser';
-import { ResponsiveModifierParser, ResponsiveModifierResult } from './responsive-modifier-parser';
-import { ContainerModifierParser, ContainerModifierResult } from './container-modifier-parser';
 
-// 통합 모디파이어 결과 타입
-export type ModifierResult = StateModifierResult | ResponsiveModifierResult | ContainerModifierResult;
+// Union type for all modifier results
+export type ModifierResult = 
+  | StateModifierResult 
+  | ResponsiveModifierResult 
+  | ContainerModifierResult;
 
-// CSSParser와 호환되는 결과 타입 (기존과 동일)
+// New modifier types (for new parsers)
+export type NewModifier = 
+  | PseudoElementModifier
+  | AriaModifier
+  | DataModifier
+  | MotionModifier;
+
+// Array-based modifier result to support multiple modifiers and ordering
 export interface ModifierParseResult {
   baseClassName: string;
   stateModifier?: StateModifier;
@@ -26,12 +39,14 @@ export interface ModifierParseResult {
   };
   breakpointModifiers?: BreakpointModifier[];
   modifier?: string;
+  // New modifier fields
+  pseudoElementModifier?: PseudoElementModifier;
+  ariaModifier?: AriaModifier;
+  dataModifier?: DataModifier;
+  motionModifier?: MotionModifier;
+  newModifiers?: NewModifier[];
 }
 
-/**
- * 새로운 통합 ModifierParser
- * 분산된 파서들을 조합하여 모디파이어를 처리합니다
- */
 export class ModifierParser {
   /**
    * 클래스명에서 모디파이어들을 파싱하여 CSSParser 호환 형태로 반환
@@ -47,6 +62,13 @@ export class ModifierParser {
       type: 'nth-child' | 'nth-last-child' | 'nth-of-type' | 'nth-last-of-type'; 
       value: string; 
     } | undefined;
+
+    // New modifier types
+    let pseudoElementModifier: PseudoElementModifier | undefined;
+    let ariaModifier: AriaModifier | undefined;
+    let dataModifier: DataModifier | undefined;
+    let motionModifier: MotionModifier | undefined;
+    let newModifiers: NewModifier[] = [];
 
     // 콜론으로 분리
     const parts = className.split(':');
@@ -75,7 +97,39 @@ export class ModifierParser {
         continue;
       }
 
-      // 3. 상태 파서 시도 (group/peer 포함)
+      // 3. Pseudo-element 파서 시도
+      const pseudoElementResult = PseudoElementModifierParser.parsePseudoElementModifier(modifierPart);
+      if (pseudoElementResult) {
+        if (!pseudoElementModifier) pseudoElementModifier = pseudoElementResult;
+        newModifiers.push(pseudoElementResult);
+        continue;
+      }
+
+      // 4. ARIA 파서 시도
+      const ariaResult = AriaModifierParser.parseAriaModifier(modifierPart);
+      if (ariaResult) {
+        if (!ariaModifier) ariaModifier = ariaResult;
+        newModifiers.push(ariaResult);
+        continue;
+      }
+
+      // 5. Data 파서 시도
+      const dataResult = DataModifierParser.parseDataModifier(modifierPart);
+      if (dataResult) {
+        if (!dataModifier) dataModifier = dataResult;
+        newModifiers.push(dataResult);
+        continue;
+      }
+
+      // 6. Motion 파서 시도
+      const motionResult = MotionModifierParser.parseMotionModifier(modifierPart);
+      if (motionResult) {
+        if (!motionModifier) motionModifier = motionResult;
+        newModifiers.push(motionResult);
+        continue;
+      }
+
+      // 7. 상태 파서 시도 (group/peer 포함)
       let stateResult = StateModifierParser.parse(modifierPart);
       if (!stateResult) {
         stateResult = StateModifierParser.parseGroupPeerState(modifierPart);
@@ -88,13 +142,13 @@ export class ModifierParser {
         continue;
       }
 
-      // 4. 특수 선택자 처리 (nth-child 등)
+      // 8. 특수 선택자 처리 (nth-child 등)
       if (this.isSpecialSelector(modifierPart)) {
         specialSelector = this.parseSpecialSelector(modifierPart);
         continue;
       }
 
-      // 5. 복합 모디파이어 처리 (has-, not-, supports- 등)
+      // 9. 복합 모디파이어 처리 (has-, not-, supports- 등)
       if (this.isComplexModifier(modifierPart)) {
         const complexState = modifierPart as StateModifier;
         if (!stateModifier) stateModifier = complexState;
@@ -102,7 +156,7 @@ export class ModifierParser {
         continue;
       }
 
-      // 6. 임의값 모디파이어 처리
+      // 10. 임의값 모디파이어 처리
       if (modifierPart.startsWith('[') && modifierPart.endsWith(']')) {
         const arbitraryState = modifierPart as StateModifier;
         if (!stateModifier) stateModifier = arbitraryState;
@@ -110,8 +164,8 @@ export class ModifierParser {
         continue;
       }
 
-      // 7. 다크모드 및 기타 모디파이어
-      if (['dark', 'light', 'print', 'motion-safe', 'motion-reduce'].includes(modifierPart)) {
+      // 11. 다크모드 및 기타 모디파이어
+      if (['dark', 'light', 'print'].includes(modifierPart)) {
         const themeState = modifierPart as StateModifier;
         if (!stateModifier) stateModifier = themeState;
         stateModifiers.push(themeState);
@@ -138,7 +192,13 @@ export class ModifierParser {
       stateModifiers: stateModifiers.length > 0 ? stateModifiers : undefined,
       specialSelector,
       breakpointModifiers: breakpointModifiers.length > 0 ? breakpointModifiers : undefined,
-      modifier: modifierValue
+      modifier: modifierValue,
+      // New modifier fields
+      pseudoElementModifier,
+      ariaModifier,
+      dataModifier,
+      motionModifier,
+      newModifiers: newModifiers.length > 0 ? newModifiers : undefined
     };
   }
 
@@ -231,7 +291,7 @@ export class ModifierParser {
       return stateModifiers && stateModifiers.length > 0 
         ? stateModifiers[stateModifiers.length - 1] 
         : stateModifier;
-    } 
+    }
     // 브레이크포인트 모디파이어만 있는 경우
     else if (breakpointModifier) {
       return ResponsiveModifierParser.getBreakpointName(
@@ -266,7 +326,11 @@ export class ModifierParser {
     return [
       ...StateModifierParser.getAllStateModifiers(),
       ...ResponsiveModifierParser.getAllBreakpoints(),
-      ...ContainerModifierParser.getAllContainerSizes().map(size => `@${size}`)
+      ...ContainerModifierParser.getAllContainerSizes().map(size => `@${size}`),
+      ...PseudoElementModifierParser.getSupportedModifiers(),
+      ...AriaModifierParser.getSupportedBooleanAttributes().map(attr => `aria-${attr}`),
+      ...DataModifierParser.getSupportedBooleanAttributes().map(attr => `data-${attr}`),
+      ...MotionModifierParser.getSupportedPreferences()
     ];
   }
 
@@ -277,7 +341,11 @@ export class ModifierParser {
     return {
       ...StateModifierParser.getModifiersByCategory(),
       responsive: ResponsiveModifierParser.getAllBreakpoints(),
-      container: ContainerModifierParser.getAllContainerSizes().map(size => `@${size}`)
+      container: ContainerModifierParser.getAllContainerSizes().map(size => `@${size}`),
+      pseudoElement: PseudoElementModifierParser.getSupportedModifiers(),
+      aria: AriaModifierParser.getSupportedBooleanAttributes().map(attr => `aria-${attr}`),
+      data: DataModifierParser.getSupportedBooleanAttributes().map(attr => `data-${attr}`),
+      motion: MotionModifierParser.getSupportedPreferences()
     };
   }
 
@@ -288,6 +356,10 @@ export class ModifierParser {
     return StateModifierParser.isStateModifier(modifier) ||
            ResponsiveModifierParser.isResponsiveModifier(modifier) ||
            ContainerModifierParser.isContainerModifier(modifier) ||
+           PseudoElementModifierParser.isValidPseudoElementModifier(modifier) ||
+           AriaModifierParser.isValidAriaModifier(modifier) ||
+           DataModifierParser.isValidDataModifier(modifier) ||
+           MotionModifierParser.isValidMotionModifier(modifier) ||
            this.isSpecialSelector(modifier) ||
            this.isComplexModifier(modifier);
   }
@@ -296,4 +368,8 @@ export class ModifierParser {
 // 기존 호환성을 위한 export
 export { StateModifierParser } from './state-modifier-parser';
 export { ResponsiveModifierParser } from './responsive-modifier-parser';
-export { ContainerModifierParser } from './container-modifier-parser'; 
+export { ContainerModifierParser } from './container-modifier-parser';
+export { PseudoElementModifierParser } from './pseudo-element-modifier-parser';
+export { AriaModifierParser } from './aria-modifier-parser';
+export { DataModifierParser } from './data-modifier-parser';
+export { MotionModifierParser } from './motion-modifier-parser'; 

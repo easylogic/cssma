@@ -389,6 +389,30 @@ export interface ParsedClass {
   };
   modifier?: string;
   breakpoint?: string;
+  
+  // New modifier types for CSSMA-V3 extended parsers
+  pseudoElementModifier?: {
+    type: 'pseudo-element';
+    element: string;
+    priority: number;
+  };
+  ariaModifier?: {
+    type: 'aria';
+    attribute: string;
+    value?: string;
+    priority: number;
+  };
+  dataModifier?: {
+    type: 'data';
+    attribute: string;
+    value?: string;
+    priority: number;
+  };
+  motionModifier?: {
+    type: 'motion';
+    preference: 'safe' | 'reduce';
+    priority: number;
+  };
 }
 
 /**

@@ -305,6 +305,11 @@ export class CSSParser {
               ),
               special: modifierResult.specialSelector,
             },
+            // New modifier fields
+            pseudoElementModifier: modifierResult.pseudoElementModifier,
+            ariaModifier: modifierResult.ariaModifier,
+            dataModifier: modifierResult.dataModifier,
+            motionModifier: modifierResult.motionModifier,
           };
         }
       }
@@ -334,6 +339,11 @@ export class CSSParser {
         container: this.getContainerName(modifierResult.containerQueryModifier),
         special: modifierResult.specialSelector,
       },
+      // New modifier fields
+      pseudoElementModifier: modifierResult.pseudoElementModifier,
+      ariaModifier: modifierResult.ariaModifier,
+      dataModifier: modifierResult.dataModifier,
+      motionModifier: modifierResult.motionModifier,
     };
   }
 
