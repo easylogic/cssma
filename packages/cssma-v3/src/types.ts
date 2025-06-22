@@ -313,10 +313,6 @@ export type StateModifier =
  * - max-xl: @media (width < 80rem)
  * - max-2xl: @media (width < 96rem)
  */
-export interface BreakpointModifier {
-  type: 'min-width' | 'max-width';
-  value: string;
-}
 
 /**
  * 컨테이너 쿼리 모디파이어 타입
@@ -336,9 +332,11 @@ export interface BreakpointModifier {
  * - @6xl: 72rem (1152px)
  * - @7xl: 80rem (1280px)
  */
+
 export interface ContainerQueryModifier {
-  type: 'min-width' | 'max-width';
+  type: 'min-width' | 'max-width' | 'named-container';
   value: string;
+  containerName?: string;
 }
 
 /**
@@ -375,7 +373,7 @@ export interface ParsedClass {
   modifiers?: {
     // Media queries (우선순위: 1)
     responsive?: string;      // "md", "lg", "xl"
-    container?: string;       // "@md", "@lg", "@xl"
+    container?: string | ContainerQueryModifier;       // "@md", "@lg", "@xl"
     motion?: string;          // "motion-safe", "motion-reduce"
     
     // Pseudo-classes (우선순위: 2)

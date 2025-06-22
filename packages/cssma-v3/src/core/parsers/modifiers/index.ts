@@ -158,57 +158,152 @@ export class ModifierParser {
    * 개별 modifier 파싱 및 분류
    */
   private static parseIndividualModifier(modifier: string, result: ModifierParseResult): void {
-    // 1. Responsive breakpoints
+    // 1. 기본 반응형 breakpoint
     if (RESPONSIVE_BREAKPOINTS[modifier]) {
       result.modifiers.responsive = modifier;
       result.modifiers.selector.mediaQueries.push(RESPONSIVE_BREAKPOINTS[modifier]);
       return;
     }
 
-    // 2. Container queries
+    // 2. 임의값 반응형 modifier (min-[320px], max-[768px])
+    if (this.parseArbitraryResponsiveModifier(modifier, result)) {
+      return;
+    }
+
+    // 3. Container queries (기본 및 임의값)
     if (CONTAINER_BREAKPOINTS[modifier]) {
       result.modifiers.container = modifier;
       result.modifiers.selector.mediaQueries.push(CONTAINER_BREAKPOINTS[modifier]);
       return;
     }
 
-    // 3. Motion preferences
+    // 3-0. Max-width container queries (@max-md, @max-lg, etc.)
+    if (modifier.startsWith('@max-')) {
+      const size = modifier.slice(5);
+      result.modifiers.container = modifier;
+      result.modifiers.selector.mediaQueries.push(`@container (max-width: ${size})`);
+      return;
+    }
+
+    // 3-0. Min-width container queries (@min-md, @min-lg, etc.)
+    if (modifier.startsWith('@min-')) {
+      const size = modifier.slice(5);
+      result.modifiers.container = modifier;
+      result.modifiers.selector.mediaQueries.push(`@container (min-width: ${size})`);
+      return;
+    }
+
+    // 3-1. Named container queries (@container/sidebar, @container/main 등)
+    if (modifier.startsWith('@container/')) {
+      const containerName = modifier.replace('@container/', '');
+      result.modifiers.container = modifier;
+      result.modifiers.selector.mediaQueries.push(`@container ${containerName}`);
+      return;
+    }
+
+    // 3-2. Named container with breakpoint (@md/sidebar, @lg/main 등)
+    const namedContainerMatch = modifier.match(/^@([^/]+)\/(.+)$/);
+    if (namedContainerMatch) {
+      const [, breakpoint, containerName] = namedContainerMatch;
+      if (CONTAINER_BREAKPOINTS[`@${breakpoint}`]) {
+        result.modifiers.container = modifier;
+        result.modifiers.selector.mediaQueries.push(`@container ${containerName} ${CONTAINER_BREAKPOINTS[`@${breakpoint}`].replace('@container ', '')}`);
+        return;
+      }
+    }
+
+    // End of Selection
+
+    // 4. 임의값 Container queries (@min-[320px], @max-[768px])
+    if (this.parseArbitraryContainerModifier(modifier, result)) {
+      return;
+    }
+
+    // 5. Motion preferences
     if (MOTION_PREFERENCES[modifier]) {
       result.modifiers.motion = modifier;
       result.modifiers.selector.mediaQueries.push(MOTION_PREFERENCES[modifier]);
       return;
     }
 
-    // 4. State pseudo-classes
+    // 6. State pseudo-classes
     if (STATE_PSEUDO_CLASSES[modifier]) {
       result.modifiers.state!.push(modifier);
       result.modifiers.selector.pseudoClasses.push(STATE_PSEUDO_CLASSES[modifier]);
       return;
     }
 
-    // 5. Pseudo-elements
+    // 7. Pseudo-elements
     if (PSEUDO_ELEMENTS[modifier]) {
       result.modifiers.pseudoElement = modifier;
       result.modifiers.selector.pseudoElements.push(PSEUDO_ELEMENTS[modifier]);
       return;
     }
 
-    // 6. ARIA attributes
+    // 8. ARIA attributes
     if (ARIA_ATTRIBUTES[modifier]) {
       result.modifiers.aria = modifier;
       result.modifiers.selector.attributes.push(ARIA_ATTRIBUTES[modifier]);
       return;
     }
 
-    // 7. Data attributes
+    // 9. Data attributes
     if (DATA_ATTRIBUTES[modifier]) {
       result.modifiers.data = modifier;
       result.modifiers.selector.attributes.push(DATA_ATTRIBUTES[modifier]);
       return;
     }
 
-    // 8. Arbitrary modifiers
+    // 10. 기타 임의값 modifiers
     this.parseArbitraryModifier(modifier, result);
+  }
+
+  /**
+   * 임의값 반응형 modifier 파싱 (미디어 쿼리)
+   * 예: "min-[320px]", "max-[768px]" 등
+   */
+  private static parseArbitraryResponsiveModifier(modifier: string, result: ModifierParseResult): boolean {
+    // min-[...] 패턴 (미디어 쿼리)
+    if (modifier.startsWith('min-[') && modifier.endsWith(']')) {
+      const value = modifier.slice(4, -1); // "min-[320px]" -> "320px"
+      result.modifiers.responsive = modifier;
+      result.modifiers.selector.mediaQueries.push(`@media (min-width: ${value})`);
+      return true;
+    }
+
+    // max-[...] 패턴 (미디어 쿼리)
+    if (modifier.startsWith('max-[') && modifier.endsWith(']')) {
+      const value = modifier.slice(4, -1); // "max-[768px]" -> "768px"
+      result.modifiers.responsive = modifier;
+      result.modifiers.selector.mediaQueries.push(`@media (max-width: ${value})`);
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * 임의값 Container query modifier 파싱
+   * 예: "@min-[320px]", "@max-[768px]" 등
+   */
+  private static parseArbitraryContainerModifier(modifier: string, result: ModifierParseResult): boolean {
+    // @min-[...] 패턴 (컨테이너 쿼리)
+    if (modifier.startsWith('@min-[') && modifier.endsWith(']')) {
+      const value = modifier.slice(6, -1); // "@min-[320px]" -> "320px"
+      result.modifiers.container = modifier;
+      result.modifiers.selector.mediaQueries.push(`@container (min-width: ${value})`);
+      return true;
+    }
+
+    // @max-[...] 패턴 (컨테이너 쿼리)
+    if (modifier.startsWith('@max-[') && modifier.endsWith(']')) {
+      const value = modifier.slice(6, -1); // "@max-[768px]" -> "768px"
+      result.modifiers.container = modifier;
+      result.modifiers.selector.mediaQueries.push(`@container (max-width: ${value})`);
+      return true;
+    }
+
+    return false;
   }
 
   /**
@@ -218,32 +313,17 @@ export class ModifierParser {
   private static parseArbitraryModifier(modifier: string, result: ModifierParseResult): void {
     // aria-[...] 패턴
     if (modifier.startsWith('aria-[') && modifier.endsWith(']')) {
-      const value = modifier.slice(5, -1); // "aria-[label]" -> "[label"
+      const value = modifier.slice(5, -1); // "aria-[checked]" -> "checked"
       result.modifiers.aria = modifier;
-      result.modifiers.selector.attributes.push(`[aria-${value.slice(1)}]`); // "[label" -> "label"
+      result.modifiers.selector.attributes.push(`[aria-${value}]`);
       return;
     }
 
     // data-[...] 패턴  
     if (modifier.startsWith('data-[') && modifier.endsWith(']')) {
-      const value = modifier.slice(5, -1); // "data-[size=large]" -> "[size=large"
+      const value = modifier.slice(5, -1); // "data-[size=large]" -> "size=large"
       result.modifiers.data = modifier;
-      result.modifiers.selector.attributes.push(`[data-${value.slice(1)}]`); // "[size=large" -> "size=large"
-      return;
-    }
-
-    // min-[...], max-[...] 반응형 임의값
-    if (modifier.startsWith('min-[') && modifier.endsWith(']')) {
-      const value = modifier.slice(4, -1); // "min-[768px]" -> "[768px"
-      result.modifiers.responsive = modifier;
-      result.modifiers.selector.mediaQueries.push(`@media (min-width: ${value.slice(1)})`); // "[768px" -> "768px"
-      return;
-    }
-
-    if (modifier.startsWith('max-[') && modifier.endsWith(']')) {
-      const value = modifier.slice(4, -1); // "max-[768px]" -> "[768px"
-      result.modifiers.responsive = modifier;
-      result.modifiers.selector.mediaQueries.push(`@media (max-width: ${value.slice(1)})`); // "[768px" -> "768px"
+      result.modifiers.selector.attributes.push(`[data-${value}]`);
       return;
     }
   }

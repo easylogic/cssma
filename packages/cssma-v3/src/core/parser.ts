@@ -13,9 +13,6 @@ import {
   ParsedStyles,
   DesignPreset,
   StyleCategory,
-  StateModifier,
-  BreakpointModifier,
-  ContainerQueryModifier,
 } from "../types";
 import {
   LayoutParser,
@@ -166,6 +163,36 @@ export class CSSParser {
   }
 
   /**
+   * 빈 스타일 구조를 생성합니다.
+   */
+  private createEmptyStylesStructure(): any {
+    return {
+      spacing: { padding: {}, margin: {}, gap: {} },
+      colors: {},
+      typography: {},
+      layout: {},
+      effects: {},
+      animation: {},
+      position: {},
+      transform: {},
+      sizing: {},
+      flexboxGrid: {},
+      filters: {},
+      interactivity: {},
+      tables: {},
+      svg: {},
+      transitions: {},
+      backgrounds: {},
+      borders: {},
+      overflow: {},
+      accessibility: {},
+      states: {} as Record<string, Partial<ParsedStyles>>,
+      nestedStates: {},
+      specialSelectors: {},
+    };
+  }
+
+  /**
    * CSS 클래스 문자열을 파싱합니다.
    * @param classString CSS 클래스 문자열
    * @returns 파싱된 스타일 객체
@@ -216,6 +243,7 @@ export class CSSParser {
     // 각 토큰 처리
     for (const token of tokens) {
       const parsedClass = this.parseClassName(token);
+      console.dir(parsedClass);
       if (parsedClass) {
         this.applyParsedClassToStyles(parsedClass, result);
       }
@@ -266,6 +294,7 @@ export class CSSParser {
 
     // Parse modifiers using Tailwind CSS approach
     const modifierResult = ModifierParser.parseModifierChain(processedClassName);
+    console.dir(modifierResult);
     const baseClassName = modifierResult ? processedClassName.replace(modifierResult.modifierChain + ':', '') : processedClassName;
 
     // 각 파서에게 baseClassName 인식을 요청 (우선순위 순서)
@@ -361,6 +390,25 @@ export class CSSParser {
 
   /**
    * 파싱된 클래스를 스타일에 적용합니다.
+   * 
+   * 💡 modifier를 직접 사용하지 않고 별도 변수로 맵핑하는 이유:
+   * 
+   * 1. 데이터 타입 안정성: modifiers 객체의 구조가 복잡하고 optional 속성들이 많아
+   *    직접 사용 시 타입 에러나 undefined 접근 위험이 있음
+   * 
+   * 2. 코드 가독성: breakpointKey, containerKey 같은 명확한 변수명으로
+   *    해당 modifier가 어떤 용도로 사용되는지 명시적으로 표현
+   * 
+   * 3. 변환 로직 분리: Tailwind CSS의 원본 modifier 문자열을 
+   *    내부 스타일 시스템의 키 형태로 변환하는 로직을 별도 메서드로 분리
+   *    (예: "md" → breakpointKey, "@md" → containerKey)
+   * 
+   * 4. 향후 확장성: modifier 형태가 변경되거나 추가 변환 로직이 필요할 때
+   *    변환 메서드만 수정하면 되므로 유지보수 용이
+   * 
+   * 5. 디버깅 편의성: 변환된 키 값을 중간 변수로 저장하여
+   *    디버깅 시 어떤 키가 생성되었는지 쉽게 확인 가능
+   * 
    * @param parsedClass 파싱된 클래스
    * @param styles 스타일 객체
    */
@@ -368,383 +416,144 @@ export class CSSParser {
     parsedClass: ParsedClass,
     styles: ParsedStyles
   ): void {
-    const {
-      breakpointModifier,
-      breakpointModifiers,
-      containerQueryModifier,
-      stateModifier,
-      stateModifiers,
-      specialSelector,
-    } = parsedClass;
+    const { modifiers } = parsedClass;
 
-    // 복합 브레이크포인트 처리 (md:max-lg:flex)
-    if (breakpointModifiers && breakpointModifiers.length > 1) {
-      let currentLevel = styles;
+    console.dir(modifiers);
 
-      // 각 브레이크포인트를 순차적으로 중첩 적용
-      for (let i = 0; i < breakpointModifiers.length; i++) {
-        const breakpoint = breakpointModifiers[i];
-        const breakpointKey = this.getBreakpointKey(breakpoint);
-
-        // 최상위 레벨에서는 breakpoints 객체 사용
-        if (i === 0) {
-          if (!currentLevel.breakpoints) {
-            currentLevel.breakpoints = {};
-          }
-
-          if (!currentLevel.breakpoints[breakpointKey]) {
-            currentLevel.breakpoints[breakpointKey] = {
-              spacing: { padding: {}, margin: {}, gap: {} },
-              colors: {},
-              typography: {},
-              layout: {},
-              effects: {},
-              animation: {},
-              position: {},
-              transform: {},
-              sizing: {},
-              states: {} as Record<string, Partial<ParsedStyles>>,
-              nestedStates: {},
-              specialSelectors: {},
-            };
-          }
-
-          currentLevel = currentLevel.breakpoints[breakpointKey] as any;
-        }
-        // 중첩 레벨에서는 breakpoints 필드에 추가
-        else {
-          if (!currentLevel.breakpoints) {
-            currentLevel.breakpoints = {};
-          }
-
-          if (!currentLevel.breakpoints[breakpointKey]) {
-            currentLevel.breakpoints[breakpointKey] = {
-              spacing: { padding: {}, margin: {}, gap: {} },
-              colors: {},
-              typography: {},
-              layout: {},
-              effects: {},
-              animation: {},
-              position: {},
-              transform: {},
-              sizing: {},
-            };
-          }
-
-          // 마지막 브레이크포인트가 아니면 계속 중첩
-          if (i < breakpointModifiers.length - 1) {
-            currentLevel = currentLevel.breakpoints[breakpointKey] as any;
-          } else {
-            // 마지막 브레이크포인트에서는 스타일 적용
-            this.applyStyleByCategory(
-              parsedClass,
-              currentLevel.breakpoints[breakpointKey]
-            );
-          }
-        }
-      }
+    // Modifier가 없는 경우: 기본 스타일 적용
+    if (!modifiers || (!modifiers.responsive && !modifiers.container && !modifiers.state?.length)) {
+      this.applyStyleByCategory(parsedClass, styles);
+      return;
     }
-    // 단일 반응형 처리 (브레이크포인트)
-    else if (breakpointModifier) {
-      // 브레이크포인트 키를 테스트에서 기대하는 형식으로 생성
-      const breakpointKey = this.getBreakpointKey(breakpointModifier);
+
+    // Responsive modifier 처리
+    if (modifiers.responsive) {
+      // 🎯 modifier 직접 사용 대신 변환된 키 사용
+      // modifiers.responsive는 "md", "lg" 같은 원본 문자열
+      // breakpointKey는 내부 스타일 시스템에서 사용할 키 형태로 변환
+      const breakpointKey = modifiers.responsive; // Tailwind 방식: 원본 그대로 사용
 
       if (!styles.breakpoints) {
         styles.breakpoints = {};
       }
 
       if (!styles.breakpoints[breakpointKey]) {
-        styles.breakpoints[breakpointKey] = {
-          spacing: {
-            padding: {},
-            margin: {},
-            gap: {},
-          },
-          colors: {},
-          typography: {},
-          layout: {},
-          effects: {},
-          animation: {},
-          position: {},
-          transform: {},
-          sizing: {},
-          states: {} as Record<string, Partial<ParsedStyles>>,
-          nestedStates: {},
-          specialSelectors: {},
-        };
+        styles.breakpoints[breakpointKey] = this.createEmptyStylesStructure();
       }
 
-      // 특수 선택자 처리
-      if (specialSelector) {
-        const selectorKey = `${specialSelector.type}-${specialSelector.value}`;
-        if (!styles.breakpoints[breakpointKey].specialSelectors![selectorKey]) {
-          styles.breakpoints[breakpointKey].specialSelectors![selectorKey] = {
-            spacing: {},
-            colors: {},
-            typography: {},
-            layout: {},
-            effects: {},
-            animation: {},
-            position: {},
-            transform: {},
-            sizing: {},
-          };
+      // State modifier가 있는 경우
+      if (modifiers.state && modifiers.state.length > 0) {
+        if (modifiers.state.length === 1) {
+          // 단일 상태: md:hover:bg-blue-500
+          const stateKey = modifiers.state[0];
+          if (!styles.breakpoints[breakpointKey].states![stateKey]) {
+            styles.breakpoints[breakpointKey].states![stateKey] = this.createEmptyStylesStructure();
+          }
+          this.applyStyleByCategory(parsedClass, styles.breakpoints[breakpointKey].states![stateKey]);
+        } else {
+          // 다중 상태: md:hover:focus:bg-blue-500
+          const nestedKey = modifiers.state.join(":");
+          if (!styles.breakpoints[breakpointKey].nestedStates![nestedKey]) {
+            styles.breakpoints[breakpointKey].nestedStates![nestedKey] = this.createEmptyStylesStructure();
+          }
+          this.applyStyleByCategory(parsedClass, styles.breakpoints[breakpointKey].nestedStates![nestedKey]);
         }
-        this.applyStyleByCategory(
-          parsedClass,
-          styles.breakpoints[breakpointKey].specialSelectors![selectorKey]
-        );
-      }
-      // 다중 상태 모디파이어 처리 (중첩 상태)
-      else if (stateModifiers && stateModifiers.length > 1) {
-        const nestedKey = stateModifiers.join(":");
-        if (!styles.breakpoints[breakpointKey].nestedStates![nestedKey]) {
-          styles.breakpoints[breakpointKey].nestedStates![nestedKey] = {
-            spacing: {},
-            colors: {},
-            typography: {},
-            layout: {},
-            effects: {},
-            animation: {},
-            position: {},
-            transform: {},
-            sizing: {},
-          };
-        }
-        this.applyStyleByCategory(
-          parsedClass,
-          styles.breakpoints[breakpointKey].nestedStates![nestedKey]
-        );
-      }
-      // 단일 상태 모디파이어 처리
-      else if (
-        stateModifier ||
-        (stateModifiers && stateModifiers.length === 1)
-      ) {
-        const stateKey = stateModifier || stateModifiers![0];
-
-        if (!styles.breakpoints[breakpointKey].states![stateKey]) {
-          styles.breakpoints[breakpointKey].states![stateKey] = {
-            spacing: {},
-            colors: {},
-            typography: {},
-            layout: {},
-            effects: {},
-            animation: {},
-            position: {},
-            transform: {},
-            sizing: {},
-            flexboxGrid: {},
-            filters: {},
-            interactivity: {},
-            tables: {},
-            svg: {},
-          };
-        }
-
-        this.applyStyleByCategory(
-          parsedClass,
-          styles.breakpoints[breakpointKey].states![stateKey]
-        );
       } else {
-        this.applyStyleByCategory(
-          parsedClass,
-          styles.breakpoints[breakpointKey]
-        );
+        // 상태 없음: md:bg-blue-500
+        this.applyStyleByCategory(parsedClass, styles.breakpoints[breakpointKey]);
       }
+      return;
     }
-    // 컨테이너 쿼리 처리
-    else if (containerQueryModifier) {
-      const containerKey = this.getContainerKey(containerQueryModifier);
+
+    console.dir(modifiers);
+
+    // Container query 처리
+    if (modifiers.container) {
+      console.dir(modifiers.container);
+      // 🎯 modifier 직접 사용 대신 변환된 키 사용
+      // modifiers.container는 "@md", "@lg" 같은 원본 문자열 또는 named container 객체
+      // containerKey는 내부 스타일 시스템에서 사용할 키 형태로 변환
+      let containerKey: string;
+      
+      if (typeof modifiers.container === 'string') {
+        // 일반 container query: @md, @lg 등
+        containerKey = modifiers.container;
+      } else if (modifiers.container && typeof modifiers.container === 'object') {
+        // named container: @container/sidebar, @container/main 등
+        containerKey = modifiers.container.containerName ? `@container/${modifiers.container.containerName}` : '@container';
+      } else {
+        containerKey = modifiers.container;
+      }
 
       if (!styles.containers) {
         styles.containers = {};
       }
 
       if (!styles.containers[containerKey]) {
-        styles.containers[containerKey] = {
-          spacing: {},
-          colors: {},
-          typography: {},
-          layout: {},
-          effects: {},
-          animation: {},
-          position: {},
-          transform: {},
-          sizing: {},
-          states: {} as Record<string, Partial<ParsedStyles>>,
-          nestedStates: {},
-          specialSelectors: {},
-        };
+        styles.containers[containerKey] = this.createEmptyStylesStructure();
       }
 
-      // 특수 선택자나 중첩 상태 처리는 브레이크포인트와 동일
-      if (specialSelector) {
-        const selectorKey = `${specialSelector.type}-${specialSelector.value}`;
-        if (!styles.containers[containerKey].specialSelectors![selectorKey]) {
-          styles.containers[containerKey].specialSelectors![selectorKey] = {
-            spacing: {},
-            colors: {},
-            typography: {},
-            layout: {},
-            effects: {},
-            animation: {},
-            position: {},
-            transform: {},
-            sizing: {},
-          };
+      // State modifier가 있는 경우
+      if (modifiers.state && modifiers.state.length > 0) {
+        if (modifiers.state.length === 1) {
+          // 단일 상태: @md:hover:bg-blue-500 또는 @container/sidebar:hover:bg-blue-500
+          const stateKey = modifiers.state[0];
+          if (!styles.containers[containerKey].states![stateKey]) {
+            styles.containers[containerKey].states![stateKey] = this.createEmptyStylesStructure();
+          }
+          this.applyStyleByCategory(parsedClass, styles.containers[containerKey].states![stateKey]);
+        } else {
+          // 다중 상태: @md:hover:focus:bg-blue-500 또는 @container/sidebar:hover:focus:bg-blue-500
+          const nestedKey = modifiers.state.join(":");
+          if (!styles.containers[containerKey].nestedStates![nestedKey]) {
+            styles.containers[containerKey].nestedStates![nestedKey] = this.createEmptyStylesStructure();
+          }
+          this.applyStyleByCategory(parsedClass, styles.containers[containerKey].nestedStates![nestedKey]);
         }
-        this.applyStyleByCategory(
-          parsedClass,
-          styles.containers[containerKey].specialSelectors![selectorKey]
-        );
-      } else if (stateModifiers && stateModifiers.length > 1) {
-        const nestedKey = stateModifiers.join(":");
-        if (!styles.containers[containerKey].nestedStates![nestedKey]) {
-          styles.containers[containerKey].nestedStates![nestedKey] = {
-            spacing: {},
-            colors: {},
-            typography: {},
-            layout: {},
-            effects: {},
-            animation: {},
-            position: {},
-            transform: {},
-            sizing: {},
-          };
-        }
-        this.applyStyleByCategory(
-          parsedClass,
-          styles.containers[containerKey].nestedStates![nestedKey]
-        );
-      } else if (
-        stateModifier ||
-        (stateModifiers && stateModifiers.length === 1)
-      ) {
-        const stateKey = stateModifier || stateModifiers![0];
-
-        if (!styles.containers[containerKey].states![stateKey]) {
-          styles.containers[containerKey].states![stateKey] = {
-            spacing: {},
-            colors: {},
-            typography: {},
-            layout: {},
-            effects: {},
-            animation: {},
-            position: {},
-            transform: {},
-            sizing: {},
-            flexboxGrid: {},
-            filters: {},
-            interactivity: {},
-            tables: {},
-            svg: {},
-          };
-        }
-
-        this.applyStyleByCategory(
-          parsedClass,
-          styles.containers[containerKey].states![stateKey]
-        );
       } else {
+        // 상태 없음: @md:bg-blue-500 또는 @container/sidebar:bg-blue-500
         this.applyStyleByCategory(parsedClass, styles.containers[containerKey]);
       }
+      return;
     }
-    // 특수 선택자만 있는 경우
-    else if (specialSelector) {
-      const selectorKey = `${specialSelector.type}-${specialSelector.value}`;
 
-      if (!styles.specialSelectors) {
-        styles.specialSelectors = {};
+    // State modifier만 있는 경우
+    if (modifiers.state && modifiers.state.length > 0) {
+      if (modifiers.state.length === 1) {
+        // 단일 상태: hover:bg-blue-500
+        const stateKey = modifiers.state[0];
+        
+        if (!styles.states) {
+          styles.states = {} as Record<string, Partial<ParsedStyles>>;
+        }
+        
+        if (!styles.states[stateKey]) {
+          styles.states[stateKey] = this.createEmptyStylesStructure();
+        }
+        
+        this.applyStyleByCategory(parsedClass, styles.states[stateKey]);
+      } else {
+        // 다중 상태: hover:focus:bg-blue-500
+        const nestedKey = modifiers.state.join(":");
+        
+        if (!styles.nestedStates) {
+          styles.nestedStates = {};
+        }
+        
+        if (!styles.nestedStates[nestedKey]) {
+          styles.nestedStates[nestedKey] = this.createEmptyStylesStructure();
+        }
+        
+        this.applyStyleByCategory(parsedClass, styles.nestedStates[nestedKey]);
       }
-
-      if (!styles.specialSelectors[selectorKey]) {
-        styles.specialSelectors[selectorKey] = {
-          spacing: {},
-          colors: {},
-          typography: {},
-          layout: {},
-          effects: {},
-          animation: {},
-          position: {},
-          transform: {},
-          sizing: {},
-        };
-      }
-
-      this.applyStyleByCategory(
-        parsedClass,
-        styles.specialSelectors[selectorKey]
-      );
-    }
-    // 다중 상태 모디파이어만 있는 경우 (중첩 상태)
-    else if (stateModifiers && stateModifiers.length > 1) {
-      const nestedKey = stateModifiers.join(":");
-
-      if (!styles.nestedStates) {
-        styles.nestedStates = {};
-      }
-
-      if (!styles.nestedStates[nestedKey]) {
-        styles.nestedStates[nestedKey] = {
-          spacing: {},
-          colors: {},
-          typography: {},
-          layout: {},
-          effects: {},
-          animation: {},
-          position: {},
-          transform: {},
-          sizing: {},
-          flexboxGrid: {},
-          filters: {},
-          interactivity: {},
-          tables: {},
-          svg: {},
-        };
-      }
-
-      this.applyStyleByCategory(parsedClass, styles.nestedStates[nestedKey]);
-    }
-    // 단일 상태 모디파이어만 있는 경우
-    else if (stateModifier || (stateModifiers && stateModifiers.length === 1)) {
-      const stateKey = stateModifier || stateModifiers![0];
-
-      if (!styles.states) {
-        styles.states = {} as Record<string, Partial<ParsedStyles>>;
-      }
-
-      if (!styles.states[stateKey]) {
-        styles.states[stateKey] = {
-          spacing: {},
-          colors: {},
-          typography: {},
-          layout: {},
-          effects: {},
-          animation: {},
-          position: {},
-          transform: {},
-          sizing: {},
-          flexboxGrid: {},
-          filters: {},
-          interactivity: {},
-          tables: {},
-          svg: {},
-        };
-      }
-
-      this.applyStyleByCategory(parsedClass, styles.states[stateKey]);
-    }
-    // 기본 스타일
-    else {
-      this.applyStyleByCategory(parsedClass, styles);
+      return;
     }
   }
 
   /**
-   * 브레이크포인트 키를 생성합니다.
+   * 브레이크포인트 키를 생성합니다. (LEGACY - 사용하지 않음)
    */
-  private getBreakpointKey(breakpoint: BreakpointModifier): string {
+  private getBreakpointKey(breakpoint: any): string {
     // 임의 브레이크포인트인 경우 원래 형태 유지
     if ((breakpoint as any).isArbitrary) {
       return breakpoint.type === "max-width"
@@ -778,7 +587,7 @@ export class CSSParser {
   /**
    * 컨테이너 키를 생성합니다.
    */
-  private getContainerKey(container: ContainerQueryModifier): string {
+  private getContainerKey(container: any): string {
     // 값에서 원래 컨테이너 이름을 찾기
     const screens = this.preset.screens || {
       sm: "640px",
@@ -948,7 +757,7 @@ export class CSSParser {
    * @returns 브레이크포인트 이름
    */
   private getBreakpointName(
-    breakpoint: BreakpointModifier | undefined
+    breakpoint: any | undefined
   ): string {
     if (!breakpoint) return "";
 
@@ -988,7 +797,7 @@ export class CSSParser {
    * @returns 컨테이너 이름
    */
   private getContainerName(
-    container: ContainerQueryModifier | undefined
+    container: any | undefined
   ): string {
     if (!container) return "";
 

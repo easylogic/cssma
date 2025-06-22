@@ -4,11 +4,12 @@
  * 처리하는 모디파이어:
  * - Container queries: @sm, @md, @lg, @xl, @2xl, etc.
  * - Min/Max container queries: @min-*, @max-*
+ * - @max-md, @min-md, @max-lg, @min-lg, etc.
  * - Named container queries: @md/sidebar
  * - Arbitrary container queries: @[200px], @min-[300px], @max-[400px]
  */
 
-import { ContainerQueryModifier, DesignPreset } from '../../../types';
+import { DesignPreset, ContainerQueryModifier } from '../../../types';
 
 export interface ContainerModifierResult {
   type: 'container';
@@ -36,6 +37,12 @@ export class ContainerModifierParser {
     // 표준 컨테이너 크기
     if (this.STANDARD_CONTAINER_SIZES.includes(query)) {
       return true;
+    }
+
+    // max-md, min-md, max-lg, min-lg, etc.
+    if (query.startsWith('max-') || query.startsWith('min-')) {
+      const size = query.slice(4);
+      return this.STANDARD_CONTAINER_SIZES.includes(size);
     }
 
     // Max 컨테이너 쿼리
@@ -124,7 +131,19 @@ export class ContainerModifierParser {
         };
       }
       
-      // 표준 크기
+      // 표준 크기 - max-md는 md-1px로 계산
+      if (this.STANDARD_CONTAINER_SIZES.includes(size)) {
+        const baseValue = screens[size];
+        if (baseValue) {
+          // px 값에서 1px 빼기
+          const numericValue = parseInt(baseValue.replace('px', ''));
+          return {
+            type: 'max-width',
+            value: `${numericValue - 1}px`
+          };
+        }
+      }
+      
       return {
         type: 'max-width',
         value: screens[size] || size
@@ -141,6 +160,19 @@ export class ContainerModifierParser {
           type: 'min-width',
           value: size.slice(1, -1) // [] 제거
         };
+      }
+
+      // 표준 크기 - min-md는 md+1px로 계산
+      if (this.STANDARD_CONTAINER_SIZES.includes(size)) {
+        const baseValue = screens[size];
+        if (baseValue) {
+          // px 값에서 1px 더하기
+          const numericValue = parseInt(baseValue.replace('px', ''));
+          return {
+            type: 'min-width',
+            value: `${numericValue + 1}px`
+          };
+        }
       }
       
       // 표준 크기
@@ -160,9 +192,11 @@ export class ContainerModifierParser {
 
     // 명명된 컨테이너 쿼리 (예: md/sidebar)
     if (containerQuery.includes('/')) {
+      const [size, containerName] = containerQuery.split('/');
       return {
-        type: 'min-width',
-        value: containerQuery // 그대로 유지
+        type: 'named-container',
+        value: screens[size] || size,
+        containerName: containerName
       };
     }
 

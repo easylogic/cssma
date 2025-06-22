@@ -10,7 +10,7 @@ describe('CSSParser - 모디파이어', () => {
       const result = parser.parseClassName('hover:text-blue-500');
       expect(result).toBeDefined();
       expect(result?.className).toBe('hover:text-blue-500');
-      expect(result?.modifier).toBe('hover');
+      expect(result?.modifiers?.state).toBe('hover');
       expect(result?.category).toBe('typography');
       expect(result?.property).toBe('text');
       expect(result?.value).toBe('blue-500');
@@ -21,7 +21,7 @@ describe('CSSParser - 모디파이어', () => {
       
       expect(result).toBeDefined();
       expect(result?.className).toBe('focus:outline-none');
-      expect(result?.modifier).toBe('focus');
+      expect(result?.modifiers?.state).toBe('focus');
       expect(result?.category).toBe('borders');
       expect(result?.property).toBe('outline');
       expect(result?.value).toBe('none');
@@ -32,7 +32,7 @@ describe('CSSParser - 모디파이어', () => {
       
       expect(result).toBeDefined();
       expect(result?.className).toBe('active:bg-blue-600');
-      expect(result?.modifier).toBe('active');
+      expect(result?.modifiers?.state).toBe('active');
       expect(result?.category).toBe('backgrounds');
       expect(result?.property).toBe('bg');
       expect(result?.value).toBe('blue-600');
