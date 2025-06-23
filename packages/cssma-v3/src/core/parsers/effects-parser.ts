@@ -109,17 +109,34 @@ export class EffectsParser {
 
     // backdrop filter 처리
     if (className.startsWith('backdrop-')) {
-      const parts = className.split('-');
-      const filterType = parts.slice(1, -1).join('-'); // brightness, blur, contrast, etc.
-      const valueStr = parts[parts.length - 1];
-
-      if (className.startsWith('backdrop-grayscale')) {
+      // 값이 없는 backdrop 필터들 특별 처리
+      if (className === 'backdrop-grayscale') {
         return {
           property: 'backdrop-grayscale',
           value: '',
           isArbitrary: false
         };
       }
+      
+      if (className === 'backdrop-invert') {
+        return {
+          property: 'backdrop-invert',
+          value: '',
+          isArbitrary: false
+        };
+      }
+      
+      if (className === 'backdrop-sepia') {
+        return {
+          property: 'backdrop-sepia',
+          value: '',
+          isArbitrary: false
+        };
+      }
+      
+      const parts = className.split('-');
+      const filterType = parts.slice(1, -1).join('-'); // brightness, blur, contrast, etc.
+      const valueStr = parts[parts.length - 1];
       
       return {
         property: `backdrop-${filterType}`,
