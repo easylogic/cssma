@@ -49,7 +49,14 @@ export class StateModifierParser {
 
   // Advanced states
   private static readonly ADVANCED_STATE_MODIFIERS = [
-    'starting', 'scripting', 'inverted-colors'
+    'starting', 'scripting', 'inverted-colors', 'no-inverted-colors'
+  ];
+
+  // Media query states
+  private static readonly MEDIA_QUERY_MODIFIERS = [
+    'pointer-fine', 'pointer-coarse', 'pointer-none',
+    'any-pointer-fine', 'any-pointer-coarse', 'any-pointer-none',
+    'can-hover', 'no-hover', 'dark', 'light', 'print'
   ];
 
   // 모든 상태 모디파이어 통합
@@ -59,7 +66,8 @@ export class StateModifierParser {
     ...StateModifierParser.FORM_STATE_MODIFIERS,
     ...StateModifierParser.SELECTION_MODIFIERS,
     ...StateModifierParser.CONTENT_STATE_MODIFIERS,
-    ...StateModifierParser.ADVANCED_STATE_MODIFIERS
+    ...StateModifierParser.ADVANCED_STATE_MODIFIERS,
+    ...StateModifierParser.MEDIA_QUERY_MODIFIERS
   ];
 
   /**
@@ -129,6 +137,7 @@ export class StateModifierParser {
     if (this.SELECTION_MODIFIERS.includes(modifier)) return 4;
     if (this.CONTENT_STATE_MODIFIERS.includes(modifier)) return 5;
     if (this.ADVANCED_STATE_MODIFIERS.includes(modifier)) return 6;
+    if (this.MEDIA_QUERY_MODIFIERS.includes(modifier)) return 7;
     
     return 99; // 기본 우선순위
   }
@@ -162,7 +171,8 @@ export class StateModifierParser {
       formState: this.FORM_STATE_MODIFIERS,
       selection: this.SELECTION_MODIFIERS,
       contentState: this.CONTENT_STATE_MODIFIERS,
-      advanced: this.ADVANCED_STATE_MODIFIERS
+      advanced: this.ADVANCED_STATE_MODIFIERS,
+      mediaQuery: this.MEDIA_QUERY_MODIFIERS
     };
   }
 

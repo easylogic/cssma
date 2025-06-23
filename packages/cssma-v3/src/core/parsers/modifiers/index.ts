@@ -5,6 +5,13 @@
  */
 
 import type { ParsedModifiers } from '../../../types';
+import { ResponsiveModifierParser } from './responsive-modifier-parser';
+import { StateModifierParser } from './state-modifier-parser';
+import { ContainerModifierParser } from './container-modifier-parser';
+import { MotionModifierParser } from './motion-modifier-parser';
+import { DataModifierParser } from './data-modifier-parser';
+import { AriaModifierParser } from './aria-modifier-parser';
+import { PseudoElementModifierParser } from './pseudo-element-modifier-parser';
 
 // Tailwind CSS modifier priority order (처리 순서)
 const MODIFIER_PRIORITY = {
@@ -23,7 +30,7 @@ const MODIFIER_PRIORITY = {
   aria: 6,
   data: 7,
   
-  // 5. v4.1 new modifiers
+  // 5. Special modifiers
   not: 8,
   starting: 9,
   pointer: 10,
@@ -167,24 +174,37 @@ const GROUP_PEER_MODIFIERS = ['group', 'peer'] as const;
 // Not modifier (negation)
 const NOT_MODIFIER_REGEX = /^not-(.+)$/;
 
-
-
 // Arbitrary value modifier patterns
 const ARBITRARY_VALUE_REGEX = /\[([^\]]+)\]/;
 
-
-
 export class ModifierParser {
   /**
-   * Parse a complete modifier chain following Tailwind v4.1 specification
-   * Example: "md:@container/sidebar:motion-safe:hover:not-disabled:before:bg-blue-500"
+   * Parse all modifiers from a className
    */
   static parseModifiers(className: string): ParsedModifiers {
+    const modifiers: ParsedModifiers = this.createEmptyModifiers();
+    
+    // Split className by colon to get modifiers and base class
     const parts = className.split(':');
-    const baseClass = parts[parts.length - 1];
+    if (parts.length <= 1) {
+      return modifiers; // No modifiers
+    }
+    
+    // Process each modifier (all parts except the last one)
     const modifierParts = parts.slice(0, -1);
     
-    const modifiers: ParsedModifiers = {
+    for (const modifier of modifierParts) {
+      this.processModifier(modifier, modifiers);
+    }
+    
+    return modifiers;
+  }
+
+  /**
+   * Create empty modifiers structure
+   */
+  private static createEmptyModifiers(): ParsedModifiers {
+    return {
       responsive: {},
       container: {},
       motion: null,
@@ -196,47 +216,49 @@ export class ModifierParser {
       peer: null,
       not: null,
       starting: false,
-      arbitrary: null
+      noscript: null,
+      userValid: null,
+      invertedColors: null,
+      pointer: null,
+      detailsContent: null
     };
-    
-    // Process modifiers in order
-    for (const modifier of modifierParts) {
-      this.processModifier(modifier, modifiers);
-    }
-    
-    return modifiers;
   }
-  
+
   /**
-   * Process a single modifier and update the modifiers object
+   * Process individual modifier using specialized parsers
    */
   private static processModifier(modifier: string, modifiers: ParsedModifiers): void {
-    // 1. Check for arbitrary values first
-    const arbitraryMatch = modifier.match(ARBITRARY_VALUE_REGEX);
-    if (arbitraryMatch) {
-      modifiers.arbitrary = arbitraryMatch[1];
+    // 1. Check for responsive modifiers
+    if (ResponsiveModifierParser.isResponsiveModifier(modifier)) {
+      const responsiveResult = ResponsiveModifierParser.parse(modifier);
+      if (responsiveResult) {
+        const breakpointName = ResponsiveModifierParser.getBreakpointName(modifier);
+        const breakpointValue = this.getBreakpointMediaQuery(responsiveResult.modifier);
+        modifiers.responsive[breakpointName] = breakpointValue;
+      }
       return;
     }
-    
-    // 2. Check for responsive breakpoints
-    if (RESPONSIVE_BREAKPOINTS[modifier]) {
-      modifiers.responsive[modifier] = RESPONSIVE_BREAKPOINTS[modifier];
+
+    // 2. Check for container queries
+    if (ContainerModifierParser.isContainerModifier(modifier)) {
+      const containerResult = ContainerModifierParser.parse(modifier);
+      if (containerResult) {
+        const containerQuery = this.getContainerMediaQuery(containerResult.modifier);
+        modifiers.container[modifier] = containerQuery;
+      }
       return;
     }
-    
-    // 3. Check for container queries
-    if (this.isContainerQuery(modifier)) {
-      this.parseContainerQuery(modifier, modifiers);
+
+    // 3. Check for motion preferences
+    if (MotionModifierParser.isValidMotionModifier(modifier)) {
+      const motionResult = MotionModifierParser.parseMotionModifier(modifier);
+      if (motionResult) {
+        modifiers.motion = this.getMotionMediaQuery(motionResult.preference);
+      }
       return;
     }
-    
-    // 4. Check for motion preferences
-    if (MOTION_MODIFIERS[modifier]) {
-      modifiers.motion = MOTION_MODIFIERS[modifier];
-      return;
-    }
-    
-    // 5. Check for special modifiers (noscript, starting)
+
+    // 4. Check for special modifiers (noscript, starting)
     if (modifier === 'noscript') {
       modifiers.noscript = modifier;
       return;
@@ -246,8 +268,8 @@ export class ModifierParser {
       modifiers.starting = true;
       return;
     }
-    
-    // 6. Check for group/peer state combinations
+
+    // 5. Check for group/peer state combinations
     if (modifier.startsWith('group-') || modifier.startsWith('peer-')) {
       const [type, state] = modifier.split('-', 2);
       if (type === 'group') {
@@ -257,104 +279,208 @@ export class ModifierParser {
       }
       return;
     }
-    
-    // 7. Check for not modifier
+
+    // 6. Check for not modifier
     const notMatch = modifier.match(NOT_MODIFIER_REGEX);
     if (notMatch) {
       modifiers.not = notMatch[1];
       return;
     }
-    
 
-    
-    // 9. Check for group/peer modifiers (basic)
+    // 7. Check for group/peer modifiers (basic)
     if (GROUP_PEER_MODIFIERS.includes(modifier as any)) {
       modifiers[modifier as 'group' | 'peer'] = modifier;
       return;
     }
-    
-    // 10. Check for state modifiers
-    if (STATE_MODIFIERS[modifier]) {
-      modifiers.state = STATE_MODIFIERS[modifier];
+
+    // 8. Check for state modifiers
+    if (StateModifierParser.isStateModifier(modifier)) {
+      const stateResult = StateModifierParser.parse(modifier);
+      if (stateResult) {
+        modifiers.state = this.getStatePseudoClass(stateResult.modifier);
+      }
       return;
     }
-    
-    // 11. Check for pseudo-elements
-    if (PSEUDO_ELEMENTS[modifier]) {
-      modifiers.pseudoElement = PSEUDO_ELEMENTS[modifier];
+
+    // 9. Check for pseudo-elements
+    if (PseudoElementModifierParser.isValidPseudoElementModifier(modifier)) {
+      const pseudoElementResult = PseudoElementModifierParser.parsePseudoElementModifier(modifier);
+      if (pseudoElementResult) {
+        modifiers.pseudoElement = this.getPseudoElementSelector(pseudoElementResult.element);
+      }
       return;
     }
-    
-    // 12. Check for aria attributes
-    if (modifier.startsWith('aria-')) {
-      const ariaName = modifier.replace('aria-', '');
-      modifiers.aria[ariaName] = `[aria-${ariaName}]`;
+
+    // 10. Check for aria attributes
+    if (AriaModifierParser.isValidAriaModifier(modifier)) {
+      const ariaResult = AriaModifierParser.parseAriaModifier(modifier);
+      if (ariaResult) {
+        const ariaName = modifier.replace('aria-', '');
+        modifiers.aria[ariaName] = `[aria-${ariaName}]`;
+      }
       return;
     }
-    
-    // 13. Check for data attributes
-    if (modifier.startsWith('data-')) {
-      const dataName = modifier.replace('data-', '');
-      modifiers.data[dataName] = `[data-${dataName}]`;
+
+    // 11. Check for data attributes
+    if (DataModifierParser.isValidDataModifier(modifier)) {
+      const dataResult = DataModifierParser.parseDataModifier(modifier);
+      if (dataResult) {
+        const dataName = modifier.replace('data-', '');
+        modifiers.data[dataName] = `[data-${dataName}]`;
+      }
       return;
     }
-    
-    // 14. Handle nth-child patterns
+
+    // 12. Handle nth-child patterns
     if (modifier.startsWith('nth-')) {
       this.parseNthModifier(modifier, modifiers);
       return;
     }
-    
-    // 15. Fallback: treat as custom state
+
+    // 13. Fallback: treat as custom state
     console.warn(`Unknown modifier: ${modifier}`);
   }
-  
+
   /**
-   * Check if modifier is a container query
+   * Convert breakpoint modifier to media query
    */
-  private static isContainerQuery(modifier: string): boolean {
-    return modifier.startsWith('@') || 
-           CONTAINER_QUERIES[modifier] !== undefined;
+  private static getBreakpointMediaQuery(breakpoint: any): string {
+    if (breakpoint.type === 'min-width') {
+      return `@media (min-width: ${breakpoint.value})`;
+    } else if (breakpoint.type === 'max-width') {
+      return `@media (max-width: ${breakpoint.value})`;
+    }
+    return `@media (min-width: ${breakpoint.value})`;
   }
-  
+
   /**
-   * Parse container query modifiers
+   * Convert container modifier to container query
    */
-  private static parseContainerQuery(modifier: string, modifiers: ParsedModifiers): void {
-    // Standard container queries
-    if (CONTAINER_QUERIES[modifier]) {
-      modifiers.container[modifier] = CONTAINER_QUERIES[modifier];
-      return;
+  private static getContainerMediaQuery(container: any): string {
+    if (container.type === 'min-width') {
+      return `@container (min-width: ${container.value})`;
+    } else if (container.type === 'max-width') {
+      return `@container (max-width: ${container.value})`;
+    } else if (container.type === 'named-container') {
+      return `@container ${container.containerName} (min-width: ${container.value})`;
     }
-    
-    // Named container queries: @container/name
-    if (modifier.includes('/')) {
-      const [size, name] = modifier.split('/');
-      if (size.startsWith('@')) {
-        const baseQuery = CONTAINER_QUERIES[size];
-        if (baseQuery) {
-          modifiers.container[modifier] = baseQuery.replace('@container', `@container ${name}`);
-        }
-      }
-      return;
-    }
-    
-    // Dynamic container queries: @min-*, @max-*
-    if (modifier.startsWith('@min-') || modifier.startsWith('@max-')) {
-      const [type, value] = modifier.split('-').slice(1); // Remove '@'
-      const operator = modifier.startsWith('@min-') ? 'min-width' : 'max-width';
-      modifiers.container[modifier] = `@container (${operator}: ${value})`;
-      return;
-    }
-    
-    // Arbitrary container queries: @[...]
-    const arbitraryMatch = modifier.match(/^@\[([^\]]+)\]$/);
-    if (arbitraryMatch) {
-      modifiers.container[modifier] = `@container ${arbitraryMatch[1]}`;
-      return;
-    }
+    return `@container (min-width: ${container.value})`;
   }
-  
+
+  /**
+   * Convert motion modifier to media query
+   */
+  private static getMotionMediaQuery(preference: 'safe' | 'reduce'): string {
+    if (preference === 'safe') {
+      return '@media (prefers-reduced-motion: no-preference)';
+    } else if (preference === 'reduce') {
+      return '@media (prefers-reduced-motion: reduce)';
+    }
+    return '';
+  }
+
+  /**
+   * Convert state modifier to pseudo-class
+   */
+  private static getStatePseudoClass(state: string): string {
+    const stateMap: Record<string, string> = {
+      // Interactive states
+      'hover': ':hover',
+      'focus': ':focus',
+      'focus-within': ':focus-within',
+      'focus-visible': ':focus-visible',
+      'active': ':active',
+      'visited': ':visited',
+      'target': ':target',
+      
+      // Form states
+      'disabled': ':disabled',
+      'enabled': ':enabled',
+      'checked': ':checked',
+      'indeterminate': ':indeterminate',
+      'default': ':default',
+      'required': ':required',
+      'valid': ':valid',
+      'invalid': ':invalid',
+      'in-range': ':in-range',
+      'out-of-range': ':out-of-range',
+      'placeholder-shown': ':placeholder-shown',
+      'autofill': ':autofill',
+      'read-only': ':read-only',
+      
+      // Form validation states
+      'user-valid': ':user-valid',
+      'user-invalid': ':user-invalid',
+      
+      // UI states
+      'first': ':first-child',
+      'last': ':last-child',
+      'only': ':only-child',
+      'odd': ':nth-child(odd)',
+      'even': ':nth-child(even)',
+      'first-of-type': ':first-of-type',
+      'last-of-type': ':last-of-type',
+      'only-of-type': ':only-of-type',
+      'empty': ':empty',
+      
+      // Additional states
+      'open': ':open',
+      'closed': ':closed',
+      'fullscreen': ':fullscreen',
+      'loading': ':loading',
+      'inert': ':inert',
+      
+      // Print media
+      'print': '@media print',
+      
+      // Dark mode
+      'dark': '@media (prefers-color-scheme: dark)',
+      'light': '@media (prefers-color-scheme: light)',
+      
+      // OS/accessibility states
+      'inverted-colors': '@media (inverted-colors: inverted)',
+      'no-inverted-colors': '@media (inverted-colors: none)',
+      'noscript': 'html:not(.js)',
+      
+      // Pointer device variants
+      'pointer-fine': '@media (pointer: fine)',
+      'pointer-coarse': '@media (pointer: coarse)',
+      'pointer-none': '@media (pointer: none)',
+      'any-pointer-fine': '@media (any-pointer: fine)',
+      'any-pointer-coarse': '@media (any-pointer: coarse)',
+      'any-pointer-none': '@media (any-pointer: none)',
+      
+      // Hover capability
+      'can-hover': '@media (hover: hover)',
+      'no-hover': '@media (hover: none)',
+      
+      // Starting style modifier
+      'starting': '@starting-style',
+    };
+    
+    return stateMap[state] || `:${state}`;
+  }
+
+  /**
+   * Convert pseudo-element modifier to selector
+   */
+  private static getPseudoElementSelector(pseudoElement: string): string {
+    const pseudoElementMap: Record<string, string> = {
+      'before': '::before',
+      'after': '::after',
+      'first-line': '::first-line',
+      'first-letter': '::first-letter',
+      'selection': '::selection',
+      'file': '::file-selector-button',
+      'backdrop': '::backdrop',
+      'placeholder': '::placeholder',
+      'marker': '::marker',
+      'details-content': '> :not(summary)', // Special case for details content
+    };
+    
+    return pseudoElementMap[pseudoElement] || `::${pseudoElement}`;
+  }
+
   /**
    * Parse nth-child modifiers
    */
@@ -378,7 +504,7 @@ export class ModifierParser {
       modifiers.state = nthPatterns[modifier];
     }
   }
-  
+
   /**
    * Generate CSS selector from parsed modifiers
    */
@@ -408,8 +534,9 @@ export class ModifierParser {
     
     // 4. Apply not modifier
     if (modifiers.not) {
-      if (STATE_MODIFIERS[modifiers.not]) {
-        selector += `:not(${STATE_MODIFIERS[modifiers.not]})`;
+      const stateSelector = this.getStatePseudoClass(modifiers.not);
+      if (stateSelector.startsWith(':')) {
+        selector += `:not(${stateSelector})`;
       } else {
         selector += `:not(.${modifiers.not})`;
       }
@@ -473,41 +600,40 @@ export class ModifierParser {
     
     return finalSelector;
   }
-  
+
   /**
    * Check if a modifier is valid
    */
   static isValidModifier(modifier: string): boolean {
-    // Check all known modifier types
+    // Check using specialized parsers
     return (
-      RESPONSIVE_BREAKPOINTS[modifier] !== undefined ||
-      CONTAINER_QUERIES[modifier] !== undefined ||
-      MOTION_MODIFIERS[modifier] !== undefined ||
-      STATE_MODIFIERS[modifier] !== undefined ||
-      PSEUDO_ELEMENTS[modifier] !== undefined ||
+      ResponsiveModifierParser.isResponsiveModifier(modifier) ||
+      ContainerModifierParser.isContainerModifier(modifier) ||
+      MotionModifierParser.isValidMotionModifier(modifier) ||
+      StateModifierParser.isStateModifier(modifier) ||
+      PseudoElementModifierParser.isValidPseudoElementModifier(modifier) ||
+      AriaModifierParser.isValidAriaModifier(modifier) ||
+      DataModifierParser.isValidDataModifier(modifier) ||
       GROUP_PEER_MODIFIERS.includes(modifier as any) ||
-      modifier.startsWith('aria-') ||
-      modifier.startsWith('data-') ||
       modifier.startsWith('nth-') ||
-      modifier.startsWith('@') ||
       modifier.match(NOT_MODIFIER_REGEX) !== null ||
       modifier === 'starting' ||
       modifier === 'noscript' ||
       modifier.match(ARBITRARY_VALUE_REGEX) !== null
     );
   }
-  
+
   /**
    * Get modifier priority for sorting
    */
   static getModifierPriority(modifier: string): number {
-    if (RESPONSIVE_BREAKPOINTS[modifier]) return MODIFIER_PRIORITY.responsive;
-    if (this.isContainerQuery(modifier)) return MODIFIER_PRIORITY.container;
-    if (MOTION_MODIFIERS[modifier]) return MODIFIER_PRIORITY.motion;
-    if (STATE_MODIFIERS[modifier]) return MODIFIER_PRIORITY.state;
-    if (PSEUDO_ELEMENTS[modifier]) return MODIFIER_PRIORITY.pseudoElement;
-    if (modifier.startsWith('aria-')) return MODIFIER_PRIORITY.aria;
-    if (modifier.startsWith('data-')) return MODIFIER_PRIORITY.data;
+    if (ResponsiveModifierParser.isResponsiveModifier(modifier)) return MODIFIER_PRIORITY.responsive;
+    if (ContainerModifierParser.isContainerModifier(modifier)) return MODIFIER_PRIORITY.container;
+    if (MotionModifierParser.isValidMotionModifier(modifier)) return MODIFIER_PRIORITY.motion;
+    if (StateModifierParser.isStateModifier(modifier)) return MODIFIER_PRIORITY.state;
+    if (PseudoElementModifierParser.isValidPseudoElementModifier(modifier)) return MODIFIER_PRIORITY.pseudoElement;
+    if (AriaModifierParser.isValidAriaModifier(modifier)) return MODIFIER_PRIORITY.aria;
+    if (DataModifierParser.isValidDataModifier(modifier)) return MODIFIER_PRIORITY.data;
     if (modifier.match(NOT_MODIFIER_REGEX)) return MODIFIER_PRIORITY.not;
     if (modifier === 'starting') return MODIFIER_PRIORITY.starting;
     if (modifier.startsWith('pointer-') || modifier.startsWith('any-pointer-')) return MODIFIER_PRIORITY.pointer;
