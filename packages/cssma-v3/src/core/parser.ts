@@ -271,9 +271,9 @@ export class CSSParser {
     }
 
     // Parse modifiers using Tailwind CSS v4.1 approach
-    const modifiers = ModifierParser.parseModifiers(processedClassName);
-    const parts = processedClassName.split(':');
-    const baseClassName = parts[parts.length - 1];
+    const modifierResult = ModifierParser.parseModifiers(processedClassName);
+    const modifiers = modifierResult.modifiers;
+    const baseClassName = modifierResult.baseClassName;
 
     // 각 파서에게 baseClassName 인식을 요청 (우선순위 순서)
     for (const { parser, category } of PARSER_MAP) {

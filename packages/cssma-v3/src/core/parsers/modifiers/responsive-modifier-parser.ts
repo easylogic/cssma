@@ -25,7 +25,7 @@ export class ResponsiveModifierParser {
   /**
    * 반응형 모디파이어인지 확인
    */
-  static isResponsiveModifier(modifier: string): boolean {
+  static isValidResponsiveModifier(modifier: string): boolean {
     // 표준 브레이크포인트
     if (this.STANDARD_BREAKPOINTS.includes(modifier)) {
       return true;
@@ -61,7 +61,7 @@ export class ResponsiveModifierParser {
    * 반응형 모디파이어 파싱
    */
   static parse(modifier: string, preset?: DesignPreset): ResponsiveModifierResult | null {
-    if (!this.isResponsiveModifier(modifier)) {
+    if (!this.isValidResponsiveModifier(modifier)) {
       return null;
     }
 

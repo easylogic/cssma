@@ -30,12 +30,12 @@ export class PseudoElementModifierParser {
     'backdrop': { selector: '::backdrop', priority: 30 },
   };
 
-  static isValidPseudoElementModifier(modifier: string): boolean {
+  static isPseudoElementModifier(modifier: string): boolean {
     return modifier in this.PSEUDO_ELEMENT_MAP;
   }
 
-  static parsePseudoElementModifier(modifier: string): PseudoElementModifier | null {
-    if (!this.isValidPseudoElementModifier(modifier)) {
+  static parse(modifier: string): PseudoElementModifier | null {
+    if (!this.isPseudoElementModifier(modifier)) {
       return null;
     }
 
@@ -75,5 +75,12 @@ export class PseudoElementModifierParser {
       return "''"; // Empty string content
     }
     return '';
+  }
+
+  /**
+   * Get all pseudo-element modifiers for comprehensive parsing
+   */
+  static getAllPseudoElements(): string[] {
+    return Object.keys(this.PSEUDO_ELEMENT_MAP);
   }
 } 

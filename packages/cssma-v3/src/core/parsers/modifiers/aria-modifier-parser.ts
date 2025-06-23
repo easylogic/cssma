@@ -193,4 +193,13 @@ export class AriaModifierParser {
     const ariaSelector = this.generateAriaSelector(modifier);
     return `:where(.peer)${ariaSelector}`;
   }
+
+  /**
+   * Get all ARIA attributes for comprehensive parsing
+   */
+  static getAllAriaAttributes(): string[] {
+    const booleanAttrs = Array.from(this.BOOLEAN_ARIA_ATTRIBUTES).map(attr => `aria-${attr}`);
+    const enumeratedAttrs = Object.keys(this.ENUMERATED_ARIA_ATTRIBUTES).map(attr => `aria-${attr}`);
+    return [...booleanAttrs, ...enumeratedAttrs];
+  }
 } 

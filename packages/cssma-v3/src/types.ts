@@ -339,6 +339,11 @@ export interface ContainerQueryModifier {
   containerName?: string;
 }
 
+export interface BreakpointModifier {
+  type: 'min-width' | 'max-width';
+  value: string;
+}
+
 /**
  * 애니메이션 방향 타입
  */

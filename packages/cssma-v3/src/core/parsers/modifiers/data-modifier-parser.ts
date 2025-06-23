@@ -229,4 +229,13 @@ export class DataModifierParser {
   static generateMultiValueSelector(attribute: string, value: string): string {
     return `[data-${attribute}~="${value}"]`;
   }
+
+  /**
+   * Get all data attributes for comprehensive parsing
+   */
+  static getAllDataAttributes(): string[] {
+    const booleanAttrs = Array.from(this.BOOLEAN_DATA_ATTRIBUTES).map(attr => `data-${attr}`);
+    const enumeratedAttrs = Object.keys(this.ENUMERATED_DATA_ATTRIBUTES).map(attr => `data-${attr}`);
+    return [...booleanAttrs, ...enumeratedAttrs];
+  }
 } 

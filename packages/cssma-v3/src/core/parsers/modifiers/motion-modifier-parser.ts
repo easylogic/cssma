@@ -28,12 +28,12 @@ export class MotionModifierParser {
     }
   };
 
-  static isValidMotionModifier(modifier: string): boolean {
+  static isMotionModifier(modifier: string): boolean {
     return modifier in this.MOTION_PREFERENCES;
   }
 
-  static parseMotionModifier(modifier: string): MotionModifier | null {
-    if (!this.isValidMotionModifier(modifier)) {
+  static parse(modifier: string): MotionModifier | null {
+    if (!this.isMotionModifier(modifier)) {
       return null;
     }
 
@@ -181,5 +181,12 @@ export class MotionModifierParser {
     } catch {
       return null;
     }
+  }
+
+  /**
+   * Get all motion modifiers for comprehensive parsing
+   */
+  static getAllMotionModifiers(): string[] {
+    return this.getSupportedPreferences();
   }
 } 

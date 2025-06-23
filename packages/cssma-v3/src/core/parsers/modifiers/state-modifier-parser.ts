@@ -73,7 +73,7 @@ export class StateModifierParser {
   /**
    * 상태 모디파이어인지 확인
    */
-  static isStateModifier(modifier: string): boolean {
+  static isValidStateModifier(modifier: string): boolean {
     return this.ALL_STATE_MODIFIERS.includes(modifier);
   }
 
@@ -81,7 +81,7 @@ export class StateModifierParser {
    * 상태 모디파이어 파싱
    */
   static parse(modifier: string): StateModifierResult | null {
-    if (!this.isStateModifier(modifier)) {
+    if (!this.isValidStateModifier(modifier)) {
       return null;
     }
 
@@ -101,7 +101,7 @@ export class StateModifierParser {
   static parseGroupPeerState(modifier: string): StateModifierResult | null {
     if (modifier.startsWith('group-')) {
       const groupState = modifier.slice(6);
-      if (this.isStateModifier(groupState)) {
+      if (this.isValidStateModifier(groupState)) {
         return {
           type: 'state',
           modifier: modifier as StateModifier,
@@ -113,7 +113,7 @@ export class StateModifierParser {
 
     if (modifier.startsWith('peer-')) {
       const peerState = modifier.slice(5);
-      if (this.isStateModifier(peerState)) {
+      if (this.isValidStateModifier(peerState)) {
         return {
           type: 'state',
           modifier: modifier as StateModifier,

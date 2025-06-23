@@ -27,7 +27,7 @@ export class ContainerModifierParser {
   /**
    * 컨테이너 쿼리 모디파이어인지 확인
    */
-  static isContainerModifier(modifier: string): boolean {
+  static isValidContainerModifier(modifier: string): boolean {
     if (!modifier.startsWith('@')) {
       return false;
     }
@@ -77,7 +77,7 @@ export class ContainerModifierParser {
    * 컨테이너 쿼리 모디파이어 파싱
    */
   static parse(modifier: string, preset?: DesignPreset): ContainerModifierResult | null {
-    if (!this.isContainerModifier(modifier)) {
+    if (!this.isValidContainerModifier(modifier)) {
       return null;
     }
 
@@ -289,5 +289,22 @@ export class ContainerModifierParser {
     };
 
     return (preset?.screens as Record<string, string>) || defaultSizes;
+  }
+
+  /**
+   * Get all container modifiers for comprehensive parsing
+   */
+  static getAllContainerModifiers(): string[] {
+    const sizes = this.getAllContainerSizes();
+    const modifiers: string[] = [];
+    
+    // Add basic container sizes
+    sizes.forEach(size => {
+      modifiers.push(`@${size}`);
+      modifiers.push(`@min-${size}`);
+      modifiers.push(`@max-${size}`);
+    });
+    
+    return modifiers;
   }
 } 
