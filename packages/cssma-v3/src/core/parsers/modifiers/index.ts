@@ -1,368 +1,521 @@
 /**
  * Unified modifier parser for CSSMA-V3
- * Following Tailwind CSS architecture: single modifier chain parsing
- * Example: "md:motion-safe:before:hover:bg-blue-500" → CSS selectors
+ * Following Tailwind CSS architecture and specifications
+ * Supports all modifiers: responsive, container queries, states, pseudo-elements, attributes
  */
 
-// Tailwind CSS modifier priority order (나중에 처리될수록 높은 우선순위)
+import type { ParsedModifiers } from '../../../types';
+
+// Tailwind CSS modifier priority order (처리 순서)
 const MODIFIER_PRIORITY = {
-  // 1. Media queries (최상위)
+  // 1. Media queries (highest priority)
   responsive: 1,
-  container: 2, 
+  container: 2,
   motion: 3,
   
-  // 2. Pseudo-classes
+  // 2. Pseudo-classes and states
   state: 4,
   
-  // 3. Pseudo-elements  
+  // 3. Pseudo-elements
   pseudoElement: 5,
   
-  // 4. Attributes (최하위)
+  // 4. Attributes
   aria: 6,
-  data: 7
+  data: 7,
+  
+  // 5. v4.1 new modifiers
+  not: 8,
+  starting: 9,
+  pointer: 10,
+  noscript: 11,
+  userValid: 12,
+  invertedColors: 13,
+  detailsContent: 14
 } as const;
 
 // Tailwind responsive breakpoints
 const RESPONSIVE_BREAKPOINTS: Record<string, string> = {
   'sm': '@media (min-width: 640px)',
-  'md': '@media (min-width: 768px)',  
+  'md': '@media (min-width: 768px)', 
   'lg': '@media (min-width: 1024px)',
   'xl': '@media (min-width: 1280px)',
   '2xl': '@media (min-width: 1536px)',
-  'max-sm': '@media (max-width: 639px)',
-  'max-md': '@media (max-width: 767px)',
-  'max-lg': '@media (max-width: 1023px)',
-  'max-xl': '@media (max-width: 1279px)',
-  'max-2xl': '@media (max-width: 1535px)'
+  // Also supports arbitrary breakpoints: sm:[640px]
 };
 
-// Container query breakpoints
-const CONTAINER_BREAKPOINTS: Record<string, string> = {
-  '@3xs': '@container (min-width: 16rem)',
-  '@2xs': '@container (min-width: 18rem)', 
-  '@xs': '@container (min-width: 20rem)',
-  '@sm': '@container (min-width: 24rem)',
-  '@md': '@container (min-width: 28rem)',
-  '@lg': '@container (min-width: 32rem)',
-  '@xl': '@container (min-width: 36rem)',
-  '@2xl': '@container (min-width: 42rem)'
+// Container query modifiers
+const CONTAINER_QUERIES: Record<string, string> = {
+  '@sm': '@container (min-width: 640px)',
+  '@md': '@container (min-width: 768px)',
+  '@lg': '@container (min-width: 1024px)', 
+  '@xl': '@container (min-width: 1280px)',
+  '@2xl': '@container (min-width: 1536px)',
+  '@3xl': '@container (min-width: 1920px)',
+  '@4xl': '@container (min-width: 2560px)',
+  '@5xl': '@container (min-width: 3840px)',
+  '@6xl': '@container (min-width: 5120px)',
+  '@7xl': '@container (min-width: 7680px)',
+  // Max-width container queries
+  '@max-sm': '@container (max-width: 639px)',
+  '@max-md': '@container (max-width: 767px)',
+  '@max-lg': '@container (max-width: 1023px)',
+  '@max-xl': '@container (max-width: 1279px)',
+  '@max-2xl': '@container (max-width: 1535px)',
+  // Named containers: @container/name
+  // Dynamic: @min-*, @max-*
 };
 
-// Motion preferences
-const MOTION_PREFERENCES: Record<string, string> = {
+// Motion preference modifiers
+const MOTION_MODIFIERS: Record<string, string> = {
   'motion-safe': '@media (prefers-reduced-motion: no-preference)',
-  'motion-reduce': '@media (prefers-reduced-motion: reduce)'
+  'motion-reduce': '@media (prefers-reduced-motion: reduce)',
 };
 
-// State pseudo-classes
-const STATE_PSEUDO_CLASSES: Record<string, string> = {
+// State pseudo-classes (comprehensive list)
+const STATE_MODIFIERS: Record<string, string> = {
+  // Interactive states
   'hover': ':hover',
-  'focus': ':focus', 
+  'focus': ':focus',
+  'focus-within': ':focus-within',
+  'focus-visible': ':focus-visible',
   'active': ':active',
   'visited': ':visited',
+  'target': ':target',
+  
+  // Form states
   'disabled': ':disabled',
+  'enabled': ':enabled',
   'checked': ':checked',
-  'focus-visible': ':focus-visible',
-  'focus-within': ':focus-within'
+  'indeterminate': ':indeterminate',
+  'default': ':default',
+  'required': ':required',
+  'valid': ':valid',
+  'invalid': ':invalid',
+  'in-range': ':in-range',
+  'out-of-range': ':out-of-range',
+  'placeholder-shown': ':placeholder-shown',
+  'autofill': ':autofill',
+  'read-only': ':read-only',
+  
+  // Form validation states
+  'user-valid': ':user-valid',
+  'user-invalid': ':user-invalid',
+  
+  // UI states
+  'first': ':first-child',
+  'last': ':last-child',
+  'only': ':only-child',
+  'odd': ':nth-child(odd)',
+  'even': ':nth-child(even)',
+  'first-of-type': ':first-of-type',
+  'last-of-type': ':last-of-type',
+  'only-of-type': ':only-of-type',
+  'empty': ':empty',
+  
+  // Additional states
+  'open': ':open', // for details and dialog
+  'closed': ':closed',
+  'fullscreen': ':fullscreen',
+  'loading': ':loading',
+  'inert': ':inert',
+  
+  // Print media
+  'print': '@media print',
+  
+  // Dark mode
+  'dark': '@media (prefers-color-scheme: dark)',
+  'light': '@media (prefers-color-scheme: light)',
+  
+  // OS/accessibility states
+  'inverted-colors': '@media (inverted-colors: inverted)',
+  'no-inverted-colors': '@media (inverted-colors: none)',
+  'noscript': 'html:not(.js)',
+  
+  // Pointer device variants
+  'pointer-fine': '@media (pointer: fine)',
+  'pointer-coarse': '@media (pointer: coarse)',
+  'pointer-none': '@media (pointer: none)',
+  'any-pointer-fine': '@media (any-pointer: fine)',
+  'any-pointer-coarse': '@media (any-pointer: coarse)',
+  'any-pointer-none': '@media (any-pointer: none)',
+  
+  // Hover capability
+  'can-hover': '@media (hover: hover)',
+  'no-hover': '@media (hover: none)',
+  
+  // Starting style modifier
+  'starting': '@starting-style',
 };
 
 // Pseudo-elements
 const PSEUDO_ELEMENTS: Record<string, string> = {
   'before': '::before',
   'after': '::after',
-  'placeholder': '::placeholder',
+  'first-line': '::first-line',
+  'first-letter': '::first-letter',
   'selection': '::selection',
-  'marker': '::marker',
   'file': '::file-selector-button',
-  'backdrop': '::backdrop'
+  'backdrop': '::backdrop',
+  'placeholder': '::placeholder',
+  'marker': '::marker',
+  'details-content': '> :not(summary)', // Special case for details content
 };
 
-// ARIA attributes
-const ARIA_ATTRIBUTES: Record<string, string> = {
-  'aria-checked': '[aria-checked="true"]',
-  'aria-disabled': '[aria-disabled="true"]', 
-  'aria-expanded': '[aria-expanded="true"]',
-  'aria-hidden': '[aria-hidden="true"]',
-  'aria-selected': '[aria-selected="true"]'
-};
+// Group and peer modifiers
+const GROUP_PEER_MODIFIERS = ['group', 'peer'] as const;
 
-// Data attributes  
-const DATA_ATTRIBUTES: Record<string, string> = {
-  'data-active': '[data-active]',
-  'data-loading': '[data-loading]',
-  'data-disabled': '[data-disabled]'
-};
+// Not modifier (negation)
+const NOT_MODIFIER_REGEX = /^not-(.+)$/;
 
-/**
- * Tailwind CSS 스타일 modifier 파싱 결과
- */
-export interface ModifierParseResult {
-  modifierChain: string;
-  modifiers: {
-    responsive?: string;
-    container?: string; 
-    motion?: string;
-    state?: string[];
-    pseudoElement?: string;
-    aria?: string;
-    data?: string;
-    selector: {
-      mediaQueries: string[];
-      pseudoClasses: string[];
-      pseudoElements: string[];
-      attributes: string[];
-    };
-  };
-}
 
-/**
- * Unified Modifier Parser - Tailwind CSS 방식
- */
+
+// Arbitrary value modifier patterns
+const ARBITRARY_VALUE_REGEX = /\[([^\]]+)\]/;
+
+
+
 export class ModifierParser {
   /**
-   * Tailwind modifier 체인 파싱
-   * 예: "md:motion-safe:before:hover" → CSS 선택자 정보
+   * Parse a complete modifier chain following Tailwind v4.1 specification
+   * Example: "md:@container/sidebar:motion-safe:hover:not-disabled:before:bg-blue-500"
    */
-  static parseModifierChain(className: string): ModifierParseResult | null {
+  static parseModifiers(className: string): ParsedModifiers {
     const parts = className.split(':');
-    if (parts.length === 1) {
-      // modifier가 없는 경우
-      return null;
-    }
-
-    const baseClass = parts.pop()!; // 마지막 부분이 실제 클래스
-    const modifierChain = parts.join(':');
+    const baseClass = parts[parts.length - 1];
+    const modifierParts = parts.slice(0, -1);
     
-    const result: ModifierParseResult = {
-      modifierChain,
-      modifiers: {
-        state: [],
-        selector: {
-          mediaQueries: [],
-          pseudoClasses: [],
-          pseudoElements: [],
-          attributes: []
+    const modifiers: ParsedModifiers = {
+      responsive: {},
+      container: {},
+      motion: null,
+      state: null,
+      pseudoElement: null,
+      aria: {},
+      data: {},
+      group: null,
+      peer: null,
+      not: null,
+      starting: false,
+      arbitrary: null
+    };
+    
+    // Process modifiers in order
+    for (const modifier of modifierParts) {
+      this.processModifier(modifier, modifiers);
+    }
+    
+    return modifiers;
+  }
+  
+  /**
+   * Process a single modifier and update the modifiers object
+   */
+  private static processModifier(modifier: string, modifiers: ParsedModifiers): void {
+    // 1. Check for arbitrary values first
+    const arbitraryMatch = modifier.match(ARBITRARY_VALUE_REGEX);
+    if (arbitraryMatch) {
+      modifiers.arbitrary = arbitraryMatch[1];
+      return;
+    }
+    
+    // 2. Check for responsive breakpoints
+    if (RESPONSIVE_BREAKPOINTS[modifier]) {
+      modifiers.responsive[modifier] = RESPONSIVE_BREAKPOINTS[modifier];
+      return;
+    }
+    
+    // 3. Check for container queries
+    if (this.isContainerQuery(modifier)) {
+      this.parseContainerQuery(modifier, modifiers);
+      return;
+    }
+    
+    // 4. Check for motion preferences
+    if (MOTION_MODIFIERS[modifier]) {
+      modifiers.motion = MOTION_MODIFIERS[modifier];
+      return;
+    }
+    
+    // 5. Check for special modifiers (noscript, starting)
+    if (modifier === 'noscript') {
+      modifiers.noscript = modifier;
+      return;
+    }
+    
+    if (modifier === 'starting') {
+      modifiers.starting = true;
+      return;
+    }
+    
+    // 6. Check for group/peer state combinations
+    if (modifier.startsWith('group-') || modifier.startsWith('peer-')) {
+      const [type, state] = modifier.split('-', 2);
+      if (type === 'group') {
+        modifiers.group = modifier; // Store full "group-hover" format
+      } else if (type === 'peer') {
+        modifiers.peer = modifier; // Store full "peer-focus" format
+      }
+      return;
+    }
+    
+    // 7. Check for not modifier
+    const notMatch = modifier.match(NOT_MODIFIER_REGEX);
+    if (notMatch) {
+      modifiers.not = notMatch[1];
+      return;
+    }
+    
+
+    
+    // 9. Check for group/peer modifiers (basic)
+    if (GROUP_PEER_MODIFIERS.includes(modifier as any)) {
+      modifiers[modifier as 'group' | 'peer'] = modifier;
+      return;
+    }
+    
+    // 10. Check for state modifiers
+    if (STATE_MODIFIERS[modifier]) {
+      modifiers.state = STATE_MODIFIERS[modifier];
+      return;
+    }
+    
+    // 11. Check for pseudo-elements
+    if (PSEUDO_ELEMENTS[modifier]) {
+      modifiers.pseudoElement = PSEUDO_ELEMENTS[modifier];
+      return;
+    }
+    
+    // 12. Check for aria attributes
+    if (modifier.startsWith('aria-')) {
+      const ariaName = modifier.replace('aria-', '');
+      modifiers.aria[ariaName] = `[aria-${ariaName}]`;
+      return;
+    }
+    
+    // 13. Check for data attributes
+    if (modifier.startsWith('data-')) {
+      const dataName = modifier.replace('data-', '');
+      modifiers.data[dataName] = `[data-${dataName}]`;
+      return;
+    }
+    
+    // 14. Handle nth-child patterns
+    if (modifier.startsWith('nth-')) {
+      this.parseNthModifier(modifier, modifiers);
+      return;
+    }
+    
+    // 15. Fallback: treat as custom state
+    console.warn(`Unknown modifier: ${modifier}`);
+  }
+  
+  /**
+   * Check if modifier is a container query
+   */
+  private static isContainerQuery(modifier: string): boolean {
+    return modifier.startsWith('@') || 
+           CONTAINER_QUERIES[modifier] !== undefined;
+  }
+  
+  /**
+   * Parse container query modifiers
+   */
+  private static parseContainerQuery(modifier: string, modifiers: ParsedModifiers): void {
+    // Standard container queries
+    if (CONTAINER_QUERIES[modifier]) {
+      modifiers.container[modifier] = CONTAINER_QUERIES[modifier];
+      return;
+    }
+    
+    // Named container queries: @container/name
+    if (modifier.includes('/')) {
+      const [size, name] = modifier.split('/');
+      if (size.startsWith('@')) {
+        const baseQuery = CONTAINER_QUERIES[size];
+        if (baseQuery) {
+          modifiers.container[modifier] = baseQuery.replace('@container', `@container ${name}`);
         }
       }
+      return;
+    }
+    
+    // Dynamic container queries: @min-*, @max-*
+    if (modifier.startsWith('@min-') || modifier.startsWith('@max-')) {
+      const [type, value] = modifier.split('-').slice(1); // Remove '@'
+      const operator = modifier.startsWith('@min-') ? 'min-width' : 'max-width';
+      modifiers.container[modifier] = `@container (${operator}: ${value})`;
+      return;
+    }
+    
+    // Arbitrary container queries: @[...]
+    const arbitraryMatch = modifier.match(/^@\[([^\]]+)\]$/);
+    if (arbitraryMatch) {
+      modifiers.container[modifier] = `@container ${arbitraryMatch[1]}`;
+      return;
+    }
+  }
+  
+  /**
+   * Parse nth-child modifiers
+   */
+  private static parseNthModifier(modifier: string, modifiers: ParsedModifiers): void {
+    // nth-[2n+1], nth-[3], etc.
+    const arbitraryMatch = modifier.match(/^nth-\[([^\]]+)\]$/);
+    if (arbitraryMatch) {
+      modifiers.state = `:nth-child(${arbitraryMatch[1]})`;
+      return;
+    }
+    
+    // Predefined nth patterns
+    const nthPatterns: Record<string, string> = {
+      'nth-1': ':nth-child(1)',
+      'nth-2': ':nth-child(2)',
+      'nth-3': ':nth-child(3)',
+      // Add more as needed
     };
-
-    // Modifier 체인을 우선순위에 따라 파싱
-    for (const modifier of parts) {
-      this.parseIndividualModifier(modifier, result);
+    
+    if (nthPatterns[modifier]) {
+      modifiers.state = nthPatterns[modifier];
     }
-
-    return result;
   }
-
+  
   /**
-   * 개별 modifier 파싱 및 분류
+   * Generate CSS selector from parsed modifiers
    */
-  private static parseIndividualModifier(modifier: string, result: ModifierParseResult): void {
-    // 1. 기본 반응형 breakpoint
-    if (RESPONSIVE_BREAKPOINTS[modifier]) {
-      result.modifiers.responsive = modifier;
-      result.modifiers.selector.mediaQueries.push(RESPONSIVE_BREAKPOINTS[modifier]);
-      return;
+  static generateSelector(modifiers: ParsedModifiers, baseSelector: string): string {
+    let selector = baseSelector;
+    let mediaQueries: string[] = [];
+    let containerQueries: string[] = [];
+    
+    // 1. Apply responsive breakpoints
+    Object.values(modifiers.responsive).forEach(query => {
+      if (query.startsWith('@media')) {
+        mediaQueries.push(query);
+      }
+    });
+    
+    // 2. Apply container queries
+    Object.values(modifiers.container).forEach(query => {
+      if (query.startsWith('@container')) {
+        containerQueries.push(query);
+      }
+    });
+    
+    // 3. Apply motion preferences
+    if (modifiers.motion && modifiers.motion.startsWith('@media')) {
+      mediaQueries.push(modifiers.motion);
     }
-
-    // 2. 임의값 반응형 modifier (min-[320px], max-[768px])
-    if (this.parseArbitraryResponsiveModifier(modifier, result)) {
-      return;
-    }
-
-    // 3. Container queries (기본 및 임의값)
-    if (CONTAINER_BREAKPOINTS[modifier]) {
-      result.modifiers.container = modifier;
-      result.modifiers.selector.mediaQueries.push(CONTAINER_BREAKPOINTS[modifier]);
-      return;
-    }
-
-    // 3-0. Max-width container queries (@max-md, @max-lg, etc.)
-    if (modifier.startsWith('@max-')) {
-      const size = modifier.slice(5);
-      result.modifiers.container = modifier;
-      result.modifiers.selector.mediaQueries.push(`@container (max-width: ${size})`);
-      return;
-    }
-
-    // 3-0. Min-width container queries (@min-md, @min-lg, etc.)
-    if (modifier.startsWith('@min-')) {
-      const size = modifier.slice(5);
-      result.modifiers.container = modifier;
-      result.modifiers.selector.mediaQueries.push(`@container (min-width: ${size})`);
-      return;
-    }
-
-    // 3-1. Named container queries (@container/sidebar, @container/main 등)
-    if (modifier.startsWith('@container/')) {
-      const containerName = modifier.replace('@container/', '');
-      result.modifiers.container = modifier;
-      result.modifiers.selector.mediaQueries.push(`@container ${containerName}`);
-      return;
-    }
-
-    // 3-2. Named container with breakpoint (@md/sidebar, @lg/main 등)
-    const namedContainerMatch = modifier.match(/^@([^/]+)\/(.+)$/);
-    if (namedContainerMatch) {
-      const [, breakpoint, containerName] = namedContainerMatch;
-      if (CONTAINER_BREAKPOINTS[`@${breakpoint}`]) {
-        result.modifiers.container = modifier;
-        result.modifiers.selector.mediaQueries.push(`@container ${containerName} ${CONTAINER_BREAKPOINTS[`@${breakpoint}`].replace('@container ', '')}`);
-        return;
+    
+    // 4. Apply not modifier
+    if (modifiers.not) {
+      if (STATE_MODIFIERS[modifiers.not]) {
+        selector += `:not(${STATE_MODIFIERS[modifiers.not]})`;
+      } else {
+        selector += `:not(.${modifiers.not})`;
       }
     }
-
-    // End of Selection
-
-    // 4. 임의값 Container queries (@min-[320px], @max-[768px])
-    if (this.parseArbitraryContainerModifier(modifier, result)) {
-      return;
-    }
-
-    // 5. Motion preferences
-    if (MOTION_PREFERENCES[modifier]) {
-      result.modifiers.motion = modifier;
-      result.modifiers.selector.mediaQueries.push(MOTION_PREFERENCES[modifier]);
-      return;
-    }
-
-    // 6. State pseudo-classes
-    if (STATE_PSEUDO_CLASSES[modifier]) {
-      result.modifiers.state!.push(modifier);
-      result.modifiers.selector.pseudoClasses.push(STATE_PSEUDO_CLASSES[modifier]);
-      return;
-    }
-
-    // 7. Pseudo-elements
-    if (PSEUDO_ELEMENTS[modifier]) {
-      result.modifiers.pseudoElement = modifier;
-      result.modifiers.selector.pseudoElements.push(PSEUDO_ELEMENTS[modifier]);
-      return;
-    }
-
-    // 8. ARIA attributes
-    if (ARIA_ATTRIBUTES[modifier]) {
-      result.modifiers.aria = modifier;
-      result.modifiers.selector.attributes.push(ARIA_ATTRIBUTES[modifier]);
-      return;
-    }
-
-    // 9. Data attributes
-    if (DATA_ATTRIBUTES[modifier]) {
-      result.modifiers.data = modifier;
-      result.modifiers.selector.attributes.push(DATA_ATTRIBUTES[modifier]);
-      return;
-    }
-
-    // 10. 기타 임의값 modifiers
-    this.parseArbitraryModifier(modifier, result);
-  }
-
-  /**
-   * 임의값 반응형 modifier 파싱 (미디어 쿼리)
-   * 예: "min-[320px]", "max-[768px]" 등
-   */
-  private static parseArbitraryResponsiveModifier(modifier: string, result: ModifierParseResult): boolean {
-    // min-[...] 패턴 (미디어 쿼리)
-    if (modifier.startsWith('min-[') && modifier.endsWith(']')) {
-      const value = modifier.slice(4, -1); // "min-[320px]" -> "320px"
-      result.modifiers.responsive = modifier;
-      result.modifiers.selector.mediaQueries.push(`@media (min-width: ${value})`);
-      return true;
-    }
-
-    // max-[...] 패턴 (미디어 쿼리)
-    if (modifier.startsWith('max-[') && modifier.endsWith(']')) {
-      const value = modifier.slice(4, -1); // "max-[768px]" -> "768px"
-      result.modifiers.responsive = modifier;
-      result.modifiers.selector.mediaQueries.push(`@media (max-width: ${value})`);
-      return true;
-    }
-
-    return false;
-  }
-
-  /**
-   * 임의값 Container query modifier 파싱
-   * 예: "@min-[320px]", "@max-[768px]" 등
-   */
-  private static parseArbitraryContainerModifier(modifier: string, result: ModifierParseResult): boolean {
-    // @min-[...] 패턴 (컨테이너 쿼리)
-    if (modifier.startsWith('@min-[') && modifier.endsWith(']')) {
-      const value = modifier.slice(6, -1); // "@min-[320px]" -> "320px"
-      result.modifiers.container = modifier;
-      result.modifiers.selector.mediaQueries.push(`@container (min-width: ${value})`);
-      return true;
-    }
-
-    // @max-[...] 패턴 (컨테이너 쿼리)
-    if (modifier.startsWith('@max-[') && modifier.endsWith(']')) {
-      const value = modifier.slice(6, -1); // "@max-[768px]" -> "768px"
-      result.modifiers.container = modifier;
-      result.modifiers.selector.mediaQueries.push(`@container (max-width: ${value})`);
-      return true;
-    }
-
-    return false;
-  }
-
-  /**
-   * 임의값 modifier 파싱
-   * 예: "aria-[checked]", "data-[size=large]" 등
-   */
-  private static parseArbitraryModifier(modifier: string, result: ModifierParseResult): void {
-    // aria-[...] 패턴
-    if (modifier.startsWith('aria-[') && modifier.endsWith(']')) {
-      const value = modifier.slice(5, -1); // "aria-[checked]" -> "checked"
-      result.modifiers.aria = modifier;
-      result.modifiers.selector.attributes.push(`[aria-${value}]`);
-      return;
-    }
-
-    // data-[...] 패턴  
-    if (modifier.startsWith('data-[') && modifier.endsWith(']')) {
-      const value = modifier.slice(5, -1); // "data-[size=large]" -> "size=large"
-      result.modifiers.data = modifier;
-      result.modifiers.selector.attributes.push(`[data-${value}]`);
-      return;
-    }
-  }
-
-  /**
-   * CSS 선택자 생성
-   * Tailwind CSS 우선순위 순서: Media Queries → Pseudo-classes → Pseudo-elements → Attributes
-   */
-  static generateCSSSelector(parseResult: ModifierParseResult, baseSelector: string): string {
-    const { selector } = parseResult.modifiers;
     
-    // Base selector 구성
-    let cssSelector = baseSelector;
-    
-    // Pseudo-classes 추가
-    cssSelector += selector.pseudoClasses.join('');
-    
-    // Pseudo-elements 추가  
-    cssSelector += selector.pseudoElements.join('');
-    
-    // Attributes 추가
-    if (selector.attributes.length > 0) {
-      cssSelector += selector.attributes.join('');
+    // 5. Apply starting style
+    if (modifiers.starting) {
+      // @starting-style is handled at CSS rule level, not selector level
+      // This is a flag for the CSS generator
     }
-
-    // Media queries로 감싸기 (선언 순서대로 중첩)
-    if (selector.mediaQueries.length > 0) {
-      for (const mediaQuery of selector.mediaQueries) { 
-        cssSelector = `${mediaQuery} { ${cssSelector} }`;
+    
+    // 6. Apply group/peer modifiers
+    if (modifiers.group) {
+      selector = `.group:hover ${selector}`;
+    }
+    if (modifiers.peer) {
+      selector = `.peer:hover + ${selector}`;
+    }
+    
+    // 7. Apply state modifiers
+    if (modifiers.state) {
+      if (modifiers.state.startsWith('@media')) {
+        mediaQueries.push(modifiers.state);
+      } else {
+        selector += modifiers.state;
       }
     }
-
-    return cssSelector;
+    
+    // 8. Apply pseudo-elements
+    if (modifiers.pseudoElement) {
+      if (modifiers.pseudoElement === '> :not(summary)') {
+        // Special case for details-content
+        selector = `${selector} > :not(summary)`;
+      } else {
+        selector += modifiers.pseudoElement;
+      }
+    }
+    
+    // 9. Apply aria attributes
+    Object.values(modifiers.aria).forEach(attr => {
+      selector += attr;
+    });
+    
+    // 10. Apply data attributes
+    Object.values(modifiers.data).forEach(attr => {
+      selector += attr;
+    });
+    
+    // Wrap in media/container queries
+    let finalSelector = selector;
+    
+    // Wrap in container queries first
+    containerQueries.forEach(query => {
+      finalSelector = `${query} { ${finalSelector} }`;
+    });
+    
+    // Then wrap in media queries
+    mediaQueries.forEach(query => {
+      finalSelector = `${query} { ${finalSelector} }`;
+    });
+    
+    return finalSelector;
   }
-
+  
   /**
-   * 호환성을 위한 parseClassNameModifier (기존 API 유지)
+   * Check if a modifier is valid
    */
-  static parseClassNameModifier(className: string): ModifierParseResult | null {
-    return this.parseModifierChain(className);
+  static isValidModifier(modifier: string): boolean {
+    // Check all known modifier types
+    return (
+      RESPONSIVE_BREAKPOINTS[modifier] !== undefined ||
+      CONTAINER_QUERIES[modifier] !== undefined ||
+      MOTION_MODIFIERS[modifier] !== undefined ||
+      STATE_MODIFIERS[modifier] !== undefined ||
+      PSEUDO_ELEMENTS[modifier] !== undefined ||
+      GROUP_PEER_MODIFIERS.includes(modifier as any) ||
+      modifier.startsWith('aria-') ||
+      modifier.startsWith('data-') ||
+      modifier.startsWith('nth-') ||
+      modifier.startsWith('@') ||
+      modifier.match(NOT_MODIFIER_REGEX) !== null ||
+      modifier === 'starting' ||
+      modifier === 'noscript' ||
+      modifier.match(ARBITRARY_VALUE_REGEX) !== null
+    );
+  }
+  
+  /**
+   * Get modifier priority for sorting
+   */
+  static getModifierPriority(modifier: string): number {
+    if (RESPONSIVE_BREAKPOINTS[modifier]) return MODIFIER_PRIORITY.responsive;
+    if (this.isContainerQuery(modifier)) return MODIFIER_PRIORITY.container;
+    if (MOTION_MODIFIERS[modifier]) return MODIFIER_PRIORITY.motion;
+    if (STATE_MODIFIERS[modifier]) return MODIFIER_PRIORITY.state;
+    if (PSEUDO_ELEMENTS[modifier]) return MODIFIER_PRIORITY.pseudoElement;
+    if (modifier.startsWith('aria-')) return MODIFIER_PRIORITY.aria;
+    if (modifier.startsWith('data-')) return MODIFIER_PRIORITY.data;
+    if (modifier.match(NOT_MODIFIER_REGEX)) return MODIFIER_PRIORITY.not;
+    if (modifier === 'starting') return MODIFIER_PRIORITY.starting;
+    if (modifier.startsWith('pointer-') || modifier.startsWith('any-pointer-')) return MODIFIER_PRIORITY.pointer;
+    if (modifier === 'noscript') return MODIFIER_PRIORITY.noscript;
+    if (modifier === 'user-valid' || modifier === 'user-invalid') return MODIFIER_PRIORITY.userValid;
+    if (modifier === 'inverted-colors') return MODIFIER_PRIORITY.invertedColors;
+    if (modifier === 'details-content') return MODIFIER_PRIORITY.detailsContent;
+    
+    return 999; // Unknown modifiers get lowest priority
   }
 } 

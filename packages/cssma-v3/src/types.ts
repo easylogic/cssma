@@ -355,7 +355,61 @@ export type AnimationFillMode = 'none' | 'forwards' | 'backwards' | 'both';
 export type AnimationPlayState = 'running' | 'paused';
 
 /**
- * 파싱된 클래스 정보 타입
+ * Tailwind CSS v4.1 Modifier 타입 정의
+ * 단일 modifier 체인을 파싱한 결과
+ */
+export interface ParsedModifiers {
+  // Media queries (최우선 순위) - 객체 형태로 반환
+  responsive?: Record<string, string>;    // { "md": "@media (min-width: 768px)" }
+  container?: Record<string, string>;     // { "@md": "@container (min-width: 768px)" }
+  motion?: string | null;                 // "@media (prefers-reduced-motion: no-preference)"
+  
+  // States (pseudo-classes) - 단일 문자열
+  state?: string | null;                  // ":hover", ":focus", ":active"
+  
+  // Pseudo-elements - 단일 문자열
+  pseudoElement?: string | null;          // "::before", "::after", "::placeholder"
+  
+  // Attribute selectors - 객체 형태로 반환
+  aria?: Record<string, string>;          // { "checked": "[aria-checked]" }
+  data?: Record<string, string>;          // { "active": "[data-active]" }
+  
+  // v4.1 새로운 modifiers
+  not?: string | null;                    // "not-[selector]"
+  starting?: boolean;                     // true/false
+  pointer?: string | null;                // "pointer-fine", "pointer-coarse"
+  noscript?: string | null;               // "noscript"
+  userValid?: string | null;              // "user-valid", "user-invalid"
+  invertedColors?: string | null;         // "inverted-colors"
+  detailsContent?: string | null;         // "details-content"
+  
+  // 추가 v4.1 기능들
+  contrast?: string | null;               // "contrast-more", "contrast-less"
+  colorScheme?: string | null;            // "dark", "light"
+  orientation?: string | null;            // "portrait", "landscape"
+  print?: string | null;                  // "print"
+  scripting?: string | null;              // "scripting"
+  
+  // Group/Peer modifiers - 단일 문자열
+  group?: string | null;                  // "group-hover", "group-focus"
+  peer?: string | null;                   // "peer-hover", "peer-focus"
+  
+  // Complex selectors
+  has?: string | null;                    // "has-[selector]"
+  supports?: string | null;               // "supports-[feature]"
+  
+  // nth-* selectors
+  nthChild?: string | null;               // "nth-[3]", "nth-[3n+1]"
+  nthLastChild?: string | null;           // "nth-last-[3]"
+  nthOfType?: string | null;              // "nth-of-type-[3]"
+  nthLastOfType?: string | null;          // "nth-last-of-type-[3]"
+  
+  // Arbitrary values
+  arbitrary?: string | null;              // "[custom-value]"의 내용
+}
+
+/**
+ * 파싱된 클래스 정보
  */
 export interface ParsedClass {
   original: string;
@@ -366,34 +420,8 @@ export interface ParsedClass {
   value: string;
   isArbitrary?: boolean;
   
-  // 🎯 Tailwind CSS 방식: 전체 modifier 체인
-  modifierChain?: string; // "md:motion-safe:before:hover"
-  
-  // 🎯 CSS 생성을 위한 파싱된 modifier 정보
-  modifiers?: {
-    // Media queries (우선순위: 1)
-    responsive?: string;      // "md", "lg", "xl"
-    container?: string | ContainerQueryModifier;       // "@md", "@lg", "@xl"
-    motion?: string;          // "motion-safe", "motion-reduce"
-    
-    // Pseudo-classes (우선순위: 2)
-    state?: string[];         // ["hover", "focus", "active"]
-    
-    // Pseudo-elements (우선순위: 3)
-    pseudoElement?: string;   // "before", "after", "placeholder"
-    
-    // Attribute selectors (우선순위: 4)
-    aria?: string;            // "aria-checked", "aria-expanded"
-    data?: string;            // "data-active", "data-loading"
-    
-    // CSS 생성용 완전한 선택자 정보
-    selector?: {
-      mediaQueries: string[];   // ["@media (min-width: 768px)", "@media (prefers-reduced-motion: no-preference)"]
-      pseudoClasses: string[];  // [":hover", ":focus"]
-      pseudoElements: string[]; // ["::before"]
-      attributes: string[];     // ["[aria-checked='true']"]
-    };
-  };
+  // 🎯 Tailwind CSS v4.1 방식의 modifier 정보
+  modifiers?: ParsedModifiers;
 }
 
 /**
@@ -812,35 +840,58 @@ export interface ParsedStyles {
   interactivity: InteractivityStyles;
   tables: TablesStyles;
   svg: SVGStyles;
-  // 메타 정보
-  meta?: StyleMeta;
-  // 단일 상태 변형자 - Record<string, ...>로 변경
-  states?: Record<string, Partial<ParsedStyles>>;
-  // 중첩된 상태 변형자 (예: hover:focus:)
-  nestedStates?: Record<string, Partial<ParsedStyles>>;
-  // 의사 요소
-  pseudoElements?: Record<string, Partial<ParsedStyles>>;
-  // 특수 선택자 (nth-child 등)
-  specialSelectors?: Record<string, Partial<ParsedStyles>>;
-  // 반응형 중단점 - 문자열 키로 변경, 중첩 브레이크포인트 지원
-  breakpoints?: Record<string, Partial<ParsedStyles> & { 
-    states?: Record<string, Partial<ParsedStyles>>;
-    nestedStates?: Record<string, Partial<ParsedStyles>>;
-    specialSelectors?: Record<string, Partial<ParsedStyles>>;
-    breakpoints?: Record<string, Partial<ParsedStyles>>;
-  }>;
-  // 컨테이너 쿼리 - 문자열 키로 변경
-  containers?: Record<string, Partial<ParsedStyles> & { 
-    states?: Record<string, Partial<ParsedStyles>>;
-    nestedStates?: Record<string, Partial<ParsedStyles>>;
-    specialSelectors?: Record<string, Partial<ParsedStyles>>;
-  }>;
   transitions: TransitionsStyles;
   backgrounds: BackgroundsStyles;
   borders: BordersStyles;
   overflow: OverflowStyles;
   accessibility: AccessibilityStyles;
   blendModes: BlendModesStyles;
+  
+  // 메타 정보
+  meta?: StyleMeta;
+  
+  // Tailwind CSS v4.1 Modifier 구조
+  // 단일 상태 변형자
+  states?: Record<string, Partial<ParsedStyles>>;
+  
+  // 의사 요소
+  pseudoElements?: Record<string, Partial<ParsedStyles>>;
+  
+  // 반응형 중단점
+  breakpoints?: Record<string, Partial<ParsedStyles>>;
+  
+  // 컨테이너 쿼리
+  containers?: Record<string, Partial<ParsedStyles>>;
+  
+  // v4.1 새로운 modifier 카테고리들
+  // Motion queries (motion-safe, motion-reduce)
+  motion?: Record<string, Partial<ParsedStyles>>;
+  
+  // Attribute selectors (aria-*, data-*, etc.)
+  attributes?: Record<string, Partial<ParsedStyles>>;
+  
+  // Complex selectors (has-[], not-[], supports-[])
+  complexSelectors?: Record<string, Partial<ParsedStyles>>;
+  
+  // Group/Peer modifiers
+  groupStates?: Record<string, Partial<ParsedStyles>>;
+  peerStates?: Record<string, Partial<ParsedStyles>>;
+  
+  // v4.1 새로운 상태들
+  contrast?: Record<string, Partial<ParsedStyles>>;        // contrast-more, contrast-less
+  colorScheme?: Record<string, Partial<ParsedStyles>>;     // dark, light
+  orientation?: Record<string, Partial<ParsedStyles>>;     // portrait, landscape
+  print?: Record<string, Partial<ParsedStyles>>;           // print
+  scripting?: Record<string, Partial<ParsedStyles>>;       // scripting
+  pointer?: Record<string, Partial<ParsedStyles>>;         // pointer-fine, pointer-coarse
+  noscript?: Record<string, Partial<ParsedStyles>>;        // noscript
+  userValidation?: Record<string, Partial<ParsedStyles>>;  // user-valid, user-invalid
+  invertedColors?: Record<string, Partial<ParsedStyles>>;  // inverted-colors
+  detailsContent?: Record<string, Partial<ParsedStyles>>;  // details-content
+  starting?: Record<string, Partial<ParsedStyles>>;        // starting
+  
+  // nth-* selectors
+  nthSelectors?: Record<string, Partial<ParsedStyles>>;    // nth-[3], nth-[3n+1], etc.
 }
 
 /**

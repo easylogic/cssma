@@ -35,7 +35,7 @@ import {
   AccessibilityParser,
   BlendModesParser,
 } from "./parsers";
-import { ModifierParser, type ModifierParseResult } from "./parsers/modifiers";
+import { ModifierParser } from "./parsers/modifiers";
 
 /**
  * 파서 정보 인터페이스
@@ -45,66 +45,40 @@ interface ParserInfo {
   category: StyleCategory;
 }
 
-// 상태 모디파이어 체크
-const states: string[] = [
-  "hover",
-  "focus",
-  "active",
-  "disabled",
-  "visited",
-  "checked",
-  "first",
-  "last",
-  "odd",
-  "even",
-  "focus-within",
-  "focus-visible",
-  "target",
-  "default",
-  "enabled",
-  "indeterminate",
-  "invalid",
-  "valid",
-  "optional",
-  "required",
-  "placeholder-shown",
-  "autofill",
-  "read-only",
-  "dark",
-  "light",
+// 파서 맵핑 (우선순위 순서로 정렬)
+const PARSER_MAP: ParserInfo[] = [
+  // 특수 케이스들 우선 처리
+  { parser: AccessibilityParser, category: "accessibility" },
+  { parser: TypographyParser, category: "typography" },
+  { parser: SpacingParser, category: "spacing" },
 
-  // v4.1 새로운 상태들
-  "details-content", // <details> 요소의 content
-  "in-range", // 범위 내 값
-  "out-of-range", // 범위 밖 값
-  "user-valid", // 사용자 상호작용 후 유효
-  "user-invalid", // 사용자 상호작용 후 무효
-  "first-of-type", // 같은 타입의 첫 번째
-  "last-of-type", // 같은 타입의 마지막
-  "only-of-type", // 같은 타입의 유일한 요소
-  "empty", // 빈 요소
-  "before", // ::before 의사 요소
-  "after", // ::after 의사 요소
-  "placeholder", // ::placeholder 의사 요소
-  "file", // ::file-selector-button 의사 요소
-  "marker", // ::marker 의사 요소
-  "selection", // ::selection 의사 요소
-  "first-line", // ::first-line 의사 요소
-  "first-letter", // ::first-letter 의사 요소
-  "backdrop", // ::backdrop 의사 요소
+  // 테이블 관련 (border-collapse가 borders와 겹치므로 우선 처리)
+  { parser: TablesParser, category: "tables" },
 
-  // 미디어 쿼리 상태들
-  "motion-safe", // prefers-reduced-motion: no-preference
-  "motion-reduce", // prefers-reduced-motion: reduce
-  "contrast-more", // prefers-contrast: more
-  "contrast-less", // prefers-contrast: less
-  "portrait", // orientation: portrait
-  "landscape", // orientation: landscape
-  "print", // print media
-  "forced-colors", // forced-colors: active
-  "inverted-colors", // inverted-colors: inverted
-  "scripting", // scripting: enabled
-  "starting", // @starting-style
+  // 애니메이션 관련 (transition이 layout과 겹치므로 우선 처리)
+  { parser: AnimationParser, category: "animation" },
+  { parser: TransitionsParser, category: "transitions" },
+  { parser: TransformParser, category: "transform" },
+
+  // 레이아웃 관련
+  { parser: FlexboxGridParser, category: "flexbox-grid" },
+  { parser: SizingParser, category: "sizing" },
+  { parser: PositionParser, category: "position" },
+  { parser: LayoutParser, category: "layout" },
+  { parser: OverflowParser, category: "overflow" },
+
+  // 시각적 효과 (각자 색상 포함, Filters 통합)
+  { parser: BordersParser, category: "borders" },
+  { parser: BackgroundsParser, category: "backgrounds" },
+  { parser: EffectsParser, category: "effects" },
+  { parser: BlendModesParser, category: "blend-modes" },
+
+  // 상호작용 관련
+  { parser: InteractivityParser, category: "interactivity" },
+
+  // 기타
+  { parser: SVGParser, category: "svg" },
+  // ColorParser 제거: 각 개별 파서가 자신의 색상을 처리
 ];
 
 /**
@@ -113,43 +87,8 @@ const states: string[] = [
 export class CSSParser {
   private config: Config;
   private preset: DesignPreset;
-  private modifierParser: ModifierParser; // ModifierParser 인스턴스
 
-  // 파서 맵핑 (우선순위 순서로 정렬)
-  private static readonly PARSER_MAP: ParserInfo[] = [
-    // 특수 케이스들 우선 처리
-    { parser: AccessibilityParser, category: "accessibility" },
-    { parser: TypographyParser, category: "typography" },
-    { parser: SpacingParser, category: "spacing" },
 
-    // 테이블 관련 (border-collapse가 borders와 겹치므로 우선 처리)
-    { parser: TablesParser, category: "tables" },
-
-    // 애니메이션 관련 (transition이 layout과 겹치므로 우선 처리)
-    { parser: AnimationParser, category: "animation" },
-    { parser: TransitionsParser, category: "transitions" },
-    { parser: TransformParser, category: "transform" },
-
-    // 레이아웃 관련
-    { parser: FlexboxGridParser, category: "flexbox-grid" },
-    { parser: SizingParser, category: "sizing" },
-    { parser: PositionParser, category: "position" },
-    { parser: LayoutParser, category: "layout" },
-    { parser: OverflowParser, category: "overflow" },
-
-    // 시각적 효과 (각자 색상 포함, Filters 통합)
-    { parser: BordersParser, category: "borders" },
-    { parser: BackgroundsParser, category: "backgrounds" },
-    { parser: EffectsParser, category: "effects" },
-    { parser: BlendModesParser, category: "blend-modes" },
-
-    // 상호작용 관련
-    { parser: InteractivityParser, category: "interactivity" },
-
-    // 기타
-    { parser: SVGParser, category: "svg" },
-    // ColorParser 제거: 각 개별 파서가 자신의 색상을 처리
-  ];
 
   /**
    * 파서를 초기화합니다.
@@ -159,7 +98,6 @@ export class CSSParser {
   constructor(config: Config, preset: DesignPreset) {
     this.config = config;
     this.preset = preset;
-    this.modifierParser = new ModifierParser(); // ModifierParser 인스턴스 생성
   }
 
   /**
@@ -186,9 +124,30 @@ export class CSSParser {
       borders: {},
       overflow: {},
       accessibility: {},
+      blendModes: {},
+      
+      // v4.1 Modifier 구조
       states: {} as Record<string, Partial<ParsedStyles>>,
-      nestedStates: {},
-      specialSelectors: {},
+      pseudoElements: {},
+      breakpoints: {},
+      containers: {},
+      motion: {},
+      attributes: {},
+      complexSelectors: {},
+      groupStates: {},
+      peerStates: {},
+      contrast: {},
+      colorScheme: {},
+      orientation: {},
+      print: {},
+      scripting: {},
+      pointer: {},
+      noscript: {},
+      userValidation: {},
+      invertedColors: {},
+      detailsContent: {},
+      starting: {},
+      nthSelectors: {},
     };
   }
 
@@ -226,11 +185,30 @@ export class CSSParser {
       overflow: {},
       accessibility: {},
       blendModes: {},
+      
+      // v4.1 Modifier 구조
       breakpoints: {},
       containers: {},
       states: {} as Record<string, Partial<ParsedStyles>>,
-      nestedStates: {},
-      specialSelectors: {},
+      pseudoElements: {},
+      motion: {},
+      attributes: {},
+      complexSelectors: {},
+      groupStates: {},
+      peerStates: {},
+      contrast: {},
+      colorScheme: {},
+      orientation: {},
+      print: {},
+      scripting: {},
+      pointer: {},
+      noscript: {},
+      userValidation: {},
+      invertedColors: {},
+      detailsContent: {},
+      starting: {},
+      nthSelectors: {},
+      
       meta: {
         originalClasses: tokens,
         originalInput: classString,
@@ -292,13 +270,13 @@ export class CSSParser {
       processedClassName = className.slice(this.config.prefix.length);
     }
 
-    // Parse modifiers using Tailwind CSS approach
-    const modifierResult = ModifierParser.parseModifierChain(processedClassName);
-    console.dir(modifierResult);
-    const baseClassName = modifierResult ? processedClassName.replace(modifierResult.modifierChain + ':', '') : processedClassName;
+    // Parse modifiers using Tailwind CSS v4.1 approach
+    const modifiers = ModifierParser.parseModifiers(processedClassName);
+    const parts = processedClassName.split(':');
+    const baseClassName = parts[parts.length - 1];
 
     // 각 파서에게 baseClassName 인식을 요청 (우선순위 순서)
-    for (const { parser, category } of CSSParser.PARSER_MAP) {
+    for (const { parser, category } of PARSER_MAP) {
       if (parser.isValidClass && parser.isValidClass(baseClassName)) {
         // 해당 파서가 클래스를 인식했으므로 파싱 진행
         const parseResult = parser.parseValue
@@ -315,9 +293,8 @@ export class CSSParser {
             category: category,
             isArbitrary: parseResult.isArbitrary || false,
             
-            // 🎯 Tailwind CSS 방식의 modifier 정보
-            modifierChain: modifierResult?.modifierChain,
-            modifiers: modifierResult?.modifiers,
+            // 🎯 Tailwind CSS v4.1 방식의 modifier 정보
+            modifiers: modifiers,
           };
         }
       }
@@ -334,9 +311,8 @@ export class CSSParser {
       category: "layout", // 기본 카테고리
       isArbitrary: fallbackResult.isArbitrary,
       
-      // 🎯 Tailwind CSS 방식의 modifier 정보
-      modifierChain: modifierResult?.modifierChain,
-      modifiers: modifierResult?.modifiers,
+      // 🎯 Tailwind CSS v4.1 방식의 modifier 정보
+      modifiers: modifiers,
     };
   }
 
@@ -391,23 +367,11 @@ export class CSSParser {
   /**
    * 파싱된 클래스를 스타일에 적용합니다.
    * 
-   * 💡 modifier를 직접 사용하지 않고 별도 변수로 맵핑하는 이유:
+   * 💡 Tailwind CSS v4.1 modifier 처리 방식:
    * 
-   * 1. 데이터 타입 안정성: modifiers 객체의 구조가 복잡하고 optional 속성들이 많아
-   *    직접 사용 시 타입 에러나 undefined 접근 위험이 있음
-   * 
-   * 2. 코드 가독성: breakpointKey, containerKey 같은 명확한 변수명으로
-   *    해당 modifier가 어떤 용도로 사용되는지 명시적으로 표현
-   * 
-   * 3. 변환 로직 분리: Tailwind CSS의 원본 modifier 문자열을 
-   *    내부 스타일 시스템의 키 형태로 변환하는 로직을 별도 메서드로 분리
-   *    (예: "md" → breakpointKey, "@md" → containerKey)
-   * 
-   * 4. 향후 확장성: modifier 형태가 변경되거나 추가 변환 로직이 필요할 때
-   *    변환 메서드만 수정하면 되므로 유지보수 용이
-   * 
-   * 5. 디버깅 편의성: 변환된 키 값을 중간 변수로 저장하여
-   *    디버깅 시 어떤 키가 생성되었는지 쉽게 확인 가능
+   * 1. 단일 modifier 체인: "md:hover:bg-blue-500" → responsive + state
+   * 2. 우선순위: responsive → container → motion → state → pseudo-elements → attributes
+   * 3. 새로운 v4.1 modifiers: noscript, user-valid, inverted-colors, etc.
    * 
    * @param parsedClass 파싱된 클래스
    * @param styles 스타일 객체
@@ -418,20 +382,15 @@ export class CSSParser {
   ): void {
     const { modifiers } = parsedClass;
 
-    console.dir(modifiers);
-
     // Modifier가 없는 경우: 기본 스타일 적용
-    if (!modifiers || (!modifiers.responsive && !modifiers.container && !modifiers.state?.length)) {
+    if (!modifiers || Object.keys(modifiers).length === 0) {
       this.applyStyleByCategory(parsedClass, styles);
       return;
     }
 
-    // Responsive modifier 처리
+    // Responsive modifier 처리 (최우선)
     if (modifiers.responsive) {
-      // 🎯 modifier 직접 사용 대신 변환된 키 사용
-      // modifiers.responsive는 "md", "lg" 같은 원본 문자열
-      // breakpointKey는 내부 스타일 시스템에서 사용할 키 형태로 변환
-      const breakpointKey = modifiers.responsive; // Tailwind 방식: 원본 그대로 사용
+      const breakpointKey = modifiers.responsive;
 
       if (!styles.breakpoints) {
         styles.breakpoints = {};
@@ -441,49 +400,22 @@ export class CSSParser {
         styles.breakpoints[breakpointKey] = this.createEmptyStylesStructure();
       }
 
-      // State modifier가 있는 경우
-      if (modifiers.state && modifiers.state.length > 0) {
-        if (modifiers.state.length === 1) {
-          // 단일 상태: md:hover:bg-blue-500
-          const stateKey = modifiers.state[0];
-          if (!styles.breakpoints[breakpointKey].states![stateKey]) {
-            styles.breakpoints[breakpointKey].states![stateKey] = this.createEmptyStylesStructure();
-          }
-          this.applyStyleByCategory(parsedClass, styles.breakpoints[breakpointKey].states![stateKey]);
-        } else {
-          // 다중 상태: md:hover:focus:bg-blue-500
-          const nestedKey = modifiers.state.join(":");
-          if (!styles.breakpoints[breakpointKey].nestedStates![nestedKey]) {
-            styles.breakpoints[breakpointKey].nestedStates![nestedKey] = this.createEmptyStylesStructure();
-          }
-          this.applyStyleByCategory(parsedClass, styles.breakpoints[breakpointKey].nestedStates![nestedKey]);
-        }
+      // 추가 modifier들을 재귀적으로 처리
+      const remainingModifiers = { ...modifiers };
+      delete remainingModifiers.responsive;
+      
+      if (Object.keys(remainingModifiers).length > 0) {
+        const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
+        this.applyParsedClassToStyles(nestedClass, styles.breakpoints[breakpointKey]);
       } else {
-        // 상태 없음: md:bg-blue-500
         this.applyStyleByCategory(parsedClass, styles.breakpoints[breakpointKey]);
       }
       return;
     }
 
-    console.dir(modifiers);
-
     // Container query 처리
     if (modifiers.container) {
-      console.dir(modifiers.container);
-      // 🎯 modifier 직접 사용 대신 변환된 키 사용
-      // modifiers.container는 "@md", "@lg" 같은 원본 문자열 또는 named container 객체
-      // containerKey는 내부 스타일 시스템에서 사용할 키 형태로 변환
-      let containerKey: string;
-      
-      if (typeof modifiers.container === 'string') {
-        // 일반 container query: @md, @lg 등
-        containerKey = modifiers.container;
-      } else if (modifiers.container && typeof modifiers.container === 'object') {
-        // named container: @container/sidebar, @container/main 등
-        containerKey = modifiers.container.containerName ? `@container/${modifiers.container.containerName}` : '@container';
-      } else {
-        containerKey = modifiers.container;
-      }
+      const containerKey = modifiers.container;
 
       if (!styles.containers) {
         styles.containers = {};
@@ -493,61 +425,125 @@ export class CSSParser {
         styles.containers[containerKey] = this.createEmptyStylesStructure();
       }
 
-      // State modifier가 있는 경우
-      if (modifiers.state && modifiers.state.length > 0) {
-        if (modifiers.state.length === 1) {
-          // 단일 상태: @md:hover:bg-blue-500 또는 @container/sidebar:hover:bg-blue-500
-          const stateKey = modifiers.state[0];
-          if (!styles.containers[containerKey].states![stateKey]) {
-            styles.containers[containerKey].states![stateKey] = this.createEmptyStylesStructure();
-          }
-          this.applyStyleByCategory(parsedClass, styles.containers[containerKey].states![stateKey]);
-        } else {
-          // 다중 상태: @md:hover:focus:bg-blue-500 또는 @container/sidebar:hover:focus:bg-blue-500
-          const nestedKey = modifiers.state.join(":");
-          if (!styles.containers[containerKey].nestedStates![nestedKey]) {
-            styles.containers[containerKey].nestedStates![nestedKey] = this.createEmptyStylesStructure();
-          }
-          this.applyStyleByCategory(parsedClass, styles.containers[containerKey].nestedStates![nestedKey]);
-        }
+      // 추가 modifier들을 재귀적으로 처리
+      const remainingModifiers = { ...modifiers };
+      delete remainingModifiers.container;
+      
+      if (Object.keys(remainingModifiers).length > 0) {
+        const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
+        this.applyParsedClassToStyles(nestedClass, styles.containers[containerKey]);
       } else {
-        // 상태 없음: @md:bg-blue-500 또는 @container/sidebar:bg-blue-500
         this.applyStyleByCategory(parsedClass, styles.containers[containerKey]);
       }
       return;
     }
 
-    // State modifier만 있는 경우
-    if (modifiers.state && modifiers.state.length > 0) {
-      if (modifiers.state.length === 1) {
-        // 단일 상태: hover:bg-blue-500
-        const stateKey = modifiers.state[0];
-        
-        if (!styles.states) {
-          styles.states = {} as Record<string, Partial<ParsedStyles>>;
-        }
-        
-        if (!styles.states[stateKey]) {
-          styles.states[stateKey] = this.createEmptyStylesStructure();
-        }
-        
-        this.applyStyleByCategory(parsedClass, styles.states[stateKey]);
+    // Motion modifier 처리
+    if (modifiers.motion) {
+      const motionKey = modifiers.motion;
+
+      if (!styles.motion) {
+        styles.motion = {};
+      }
+
+      if (!styles.motion[motionKey]) {
+        styles.motion[motionKey] = this.createEmptyStylesStructure();
+      }
+
+      // 추가 modifier들을 재귀적으로 처리
+      const remainingModifiers = { ...modifiers };
+      delete remainingModifiers.motion;
+      
+      if (Object.keys(remainingModifiers).length > 0) {
+        const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
+        this.applyParsedClassToStyles(nestedClass, styles.motion[motionKey]);
       } else {
-        // 다중 상태: hover:focus:bg-blue-500
-        const nestedKey = modifiers.state.join(":");
-        
-        if (!styles.nestedStates) {
-          styles.nestedStates = {};
-        }
-        
-        if (!styles.nestedStates[nestedKey]) {
-          styles.nestedStates[nestedKey] = this.createEmptyStylesStructure();
-        }
-        
-        this.applyStyleByCategory(parsedClass, styles.nestedStates[nestedKey]);
+        this.applyStyleByCategory(parsedClass, styles.motion[motionKey]);
       }
       return;
     }
+
+    // State modifier 처리 (v4.1: 단일 문자열)
+    if (modifiers.state) {
+      const stateKey = modifiers.state;
+      
+      if (!styles.states) {
+        styles.states = {} as Record<string, Partial<ParsedStyles>>;
+      }
+      
+      if (!styles.states[stateKey]) {
+        styles.states[stateKey] = this.createEmptyStylesStructure();
+      }
+      
+      // 추가 modifier들을 재귀적으로 처리
+      const remainingModifiers = { ...modifiers };
+      delete remainingModifiers.state;
+      
+      if (Object.keys(remainingModifiers).length > 0) {
+        const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
+        this.applyParsedClassToStyles(nestedClass, styles.states[stateKey]);
+      } else {
+        this.applyStyleByCategory(parsedClass, styles.states[stateKey]);
+      }
+      return;
+    }
+
+    // Pseudo-element modifier 처리
+    if (modifiers.pseudoElement) {
+      const pseudoKey = modifiers.pseudoElement;
+      
+      if (!styles.pseudoElements) {
+        styles.pseudoElements = {};
+      }
+      
+      if (!styles.pseudoElements[pseudoKey]) {
+        styles.pseudoElements[pseudoKey] = this.createEmptyStylesStructure();
+      }
+      
+      // 추가 modifier들을 재귀적으로 처리
+      const remainingModifiers = { ...modifiers };
+      delete remainingModifiers.pseudoElement;
+      
+      if (Object.keys(remainingModifiers).length > 0) {
+        const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
+        this.applyParsedClassToStyles(nestedClass, styles.pseudoElements[pseudoKey]);
+      } else {
+        this.applyStyleByCategory(parsedClass, styles.pseudoElements[pseudoKey]);
+      }
+      return;
+    }
+
+    // Attribute modifier 처리 (aria, data 등)
+    const attributeModifiers = ['aria', 'data', 'not', 'starting', 'pointer', 'noscript', 'userValid', 'invertedColors', 'detailsContent'];
+    
+    for (const attrType of attributeModifiers) {
+      if (modifiers[attrType]) {
+        const attrKey = `${attrType}:${modifiers[attrType]}`;
+        
+        if (!styles.attributes) {
+          styles.attributes = {};
+        }
+        
+        if (!styles.attributes[attrKey]) {
+          styles.attributes[attrKey] = this.createEmptyStylesStructure();
+        }
+        
+        // 추가 modifier들을 재귀적으로 처리
+        const remainingModifiers = { ...modifiers };
+        delete remainingModifiers[attrType];
+        
+        if (Object.keys(remainingModifiers).length > 0) {
+          const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
+          this.applyParsedClassToStyles(nestedClass, styles.attributes[attrKey]);
+        } else {
+          this.applyStyleByCategory(parsedClass, styles.attributes[attrKey]);
+        }
+        return;
+      }
+    }
+
+    // 모든 modifier 처리가 완료된 경우: 기본 스타일 적용
+    this.applyStyleByCategory(parsedClass, styles);
   }
 
   /**

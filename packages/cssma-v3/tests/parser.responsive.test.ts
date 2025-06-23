@@ -156,7 +156,7 @@ describe('CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식', () =>
       expect(result.containers?.['@md'].states?.hover.typography?.color).toBeDefined();
     });
     
-    it.only('다중 상태 모디파이어를 적용할 수 있어야 함', () => {
+    it('다중 상태 모디파이어를 적용할 수 있어야 함', () => {
       const result = parser.parse('lg:hover:focus:active:bg-red-500');
       expect(result).toBeDefined();
       expect(result.breakpoints?.lg).toBeDefined();
