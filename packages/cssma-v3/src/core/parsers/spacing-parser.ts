@@ -42,39 +42,39 @@ export class SpacingParser {
   private static readonly SPACING_SCALE: Record<string, number> = {
     '0': 0,
     'px': 1, // 1px 특수값
-    '0.5': 0.125,
-    '1': 0.25,
-    '1.5': 0.375,
-    '2': 0.5,
-    '2.5': 0.625,
-    '3': 0.75,
-    '3.5': 0.875,
-    '4': 1,
-    '5': 1.25,
-    '6': 1.5,
-    '7': 1.75,
-    '8': 2,
-    '9': 2.25,
-    '10': 2.5,
-    '11': 2.75,
-    '12': 3,
-    '14': 3.5,
-    '16': 4,
-    '20': 5,
-    '24': 6,
-    '28': 7,
-    '32': 8,
-    '36': 9,
-    '40': 10,
-    '44': 11,
-    '48': 12,
-    '52': 13,
-    '56': 14,
-    '60': 15,
-    '64': 16,
-    '72': 18,
-    '80': 20,
-    '96': 24,
+    '0.5': 2,  // 0.125rem = 2px
+    '1': 4,    // 0.25rem = 4px
+    '1.5': 6,  // 0.375rem = 6px
+    '2': 8,    // 0.5rem = 8px
+    '2.5': 10, // 0.625rem = 10px
+    '3': 12,   // 0.75rem = 12px
+    '3.5': 14, // 0.875rem = 14px
+    '4': 16,   // 1rem = 16px
+    '5': 20,   // 1.25rem = 20px
+    '6': 24,   // 1.5rem = 24px
+    '7': 28,   // 1.75rem = 28px
+    '8': 32,   // 2rem = 32px
+    '9': 36,   // 2.25rem = 36px
+    '10': 40,  // 2.5rem = 40px
+    '11': 44,  // 2.75rem = 44px
+    '12': 48,  // 3rem = 48px
+    '14': 56,  // 3.5rem = 56px
+    '16': 64,  // 4rem = 64px
+    '20': 80,  // 5rem = 80px
+    '24': 96,  // 6rem = 96px
+    '28': 112, // 7rem = 112px
+    '32': 128, // 8rem = 128px
+    '36': 144, // 9rem = 144px
+    '40': 160, // 10rem = 160px
+    '44': 176, // 11rem = 176px
+    '48': 192, // 12rem = 192px
+    '52': 208, // 13rem = 208px
+    '56': 224, // 14rem = 224px
+    '60': 240, // 15rem = 240px
+    '64': 256, // 16rem = 256px
+    '72': 288, // 18rem = 288px
+    '80': 320, // 20rem = 320px
+    '96': 384, // 24rem = 384px
   };
 
   private static readonly PADDING_PATTERNS = [
@@ -92,8 +92,14 @@ export class SpacingParser {
     // Logical properties (v4.1 신규)
     /^ps-(.+)$/, // padding-inline-start
     /^pe-(.+)$/, // padding-inline-end
-    /^pb-(.+)$/, // padding-block-start (pt와 동일)
-    /^pb-(.+)$/, // padding-block-end (pb와 동일)
+    // 전체 속성명 형태
+    /^padding-(.+)$/,
+    /^padding-top-(.+)$/,
+    /^padding-right-(.+)$/,
+    /^padding-bottom-(.+)$/,
+    /^padding-left-(.+)$/,
+    /^padding-inline-(.+)$/,
+    /^padding-block-(.+)$/,
   ];
 
   private static readonly MARGIN_PATTERNS = [
@@ -111,6 +117,14 @@ export class SpacingParser {
     // Logical properties (v4.1 신규)
     /^-?ms-(.+)$/, // margin-inline-start
     /^-?me-(.+)$/, // margin-inline-end
+    // 전체 속성명 형태
+    /^-?margin-(.+)$/,
+    /^-?margin-top-(.+)$/,
+    /^-?margin-right-(.+)$/,
+    /^-?margin-bottom-(.+)$/,
+    /^-?margin-left-(.+)$/,
+    /^-?margin-inline-(.+)$/,
+    /^-?margin-block-(.+)$/,
     // Space between
     /^-?space-x-(.+)$/,
     /^-?space-y-(.+)$/,
@@ -120,7 +134,16 @@ export class SpacingParser {
     /^gap-(.+)$/,
     /^gap-x-(.+)$/,
     /^gap-y-(.+)$/,
+    /^column-gap-(.+)$/,
+    /^row-gap-(.+)$/,
   ];
+
+  /**
+   * 클래스명이 spacing 관련인지 확인 (테스트 호환)
+   */
+  static isSpacingClass(className: string): boolean {
+    return this.isValidClass(className);
+  }
 
   /**
    * 클래스명이 spacing 관련인지 확인
@@ -139,7 +162,7 @@ export class SpacingParser {
   private static parseSpacingValue(value: string): string | number {
     // px 특수 처리
     if (value === 'px') {
-      return '1px';
+      return 1;
     }
 
     // 임의값 처리: [10px], [2.5rem], [calc(100% - 1rem)]
@@ -150,7 +173,7 @@ export class SpacingParser {
     // 기본 스케일에서 찾기
     const scaleValue = this.SPACING_SCALE[value];
     if (scaleValue !== undefined) {
-      return scaleValue === 1 && value === 'px' ? '1px' : scaleValue;
+      return scaleValue;
     }
 
     // 자동값
@@ -158,19 +181,19 @@ export class SpacingParser {
       return 'auto';
     }
 
-    // 숫자 값 직접 처리
+    // 동적 숫자 값 처리 (Tailwind 기본: 1단위 = 4px)
     const numValue = parseFloat(value);
     if (!isNaN(numValue)) {
-      return numValue;
+      return numValue * 4; // 4px 단위로 계산
     }
 
     return value; // 그대로 반환 (string)
   }
 
   /**
-   * 클래스명을 파싱하여 SpacingValue 반환
+   * 클래스명을 파싱하여 SpacingValue 반환 (내부용)
    */
-  static parseSpacing(className: string): SpacingValue | null {
+  private static parseSpacingInternal(className: string): SpacingValue | null {
     // Padding 처리
     let match = className.match(/^p-(.+)$/);
     if (match) {
@@ -264,6 +287,210 @@ export class SpacingParser {
       return { y: value, marginBlock: value };
     }
 
+    // 개별 margin 방향들
+    match = className.match(/^(-?)mt-(.+)$/);
+    if (match) {
+      const isNegative = match[1] === '-';
+      let value = this.parseSpacingValue(match[2]);
+      if (isNegative && typeof value === 'number') {
+        value = -value;
+      } else if (isNegative && typeof value === 'string' && !value.includes('calc')) {
+        value = `-${value}`;
+      }
+      return { top: value };
+    }
+
+    match = className.match(/^(-?)mr-(.+)$/);
+    if (match) {
+      const isNegative = match[1] === '-';
+      let value = this.parseSpacingValue(match[2]);
+      if (isNegative && typeof value === 'number') {
+        value = -value;
+      } else if (isNegative && typeof value === 'string' && !value.includes('calc')) {
+        value = `-${value}`;
+      }
+      return { right: value };
+    }
+
+    match = className.match(/^(-?)mb-(.+)$/);
+    if (match) {
+      const isNegative = match[1] === '-';
+      let value = this.parseSpacingValue(match[2]);
+      if (isNegative && typeof value === 'number') {
+        value = -value;
+      } else if (isNegative && typeof value === 'string' && !value.includes('calc')) {
+        value = `-${value}`;
+      }
+      return { bottom: value };
+    }
+
+    match = className.match(/^(-?)ml-(.+)$/);
+    if (match) {
+      const isNegative = match[1] === '-';
+      let value = this.parseSpacingValue(match[2]);
+      if (isNegative && typeof value === 'number') {
+        value = -value;
+      } else if (isNegative && typeof value === 'string' && !value.includes('calc')) {
+        value = `-${value}`;
+      }
+      return { left: value };
+    }
+
+    // Logical margin properties (v4.1)
+    match = className.match(/^(-?)ms-(.+)$/);
+    if (match) {
+      const isNegative = match[1] === '-';
+      let value = this.parseSpacingValue(match[2]);
+      if (isNegative && typeof value === 'number') {
+        value = -value;
+      } else if (isNegative && typeof value === 'string' && !value.includes('calc')) {
+        value = `-${value}`;
+      }
+      return { marginInline: { start: value } };
+    }
+
+    match = className.match(/^(-?)me-(.+)$/);
+    if (match) {
+      const isNegative = match[1] === '-';
+      let value = this.parseSpacingValue(match[2]);
+      if (isNegative && typeof value === 'number') {
+        value = -value;
+      } else if (isNegative && typeof value === 'string' && !value.includes('calc')) {
+        value = `-${value}`;
+      }
+      return { marginInline: { end: value } };
+    }
+
+    // Gap 처리 - gap-x와 gap-y를 먼저 처리
+    match = className.match(/^gap-x-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { x: value };
+    }
+
+    match = className.match(/^gap-y-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { y: value };
+    }
+
+    // 기본 gap 처리
+    match = className.match(/^gap-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { all: value }; // gap은 all로 처리
+    }
+
+    // Space between 처리
+    match = className.match(/^(-?)space-x-(.+)$/);
+    if (match) {
+      const isNegative = match[1] === '-';
+      let value = this.parseSpacingValue(match[2]);
+      if (isNegative && typeof value === 'number') {
+        value = -value;
+      } else if (isNegative && typeof value === 'string' && !value.includes('calc')) {
+        value = `-${value}`;
+      }
+      return { x: value };
+    }
+
+    match = className.match(/^(-?)space-y-(.+)$/);
+    if (match) {
+      const isNegative = match[1] === '-';
+      let value = this.parseSpacingValue(match[2]);
+      if (isNegative && typeof value === 'number') {
+        value = -value;
+      } else if (isNegative && typeof value === 'string' && !value.includes('calc')) {
+        value = `-${value}`;
+      }
+      return { y: value };
+    }
+
+    // 전체 속성명 처리
+    match = className.match(/^padding-top-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { top: value };
+    }
+
+    match = className.match(/^padding-right-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { right: value };
+    }
+
+    match = className.match(/^padding-bottom-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { bottom: value };
+    }
+
+    match = className.match(/^padding-left-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { left: value };
+    }
+
+    match = className.match(/^padding-inline-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { paddingInline: value };
+    }
+
+    match = className.match(/^padding-block-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { paddingBlock: value };
+    }
+
+    match = className.match(/^(-?)margin-top-(.+)$/);
+    if (match) {
+      const isNegative = match[1] === '-';
+      let value = this.parseSpacingValue(match[2]);
+      if (isNegative && typeof value === 'number') {
+        value = -value;
+      } else if (isNegative && typeof value === 'string' && !value.includes('calc')) {
+        value = `-${value}`;
+      }
+      return { top: value };
+    }
+
+    match = className.match(/^(-?)margin-inline-(.+)$/);
+    if (match) {
+      const isNegative = match[1] === '-';
+      let value = this.parseSpacingValue(match[2]);
+      if (isNegative && typeof value === 'number') {
+        value = -value;
+      } else if (isNegative && typeof value === 'string' && !value.includes('calc')) {
+        value = `-${value}`;
+      }
+      return { marginInline: value };
+    }
+
+    match = className.match(/^(-?)margin-block-(.+)$/);
+    if (match) {
+      const isNegative = match[1] === '-';
+      let value = this.parseSpacingValue(match[2]);
+      if (isNegative && typeof value === 'number') {
+        value = -value;
+      } else if (isNegative && typeof value === 'string' && !value.includes('calc')) {
+        value = `-${value}`;
+      }
+      return { marginBlock: value };
+    }
+
+    match = className.match(/^column-gap-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { x: value };
+    }
+
+    match = className.match(/^row-gap-(.+)$/);
+    if (match) {
+      const value = this.parseSpacingValue(match[1]);
+      return { y: value };
+    }
+
     return null;
   }
 
@@ -287,9 +514,12 @@ export class SpacingParser {
   /**
    * ParsedStyle로 변환 (기존 테스트와 호환성 유지)
    */
-  static parseValue(className: string): ParsedStyle | null {
-    const spacingValue = this.parseSpacing(className);
+  static parseValue(className: string): ParsedStyle & { isArbitrary?: boolean } | null {
+    const spacingValue = this.parseSpacingInternal(className);
     if (!spacingValue) return null;
+
+    // 임의 값인지 확인
+    const isArbitrary = className.includes('[') && className.includes(']');
 
     // 클래스 타입 결정 (modifier 테스트를 위한 간단한 property 이름 사용)
     let property = 'spacing';
@@ -311,7 +541,8 @@ export class SpacingParser {
         return {
           property,
           value,
-          variant: value.includes('[') ? 'arbitrary' : 'preset'
+          variant: isArbitrary ? 'arbitrary' : 'preset',
+          isArbitrary
         };
       }
     }
@@ -319,7 +550,8 @@ export class SpacingParser {
     return {
       property,
       value: JSON.stringify(spacingValue), // 기존 스타일 적용 시스템과 호환
-      variant: className.includes('[') ? 'arbitrary' : 'preset'
+      variant: isArbitrary ? 'arbitrary' : 'preset',
+      isArbitrary
     };
   }
 
@@ -331,52 +563,124 @@ export class SpacingParser {
     styles: any,
     preset: DesignPreset
   ): void {
-    // 값이 간단한 문자열인 경우와 JSON 객체인 경우 모두 처리
-    let spacingValue: SpacingValue;
+    // 항상 parseSpacingInternal을 사용하여 올바른 SpacingValue 객체 생성
+    const spacingValue: SpacingValue = this.parseSpacingInternal(parsedClass.original) || {};
     
-    try {
-      // JSON 객체로 파싱 시도
-      spacingValue = JSON.parse(parsedClass.value) as SpacingValue;
-    } catch {
-      // 간단한 문자열 값인 경우, 클래스명을 다시 파싱
-      spacingValue = this.parseSpacing(parsedClass.original) || {};
-    }
+    // 디버깅 추가 (disabled for now)
+    // if (parsedClass.original.includes('gap') || parsedClass.original.includes('space')) {
+    //   console.log(`🔧 ${parsedClass.original}:`, spacingValue, 'current gap:', styles.spacing?.gap, 'spaceBetween:', styles.spacing?.spaceBetween);
+    // }
     
     if (!styles.spacing) {
       styles.spacing = {};
     }
-
+    
     // 모든 방향 처리
     if (spacingValue.all !== undefined) {
       const cssValue = this.valueToCSS(spacingValue.all);
       if (parsedClass.original.startsWith('p')) {
-        styles.spacing.padding = cssValue;
-      } else if (parsedClass.original.startsWith('m')) {
-        styles.spacing.margin = cssValue;
+        // padding을 개별 방향별 객체로 설정
+        styles.spacing.padding = {
+          top: spacingValue.all,
+          right: spacingValue.all,
+          bottom: spacingValue.all,
+          left: spacingValue.all
+        };
+      } else if (parsedClass.original.startsWith('m') || parsedClass.original.startsWith('-m')) {
+        // margin을 개별 방향별 객체로 설정
+        styles.spacing.margin = {
+          top: spacingValue.all,
+          right: spacingValue.all,
+          bottom: spacingValue.all,
+          left: spacingValue.all
+        };
+              } else if (parsedClass.original.startsWith('gap')) {
+          // 기본 gap인 경우
+          // console.log(`🔧 Gap-all processing for ${parsedClass.original}:`, 'current gap:', styles.spacing.gap, 'has properties?', Object.keys(styles.spacing.gap || {}).length > 0);
+          if (styles.spacing.gap && typeof styles.spacing.gap === 'object' && Object.keys(styles.spacing.gap).length > 0) {
+            // 이미 값이 있는 객체라면 row, column 모두 설정
+            styles.spacing.gap.row = spacingValue.all;
+            styles.spacing.gap.column = spacingValue.all;
+          } else {
+            // 단일 값으로 설정
+            styles.spacing.gap = spacingValue.all;
+          }
       }
     }
 
     // X축 (horizontal) 처리
     if (spacingValue.x !== undefined) {
       const cssValue = this.valueToCSS(spacingValue.x);
-      if (parsedClass.original.includes('p')) {
-        styles.spacing.paddingLeft = cssValue;
-        styles.spacing.paddingRight = cssValue;
-      } else if (parsedClass.original.includes('m')) {
-        styles.spacing.marginLeft = cssValue;
-        styles.spacing.marginRight = cssValue;
+      if (parsedClass.original.startsWith('gap')) {
+        // gap-x인 경우 - gap이 padding보다 우선
+        // console.log(`🔧 Setting gap.column for ${parsedClass.original}:`, spacingValue.x, 'current gap:', styles.spacing.gap);
+        if (!styles.spacing.gap || typeof styles.spacing.gap !== 'object') {
+          // 기존 gap이 숫자인 경우 객체로 변환
+          const existingGap = styles.spacing.gap;
+          styles.spacing.gap = {
+            row: typeof existingGap === 'number' ? existingGap : spacingValue.x,
+            column: spacingValue.x
+          };
+        } else {
+          styles.spacing.gap.column = spacingValue.x;
+        }
+      } else if (parsedClass.original.startsWith('space')) {
+        // space-x인 경우
+        // console.log(`🔧 Setting spaceBetween for ${parsedClass.original}:`, spacingValue.x);
+        if (!styles.spacing.spaceBetween) {
+          styles.spacing.spaceBetween = {};
+        }
+        styles.spacing.spaceBetween.x = spacingValue.x;
+      } else if (parsedClass.original.startsWith('p')) {
+        if (!styles.spacing.padding || typeof styles.spacing.padding !== 'object') {
+          styles.spacing.padding = {};
+        }
+        styles.spacing.padding.left = spacingValue.x;
+        styles.spacing.padding.right = spacingValue.x;
+      } else if (parsedClass.original.startsWith('m') || parsedClass.original.startsWith('-m')) {
+        if (!styles.spacing.margin || typeof styles.spacing.margin !== 'object') {
+          styles.spacing.margin = {};
+        }
+        styles.spacing.margin.left = spacingValue.x;
+        styles.spacing.margin.right = spacingValue.x;
       }
     }
 
     // Y축 (vertical) 처리
     if (spacingValue.y !== undefined) {
       const cssValue = this.valueToCSS(spacingValue.y);
-      if (parsedClass.original.includes('p')) {
-        styles.spacing.paddingTop = cssValue;
-        styles.spacing.paddingBottom = cssValue;
-      } else if (parsedClass.original.includes('m')) {
-        styles.spacing.marginTop = cssValue;
-        styles.spacing.marginBottom = cssValue;
+      if (parsedClass.original.startsWith('gap')) {
+        // gap-y인 경우 - gap이 padding보다 우선
+        // console.log(`🔧 Setting gap.row for ${parsedClass.original}:`, spacingValue.y, 'current gap:', styles.spacing.gap);
+        if (!styles.spacing.gap || typeof styles.spacing.gap !== 'object') {
+          // 기존 gap이 숫자인 경우 객체로 변환
+          const existingGap = styles.spacing.gap;
+          styles.spacing.gap = {
+            row: spacingValue.y,
+            column: typeof existingGap === 'number' ? existingGap : spacingValue.y
+          };
+        } else {
+          styles.spacing.gap.row = spacingValue.y;
+        }
+      } else if (parsedClass.original.startsWith('space')) {
+        // space-y인 경우
+        // console.log(`🔧 Setting spaceBetween.y for ${parsedClass.original}:`, spacingValue.y);
+        if (!styles.spacing.spaceBetween) {
+          styles.spacing.spaceBetween = {};
+        }
+        styles.spacing.spaceBetween.y = spacingValue.y;
+      } else if (parsedClass.original.startsWith('p')) {
+        if (!styles.spacing.padding || typeof styles.spacing.padding !== 'object') {
+          styles.spacing.padding = {};
+        }
+        styles.spacing.padding.top = spacingValue.y;
+        styles.spacing.padding.bottom = spacingValue.y;
+      } else if (parsedClass.original.startsWith('m') || parsedClass.original.startsWith('-m')) {
+        if (!styles.spacing.margin || typeof styles.spacing.margin !== 'object') {
+          styles.spacing.margin = {};
+        }
+        styles.spacing.margin.top = spacingValue.y;
+        styles.spacing.margin.bottom = spacingValue.y;
       }
     }
 
@@ -386,66 +690,89 @@ export class SpacingParser {
       if (value !== undefined) {
         const cssValue = this.valueToCSS(value as string | number);
         if (parsedClass.original.startsWith('p')) {
-          styles.spacing[`padding${side.charAt(0).toUpperCase() + side.slice(1)}`] = cssValue;
-        } else if (parsedClass.original.startsWith('m')) {
-          styles.spacing[`margin${side.charAt(0).toUpperCase() + side.slice(1)}`] = cssValue;
+          if (!styles.spacing.padding || typeof styles.spacing.padding !== 'object') {
+            styles.spacing.padding = {};
+          }
+          styles.spacing.padding[side] = value;
+        } else if (parsedClass.original.startsWith('m') || parsedClass.original.startsWith('-m')) {
+          if (!styles.spacing.margin || typeof styles.spacing.margin !== 'object') {
+            styles.spacing.margin = {};
+          }
+          styles.spacing.margin[side] = value;
         }
       }
     });
 
     // Logical properties 처리 (v4.1)
     if (spacingValue.paddingInline !== undefined) {
+      if (!styles.spacing.paddingInline) {
+        styles.spacing.paddingInline = {};
+      }
       if (typeof spacingValue.paddingInline === 'object') {
         if (spacingValue.paddingInline.start !== undefined) {
-          styles.spacing.paddingInlineStart = this.valueToCSS(spacingValue.paddingInline.start);
+          styles.spacing.paddingInline.start = spacingValue.paddingInline.start;
         }
         if (spacingValue.paddingInline.end !== undefined) {
-          styles.spacing.paddingInlineEnd = this.valueToCSS(spacingValue.paddingInline.end);
+          styles.spacing.paddingInline.end = spacingValue.paddingInline.end;
         }
       } else {
-        styles.spacing.paddingInline = this.valueToCSS(spacingValue.paddingInline);
+        styles.spacing.paddingInline = spacingValue.paddingInline;
       }
     }
 
     if (spacingValue.paddingBlock !== undefined) {
+      if (!styles.spacing.paddingBlock) {
+        styles.spacing.paddingBlock = {};
+      }
       if (typeof spacingValue.paddingBlock === 'object') {
         if (spacingValue.paddingBlock.start !== undefined) {
-          styles.spacing.paddingBlockStart = this.valueToCSS(spacingValue.paddingBlock.start);
+          styles.spacing.paddingBlock.start = spacingValue.paddingBlock.start;
         }
         if (spacingValue.paddingBlock.end !== undefined) {
-          styles.spacing.paddingBlockEnd = this.valueToCSS(spacingValue.paddingBlock.end);
+          styles.spacing.paddingBlock.end = spacingValue.paddingBlock.end;
         }
       } else {
-        styles.spacing.paddingBlock = this.valueToCSS(spacingValue.paddingBlock);
+        styles.spacing.paddingBlock = spacingValue.paddingBlock;
       }
     }
 
     // 마진 logical properties
     if (spacingValue.marginInline !== undefined) {
+      if (!styles.spacing.marginInline) {
+        styles.spacing.marginInline = {};
+      }
       if (typeof spacingValue.marginInline === 'object') {
         if (spacingValue.marginInline.start !== undefined) {
-          styles.spacing.marginInlineStart = this.valueToCSS(spacingValue.marginInline.start);
+          styles.spacing.marginInline.start = spacingValue.marginInline.start;
         }
         if (spacingValue.marginInline.end !== undefined) {
-          styles.spacing.marginInlineEnd = this.valueToCSS(spacingValue.marginInline.end);
+          styles.spacing.marginInline.end = spacingValue.marginInline.end;
         }
       } else {
-        styles.spacing.marginInline = this.valueToCSS(spacingValue.marginInline);
+        styles.spacing.marginInline = spacingValue.marginInline;
       }
     }
 
     if (spacingValue.marginBlock !== undefined) {
+      if (!styles.spacing.marginBlock) {
+        styles.spacing.marginBlock = {};
+      }
       if (typeof spacingValue.marginBlock === 'object') {
         if (spacingValue.marginBlock.start !== undefined) {
-          styles.spacing.marginBlockStart = this.valueToCSS(spacingValue.marginBlock.start);
+          styles.spacing.marginBlock.start = spacingValue.marginBlock.start;
         }
         if (spacingValue.marginBlock.end !== undefined) {
-          styles.spacing.marginBlockEnd = this.valueToCSS(spacingValue.marginBlock.end);
+          styles.spacing.marginBlock.end = spacingValue.marginBlock.end;
         }
       } else {
-        styles.spacing.marginBlock = this.valueToCSS(spacingValue.marginBlock);
+        styles.spacing.marginBlock = spacingValue.marginBlock;
       }
     }
+    
+    // 디버깅: 최종 결과 (disabled for now)
+    // if (parsedClass.original.includes('gap') || parsedClass.original.includes('space')) {
+    //   console.log(`🔧 Final result for ${parsedClass.original}:`, JSON.stringify(styles.spacing, null, 2));
+    // }
   }
 
   /**
@@ -457,13 +784,6 @@ export class SpacingParser {
     }
 
     return this.parseValue(className);
-  }
-
-  /**
-   * 테스트 호환용: 클래스가 spacing 관련인지 확인 (isValidClass와 동일)
-   */
-  static isSpacingClass(className: string): boolean {
-    return this.isValidClass(className);
   }
 
   /**
@@ -500,8 +820,15 @@ export class SpacingParser {
 
     // gap 처리
     if (spacing.gap !== undefined) {
-      css['gap'] = this.formatCSSValue(spacing.gap);
+      if (typeof spacing.gap === 'object') {
+        if (spacing.gap.row !== undefined) css['row-gap'] = this.formatCSSValue(spacing.gap.row);
+        if (spacing.gap.column !== undefined) css['column-gap'] = this.formatCSSValue(spacing.gap.column);
+      } else {
+        css['gap'] = this.formatCSSValue(spacing.gap);
+      }
     }
+    
+    // 개별 gap 속성들 (기존 호환성)
     if (spacing.gapX !== undefined) {
       css['column-gap'] = this.formatCSSValue(spacing.gapX);
     }
@@ -509,15 +836,14 @@ export class SpacingParser {
       css['row-gap'] = this.formatCSSValue(spacing.gapY);
     }
 
-    // logical properties
+    // logical properties 처리
     if (spacing.paddingInline !== undefined) {
-      css['padding-inline'] = this.formatCSSValue(spacing.paddingInline);
-    }
-    if (spacing.paddingInlineStart !== undefined) {
-      css['padding-inline-start'] = this.formatCSSValue(spacing.paddingInlineStart);
-    }
-    if (spacing.paddingInlineEnd !== undefined) {
-      css['padding-inline-end'] = this.formatCSSValue(spacing.paddingInlineEnd);
+      if (typeof spacing.paddingInline === 'object') {
+        if (spacing.paddingInline.start !== undefined) css['padding-inline-start'] = this.formatCSSValue(spacing.paddingInline.start);
+        if (spacing.paddingInline.end !== undefined) css['padding-inline-end'] = this.formatCSSValue(spacing.paddingInline.end);
+      } else {
+        css['padding-inline'] = this.formatCSSValue(spacing.paddingInline);
+      }
     }
 
     // space-between 처리
@@ -545,5 +871,238 @@ export class SpacingParser {
       return `${value}px`;
     }
     return '0';
+  }
+
+  /**
+   * 테스트 호환용 parseSpacing 메서드
+   */
+  static parseSpacing(className: string): { property: string; value: string; isNegative: boolean } | null {
+    // 음수 여부 확인
+    const isNegative = className.startsWith('-');
+    const cleanClassName = isNegative ? className.substring(1) : className;
+
+    // property 결정
+    let property = '';
+    let value = '';
+
+    // 패턴 매칭으로 property와 value 추출
+    let match;
+
+    // Padding patterns
+    match = cleanClassName.match(/^p-(.+)$/);
+    if (match) {
+      property = 'p';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^ps-(.+)$/);
+    if (match) {
+      property = 'ps';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^pe-(.+)$/);
+    if (match) {
+      property = 'pe';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^pt-(.+)$/);
+    if (match) {
+      property = 'pt';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^pr-(.+)$/);
+    if (match) {
+      property = 'pr';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^pb-(.+)$/);
+    if (match) {
+      property = 'pb';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^pl-(.+)$/);
+    if (match) {
+      property = 'pl';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^px-(.+)$/);
+    if (match) {
+      property = 'px';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^py-(.+)$/);
+    if (match) {
+      property = 'py';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    // Margin patterns
+    match = cleanClassName.match(/^m-(.+)$/);
+    if (match) {
+      property = 'm';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^ms-(.+)$/);
+    if (match) {
+      property = 'ms';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^me-(.+)$/);
+    if (match) {
+      property = 'me';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^mt-(.+)$/);
+    if (match) {
+      property = 'mt';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^mr-(.+)$/);
+    if (match) {
+      property = 'mr';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^mb-(.+)$/);
+    if (match) {
+      property = 'mb';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^ml-(.+)$/);
+    if (match) {
+      property = 'ml';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^mx-(.+)$/);
+    if (match) {
+      property = 'mx';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^my-(.+)$/);
+    if (match) {
+      property = 'my';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    // Gap patterns
+    match = cleanClassName.match(/^gap-(.+)$/);
+    if (match) {
+      property = 'gap';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^gap-x-(.+)$/);
+    if (match) {
+      property = 'gap-x';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^gap-y-(.+)$/);
+    if (match) {
+      property = 'gap-y';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    // Space patterns
+    match = cleanClassName.match(/^space-x-(.+)$/);
+    if (match) {
+      property = 'space-x';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^space-y-(.+)$/);
+    if (match) {
+      property = 'space-y';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    // 전체 속성명 patterns
+    match = cleanClassName.match(/^padding-top-(.+)$/);
+    if (match) {
+      property = 'padding-top';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^padding-inline-(.+)$/);
+    if (match) {
+      property = 'padding-inline';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^padding-block-(.+)$/);
+    if (match) {
+      property = 'padding-block';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^margin-inline-(.+)$/);
+    if (match) {
+      property = 'margin-inline';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^margin-block-(.+)$/);
+    if (match) {
+      property = 'margin-block';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^column-gap-(.+)$/);
+    if (match) {
+      property = 'column-gap';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    match = cleanClassName.match(/^row-gap-(.+)$/);
+    if (match) {
+      property = 'row-gap';
+      value = match[1];
+      return { property, value, isNegative };
+    }
+
+    return null;
   }
 } 
