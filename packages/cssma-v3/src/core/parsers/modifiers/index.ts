@@ -19,28 +19,127 @@ import { NotModifierParser } from './not-modifier-parser';
 import { NthModifierParser } from './nth-modifier-parser';
 import { SpecialModifierParser } from './special-modifier-parser';
 import { SelectorGeneratorService } from './selector-generator-service';
+import { ArbitraryAttributeSelectorModifierParser } from './arbitrary-attribute-selectors-modifier-parser';
+import { ArbitraryVariantParser } from './arbitrary-variant-parser';
 
 export interface ModifierParseResult {
   modifiers: ParsedModifiers;
   baseClassName: string;
   hasModifiers: boolean;
+  isArbitrary: boolean;
 }
 
 export class ModifierParser {
+
+  /**
+   * Parse className into modifier parts and base class name
+   * 
+   * algorithm:
+   * 1. Split className by colon
+   *   1. parts 중간에 colon 이 있을 수 있어서 단순히 분리하면 안됨 
+   *   2. 따라서 분리하고 나서 마지막 부분이 무엇인지 확인해야 함
+   * 2. The last part is the base class name
+   * 3. The remaining parts are the modifier parts
+   * 4. If the base class name starts with a square bracket, it is an arbitrary property
+   * 5. If the base class name does not start with a square bracket, it is not an arbitrary property
+   * 
+   * @param className - The className to parse
+   * @returns An object containing the modifier parts, base class name, and whether it is an arbitrary property
+   */
+
+  static parseClassNameParts(className: string): {
+    modifierParts: string[];
+    baseClassName: string;
+    isArbitrary: boolean;
+  } {
+    // Handle empty string
+    if (!className) {
+      return {
+        modifierParts: [],
+        baseClassName: '',
+        isArbitrary: false
+      };
+    }
+
+    // Handle arbitrary values that may contain colons
+    const parts: string[] = [];
+    let currentPart = '';
+    let bracketDepth = 0;
+    let inBrackets = false;
+    
+    for (let i = 0; i < className.length; i++) {
+      const char = className[i];
+      
+      if (char === '[') {
+        bracketDepth++;
+        inBrackets = true;
+        currentPart += char;
+      } else if (char === ']') {
+        bracketDepth--;
+        if (bracketDepth === 0) {
+          inBrackets = false;
+        }
+        currentPart += char;
+      } else if (char === ':' && !inBrackets) {
+        // Only split on colons that are not inside brackets
+        parts.push(currentPart);
+        currentPart = '';
+      } else {
+        currentPart += char;
+      }
+    }
+    
+    // Always add the final part (even if empty)
+    parts.push(currentPart);
+    
+    // If only one part and it's the entire string without colons outside brackets
+    if (parts.length === 1) {
+      return {
+        modifierParts: [],
+        baseClassName: className,
+        isArbitrary: className.startsWith('[') && className.endsWith(']')
+      };
+    }
+    
+    const baseClassName = parts[parts.length - 1];
+    const modifierParts = parts.slice(0, -1);
+    
+    // Check if the base class is arbitrary
+    const isArbitrary = baseClassName.startsWith('[') && baseClassName.endsWith(']');
+
+    return {
+      modifierParts,
+      baseClassName,
+      isArbitrary
+    };
+  }
+
+
   /**
    * Parse complete modifier chain from className
    * Delegates to specialized parsers based on modifier type
    */
   static parseModifiers(className: string): ModifierParseResult {
-    const parts = className.split(':');
-    const baseClassName = parts[parts.length - 1];
-    const modifierParts = parts.slice(0, -1);
+    // Use the improved parseClassNameParts method that handles arbitrary values correctly
+    const parsedParts = this.parseClassNameParts(className);
+    const { modifierParts, baseClassName, isArbitrary } = parsedParts;
+
+    // Check if this is an arbitrary property (e.g., [mask-type:luminance])
+    if (isArbitrary && modifierParts.length === 0) {
+      return {
+        modifiers: this.createEmptyModifiers(),
+        baseClassName,
+        hasModifiers: false,
+        isArbitrary: true
+      };
+    }
 
     if (modifierParts.length === 0) {
       return {
         modifiers: this.createEmptyModifiers(),
         baseClassName,
-        hasModifiers: false
+        hasModifiers: false,
+        isArbitrary
       };
     }
 
@@ -48,13 +147,15 @@ export class ModifierParser {
 
     // Process each modifier part
     for (const modifierPart of modifierParts) {
+      console.log('modifierPart', modifierPart);
       this.processModifierPart(modifierPart, modifiers);
     }
 
     return {
       modifiers,
       baseClassName,
-      hasModifiers: true
+      hasModifiers: true,
+      isArbitrary
     };
   }
 
@@ -65,7 +166,13 @@ export class ModifierParser {
   private static processModifierPart(modifier: string, modifiers: ParsedModifiers): void {
     // Try each parser in priority order
     const parsers = [
-      // Responsive (highest priority)
+      // Arbitrary variants (highest priority for complex selectors)
+      () => this.tryArbitraryVariantParser(modifier, modifiers),
+      
+      // Arbitrary attribute selectors
+      () => this.tryArbitraryAttributeParser(modifier, modifiers),
+      
+      // Responsive (high priority)
       () => this.tryResponsiveParser(modifier, modifiers),
       
       // Container queries
@@ -106,6 +213,52 @@ export class ModifierParser {
 
     // If no parser handled it, it might be an unknown modifier
     console.warn(`Unknown modifier: ${modifier}`);
+  }
+
+  /**
+   * Try arbitrary variant parser (new in v4.1)
+   */
+  private static tryArbitraryVariantParser(modifier: string, modifiers: ParsedModifiers): boolean {
+    console.log('tryArbitraryVariantParser', modifier);
+    if (ArbitraryVariantParser.isValidArbitraryVariant(modifier)) {
+      const result = ArbitraryVariantParser.parseArbitraryVariant(modifier);
+      if (result) {
+        // Store arbitrary variant based on type
+        switch (result.type) {
+          case 'media':
+            if (!modifiers.responsive) modifiers.responsive = {};
+            modifiers.responsive[modifier] = result.mediaQuery!;
+            break;
+          case 'supports':
+            modifiers.supports = result.supportsQuery!;
+            break;
+          case 'container':
+            if (!modifiers.container) modifiers.container = {};
+            modifiers.container[modifier] = result.containerQuery!;
+            break;
+          case 'selector':
+            modifiers.arbitrary = result.selector!;
+            break;
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Try arbitrary attribute modifier parser
+   */
+  private static tryArbitraryAttributeParser(modifier: string, modifiers: ParsedModifiers): boolean {
+    console.log('tryArbitraryAttributeParser', modifier);
+    if (ArbitraryAttributeSelectorModifierParser.isValidArbitraryAttributeSelector(modifier)) {
+      const result = ArbitraryAttributeSelectorModifierParser.parseArbitraryAttributeModifier(modifier);
+      if (result) {
+        modifiers.arbitrary = ArbitraryAttributeSelectorModifierParser.generateAttributeSelector(result);
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -267,21 +420,22 @@ export class ModifierParser {
     if (SpecialModifierParser.isSpecialModifier(modifier)) {
       const result = SpecialModifierParser.parseSpecialModifier(modifier);
       if (result) {
-        // Special modifiers need special handling
-        if (modifier === 'noscript') {
+        // Handle different types of special modifiers
+        if (result.type === 'noscript') {
           modifiers.noscript = modifier;
-        } else if (modifier === 'user-valid') {
-          modifiers.state = ':user-valid';
-        } else if (modifier === 'user-invalid') {
-          modifiers.state = ':user-invalid';
-        } else if (modifier === 'inverted-colors') {
-          modifiers.state = '@media (inverted-colors: inverted)';
-        } else if (modifier === 'pointer-fine') {
-          modifiers.state = '@media (pointer: fine)';
-        } else if (modifier === 'pointer-coarse') {
-          modifiers.state = '@media (pointer: coarse)';
-        } else if (modifier === 'starting') {
+        } else if (result.type === 'starting') {
           modifiers.starting = true;
+        } else if (result.type === 'media-feature' && result.condition) {
+          // All pointer variants and media feature variants
+          if (result.condition.startsWith(':')) {
+            // Pseudo-classes like :user-valid, :user-invalid
+            modifiers.state = result.condition;
+          } else {
+            // Media queries like pointer: fine, inverted-colors: inverted
+            modifiers.state = `@media (${result.condition})`;
+          }
+        } else if (result.type === 'supports' && result.condition) {
+          modifiers.state = `@supports (${result.condition})`;
         } else {
           modifiers.state = modifier; // fallback for other special modifiers
         }

@@ -22,4 +22,5 @@ export { BackgroundsParser } from './backgrounds-parser';
 export { BordersParser } from './borders-parser';
 export { OverflowParser } from './overflow-parser';
 export { AccessibilityParser } from './accessibility-parser';
-export { BlendModesParser } from './blend-modes-parser'; 
+export { BlendModesParser } from './blend-modes-parser';
+export { MaskParser } from './mask-parser'; 

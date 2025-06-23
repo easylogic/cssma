@@ -229,6 +229,14 @@ describe('Tailwind CSS Modifier System Tests', () => {
   });
 
   describe('v4.1 Arbitrary Values', () => {
+    it('should parse arbitrary attribute selectors', () => {
+      const className = '[my-property="value"]';
+      const result = parser.parseClassName(className);
+      console.log(result);
+
+      expect(result).toBeDefined();
+      expect(result?.modifiers?.arbitrary).toBe('[my-property="value"]');
+    });
     it('should parse arbitrary values with modifiers', () => {
       const className = 'md:bg-[#ff0000]';
       const result = parser.parseClassName(className);

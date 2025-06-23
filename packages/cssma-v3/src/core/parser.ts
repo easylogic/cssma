@@ -34,6 +34,7 @@ import {
   OverflowParser,
   AccessibilityParser,
   BlendModesParser,
+  MaskParser,
 } from "./parsers";
 import { ModifierParser } from "./parsers/modifiers";
 
@@ -72,6 +73,7 @@ const PARSER_MAP: ParserInfo[] = [
   { parser: BackgroundsParser, category: "backgrounds" },
   { parser: EffectsParser, category: "effects" },
   { parser: BlendModesParser, category: "blend-modes" },
+  { parser: MaskParser, category: "mask" },
 
   // 상호작용 관련
   { parser: InteractivityParser, category: "interactivity" },
@@ -125,6 +127,7 @@ export class CSSParser {
       overflow: {},
       accessibility: {},
       blendModes: {},
+      mask: {},
       
       // v4.1 Modifier 구조
       states: {} as Record<string, Partial<ParsedStyles>>,
@@ -185,6 +188,7 @@ export class CSSParser {
       overflow: {},
       accessibility: {},
       blendModes: {},
+      mask: {},
       
       // v4.1 Modifier 구조
       breakpoints: {},
@@ -270,8 +274,11 @@ export class CSSParser {
       processedClassName = className.slice(this.config.prefix.length);
     }
 
+    console.log('processedClassName', processedClassName);
+
     // Parse modifiers using Tailwind CSS v4.1 approach
     const modifierResult = ModifierParser.parseModifiers(processedClassName);
+    console.log('modifierResult', modifierResult);
     const modifiers = modifierResult.modifiers;
     const baseClassName = modifierResult.baseClassName;
 
@@ -390,50 +397,58 @@ export class CSSParser {
 
     // Responsive modifier 처리 (최우선)
     if (modifiers.responsive) {
-      const breakpointKey = modifiers.responsive;
+      // responsive는 Record<string, string> 형태이므로 첫 번째 키를 사용
+      const breakpointKeys = Object.keys(modifiers.responsive);
+      if (breakpointKeys.length > 0) {
+        const breakpointKey = breakpointKeys[0];
 
-      if (!styles.breakpoints) {
-        styles.breakpoints = {};
-      }
+        if (!styles.breakpoints) {
+          styles.breakpoints = {};
+        }
 
-      if (!styles.breakpoints[breakpointKey]) {
-        styles.breakpoints[breakpointKey] = this.createEmptyStylesStructure();
-      }
+        if (!styles.breakpoints[breakpointKey]) {
+          styles.breakpoints[breakpointKey] = this.createEmptyStylesStructure();
+        }
 
-      // 추가 modifier들을 재귀적으로 처리
-      const remainingModifiers = { ...modifiers };
-      delete remainingModifiers.responsive;
-      
-      if (Object.keys(remainingModifiers).length > 0) {
-        const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
-        this.applyParsedClassToStyles(nestedClass, styles.breakpoints[breakpointKey]);
-      } else {
-        this.applyStyleByCategory(parsedClass, styles.breakpoints[breakpointKey]);
+        // 추가 modifier들을 재귀적으로 처리
+        const remainingModifiers = { ...modifiers };
+        delete remainingModifiers.responsive;
+        
+        if (Object.keys(remainingModifiers).length > 0) {
+          const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
+          this.applyParsedClassToStyles(nestedClass, styles.breakpoints[breakpointKey] as ParsedStyles);
+        } else {
+          this.applyStyleByCategory(parsedClass, styles.breakpoints[breakpointKey] as Partial<ParsedStyles>);
+        }
       }
       return;
     }
 
     // Container query 처리
     if (modifiers.container) {
-      const containerKey = modifiers.container;
+      // container는 Record<string, string> 형태이므로 첫 번째 키를 사용
+      const containerKeys = Object.keys(modifiers.container);
+      if (containerKeys.length > 0) {
+        const containerKey = containerKeys[0];
 
-      if (!styles.containers) {
-        styles.containers = {};
-      }
+        if (!styles.containers) {
+          styles.containers = {};
+        }
 
-      if (!styles.containers[containerKey]) {
-        styles.containers[containerKey] = this.createEmptyStylesStructure();
-      }
+        if (!styles.containers[containerKey]) {
+          styles.containers[containerKey] = this.createEmptyStylesStructure();
+        }
 
-      // 추가 modifier들을 재귀적으로 처리
-      const remainingModifiers = { ...modifiers };
-      delete remainingModifiers.container;
-      
-      if (Object.keys(remainingModifiers).length > 0) {
-        const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
-        this.applyParsedClassToStyles(nestedClass, styles.containers[containerKey]);
-      } else {
-        this.applyStyleByCategory(parsedClass, styles.containers[containerKey]);
+        // 추가 modifier들을 재귀적으로 처리
+        const remainingModifiers = { ...modifiers };
+        delete remainingModifiers.container;
+        
+        if (Object.keys(remainingModifiers).length > 0) {
+          const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
+          this.applyParsedClassToStyles(nestedClass, styles.containers[containerKey] as ParsedStyles);
+        } else {
+          this.applyStyleByCategory(parsedClass, styles.containers[containerKey] as Partial<ParsedStyles>);
+        }
       }
       return;
     }
@@ -456,9 +471,9 @@ export class CSSParser {
       
       if (Object.keys(remainingModifiers).length > 0) {
         const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
-        this.applyParsedClassToStyles(nestedClass, styles.motion[motionKey]);
+        this.applyParsedClassToStyles(nestedClass, styles.motion[motionKey] as ParsedStyles);
       } else {
-        this.applyStyleByCategory(parsedClass, styles.motion[motionKey]);
+        this.applyStyleByCategory(parsedClass, styles.motion[motionKey] as Partial<ParsedStyles>);
       }
       return;
     }
@@ -481,9 +496,9 @@ export class CSSParser {
       
       if (Object.keys(remainingModifiers).length > 0) {
         const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
-        this.applyParsedClassToStyles(nestedClass, styles.states[stateKey]);
+        this.applyParsedClassToStyles(nestedClass, styles.states[stateKey] as ParsedStyles);
       } else {
-        this.applyStyleByCategory(parsedClass, styles.states[stateKey]);
+        this.applyStyleByCategory(parsedClass, styles.states[stateKey] as Partial<ParsedStyles>);
       }
       return;
     }
@@ -506,19 +521,20 @@ export class CSSParser {
       
       if (Object.keys(remainingModifiers).length > 0) {
         const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
-        this.applyParsedClassToStyles(nestedClass, styles.pseudoElements[pseudoKey]);
+        this.applyParsedClassToStyles(nestedClass, styles.pseudoElements[pseudoKey] as ParsedStyles);
       } else {
-        this.applyStyleByCategory(parsedClass, styles.pseudoElements[pseudoKey]);
+        this.applyStyleByCategory(parsedClass, styles.pseudoElements[pseudoKey] as Partial<ParsedStyles>);
       }
       return;
     }
 
     // Attribute modifier 처리 (aria, data 등)
-    const attributeModifiers = ['aria', 'data', 'not', 'starting', 'pointer', 'noscript', 'userValid', 'invertedColors', 'detailsContent'];
+    const attributeModifiers = ['aria', 'data', 'not', 'starting', 'pointer', 'noscript', 'userValid', 'invertedColors', 'detailsContent'] as const;
     
     for (const attrType of attributeModifiers) {
-      if (modifiers[attrType]) {
-        const attrKey = `${attrType}:${modifiers[attrType]}`;
+      const modifierValue = (modifiers as any)[attrType];
+      if (modifierValue) {
+        const attrKey = `${attrType}:${modifierValue}`;
         
         if (!styles.attributes) {
           styles.attributes = {};
@@ -530,13 +546,13 @@ export class CSSParser {
         
         // 추가 modifier들을 재귀적으로 처리
         const remainingModifiers = { ...modifiers };
-        delete remainingModifiers[attrType];
+        delete (remainingModifiers as any)[attrType];
         
         if (Object.keys(remainingModifiers).length > 0) {
           const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
-          this.applyParsedClassToStyles(nestedClass, styles.attributes[attrKey]);
+          this.applyParsedClassToStyles(nestedClass, styles.attributes[attrKey] as ParsedStyles);
         } else {
-          this.applyStyleByCategory(parsedClass, styles.attributes[attrKey]);
+          this.applyStyleByCategory(parsedClass, styles.attributes[attrKey] as Partial<ParsedStyles>);
         }
         return;
       }
@@ -697,6 +713,9 @@ export class CSSParser {
         break;
       case "blend-modes":
         BlendModesParser.applyBlendModesStyle(parsedClass, styles, this.preset);
+        break;
+      case "mask":
+        MaskParser.applyMaskStyle(parsedClass, styles, this.preset);
         break;
     }
   }

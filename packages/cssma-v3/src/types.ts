@@ -242,7 +242,8 @@ export type StyleCategory =
   | 'borders'
   | 'overflow'
   | 'accessibility'
-  | 'blend-modes';
+  | 'blend-modes'
+  | 'mask';
 
 /**
  * 상태 모디파이어 타입
@@ -851,6 +852,7 @@ export interface ParsedStyles {
   overflow: OverflowStyles;
   accessibility: AccessibilityStyles;
   blendModes: BlendModesStyles;
+  mask: MaskStyles;
   
   // 메타 정보
   meta?: StyleMeta;
@@ -1077,6 +1079,17 @@ export interface BlendModesStyles {
   mixBlendMode?: string;
   backgroundBlendMode?: string;
   isolation?: string;
+}
+
+export interface MaskStyles {
+  maskImage?: string;
+  maskPosition?: string;
+  maskSize?: string;
+  maskRepeat?: string;
+  maskOrigin?: string;
+  maskClip?: string;
+  maskComposite?: string;
+  maskMode?: string;
 }
 
 export interface FlexboxStyles {

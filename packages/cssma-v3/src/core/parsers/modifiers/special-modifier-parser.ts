@@ -15,7 +15,18 @@ export class SpecialModifierParser {
   // Special modifiers that don't fit other categories
   private static readonly SPECIAL_MODIFIERS = [
     'noscript',
-    'starting'
+    'starting',
+    // Pointer device variants
+    'pointer-fine',
+    'pointer-coarse', 
+    'pointer-none',
+    'any-pointer-fine',
+    'any-pointer-coarse',
+    'any-pointer-none',
+    // Other v4.1 variants
+    'user-valid',
+    'user-invalid',
+    'inverted-colors'
   ] as const;
 
   // Supported CSS features for @supports queries
@@ -87,6 +98,44 @@ export class SpecialModifierParser {
       starting: {
         type: 'starting' as const,
         priority: 21
+      },
+      // Pointer device variants - all use media-feature type
+      'pointer-fine': {
+        type: 'media-feature' as const,
+        priority: 15
+      },
+      'pointer-coarse': {
+        type: 'media-feature' as const,
+        priority: 15
+      },
+      'pointer-none': {
+        type: 'media-feature' as const,
+        priority: 15
+      },
+      'any-pointer-fine': {
+        type: 'media-feature' as const,
+        priority: 15
+      },
+      'any-pointer-coarse': {
+        type: 'media-feature' as const,
+        priority: 15
+      },
+      'any-pointer-none': {
+        type: 'media-feature' as const,
+        priority: 15
+      },
+      // Other v4.1 variants
+      'user-valid': {
+        type: 'media-feature' as const,
+        priority: 16
+      },
+      'user-invalid': {
+        type: 'media-feature' as const,
+        priority: 16
+      },
+      'inverted-colors': {
+        type: 'media-feature' as const,
+        priority: 16
       }
     };
 
@@ -95,7 +144,8 @@ export class SpecialModifierParser {
     return {
       type: config.type,
       raw: modifier,
-      priority: config.priority
+      priority: config.priority,
+      condition: this.getMediaFeatureCondition(modifier)
     };
   }
 
@@ -151,6 +201,27 @@ export class SpecialModifierParser {
   }
 
   /**
+   * Get media feature condition for pointer and other v4.1 variants
+   */
+  private static getMediaFeatureCondition(modifier: string): string | null {
+    const conditionMap: Record<string, string> = {
+      // Pointer variants - all are media queries
+      'pointer-fine': 'pointer: fine',
+      'pointer-coarse': 'pointer: coarse', 
+      'pointer-none': 'pointer: none',
+      'any-pointer-fine': 'any-pointer: fine',
+      'any-pointer-coarse': 'any-pointer: coarse',
+      'any-pointer-none': 'any-pointer: none',
+      // Other v4.1 variants
+      'user-valid': ':user-valid',  // This is a pseudo-class, not media query
+      'user-invalid': ':user-invalid',  // This is a pseudo-class, not media query
+      'inverted-colors': 'inverted-colors: inverted'
+    };
+
+    return conditionMap[modifier] || null;
+  }
+
+  /**
    * Generate CSS selector for special modifier
    */
   static generateSpecialSelector(modifier: SpecialModifier, baseSelector: string): string {
@@ -169,7 +240,12 @@ export class SpecialModifierParser {
       
       case 'media-feature':
         if (modifier.condition) {
-          return `@media (${modifier.condition}) { ${baseSelector} }`;
+          // Handle pseudo-classes differently than media queries
+          if (modifier.condition.startsWith(':')) {
+            return `${baseSelector}${modifier.condition}`;
+          } else {
+            return `@media (${modifier.condition}) { ${baseSelector} }`;
+          }
         }
         break;
     }
