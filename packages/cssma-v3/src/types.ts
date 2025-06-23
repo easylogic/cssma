@@ -716,9 +716,14 @@ export interface TransformStyles {
   scale?: number;
   scaleX?: number;
   scaleY?: number;
+  scaleZ?: number;  // 3D (v4.1)
   rotate?: number | string;
+  rotateX?: number | string;  // 3D (v4.1)
+  rotateY?: number | string;  // 3D (v4.1)  
+  rotateZ?: number | string;  // 3D (v4.1)
   translateX?: number | string;
   translateY?: number | string;
+  translateZ?: number | string;  // 3D (v4.1)
   skewX?: number | string;
   skewY?: number | string;
   transformOrigin?: string;

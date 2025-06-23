@@ -53,15 +53,11 @@ export class ArbitraryAttributeSelectorModifierParser {
       // Clean up attribute name
       const cleanAttribute = attribute.trim();
       
-      // Clean up value (remove quotes if present)
-      let cleanValue = value.trim();
-      if ((cleanValue.startsWith('"') && cleanValue.endsWith('"')) ||
-          (cleanValue.startsWith("'") && cleanValue.endsWith("'"))) {
-        cleanValue = cleanValue.slice(1, -1);
-      }
+      // Keep the original value with quotes if present
+      const cleanValue = value.trim();
       
       // Combine operator and value for the final value
-      const finalValue = operator + (cleanValue.includes(' ') ? `"${cleanValue}"` : cleanValue);
+      const finalValue = operator + cleanValue;
       
       return {
         type: 'arbitrary-attribute',

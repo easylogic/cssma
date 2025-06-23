@@ -235,8 +235,21 @@ describe('Tailwind CSS Modifier System Tests', () => {
       console.log(result);
 
       expect(result).toBeDefined();
-      expect(result?.modifiers?.arbitrary).toBe('[my-property="value"]');
+      // 이것은 arbitrary property이므로 baseClassName으로 처리되어야 함
+      expect(result?.baseClassName).toBe('[my-property="value"]');
+      expect(result?.isArbitrary).toBe(true);
+      expect(result?.modifiers?.arbitrary).toBeUndefined();
     });
+    
+    it('should parse arbitrary attribute selector as modifier', () => {
+      const className = '[data-state="active"]:bg-blue-500';
+      const result = parser.parseClassName(className);
+
+      expect(result).toBeDefined();
+      expect(result?.baseClassName).toBe('bg-blue-500');
+      expect(result?.modifiers?.arbitrary).toBe('[data-state="active"]');
+    });
+    
     it('should parse arbitrary values with modifiers', () => {
       const className = 'md:bg-[#ff0000]';
       const result = parser.parseClassName(className);

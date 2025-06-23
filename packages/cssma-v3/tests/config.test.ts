@@ -43,15 +43,18 @@ describe('Config Module', () => {
       const customPreset = {
         name: 'custom',
         colors: {
-          primary: { r: 0.1, g: 0.2, b: 0.8 },
+          customBlue: {
+            '500': { r: 0.1, g: 0.2, b: 0.8 },
+          },
         },
       };
       const preset = loadPreset(customPreset);
       expect(preset.name).toBe('custom');
-      expect(preset.colors.primary).toEqual({ r: 0.1, g: 0.2, b: 0.8 });
+      expect(preset.colors.customBlue['500']).toEqual({ r: 0.1, g: 0.2, b: 0.8 });
       // Default categories should still be present
       expect(preset.spacing).toBeDefined();
       expect(preset.typography).toBeDefined();
+      expect(preset.colors.blue).toBeDefined(); // 기본 색상이 여전히 존재해야 함
     });
   });
 

@@ -327,4 +327,44 @@ describe('CSSParser - 타이포그래피(Typography) - Tailwind v4', () => {
       });
     });
   });
+
+  describe('Text Wrap Utilities (v4.1)', () => {
+    it('should parse text wrap utilities', () => {
+      expect(parser.parseClass('wrap-normal')?.category).toBe('typography');
+      expect(parser.parseClass('wrap-break-word')?.category).toBe('typography');
+      expect(parser.parseClass('wrap-anywhere')?.category).toBe('typography');
+    });
+
+    it('should apply text wrap styles correctly', () => {
+      const wrapNormalResult = parser.parse('wrap-normal');
+      expect(wrapNormalResult.typography?.overflowWrap).toBe('normal');
+
+      const wrapBreakWordResult = parser.parse('wrap-break-word');
+      expect(wrapBreakWordResult.typography?.overflowWrap).toBe('break-word');
+
+      const wrapAnywhereResult = parser.parse('wrap-anywhere');
+      expect(wrapAnywhereResult.typography?.overflowWrap).toBe('anywhere');
+    });
+
+    it('should work with modifiers', () => {
+      const result = parser.parse('hover:wrap-anywhere md:wrap-break-word');
+      
+      expect(result.states?.[':hover']?.typography?.overflowWrap).toBe('anywhere');
+      expect(result.breakpoints?.md?.typography?.overflowWrap).toBe('break-word');
+    });
+
+    it('should output correct CSS for text wrap utilities', () => {
+      const wrapNormalResult = parser.parse('wrap-normal');
+      const wrapBreakWordResult = parser.parse('wrap-break-word');
+      const wrapAnywhereResult = parser.parse('wrap-anywhere');
+
+      const css1 = TypographyParser.toCSSProperties(wrapNormalResult.typography!);
+      const css2 = TypographyParser.toCSSProperties(wrapBreakWordResult.typography!);
+      const css3 = TypographyParser.toCSSProperties(wrapAnywhereResult.typography!);
+
+      expect(css1['overflow-wrap']).toBe('normal');
+      expect(css2['overflow-wrap']).toBe('break-word');
+      expect(css3['overflow-wrap']).toBe('anywhere');
+    });
+  });
 }); 

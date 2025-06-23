@@ -34,10 +34,10 @@ export class FlexboxGridParser {
       /^row-/, // grid row
       /^grid-flow-/, // grid auto flow
       /^gap-/, // gap
-      /^justify-/, // justify content/items/self
-      /^items-/, // align items
-      /^self-/, // align/justify self
-      /^content-/, // align content
+      /^justify-/, // justify content/items/self (includes safe alignment)
+      /^items-/, // align items (includes safe alignment and baseline-last)
+      /^self-/, // align/justify self (includes safe alignment and baseline-last)
+      /^content-/, // align content (includes safe alignment)
       /^place-/, // place content/items/self
       /^auto-cols-/, // grid auto columns
       /^auto-rows-/ // grid auto rows
@@ -657,7 +657,7 @@ export class FlexboxGridParser {
 
   // Gap - 제거됨: SpacingParser에서 처리하고 FlexboxGrid로 연동됨
 
-  // Justify Content
+  // Justify Content (Safe Alignment 포함)
   static parseJustifyContent(className: string): ParsedStyle | null {
     const justifyContentMap: Record<string, string> = {
       'justify-start': 'flex-start',
@@ -665,7 +665,14 @@ export class FlexboxGridParser {
       'justify-center': 'center',
       'justify-between': 'space-between',
       'justify-around': 'space-around',
-      'justify-evenly': 'space-evenly'
+      'justify-evenly': 'space-evenly',
+      // Safe Alignment (v4.1)
+      'justify-start-safe': 'safe flex-start',
+      'justify-end-safe': 'safe flex-end',
+      'justify-center-safe': 'safe center',
+      'justify-between-safe': 'safe space-between',
+      'justify-around-safe': 'safe space-around',
+      'justify-evenly-safe': 'safe space-evenly'
     };
 
     if (className in justifyContentMap) {
@@ -679,13 +686,18 @@ export class FlexboxGridParser {
     return null;
   }
 
-  // Justify Items
+  // Justify Items (Safe Alignment 포함)
   static parseJustifyItems(className: string): ParsedStyle | null {
     const justifyItemsMap: Record<string, string> = {
       'justify-items-start': 'start',
       'justify-items-end': 'end',
       'justify-items-center': 'center',
-      'justify-items-stretch': 'stretch'
+      'justify-items-stretch': 'stretch',
+      // Safe Alignment (v4.1)
+      'justify-items-start-safe': 'safe start',
+      'justify-items-end-safe': 'safe end',
+      'justify-items-center-safe': 'safe center',
+      'justify-items-stretch-safe': 'safe stretch'
     };
 
     if (className in justifyItemsMap) {
@@ -699,14 +711,19 @@ export class FlexboxGridParser {
     return null;
   }
 
-  // Justify Self
+  // Justify Self (Safe Alignment 포함)
   static parseJustifySelf(className: string): ParsedStyle | null {
     const justifySelfMap: Record<string, string> = {
       'justify-self-auto': 'auto',
       'justify-self-start': 'start',
       'justify-self-end': 'end',
       'justify-self-center': 'center',
-      'justify-self-stretch': 'stretch'
+      'justify-self-stretch': 'stretch',
+      // Safe Alignment (v4.1)
+      'justify-self-start-safe': 'safe start',
+      'justify-self-end-safe': 'safe end',
+      'justify-self-center-safe': 'safe center',
+      'justify-self-stretch-safe': 'safe stretch'
     };
 
     if (className in justifySelfMap) {
@@ -720,7 +737,7 @@ export class FlexboxGridParser {
     return null;
   }
 
-  // Align Content
+  // Align Content (Safe Alignment 포함)
   static parseAlignContent(className: string): ParsedStyle | null {
     const alignContentMap: Record<string, string> = {
       'content-center': 'center',
@@ -728,7 +745,14 @@ export class FlexboxGridParser {
       'content-end': 'flex-end',
       'content-between': 'space-between',
       'content-around': 'space-around',
-      'content-evenly': 'space-evenly'
+      'content-evenly': 'space-evenly',
+      // Safe Alignment (v4.1)
+      'content-center-safe': 'safe center',
+      'content-start-safe': 'safe flex-start',
+      'content-end-safe': 'safe flex-end',
+      'content-between-safe': 'safe space-between',
+      'content-around-safe': 'safe space-around',
+      'content-evenly-safe': 'safe space-evenly'
     };
 
     if (className in alignContentMap) {
@@ -742,14 +766,22 @@ export class FlexboxGridParser {
     return null;
   }
 
-  // Align Items
+  // Align Items (Safe Alignment 및 Baseline Last 포함)
   static parseAlignItems(className: string): ParsedStyle | null {
     const alignItemsMap: Record<string, string> = {
       'items-start': 'flex-start',
       'items-end': 'flex-end',
       'items-center': 'center',
       'items-baseline': 'baseline',
-      'items-stretch': 'stretch'
+      'items-stretch': 'stretch',
+      // Safe Alignment (v4.1)
+      'items-start-safe': 'safe flex-start',
+      'items-end-safe': 'safe flex-end',
+      'items-center-safe': 'safe center',
+      'items-baseline-safe': 'safe baseline',
+      'items-stretch-safe': 'safe stretch',
+      // Baseline Last Alignment (v4.1)
+      'items-baseline-last': 'last baseline'
     };
 
     if (className in alignItemsMap) {
@@ -763,7 +795,7 @@ export class FlexboxGridParser {
     return null;
   }
 
-  // Align Self
+  // Align Self (Safe Alignment 및 Baseline Last 포함)
   static parseAlignSelf(className: string): ParsedStyle | null {
     const alignSelfMap: Record<string, string> = {
       'self-auto': 'auto',
@@ -771,7 +803,15 @@ export class FlexboxGridParser {
       'self-end': 'flex-end',
       'self-center': 'center',
       'self-stretch': 'stretch',
-      'self-baseline': 'baseline'
+      'self-baseline': 'baseline',
+      // Safe Alignment (v4.1)
+      'self-start-safe': 'safe flex-start',
+      'self-end-safe': 'safe flex-end',
+      'self-center-safe': 'safe center',
+      'self-baseline-safe': 'safe baseline',
+      'self-stretch-safe': 'safe stretch',
+      // Baseline Last Alignment (v4.1)
+      'self-baseline-last': 'last baseline'
     };
 
     if (className in alignSelfMap) {

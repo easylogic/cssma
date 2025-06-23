@@ -358,6 +358,27 @@ describe('Flexbox & Grid Parser', () => {
       const justifyBetweenResult = parser.parse('justify-between');
       expect(justifyBetweenResult.flexboxGrid?.justifyContent).toBe('space-between');
     });
+
+    // Safe Alignment 테스트 (v4.1)
+    test('should parse safe alignment justify content utilities', () => {
+      expect(parser.parseClass('justify-start-safe')?.category).toBe('flexbox-grid');
+      expect(parser.parseClass('justify-end-safe')?.category).toBe('flexbox-grid');
+      expect(parser.parseClass('justify-center-safe')?.category).toBe('flexbox-grid');
+      expect(parser.parseClass('justify-between-safe')?.category).toBe('flexbox-grid');
+      expect(parser.parseClass('justify-around-safe')?.category).toBe('flexbox-grid');
+      expect(parser.parseClass('justify-evenly-safe')?.category).toBe('flexbox-grid');
+    });
+
+    test('should parse safe alignment justify content values correctly', () => {
+      const justifyStartSafeResult = parser.parse('justify-start-safe');
+      expect(justifyStartSafeResult.flexboxGrid?.justifyContent).toBe('safe flex-start');
+
+      const justifyCenterSafeResult = parser.parse('justify-center-safe');
+      expect(justifyCenterSafeResult.flexboxGrid?.justifyContent).toBe('safe center');
+
+      const justifyBetweenSafeResult = parser.parse('justify-between-safe');
+      expect(justifyBetweenSafeResult.flexboxGrid?.justifyContent).toBe('safe space-between');
+    });
   });
 
   describe('Align Content', () => {
@@ -380,6 +401,27 @@ describe('Flexbox & Grid Parser', () => {
       const contentBetweenResult = parser.parse('content-between');
       expect(contentBetweenResult.flexboxGrid?.alignContent).toBe('space-between');
     });
+
+    // Safe Alignment 테스트 (v4.1)
+    test('should parse safe alignment align content utilities', () => {
+      expect(parser.parseClass('content-start-safe')?.category).toBe('flexbox-grid');
+      expect(parser.parseClass('content-end-safe')?.category).toBe('flexbox-grid');
+      expect(parser.parseClass('content-center-safe')?.category).toBe('flexbox-grid');
+      expect(parser.parseClass('content-between-safe')?.category).toBe('flexbox-grid');
+      expect(parser.parseClass('content-around-safe')?.category).toBe('flexbox-grid');
+      expect(parser.parseClass('content-evenly-safe')?.category).toBe('flexbox-grid');
+    });
+
+    test('should parse safe alignment align content values correctly', () => {
+      const contentStartSafeResult = parser.parse('content-start-safe');
+      expect(contentStartSafeResult.flexboxGrid?.alignContent).toBe('safe flex-start');
+
+      const contentCenterSafeResult = parser.parse('content-center-safe');
+      expect(contentCenterSafeResult.flexboxGrid?.alignContent).toBe('safe center');
+
+      const contentBetweenSafeResult = parser.parse('content-between-safe');
+      expect(contentBetweenSafeResult.flexboxGrid?.alignContent).toBe('safe space-between');
+    });
   });
 
   describe('Align Items', () => {
@@ -400,6 +442,36 @@ describe('Flexbox & Grid Parser', () => {
 
       const itemsBaselineResult = parser.parse('items-baseline');
       expect(itemsBaselineResult.flexboxGrid?.alignItems).toBe('baseline');
+    });
+
+    // Safe Alignment 테스트 (v4.1)
+    test('should parse safe alignment align items utilities', () => {
+      expect(parser.parseClass('items-start-safe')?.category).toBe('flexbox-grid');
+      expect(parser.parseClass('items-end-safe')?.category).toBe('flexbox-grid');
+      expect(parser.parseClass('items-center-safe')?.category).toBe('flexbox-grid');
+      expect(parser.parseClass('items-baseline-safe')?.category).toBe('flexbox-grid');
+      expect(parser.parseClass('items-stretch-safe')?.category).toBe('flexbox-grid');
+    });
+
+    test('should parse safe alignment align items values correctly', () => {
+      const itemsStartSafeResult = parser.parse('items-start-safe');
+      expect(itemsStartSafeResult.flexboxGrid?.alignItems).toBe('safe flex-start');
+
+      const itemsCenterSafeResult = parser.parse('items-center-safe');
+      expect(itemsCenterSafeResult.flexboxGrid?.alignItems).toBe('safe center');
+
+      const itemsBaselineSafeResult = parser.parse('items-baseline-safe');
+      expect(itemsBaselineSafeResult.flexboxGrid?.alignItems).toBe('safe baseline');
+    });
+
+    // Baseline Last Alignment 테스트 (v4.1)
+    test('should parse baseline last alignment utilities', () => {
+      expect(parser.parseClass('items-baseline-last')?.category).toBe('flexbox-grid');
+    });
+
+    test('should parse baseline last alignment values correctly', () => {
+      const itemsBaselineLastResult = parser.parse('items-baseline-last');
+      expect(itemsBaselineLastResult.flexboxGrid?.alignItems).toBe('last baseline');
     });
   });
 
@@ -422,6 +494,36 @@ describe('Flexbox & Grid Parser', () => {
 
       const selfEndResult = parser.parse('self-end');
       expect(selfEndResult.flexboxGrid?.alignSelf).toBe('flex-end');
+    });
+
+    // Safe Alignment 테스트 (v4.1)
+    test('should parse safe alignment align self utilities', () => {
+      expect(parser.parseClass('self-start-safe')?.category).toBe('flexbox-grid');
+      expect(parser.parseClass('self-end-safe')?.category).toBe('flexbox-grid');
+      expect(parser.parseClass('self-center-safe')?.category).toBe('flexbox-grid');
+      expect(parser.parseClass('self-baseline-safe')?.category).toBe('flexbox-grid');
+      expect(parser.parseClass('self-stretch-safe')?.category).toBe('flexbox-grid');
+    });
+
+    test('should parse safe alignment align self values correctly', () => {
+      const selfStartSafeResult = parser.parse('self-start-safe');
+      expect(selfStartSafeResult.flexboxGrid?.alignSelf).toBe('safe flex-start');
+
+      const selfCenterSafeResult = parser.parse('self-center-safe');
+      expect(selfCenterSafeResult.flexboxGrid?.alignSelf).toBe('safe center');
+
+      const selfBaselineSafeResult = parser.parse('self-baseline-safe');
+      expect(selfBaselineSafeResult.flexboxGrid?.alignSelf).toBe('safe baseline');
+    });
+
+    // Baseline Last Alignment 테스트 (v4.1)
+    test('should parse baseline last alignment self utilities', () => {
+      expect(parser.parseClass('self-baseline-last')?.category).toBe('flexbox-grid');
+    });
+
+    test('should parse baseline last alignment self values correctly', () => {
+      const selfBaselineLastResult = parser.parse('self-baseline-last');
+      expect(selfBaselineLastResult.flexboxGrid?.alignSelf).toBe('last baseline');
     });
   });
 

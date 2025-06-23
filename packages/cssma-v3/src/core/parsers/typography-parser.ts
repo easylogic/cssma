@@ -116,6 +116,8 @@ export class TypographyParser {
     'whitespace-pre-wrap', 'whitespace-break-spaces',
     // 단어 분리
     'break-normal', 'break-words', 'break-all', 'break-keep',
+    // Text Wrap Utilities (v4.1)
+    'wrap-normal', 'wrap-break-word', 'wrap-anywhere',
     // 하이픈
     'hyphens-none', 'hyphens-manual', 'hyphens-auto',
     // 폰트 스타일
@@ -843,6 +845,17 @@ export class TypographyParser {
         typography.wordBreak = 'keep-all';
         break;
 
+      // Text Wrap Utilities (v4.1)
+      case 'wrap-normal':
+        typography.overflowWrap = 'normal';
+        break;
+      case 'wrap-break-word':
+        typography.overflowWrap = 'break-word';
+        break;
+      case 'wrap-anywhere':
+        typography.overflowWrap = 'anywhere';
+        break;
+
       // 하이픈
       case 'hyphens-none':
         typography.hyphens = 'none';
@@ -1002,6 +1015,39 @@ export class TypographyParser {
 
     if (typography.color !== undefined) {
       css['color'] = typeof typography.color === 'string' ? typography.color : this.colorToString(typography.color);
+    }
+
+    // Text Wrap Utilities (v4.1)
+    if (typography.overflowWrap !== undefined) {
+      css['overflow-wrap'] = typography.overflowWrap;
+    }
+
+    if (typography.wordBreak !== undefined) {
+      css['word-break'] = typography.wordBreak;
+    }
+
+    if (typography.whiteSpace !== undefined) {
+      css['white-space'] = typography.whiteSpace;
+    }
+
+    if (typography.hyphens !== undefined) {
+      css['hyphens'] = typography.hyphens;
+    }
+
+    if (typography.textOverflow !== undefined) {
+      css['text-overflow'] = typography.textOverflow;
+    }
+
+    if (typography.overflow !== undefined) {
+      css['overflow'] = typography.overflow;
+    }
+
+    if (typography.verticalAlign !== undefined) {
+      css['vertical-align'] = typography.verticalAlign;
+    }
+
+    if (typography.textDecorationLine !== undefined) {
+      css['text-decoration-line'] = typography.textDecorationLine;
     }
 
     return css;

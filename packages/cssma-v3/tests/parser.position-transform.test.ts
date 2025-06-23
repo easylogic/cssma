@@ -138,4 +138,114 @@ describe('CSSParser - 위치 및 변형', () => {
       expect(result.transform.rotate).toBe(30);
     });
   });
+
+  describe('3D Transform Utilities (v4.1)', () => {
+    describe('3D 회전 클래스 파싱', () => {
+      it('rotate-x 클래스를 파싱할 수 있어야 함', () => {
+        const result = parser.parseClassName('rotate-x-45');
+        expect(result).toBeDefined();
+        expect(result?.className).toBe('rotate-x-45');
+        expect(result?.category).toBe('transform');
+        expect(result?.property).toBe('rotate-x');
+        expect(result?.value).toBe('45');
+      });
+
+      it('rotate-y 클래스를 파싱할 수 있어야 함', () => {
+        const result = parser.parseClassName('rotate-y-90');
+        expect(result).toBeDefined();
+        expect(result?.className).toBe('rotate-y-90');
+        expect(result?.category).toBe('transform');
+        expect(result?.property).toBe('rotate-y');
+        expect(result?.value).toBe('90');
+      });
+
+      it('rotate-z 클래스를 파싱할 수 있어야 함', () => {
+        const result = parser.parseClassName('rotate-z-180');
+        expect(result).toBeDefined();
+        expect(result?.className).toBe('rotate-z-180');
+        expect(result?.category).toBe('transform');
+        expect(result?.property).toBe('rotate-z');
+        expect(result?.value).toBe('180');
+      });
+    });
+
+    describe('3D 스케일 클래스 파싱', () => {
+      it('scale-z 클래스를 파싱할 수 있어야 함', () => {
+        const result = parser.parseClassName('scale-z-110');
+        expect(result).toBeDefined();
+        expect(result?.className).toBe('scale-z-110');
+        expect(result?.category).toBe('transform');
+        expect(result?.property).toBe('scale-z');
+        expect(result?.value).toBe('110');
+      });
+    });
+
+    describe('3D 이동 클래스 파싱', () => {
+      it('translate-z 클래스를 파싱할 수 있어야 함', () => {
+        const result = parser.parseClassName('translate-z-12');
+        expect(result).toBeDefined();
+        expect(result?.className).toBe('translate-z-12');
+        expect(result?.category).toBe('transform');
+        expect(result?.property).toBe('translate-z');
+        expect(result?.value).toBe('12');
+      });
+    });
+
+    describe('3D 변형 스타일 적용', () => {
+      it('rotate-x 스타일을 적용할 수 있어야 함', () => {
+        const result = parser.parse('rotate-x-45');
+        expect(result.transform.rotateX).toBeDefined();
+        expect(result.transform.rotateX).toBe(45);
+      });
+
+      it('rotate-y 스타일을 적용할 수 있어야 함', () => {
+        const result = parser.parse('rotate-y-90');
+        expect(result.transform.rotateY).toBeDefined();
+        expect(result.transform.rotateY).toBe(90);
+      });
+
+      it('rotate-z 스타일을 적용할 수 있어야 함', () => {
+        const result = parser.parse('rotate-z-180');
+        expect(result.transform.rotateZ).toBeDefined();
+        expect(result.transform.rotateZ).toBe(180);
+      });
+
+      it('scale-z 스타일을 적용할 수 있어야 함', () => {
+        const result = parser.parse('scale-z-110');
+        expect(result.transform.scaleZ).toBeDefined();
+        expect(result.transform.scaleZ).toBe(1.1);
+      });
+
+      it('translate-z 스타일을 적용할 수 있어야 함', () => {
+        const result = parser.parse('translate-z-12');
+        expect(result.transform.translateZ).toBeDefined();
+        expect(result.transform.translateZ).toBe('48px');
+      });
+
+      it('3D 변형 임의값을 적용할 수 있어야 함', () => {
+        const result = parser.parse('rotate-x-[30deg] rotate-y-[45deg] translate-z-[10px]');
+        expect(result.transform.rotateX).toBe(30);
+        expect(result.transform.rotateY).toBe(45);
+        expect(result.transform.translateZ).toBe('10px');
+      });
+
+      it('2D와 3D 변형을 함께 적용할 수 있어야 함', () => {
+        const result = parser.parse('rotate-45 rotate-x-30 scale-150 scale-z-110 translate-x-4 translate-z-8');
+        expect(result.transform.rotate).toBe(45);
+        expect(result.transform.rotateX).toBe(30);
+        expect(result.transform.scale).toBe(1.5);
+        expect(result.transform.scaleZ).toBe(1.1);
+        expect(result.transform.translateX).toBe(16);
+        expect(result.transform.translateZ).toBe('32px');
+      });
+    });
+
+    describe('모디파이어와 3D 변형', () => {
+      it('반응형 3D 변형을 적용할 수 있어야 함', () => {
+        const result = parser.parse('hover:rotate-x-45 md:rotate-y-90');
+        expect(result.states?.[':hover']?.transform?.rotateX).toBe(45);
+        expect(result.breakpoints?.md?.transform?.rotateY).toBe(90);
+      });
+    });
+  });
 }); 

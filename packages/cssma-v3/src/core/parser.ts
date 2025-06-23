@@ -298,7 +298,7 @@ export class CSSParser {
             property: parseResult.property || baseClassName,
             value: parseResult.value || "",
             category: category,
-            isArbitrary: parseResult.isArbitrary || false,
+            isArbitrary: modifierResult.isArbitrary || parseResult.isArbitrary || false,
             
             // 🎯 Tailwind CSS v4.1 방식의 modifier 정보
             modifiers: modifiers,
@@ -316,7 +316,7 @@ export class CSSParser {
       property: fallbackResult.property,
       value: fallbackResult.value,
       category: "layout", // 기본 카테고리
-      isArbitrary: fallbackResult.isArbitrary,
+      isArbitrary: modifierResult.isArbitrary || fallbackResult.isArbitrary,
       
       // 🎯 Tailwind CSS v4.1 방식의 modifier 정보
       modifiers: modifiers,

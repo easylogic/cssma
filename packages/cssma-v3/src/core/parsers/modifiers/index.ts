@@ -349,7 +349,7 @@ export class ModifierParser {
       const result = StateModifierParser.parse(modifier);
       if (result) {
         modifiers.state = this.convertStateToCSS(result.modifier);
-        return true;
+      return true;
       }
     }
     return false;
@@ -363,7 +363,7 @@ export class ModifierParser {
       const result = MotionModifierParser.parse(modifier);
       if (result) {
         modifiers.motion = `@media ${MotionModifierParser.generateMotionMediaQuery(result)}`;
-        return true;
+      return true;
       }
     }
     return false;
@@ -377,7 +377,7 @@ export class ModifierParser {
       const result = PseudoElementModifierParser.parse(modifier);
       if (result) {
         modifiers.pseudoElement = this.convertPseudoElementToCSS(result.element);
-        return true;
+      return true;
       }
     }
     return false;
@@ -392,7 +392,7 @@ export class ModifierParser {
       if (result) {
         if (!modifiers.aria) modifiers.aria = {};
         modifiers.aria[result.attribute] = `[aria-${result.attribute}]`;
-        return true;
+      return true;
       }
     }
     return false;
@@ -420,6 +420,8 @@ export class ModifierParser {
     if (SpecialModifierParser.isSpecialModifier(modifier)) {
       const result = SpecialModifierParser.parseSpecialModifier(modifier);
       if (result) {
+        console.log(`DEBUG: Special modifier "${modifier}" parsed as:`, result);
+        
         // Handle different types of special modifiers
         if (result.type === 'noscript') {
           modifiers.noscript = modifier;
@@ -427,11 +429,14 @@ export class ModifierParser {
           modifiers.starting = true;
         } else if (result.type === 'media-feature' && result.condition) {
           // All pointer variants and media feature variants
+          console.log(`DEBUG: Processing media-feature "${modifier}" with condition "${result.condition}"`);
           if (result.condition.startsWith(':')) {
             // Pseudo-classes like :user-valid, :user-invalid
+            console.log(`DEBUG: Setting pseudo-class state: ${result.condition}`);
             modifiers.state = result.condition;
           } else {
             // Media queries like pointer: fine, inverted-colors: inverted
+            console.log(`DEBUG: Setting media query state: @media (${result.condition})`);
             modifiers.state = `@media (${result.condition})`;
           }
         } else if (result.type === 'supports' && result.condition) {

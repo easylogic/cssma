@@ -13,9 +13,9 @@ export class TransformParser {
   static isValidClass(className: string): boolean {
     // Transform patterns
     const patterns = [
-      /^scale(-[xy])?-/, // scale-150, scale-x-50, scale-y-125, scale-[1.5]
-      /^rotate-/, // rotate-45, rotate-[30deg]
-      /^translate-[xy]-/, // translate-x-4, translate-y-8, translate-x-[10px]
+      /^scale(-[xyz])?-/, // scale-150, scale-x-50, scale-y-125, scale-z-110, scale-[1.5]
+      /^rotate(-[xyz])?-/, // rotate-45, rotate-x-45, rotate-y-90, rotate-z-180, rotate-[30deg]
+      /^translate-[xyz]-/, // translate-x-4, translate-y-8, translate-z-12, translate-x-[10px]
       /^skew-[xy]-/, // skew-x-6, skew-y-12, skew-x-[15deg]
       /^origin-/, // origin-center, origin-top-left, origin-[50%_50%]
     ];
@@ -35,10 +35,10 @@ export class TransformParser {
       return null;
     }
 
-    // Scale patterns
-    const scaleMatch = className.match(/^scale(-[xy])?-(.+)$/);
+    // Scale patterns (3D 지원)
+    const scaleMatch = className.match(/^scale(-[xyz])?-(.+)$/);
     if (scaleMatch) {
-      const axis = scaleMatch[1] || ''; // '', '-x', '-y'
+      const axis = scaleMatch[1] || ''; // '', '-x', '-y', '-z'
       let value = scaleMatch[2];
       
       // 임의 값 [...]
@@ -58,32 +58,33 @@ export class TransformParser {
       };
     }
 
-    // Rotate pattern
-    const rotateMatch = className.match(/^rotate-(.+)$/);
+    // Rotate patterns (3D 지원)
+    const rotateMatch = className.match(/^rotate(-[xyz])?-(.+)$/);
     if (rotateMatch) {
-      let value = rotateMatch[1];
+      const axis = rotateMatch[1] || ''; // '', '-x', '-y', '-z'
+      let value = rotateMatch[2];
       
       // 임의 값 [...]
       if (value.startsWith('[') && value.endsWith(']')) {
         value = value.slice(1, -1);
         return {
-          property: 'rotate',
+          property: `rotate${axis}`,
           value: value,
           isArbitrary: true
         };
       }
       
       return {
-        property: 'rotate',
+        property: `rotate${axis}`,
         value: value,
         isArbitrary: false
       };
     }
 
-    // Translate patterns
-    const translateMatch = className.match(/^translate-([xy])-(.+)$/);
+    // Translate patterns (3D 지원)
+    const translateMatch = className.match(/^translate-([xyz])-(.+)$/);
     if (translateMatch) {
-      const axis = translateMatch[1]; // 'x' or 'y'
+      const axis = translateMatch[1]; // 'x', 'y', or 'z'
       let value = translateMatch[2];
       
       // 임의 값 [...]
@@ -177,15 +178,30 @@ export class TransformParser {
     } else if (property === 'scale-y') {
       // Y축 스케일
       this.handleScaleY(value, isArbitrary || false, styles.transform);
+    } else if (property === 'scale-z') {
+      // Z축 스케일 (v4.1)
+      this.handleScaleZ(value, isArbitrary || false, styles.transform);
     } else if (property === 'rotate') {
-      // 회전
+      // 회전 (Z축)
       this.handleRotate(value, isArbitrary || false, styles.transform);
+    } else if (property === 'rotate-x') {
+      // X축 회전 (v4.1)
+      this.handleRotateX(value, isArbitrary || false, styles.transform);
+    } else if (property === 'rotate-y') {
+      // Y축 회전 (v4.1)
+      this.handleRotateY(value, isArbitrary || false, styles.transform);
+    } else if (property === 'rotate-z') {
+      // Z축 회전 (v4.1)
+      this.handleRotateZ(value, isArbitrary || false, styles.transform);
     } else if (property === 'translate-x') {
       // X축 이동
       this.handleTranslateX(value, isArbitrary || false, styles.transform, preset);
     } else if (property === 'translate-y') {
       // Y축 이동
       this.handleTranslateY(value, isArbitrary || false, styles.transform, preset);
+    } else if (property === 'translate-z') {
+      // Z축 이동 (v4.1)
+      this.handleTranslateZ(value, isArbitrary || false, styles.transform, preset);
     } else if (property === 'skew-x') {
       // X축 기울기
       this.handleSkewX(value, isArbitrary || false, styles.transform);
@@ -384,6 +400,113 @@ export class TransformParser {
         transform.transformOrigin = originMap[value];
       } else {
         transform.transformOrigin = value;
+      }
+    }
+  }
+
+  /**
+   * Z축 스케일을 처리합니다. (v4.1)
+   */
+  private static handleScaleZ(value: string, isArbitrary: boolean, transform: TransformStyles): void {
+    if (isArbitrary) {
+      const scaleZ = parseFloat(value);
+      if (!isNaN(scaleZ)) {
+        transform.scaleZ = scaleZ;
+      }
+    } else {
+      const scaleZ = parseFloat(value);
+      if (!isNaN(scaleZ)) {
+        transform.scaleZ = scaleZ / 100;
+      }
+    }
+  }
+
+  /**
+   * X축 회전을 처리합니다. (v4.1)
+   */
+  private static handleRotateX(value: string, isArbitrary: boolean, transform: TransformStyles): void {
+    if (isArbitrary) {
+      // 임의 값에서 deg 단위 제거하고 숫자만 반환
+      const numericValue = parseFloat(value.replace('deg', ''));
+      if (!isNaN(numericValue)) {
+        transform.rotateX = numericValue;
+      } else {
+        transform.rotateX = value;
+      }
+    } else {
+      // rotate-x-45 => 45 (숫자)
+      const degrees = parseFloat(value);
+      if (!isNaN(degrees)) {
+        transform.rotateX = degrees;
+      } else {
+        transform.rotateX = value;
+      }
+    }
+  }
+
+  /**
+   * Y축 회전을 처리합니다. (v4.1)
+   */
+  private static handleRotateY(value: string, isArbitrary: boolean, transform: TransformStyles): void {
+    if (isArbitrary) {
+      // 임의 값에서 deg 단위 제거하고 숫자만 반환
+      const numericValue = parseFloat(value.replace('deg', ''));
+      if (!isNaN(numericValue)) {
+        transform.rotateY = numericValue;
+      } else {
+        transform.rotateY = value;
+      }
+    } else {
+      // rotate-y-90 => 90 (숫자)
+      const degrees = parseFloat(value);
+      if (!isNaN(degrees)) {
+        transform.rotateY = degrees;
+      } else {
+        transform.rotateY = value;
+      }
+    }
+  }
+
+  /**
+   * Z축 회전을 처리합니다. (v4.1)
+   */
+  private static handleRotateZ(value: string, isArbitrary: boolean, transform: TransformStyles): void {
+    if (isArbitrary) {
+      // 임의 값에서 deg 단위 제거하고 숫자만 반환
+      const numericValue = parseFloat(value.replace('deg', ''));
+      if (!isNaN(numericValue)) {
+        transform.rotateZ = numericValue;
+      } else {
+        transform.rotateZ = value;
+      }
+    } else {
+      // rotate-z-180 => 180 (숫자)
+      const degrees = parseFloat(value);
+      if (!isNaN(degrees)) {
+        transform.rotateZ = degrees;
+      } else {
+        transform.rotateZ = value;
+      }
+    }
+  }
+
+  /**
+   * Z축 이동을 처리합니다. (v4.1)
+   */
+  private static handleTranslateZ(
+    value: string, 
+    isArbitrary: boolean, 
+    transform: TransformStyles, 
+    preset: DesignPreset
+  ): void {
+    if (isArbitrary) {
+      transform.translateZ = value;
+    } else {
+      // 프리셋 값 처리
+      if (value in preset.spacing) {
+        transform.translateZ = `${preset.spacing[value]}px`;
+      } else {
+        transform.translateZ = value;
       }
     }
   }
