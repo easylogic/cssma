@@ -5,7 +5,7 @@
  * 애니메이션 관련 속성을 처리합니다.
  */
 
-import { ParsedClass, AnimationStyles, DesignPreset } from '../../types';
+import { ParsedClass, AnimationStyles, DesignPreset, ParsedStyles, ParserContext } from '../../types';
 
 export class AnimationParser {
   /**
@@ -147,21 +147,21 @@ export class AnimationParser {
   }
 
   /**
-   * 애니메이션 스타일을 적용합니다.
-   * @param parsedClass 파싱된 클래스
-   * @param styles 스타일 객체
-   * @param preset 디자인 프리셋
+   * Context Pattern을 사용한 새로운 스타일 적용 메서드
    */
   static applyAnimationStyle(
     parsedClass: ParsedClass, 
-    styles: { animation?: AnimationStyles }, 
-    preset: DesignPreset
+    styles: Partial<ParsedStyles>, 
+    context: ParserContext
   ): void {
     const { property, value, isArbitrary } = parsedClass;
     
     if (!styles.animation) {
       styles.animation = {};
     }
+    
+    // Context에서 preset 추출
+    const preset = context.preset;
     
     if (property === 'transition') {
       // transition 활성화
@@ -193,6 +193,15 @@ export class AnimationParser {
     } else if (property === 'fill') {
       styles.animation.fillMode = value as any;
     }
+  }
+
+  /**
+   * Animation 관련 클래스인지 확인합니다.
+   * @param className 클래스명
+   * @returns Animation 관련 클래스 여부
+   */
+  static isAnimationClass(className: string): boolean {
+    return this.isValidClass(className);
   }
 
   /**

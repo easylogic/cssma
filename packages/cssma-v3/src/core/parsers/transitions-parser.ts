@@ -1,4 +1,4 @@
-import { ParsedStyle } from '../../types';
+import { ParsedStyle, ParsedClass, ParsedStyles, ParserContext } from '../../types';
 
 export class TransitionsParser {
   private static readonly TRANSITION_PROPERTIES: Record<string, string> = {
@@ -192,14 +192,129 @@ export class TransitionsParser {
     return null;
   }
 
-  static applyTransitionsStyle(parsedClass: { property: string; value: any; baseClassName: string }, styles: Record<string, any>, preset: any): void {
-    const parsed = this.parse(parsedClass.baseClassName);
-    if (!parsed) return;
-
+  /**
+   * Context Pattern을 사용한 새로운 스타일 적용 메서드
+   */
+  static applyTransitionsStyle(
+    parsedClass: ParsedClass,
+    styles: Partial<ParsedStyles>,
+    context: ParserContext
+  ): void {
     if (!styles.transitions) {
       styles.transitions = {};
     }
 
-    styles.transitions[parsed.property] = parsed.value;
+    const { property, value, isArbitrary } = parsedClass;
+    
+    // Context에서 preset 추출
+    const preset = context.preset;
+
+    // 속성별 처리
+    switch (property) {
+      // Transition property
+      case 'transitionProperty':
+        this.handleTransitionProperty(value, isArbitrary, styles.transitions);
+        break;
+        
+      // Transition duration
+      case 'transitionDuration':
+        this.handleTransitionDuration(value, isArbitrary, styles.transitions);
+        break;
+        
+      // Transition delay
+      case 'transitionDelay':
+        this.handleTransitionDelay(value, isArbitrary, styles.transitions);
+        break;
+        
+      // Transition timing function
+      case 'transitionTimingFunction':
+        this.handleTransitionTimingFunction(value, isArbitrary, styles.transitions);
+        break;
+        
+      default:
+        // Generic property 처리
+        styles.transitions[property] = isArbitrary ? value : this.convertTransitionValue(property, value);
+        break;
+    }
+  }
+
+  /**
+   * Transition property 처리 헬퍼 메서드
+   */
+  private static handleTransitionProperty(value: string, isArbitrary: boolean, transitionStyles: any): void {
+    if (isArbitrary) {
+      transitionStyles.transitionProperty = value;
+    } else {
+      transitionStyles.transitionProperty = value;
+    }
+  }
+
+  /**
+   * Transition duration 처리 헬퍼 메서드
+   */
+  private static handleTransitionDuration(value: string, isArbitrary: boolean, transitionStyles: any): void {
+    if (isArbitrary) {
+      // 임의값은 이미 올바른 형태로 파싱됨
+      transitionStyles.transitionDuration = value;
+    } else {
+      // 표준 duration 값 매핑
+      const durationMap: Record<string, string> = {
+        '0': '0s',
+        '75': '75ms',
+        '100': '100ms',
+        '150': '150ms',
+        '200': '200ms',
+        '300': '300ms',
+        '500': '500ms',
+        '700': '700ms',
+        '1000': '1000ms'
+      };
+      
+      transitionStyles.transitionDuration = durationMap[value] || `${value}ms`;
+    }
+  }
+
+  /**
+   * Transition delay 처리 헬퍼 메서드
+   */
+  private static handleTransitionDelay(value: string, isArbitrary: boolean, transitionStyles: any): void {
+    if (isArbitrary) {
+      // 임의값은 이미 올바른 형태로 파싱됨
+      transitionStyles.transitionDelay = value;
+    } else {
+      // 표준 delay 값 매핑 (duration과 동일)
+      const delayMap: Record<string, string> = {
+        '0': '0s',
+        '75': '75ms',
+        '100': '100ms',
+        '150': '150ms',
+        '200': '200ms',
+        '300': '300ms',
+        '500': '500ms',
+        '700': '700ms',
+        '1000': '1000ms'
+      };
+      
+      transitionStyles.transitionDelay = delayMap[value] || `${value}ms`;
+    }
+  }
+
+  /**
+   * Transition timing function 처리 헬퍼 메서드
+   */
+  private static handleTransitionTimingFunction(value: string, isArbitrary: boolean, transitionStyles: any): void {
+    if (isArbitrary) {
+      transitionStyles.transitionTimingFunction = value;
+    } else {
+      transitionStyles.transitionTimingFunction = value;
+    }
+  }
+
+  /**
+   * Transition 값 변환 헬퍼 메서드
+   */
+  private static convertTransitionValue(property: string, value: string): string {
+    // 특정 property에 따른 값 변환 로직
+    return value;
   }
 } 

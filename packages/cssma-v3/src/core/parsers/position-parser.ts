@@ -5,7 +5,7 @@
  * 위치 관련 속성을 처리합니다.
  */
 
-import { ParsedClass, PositionStyles, DesignPreset } from '../../types';
+import { ParsedClass, PositionStyles, DesignPreset, ParsedStyles, ParserContext } from '../../types';
 
 export class PositionParser {
   /**
@@ -154,21 +154,21 @@ export class PositionParser {
   }
 
   /**
-   * 위치 스타일을 적용합니다.
-   * @param parsedClass 파싱된 클래스
-   * @param styles 스타일 객체
-   * @param preset 디자인 프리셋
+   * Context Pattern을 사용한 새로운 스타일 적용 메서드
    */
   static applyPositionStyle(
     parsedClass: ParsedClass, 
-    styles: { position?: PositionStyles }, 
-    preset: DesignPreset
+    styles: Partial<ParsedStyles>, 
+    context: ParserContext
   ): void {
     if (!styles.position) {
       styles.position = {};
     }
 
     const { property, value, isArbitrary } = parsedClass;
+    
+    // Context에서 preset 추출
+    const preset = context.preset;
 
     // Position types (static, fixed, absolute, relative, sticky)
     const positionTypes = ['static', 'fixed', 'absolute', 'relative', 'sticky'];
@@ -180,237 +180,176 @@ export class PositionParser {
 
     // Directional positions (top, right, bottom, left)
     if (['top', 'right', 'bottom', 'left'].includes(property)) {
-      this.handlePositionValue(property, value, isArbitrary || false, styles.position, preset);
+      this.handlePositionValue(property, value, isArbitrary || false, styles.position, context);
       return;
     }
 
     // Z-index
     if (property === 'z') {
-      this.handleZIndex(value, isArbitrary || false, styles.position);
+      this.handleZIndex(value, isArbitrary || false, styles.position, context);
       return;
     }
 
     // Inset patterns (inset, inset-x, inset-y)
     if (property === 'inset') {
-      this.handleInsetValue(value, isArbitrary || false, styles.position, preset);
+      this.handleInsetValue(value, isArbitrary || false, styles.position, context);
     } else if (property === 'inset-x') {
-      this.handleInsetXValue(value, isArbitrary || false, styles.position, preset);
+      this.handleInsetXValue(value, isArbitrary || false, styles.position, context);
     } else if (property === 'inset-y') {
-      this.handleInsetYValue(value, isArbitrary || false, styles.position, preset);
+      this.handleInsetYValue(value, isArbitrary || false, styles.position, context);
     }
   }
 
   /**
-   * 위치 값을 처리합니다 (top, right, bottom, left)
+   * Position 관련 클래스인지 확인합니다.
+   * @param className 클래스명
+   * @returns Position 관련 클래스 여부
+   */
+  static isPositionClass(className: string): boolean {
+    return this.isValidClass(className);
+  }
+
+  /**
+   * 위치 값을 처리합니다. (Context Pattern 버전)
    */
   private static handlePositionValue(
     property: string,
     value: string,
     isArbitrary: boolean,
     position: PositionStyles,
-    preset: DesignPreset
+    context: ParserContext
   ): void {
-    let positionValue: number | string;
-
-    // 음수 값 확인
-    const isNegative = value.startsWith('-');
-    const cleanValue = isNegative ? value.substring(1) : value;
-
+    const preset = context.preset;
+    
     if (isArbitrary) {
       // 임의 값 처리
-      positionValue = this.parseArbitraryValue(cleanValue);
-    } else {
-      // 프리셋 값 처리
-      if (cleanValue === 'auto') {
-        positionValue = 'auto';
-      } else if (cleanValue === 'full') {
-        positionValue = '100%';
-      } else if (cleanValue.includes('%')) {
-        // 이미 백분율로 변환된 값 (50% 등)
-        positionValue = cleanValue;
-      } else if (cleanValue in preset.spacing) {
-        positionValue = preset.spacing[cleanValue];
-      } else {
-        positionValue = cleanValue;
+      const convertedValue = this.parseArbitraryValue(value);
+      (position as any)[property] = convertedValue;
+      return;
+    }
+
+    // 특수 값 처리
+    if (value === 'auto') {
+      (position as any)[property] = 'auto';
+      return;
+    }
+
+    if (value === 'full') {
+      (position as any)[property] = '100%';
+      return;
+    }
+
+    // 음수 값 처리
+    const isNegative = value.startsWith('-');
+    const positiveValue = isNegative ? value.slice(1) : value;
+
+    // 분수 값 처리 (이미 parseValue에서 처리되었을 수 있음)
+    if (positiveValue.includes('/')) {
+      const [numerator, denominator] = positiveValue.split('/').map(Number);
+      if (!isNaN(numerator) && !isNaN(denominator)) {
+        const percentage = `${(numerator / denominator) * 100}%`;
+        (position as any)[property] = isNegative ? `-${percentage}` : percentage;
+        return;
       }
     }
 
-    // 음수 처리
-    if (isNegative && typeof positionValue === 'number') {
-      positionValue = -positionValue;
-    } else if (isNegative && typeof positionValue === 'string' && !isNaN(parseFloat(positionValue))) {
-      positionValue = `-${positionValue}`;
+    // 퍼센트 값 처리 (이미 파싱된 경우)
+    if (positiveValue.endsWith('%')) {
+      (position as any)[property] = value; // 음수 포함하여 그대로 사용
+      return;
     }
 
-    // 속성에 따라 설정
-    switch (property) {
-      case 'top':
-        position.top = positionValue;
-        break;
-      case 'right':
-        position.right = positionValue;
-        break;
-      case 'bottom':
-        position.bottom = positionValue;
-        break;
-      case 'left':
-        position.left = positionValue;
-        break;
+    // 숫자 값 처리 (spacing scale 적용)
+    if (/^\d+(\.\d+)?$/.test(positiveValue)) {
+      const numericValue = parseFloat(positiveValue);
+      const pixelValue = numericValue * 4; // Tailwind spacing scale
+      (position as any)[property] = isNegative ? -pixelValue : pixelValue;
+      return;
     }
+
+    // 기타 값들은 그대로 적용
+    (position as any)[property] = value;
   }
 
   /**
-   * inset 값을 처리합니다 (모든 방향)
+   * inset 값을 처리합니다. (Context Pattern 버전)
    */
   private static handleInsetValue(
     value: string,
     isArbitrary: boolean,
     position: PositionStyles,
-    preset: DesignPreset
+    context: ParserContext
   ): void {
-    let insetValue: number | string;
-
-    // 음수 값 확인
-    const isNegative = value.startsWith('-');
-    const cleanValue = isNegative ? value.substring(1) : value;
-
-    if (isArbitrary) {
-      insetValue = this.parseArbitraryValue(cleanValue);
-    } else if (cleanValue === 'auto') {
-      insetValue = 'auto';
-    } else if (cleanValue === 'full') {
-      insetValue = '100%';
-    } else if (cleanValue.includes('%')) {
-      // 이미 백분율로 변환된 값 (50% 등)
-      insetValue = cleanValue;
-    } else if (cleanValue in preset.spacing) {
-      insetValue = preset.spacing[cleanValue];
-    } else {
-      insetValue = cleanValue;
-    }
-
-    // 음수 처리
-    if (isNegative && typeof insetValue === 'number') {
-      insetValue = -insetValue;
-    } else if (isNegative && typeof insetValue === 'string' && !isNaN(parseFloat(insetValue))) {
-      insetValue = `-${insetValue}`;
-    }
-
-    // 모든 방향에 적용
-    position.top = insetValue;
-    position.right = insetValue;
-    position.bottom = insetValue;
-    position.left = insetValue;
+    // inset은 top, right, bottom, left 모두에 동일한 값 적용
+    this.handlePositionValue('top', value, isArbitrary, position, context);
+    this.handlePositionValue('right', value, isArbitrary, position, context);
+    this.handlePositionValue('bottom', value, isArbitrary, position, context);
+    this.handlePositionValue('left', value, isArbitrary, position, context);
   }
 
   /**
-   * inset-x 값을 처리합니다 (좌우 방향)
+   * inset-x 값을 처리합니다. (Context Pattern 버전)
    */
   private static handleInsetXValue(
     value: string,
     isArbitrary: boolean,
     position: PositionStyles,
-    preset: DesignPreset
+    context: ParserContext
   ): void {
-    let insetValue: number | string;
-
-    // 음수 값 확인
-    const isNegative = value.startsWith('-');
-    const cleanValue = isNegative ? value.substring(1) : value;
-
-    if (isArbitrary) {
-      insetValue = this.parseArbitraryValue(cleanValue);
-    } else if (cleanValue === 'auto') {
-      insetValue = 'auto';
-    } else if (cleanValue === 'full') {
-      insetValue = '100%';
-    } else if (cleanValue.includes('%')) {
-      // 이미 백분율로 변환된 값 (50% 등)
-      insetValue = cleanValue;
-    } else if (cleanValue in preset.spacing) {
-      insetValue = preset.spacing[cleanValue];
-    } else {
-      insetValue = cleanValue;
-    }
-
-    // 음수 처리
-    if (isNegative && typeof insetValue === 'number') {
-      insetValue = -insetValue;
-    } else if (isNegative && typeof insetValue === 'string' && !isNaN(parseFloat(insetValue))) {
-      insetValue = `-${insetValue}`;
-    }
-
-    // 좌우 방향에만 적용
-    position.left = insetValue;
-    position.right = insetValue;
+    // inset-x는 left, right에 동일한 값 적용
+    this.handlePositionValue('left', value, isArbitrary, position, context);
+    this.handlePositionValue('right', value, isArbitrary, position, context);
   }
 
   /**
-   * inset-y 값을 처리합니다 (상하 방향)
+   * inset-y 값을 처리합니다. (Context Pattern 버전)
    */
   private static handleInsetYValue(
     value: string,
     isArbitrary: boolean,
     position: PositionStyles,
-    preset: DesignPreset
+    context: ParserContext
   ): void {
-    let insetValue: number | string;
-
-    // 음수 값 확인
-    const isNegative = value.startsWith('-');
-    const cleanValue = isNegative ? value.substring(1) : value;
-
-    if (isArbitrary) {
-      insetValue = this.parseArbitraryValue(cleanValue);
-    } else if (cleanValue === 'auto') {
-      insetValue = 'auto';
-    } else if (cleanValue === 'full') {
-      insetValue = '100%';
-    } else if (cleanValue.includes('%')) {
-      // 이미 백분율로 변환된 값 (50% 등)
-      insetValue = cleanValue;
-    } else if (cleanValue in preset.spacing) {
-      insetValue = preset.spacing[cleanValue];
-    } else {
-      insetValue = cleanValue;
-    }
-
-    // 음수 처리
-    if (isNegative && typeof insetValue === 'number') {
-      insetValue = -insetValue;
-    } else if (isNegative && typeof insetValue === 'string' && !isNaN(parseFloat(insetValue))) {
-      insetValue = `-${insetValue}`;
-    }
-
-    // 상하 방향에만 적용
-    position.top = insetValue;
-    position.bottom = insetValue;
+    // inset-y는 top, bottom에 동일한 값 적용
+    this.handlePositionValue('top', value, isArbitrary, position, context);
+    this.handlePositionValue('bottom', value, isArbitrary, position, context);
   }
 
   /**
-   * z-index를 처리합니다.
+   * z-index 값을 처리합니다. (Context Pattern 버전)
    */
   private static handleZIndex(
     value: string,
     isArbitrary: boolean,
-    position: PositionStyles
+    position: PositionStyles,
+    context?: ParserContext
   ): void {
-    if (value === 'auto') {
-      // zIndex를 string으로 타입 확장이 필요하거나, 'auto' 문자열로 저장
-      (position as any).zIndex = 'auto';
-    } else if (isArbitrary) {
-      position.zIndex = parseInt(value, 10) || 0;
-    } else {
-      const zIndexMap: Record<string, number> = {
-        '0': 0,
-        '10': 10,
-        '20': 20,
-        '30': 30,
-        '40': 40,
-        '50': 50,
-      };
-      position.zIndex = zIndexMap[value] ?? (parseInt(value, 10) || 0);
+    if (isArbitrary) {
+      // 임의 값 처리
+      const convertedValue = this.parseArbitraryValue(value);
+      position.zIndex = convertedValue;
+      return;
     }
+
+    // auto 값 처리
+    if (value === 'auto') {
+      position.zIndex = 'auto';
+      return;
+    }
+
+    // 음수 값 처리
+    const isNegative = value.startsWith('-');
+    const positiveValue = isNegative ? value.slice(1) : value;
+
+    // 숫자 값 처리
+    if (/^\d+$/.test(positiveValue)) {
+      const numericValue = parseInt(positiveValue, 10);
+      position.zIndex = isNegative ? -numericValue : numericValue;
+      return;
+    }
+
+    // 기타 값들은 그대로 적용
+    position.zIndex = value;
   }
 
   /**

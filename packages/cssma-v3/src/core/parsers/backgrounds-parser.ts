@@ -1,4 +1,4 @@
-import { ParsedStyle } from '../../types';
+import { ParsedStyle, ParsedClass, ParsedStyles, ParserContext } from '../../types';
 import { ColorUtils } from '../../config';
 
 const BACKGROUND_CLASSES = {
@@ -942,34 +942,275 @@ export class BackgroundsParser {
     return `var(--color-${colorName})`;
   }
 
-  static applyBackgroundsStyle(parsedClass: { property: string; value: any; baseClassName: string }, styles: Record<string, any>, preset: any, config?: any): void {
-    const parsed = this.parse(parsedClass.baseClassName);
-    if (!parsed) return;
-
+  /**
+   * Context Pattern을 사용한 새로운 스타일 적용 메서드
+   */
+  static applyBackgroundsStyle(
+    parsedClass: ParsedClass, 
+    styles: Partial<ParsedStyles>, 
+    context: ParserContext
+  ): void {
     if (!styles.backgrounds) {
       styles.backgrounds = {};
     }
 
-    // Handle backgroundColor with preset color conversion
-    if (parsed.property === 'backgroundColor' && typeof parsed.value === 'string') {
-      // If it's a CSS variable reference, convert to actual color
-      if (parsed.value.startsWith('var(--color-')) {
-        const colorName = parsed.value.match(/var\\(--color-(.*)\\)/)?.[1];
-        if (colorName) {
-          // Convert back to standard color name format
-          const standardColorName = colorName.replace('-', '-');
-          styles.backgrounds.backgroundColor = this.getColorValue(standardColorName, preset, config);
-        } else {
-          styles.backgrounds.backgroundColor = parsed.value;
+    const { property, value, isArbitrary } = parsedClass;
+    
+    // Context에서 preset과 config 추출
+    const preset = context.preset;
+    const config = context.config;
+
+    // 속성별 처리
+    switch (property) {
+      // Background color
+      case 'bg':
+      case 'backgroundColor':
+        this.handleBackgroundColor(value, isArbitrary, styles.backgrounds, preset, config);
+        break;
+        
+      // Background image
+      case 'backgroundImage':
+      case 'bg-image':
+        this.handleBackgroundImage(value, isArbitrary, styles.backgrounds);
+        break;
+        
+      // Background size
+      case 'backgroundSize':
+      case 'bg-size':
+        this.handleBackgroundSize(value, isArbitrary, styles.backgrounds);
+        break;
+        
+      // Background position
+      case 'backgroundPosition':
+      case 'bg-position':
+        this.handleBackgroundPosition(value, isArbitrary, styles.backgrounds);
+        break;
+        
+      // Background repeat
+      case 'backgroundRepeat':
+      case 'bg-repeat':
+        this.handleBackgroundRepeat(value, isArbitrary, styles.backgrounds);
+        break;
+        
+      // Background attachment
+      case 'backgroundAttachment':
+      case 'bg-attachment':
+        this.handleBackgroundAttachment(value, isArbitrary, styles.backgrounds);
+        break;
+        
+      // Background clip
+      case 'backgroundClip':
+      case 'bg-clip':
+        this.handleBackgroundClip(value, isArbitrary, styles.backgrounds);
+        break;
+        
+      // Background origin
+      case 'backgroundOrigin':
+      case 'bg-origin':
+        this.handleBackgroundOrigin(value, isArbitrary, styles.backgrounds);
+        break;
+        
+      // Background opacity
+      case 'backgroundOpacity':
+      case 'bg-opacity':
+        this.handleBackgroundOpacity(value, isArbitrary, styles.backgrounds);
+        break;
+        
+      // Gradient directions
+      case 'gradient':
+      case 'linearGradient':
+      case 'radialGradient':
+      case 'conicGradient':
+        this.handleGradient(property, value, isArbitrary, styles.backgrounds);
+        break;
+        
+      // Gradient color stops
+      case 'from':
+      case 'via':
+      case 'to':
+        this.handleGradientColorStop(property, value, isArbitrary, styles.backgrounds, preset, config);
+        break;
+        
+      default:
+        // Generic property 처리
+        styles.backgrounds[property] = isArbitrary ? value : this.convertBackgroundValue(property, value);
+        break;
+    }
+  }
+
+  /**
+   * Background color 처리 헬퍼 메서드
+   */
+  private static handleBackgroundColor(value: string, isArbitrary: boolean, backgroundStyles: any, preset: any, config: any): void {
+    if (isArbitrary) {
+      backgroundStyles.backgroundColor = value;
+    } else {
+      // 투명도 조합 처리 (bg-red-500/50)
+      if (value.includes('/')) {
+        const [colorPart, opacityPart] = value.split('/');
+        const opacity = parseInt(opacityPart) / 100;
+        
+        if (this.isValidColor(colorPart)) {
+          const colorValue = this.getColorValue(colorPart, preset, config);
+          backgroundStyles.backgroundColor = colorValue;
+          backgroundStyles.backgroundOpacity = opacity.toString();
         }
       } else {
-        // Direct color value or already processed
-        styles.backgrounds.backgroundColor = parsed.value;
+        // 표준 색상 처리
+        backgroundStyles.backgroundColor = this.getColorValue(value, preset, config);
       }
-    } else {
-      // Apply other background properties directly
-      Object.assign(styles.backgrounds, parsed);
     }
+  }
+
+  /**
+   * Background image 처리 헬퍼 메서드
+   */
+  private static handleBackgroundImage(value: string, isArbitrary: boolean, backgroundStyles: any): void {
+    if (isArbitrary) {
+      backgroundStyles.backgroundImage = value;
+    } else {
+      const presetValue = this.BACKGROUND_IMAGE_VALUES[`bg-${value}`] || 
+                         this.BACKGROUND_IMAGE_VALUES[value] ||
+                         value;
+      backgroundStyles.backgroundImage = presetValue;
+    }
+  }
+
+  /**
+   * Background size 처리 헬퍼 메서드
+   */
+  private static handleBackgroundSize(value: string, isArbitrary: boolean, backgroundStyles: any): void {
+    if (isArbitrary) {
+      backgroundStyles.backgroundSize = value;
+    } else {
+      const presetValue = this.BACKGROUND_SIZE_VALUES[`bg-${value}`] || 
+                         this.BACKGROUND_SIZE_VALUES[value] ||
+                         value;
+      backgroundStyles.backgroundSize = presetValue;
+    }
+  }
+
+  /**
+   * Background position 처리 헬퍼 메서드
+   */
+  private static handleBackgroundPosition(value: string, isArbitrary: boolean, backgroundStyles: any): void {
+    if (isArbitrary) {
+      backgroundStyles.backgroundPosition = value;
+    } else {
+      const presetValue = this.BACKGROUND_POSITION_VALUES[`bg-${value}`] || 
+                         this.BACKGROUND_POSITION_VALUES[value] ||
+                         value;
+      backgroundStyles.backgroundPosition = presetValue;
+    }
+  }
+
+  /**
+   * Background repeat 처리 헬퍼 메서드
+   */
+  private static handleBackgroundRepeat(value: string, isArbitrary: boolean, backgroundStyles: any): void {
+    if (isArbitrary) {
+      backgroundStyles.backgroundRepeat = value;
+    } else {
+      const presetValue = this.BACKGROUND_REPEAT_VALUES[`bg-${value}`] || 
+                         this.BACKGROUND_REPEAT_VALUES[value] ||
+                         value;
+      backgroundStyles.backgroundRepeat = presetValue;
+    }
+  }
+
+  /**
+   * Background attachment 처리 헬퍼 메서드
+   */
+  private static handleBackgroundAttachment(value: string, isArbitrary: boolean, backgroundStyles: any): void {
+    if (isArbitrary) {
+      backgroundStyles.backgroundAttachment = value;
+    } else {
+      const presetValue = this.BACKGROUND_ATTACHMENT_VALUES[`bg-${value}`] || 
+                         this.BACKGROUND_ATTACHMENT_VALUES[value] ||
+                         value;
+      backgroundStyles.backgroundAttachment = presetValue;
+    }
+  }
+
+  /**
+   * Background clip 처리 헬퍼 메서드
+   */
+  private static handleBackgroundClip(value: string, isArbitrary: boolean, backgroundStyles: any): void {
+    if (isArbitrary) {
+      backgroundStyles.backgroundClip = value;
+    } else {
+      const presetValue = this.BACKGROUND_CLIP_VALUES[`bg-clip-${value}`] || 
+                         this.BACKGROUND_CLIP_VALUES[value] ||
+                         value;
+      backgroundStyles.backgroundClip = presetValue;
+    }
+  }
+
+  /**
+   * Background origin 처리 헬퍼 메서드
+   */
+  private static handleBackgroundOrigin(value: string, isArbitrary: boolean, backgroundStyles: any): void {
+    if (isArbitrary) {
+      backgroundStyles.backgroundOrigin = value;
+    } else {
+      const presetValue = this.BACKGROUND_ORIGIN_VALUES[`bg-origin-${value}`] || 
+                         this.BACKGROUND_ORIGIN_VALUES[value] ||
+                         value;
+      backgroundStyles.backgroundOrigin = presetValue;
+    }
+  }
+
+  /**
+   * Background opacity 처리 헬퍼 메서드
+   */
+  private static handleBackgroundOpacity(value: string, isArbitrary: boolean, backgroundStyles: any): void {
+    if (isArbitrary) {
+      backgroundStyles.backgroundOpacity = value;
+    } else {
+      const presetValue = this.BACKGROUND_OPACITY_VALUES[`bg-opacity-${value}`] || 
+                         (parseInt(value) / 100).toString();
+      backgroundStyles.backgroundOpacity = presetValue;
+    }
+  }
+
+  /**
+   * Gradient 처리 헬퍼 메서드
+   */
+  private static handleGradient(property: string, value: string, isArbitrary: boolean, backgroundStyles: any): void {
+    if (isArbitrary) {
+      backgroundStyles.backgroundImage = value;
+    } else {
+      const direction = this.GRADIENT_DIRECTIONS[`bg-gradient-to-${value}`] || 
+                       this.LINEAR_GRADIENT_DIRECTIONS[`bg-linear-to-${value}`] ||
+                       value;
+      backgroundStyles.backgroundImage = `linear-gradient(${direction}, var(--tw-gradient-stops))`;
+    }
+  }
+
+  /**
+   * Gradient color stop 처리 헬퍼 메서드
+   */
+  private static handleGradientColorStop(property: string, value: string, isArbitrary: boolean, backgroundStyles: any, preset: any, config: any): void {
+    if (isArbitrary) {
+      backgroundStyles[`--tw-gradient-${property}`] = value;
+    } else {
+      // 퍼센트 위치 처리 (from-10%, via-30%, to-90%)
+      if (value.match(/^\d+%$/)) {
+        backgroundStyles[`--tw-gradient-${property}-position`] = value;
+      } else {
+        // 색상 처리
+        const colorValue = this.getColorValue(value, preset, config);
+        backgroundStyles[`--tw-gradient-${property}`] = colorValue;
+      }
+    }
+  }
+
+  /**
+   * Background 값 변환 헬퍼 메서드
+   */
+  private static convertBackgroundValue(property: string, value: string): string {
+    // 특정 property에 따른 값 변환 로직
+    return value;
   }
 
   /**
@@ -988,5 +1229,14 @@ export class BackgroundsParser {
     };
     
     return directionMap[direction] || null;
+  }
+
+  /**
+   * Backgrounds 관련 클래스인지 확인합니다.
+   * @param className 클래스명
+   * @returns Backgrounds 관련 클래스 여부
+   */
+  static isBackgroundsClass(className: string): boolean {
+    return this.isValidClass(className);
   }
 } 

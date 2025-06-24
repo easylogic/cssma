@@ -5,7 +5,7 @@
  * 레이아웃 관련 속성을 처리합니다.
  */
 
-import { ParsedClass, LayoutStyles } from '../../types';
+import { ParsedClass, LayoutStyles, ParsedStyles, ParserContext } from '../../types';
 
 export class LayoutParser {
   /**
@@ -213,130 +213,129 @@ export class LayoutParser {
   }
 
   /**
-   * 레이아웃 스타일을 적용합니다.
-   * @param parsedClass 파싱된 클래스
-   * @param styles 스타일 객체
+   * Context Pattern을 사용한 새로운 스타일 적용 메서드
    */
-  static applyLayoutStyle(parsedClass: ParsedClass, styles: { layout?: LayoutStyles }): void {
+  static applyLayoutStyle(
+    parsedClass: ParsedClass, 
+    styles: Partial<ParsedStyles>, 
+    context: ParserContext
+  ): void {
     const { property, value } = parsedClass;
+    const isArbitrary = Boolean(parsedClass.isArbitrary);
     
     if (!styles.layout) {
       styles.layout = {};
     }
+
+    // Context에서 preset 추출
+    const preset = context.preset;
     
-    // 디스플레이 속성
-    if (['flex', 'grid', 'block', 'inline', 'hidden'].includes(property)) {
-      styles.layout.display = property === 'hidden' ? 'none' : property as any;
-      return;
-    }
-    
-    // 애스펙트 비율 속성
-    if (property === 'aspect') {
-      styles.layout.aspectRatio = this.convertAspectRatio(value);
-      return;
-    }
-    
-    // 컬럼 속성
-    if (property === 'columns') {
-      styles.layout.columns = this.convertColumnsValue(value);
-      return;
-    }
-    
-    // 브레이크 애프터 속성
-    if (property === 'break-after') {
-      if (['auto', 'avoid', 'all', 'avoid-page', 'page', 'left', 'right', 'column'].includes(value)) {
-        styles.layout.breakAfter = value as any;
-      }
-      return;
-    }
-    
-    // 브레이크 비포어 속성
-    if (property === 'break-before') {
-      if (['auto', 'avoid', 'all', 'avoid-page', 'page', 'left', 'right', 'column'].includes(value)) {
-        styles.layout.breakBefore = value as any;
-      }
-      return;
-    }
-    
-    // 브레이크 인사이드 속성
-    if (property === 'break-inside') {
-      if (['auto', 'avoid', 'avoid-page', 'avoid-column', 'all', 'page', 'left', 'right', 'column'].includes(value)) {
-        styles.layout.breakInside = value as any;
-      }
-      return;
-    }
-    
-    // 박스 데코레이션 브레이크 속성
-    if (property === 'box-decoration') {
-      if (['clone', 'slice'].includes(value)) {
-        styles.layout.boxDecorationBreak = value as 'clone' | 'slice';
-      }
-      return;
-    }
-    
-    // 박스 사이징 속성
-    if (property === 'box') {
-      if (value === 'border') {
-        styles.layout.boxSizing = 'border-box';
-      } else if (value === 'content') {
-        styles.layout.boxSizing = 'content-box';
-      }
-      return;
-    }
-    
-    // 플로트 속성
-    if (property === 'float') {
-      if (['left', 'right', 'none', 'start', 'end'].includes(value)) {
-        if (value === 'start') {
-          styles.layout.float = 'inline-start';
-        } else if (value === 'end') {
-          styles.layout.float = 'inline-end';
-        } else {
-          styles.layout.float = value as 'left' | 'right' | 'none';
+    // 속성별 처리 - Context의 유틸리티 사용
+    switch (property) {
+      // 디스플레이 속성
+      case 'flex':
+      case 'grid':
+      case 'block':
+      case 'inline':
+      case 'hidden':
+        styles.layout.display = property === 'hidden' ? 'none' : property as any;
+        break;
+        
+      // 애스펙트 비율 속성
+      case 'aspect':
+        styles.layout.aspectRatio = this.convertAspectRatio(value, isArbitrary, context);
+        break;
+        
+      // 컬럼 속성
+      case 'columns':
+        styles.layout.columns = this.convertColumnsValue(value, isArbitrary, context);
+        break;
+        
+      // 브레이크 애프터 속성
+      case 'break-after':
+        if (['auto', 'avoid', 'all', 'avoid-page', 'page', 'left', 'right', 'column'].includes(value)) {
+          styles.layout.breakAfter = value as any;
         }
-      }
-      return;
-    }
-    
-    // 클리어 속성
-    if (property === 'clear') {
-      if (['left', 'right', 'both', 'none', 'start', 'end'].includes(value)) {
-        if (value === 'start') {
-          styles.layout.clear = 'inline-start';
-        } else if (value === 'end') {
-          styles.layout.clear = 'inline-end';
-        } else {
-          styles.layout.clear = value as 'left' | 'right' | 'both' | 'none';
+        break;
+        
+      // 브레이크 비포어 속성
+      case 'break-before':
+        if (['auto', 'avoid', 'all', 'avoid-page', 'page', 'left', 'right', 'column'].includes(value)) {
+          styles.layout.breakBefore = value as any;
         }
-      }
-      return;
-    }
-    
-    // 아이솔레이션 속성
-    if (property === 'isolate') {
-      styles.layout.isolation = 'isolate';
-      return;
-    }
-    
-    if (property === 'isolation') {
-      if (['auto', 'isolate'].includes(value)) {
-        styles.layout.isolation = value as 'auto' | 'isolate';
-      }
-      return;
-    }
-    
-    // object-fit 속성
-    if (property === 'object') {
-      if (['contain', 'cover', 'fill', 'none', 'scale-down'].includes(value)) {
-        styles.layout.objectFit = value as 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
-      }
-      return;
-    }
-    
-    // object-position 속성
-    if (property === 'object-position') {
-      styles.layout.objectPosition = value;
-      return;
+        break;
+        
+      // 브레이크 인사이드 속성
+      case 'break-inside':
+        if (['auto', 'avoid', 'avoid-page', 'avoid-column', 'all', 'page', 'left', 'right', 'column'].includes(value)) {
+          styles.layout.breakInside = value as any;
+        }
+        break;
+        
+      // 박스 데코레이션 브레이크 속성
+      case 'box-decoration':
+        if (['clone', 'slice'].includes(value)) {
+          styles.layout.boxDecorationBreak = value as 'clone' | 'slice';
+        }
+        break;
+        
+      // 박스 사이징 속성
+      case 'box':
+        if (value === 'border') {
+          styles.layout.boxSizing = 'border-box';
+        } else if (value === 'content') {
+          styles.layout.boxSizing = 'content-box';
+        }
+        break;
+        
+      // 플로트 속성
+      case 'float':
+        if (['left', 'right', 'none', 'start', 'end'].includes(value)) {
+          if (value === 'start') {
+            styles.layout.float = 'inline-start';
+          } else if (value === 'end') {
+            styles.layout.float = 'inline-end';
+          } else {
+            styles.layout.float = value as 'left' | 'right' | 'none';
+          }
+        }
+        break;
+        
+      // 클리어 속성
+      case 'clear':
+        if (['left', 'right', 'both', 'none', 'start', 'end'].includes(value)) {
+          if (value === 'start') {
+            styles.layout.clear = 'inline-start';
+          } else if (value === 'end') {
+            styles.layout.clear = 'inline-end';
+          } else {
+            styles.layout.clear = value as 'left' | 'right' | 'both' | 'none';
+          }
+        }
+        break;
+        
+      // 아이솔레이션 속성
+      case 'isolate':
+        styles.layout.isolation = 'isolate';
+        break;
+        
+      case 'isolation':
+        if (['auto', 'isolate'].includes(value)) {
+          styles.layout.isolation = value as 'auto' | 'isolate';
+        }
+        break;
+        
+      // object-fit 속성
+      case 'object':
+        if (['contain', 'cover', 'fill', 'none', 'scale-down'].includes(value)) {
+          styles.layout.objectFit = value as 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
+        }
+        break;
+        
+      // object-position 속성
+      case 'object-position':
+        styles.layout.objectPosition = value;
+        break;
     }
   }
 
@@ -378,16 +377,19 @@ export class LayoutParser {
   }
 
   /**
-   * 애스펙트 비율 값을 변환합니다.
-   * @param value 애스펙트 비율 값
-   * @returns 변환된 애스펙트 비율 값
+   * 애스펙트 비율 값을 변환합니다. (Context Pattern 버전)
    */
-  private static convertAspectRatio(value: string): string {
+  private static convertAspectRatio(value: string, isArbitrary: boolean, context: ParserContext): string {
+    if (isArbitrary) {
+      return value; // 임의값은 그대로 반환
+    }
+    
     if (value === 'auto') return 'auto';
     if (value === 'square') return '1/1';
     if (value === 'video') return '16/9';
+    
+    // CSS 변수 처리
     if (value.startsWith('(') && value.endsWith(')')) {
-      // CSS 변수 처리
       return `var${value}`;
     }
     
@@ -396,11 +398,13 @@ export class LayoutParser {
   }
 
   /**
-   * 컬럼 값을 변환합니다.
-   * @param value 컬럼 값
-   * @returns 변환된 컬럼 값
+   * 컬럼 값을 변환합니다. (Context Pattern 버전)
    */
-  private static convertColumnsValue(value: string): string | number {
+  private static convertColumnsValue(value: string, isArbitrary: boolean, context: ParserContext): string | number {
+    if (isArbitrary) {
+      return value;
+    }
+    
     if (value === 'auto') return 'auto';
     
     if (/^\d+$/.test(value)) {
@@ -413,12 +417,11 @@ export class LayoutParser {
       return `var(--container-${value})`;
     }
     
+    // CSS 변수 처리 (columns-(--my-columns))
     if (value.startsWith('(') && value.endsWith(')')) {
-      // CSS 변수 처리 (columns-(--my-columns))
       return `var${value}`;
     }
     
-    // 기타 값 처리
     return value;
   }
 } 

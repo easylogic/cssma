@@ -1,4 +1,4 @@
-import { ParsedStyle } from '../../types';
+import { ParsedStyle, ParsedClass, ParsedStyles, ParserContext } from '../../types';
 
 const BORDER_CLASSES = {
   'border-solid': 'solid',
@@ -617,14 +617,210 @@ export class BordersParser {
     return value.startsWith('[') && value.endsWith(']');
   }
 
-  static applyBordersStyle(parsedClass: { property: string; value: any; baseClassName: string }, styles: Record<string, any>, preset: any): void {
-    const parsed = this.parse(parsedClass.baseClassName);
-    if (!parsed) return;
-
+  /**
+   * Context Pattern을 사용한 새로운 스타일 적용 메서드
+   */
+  static applyBordersStyle(
+    parsedClass: ParsedClass, 
+    styles: Partial<ParsedStyles>, 
+    context: ParserContext
+  ): void {
     if (!styles.borders) {
       styles.borders = {};
     }
 
-    styles.borders[parsed.property] = parsed.value;
+    const { property, value, isArbitrary } = parsedClass;
+    
+    // Context에서 preset 추출
+    const preset = context.preset;
+
+    // 속성별 처리
+    switch (property) {
+      // Border width (border, border-t, border-x, etc.)
+      case 'border':
+      case 'border-t':
+      case 'border-r':
+      case 'border-b':
+      case 'border-l':
+      case 'border-x':
+      case 'border-y':
+        this.handleBorderWidth(property, value, isArbitrary, styles.borders);
+        break;
+        
+      // Border radius (rounded, rounded-t, rounded-tl, etc.)
+      case 'rounded':
+      case 'rounded-t':
+      case 'rounded-r':
+      case 'rounded-b':
+      case 'rounded-l':
+      case 'rounded-tl':
+      case 'rounded-tr':
+      case 'rounded-bl':
+      case 'rounded-br':
+        this.handleBorderRadius(property, value, isArbitrary, styles.borders);
+        break;
+        
+      // Ring utilities
+      case 'ring':
+      case 'ringWidth':
+      case 'ringOffset':
+      case 'ringOffsetWidth':
+        this.handleRingUtility(property, value, isArbitrary, styles.borders);
+        break;
+        
+      // Outline utilities
+      case 'outline':
+      case 'outlineWidth':
+      case 'outlineStyle':
+        this.handleOutlineUtility(property, value, isArbitrary, styles.borders);
+        break;
+        
+      // Divide utilities
+      case 'divideX':
+      case 'divideY':
+      case 'divideXWidth':
+      case 'divideYWidth':
+        this.handleDivideUtility(property, value, isArbitrary, styles.borders);
+        break;
+        
+      // Border style
+      case 'borderStyle':
+        this.handleBorderStyle(value, styles.borders);
+        break;
+        
+      default:
+        // Generic property 처리
+        styles.borders[property] = isArbitrary ? value : this.convertBorderValue(property, value);
+        break;
+    }
+  }
+
+  /**
+   * Borders 관련 클래스인지 확인합니다.
+   * @param className 클래스명
+   * @returns Borders 관련 클래스 여부
+   */
+  static isBordersClass(className: string): boolean {
+    return this.isValidClass(className);
+  }
+
+  /**
+   * Border width 처리 헬퍼 메서드
+   */
+  private static handleBorderWidth(property: string, value: string, isArbitrary: boolean, borderStyles: any): void {
+    if (isArbitrary) {
+      borderStyles[this.convertPropertyName(property)] = value;
+    } else {
+      const numericValue = parseFloat(value);
+      if (!isNaN(numericValue)) {
+        borderStyles[this.convertPropertyName(property)] = `${numericValue}px`;
+      } else {
+        borderStyles[this.convertPropertyName(property)] = value;
+      }
+    }
+  }
+
+  /**
+   * Border radius 처리 헬퍼 메서드
+   */
+  private static handleBorderRadius(property: string, value: string, isArbitrary: boolean, borderStyles: any): void {
+    if (isArbitrary) {
+      borderStyles[this.convertPropertyName(property)] = value;
+    } else {
+      const presetValue = this.BORDER_RADIUS_VALUES[`${property}-${value}`] || 
+                         this.BORDER_RADIUS_VALUES[property] ||
+                         (value === 'default' ? '4px' : `${value}px`);
+      borderStyles[this.convertPropertyName(property)] = presetValue;
+    }
+  }
+
+  /**
+   * Ring utility 처리 헬퍼 메서드
+   */
+  private static handleRingUtility(property: string, value: string, isArbitrary: boolean, borderStyles: any): void {
+    if (isArbitrary) {
+      borderStyles[property] = value;
+    } else {
+      const presetValue = this.RING_WIDTH_VALUES[`ring-${value}`] || 
+                         this.RING_OFFSET_VALUES[`ring-offset-${value}`] ||
+                         value;
+      borderStyles[property] = presetValue;
+    }
+  }
+
+  /**
+   * Outline utility 처리 헬퍼 메서드
+   */
+  private static handleOutlineUtility(property: string, value: string, isArbitrary: boolean, borderStyles: any): void {
+    if (isArbitrary) {
+      borderStyles[property] = value;
+    } else {
+      const numericValue = parseFloat(value);
+      if (!isNaN(numericValue)) {
+        borderStyles[property] = `${numericValue}px`;
+      } else {
+        borderStyles[property] = value;
+      }
+    }
+  }
+
+  /**
+   * Divide utility 처리 헬퍼 메서드
+   */
+  private static handleDivideUtility(property: string, value: string, isArbitrary: boolean, borderStyles: any): void {
+    if (isArbitrary) {
+      borderStyles[property] = value;
+    } else {
+      const numericValue = parseFloat(value);
+      if (!isNaN(numericValue)) {
+        borderStyles[property] = `${numericValue}px`;
+      } else {
+        borderStyles[property] = value;
+      }
+    }
+  }
+
+  /**
+   * Border style 처리 헬퍼 메서드
+   */
+  private static handleBorderStyle(value: string, borderStyles: any): void {
+    borderStyles.borderStyle = value;
+  }
+
+  /**
+   * Property 이름 변환 헬퍼 메서드
+   */
+  private static convertPropertyName(property: string): string {
+    const mappings = {
+      'border': 'borderWidth',
+      'border-t': 'borderTopWidth',
+      'border-r': 'borderRightWidth',
+      'border-b': 'borderBottomWidth',
+      'border-l': 'borderLeftWidth',
+      'border-x': 'borderLeftWidth', // X는 left와 right 모두 적용되어야 하지만 일단 left로
+      'border-y': 'borderTopWidth', // Y는 top과 bottom 모두 적용되어야 하지만 일단 top으로
+      'rounded': 'borderRadius',
+      'rounded-t': 'borderTopLeftRadius',
+      'rounded-r': 'borderTopRightRadius',
+      'rounded-b': 'borderBottomRightRadius',
+      'rounded-l': 'borderBottomLeftRadius',
+      'rounded-tl': 'borderTopLeftRadius',
+      'rounded-tr': 'borderTopRightRadius',
+      'rounded-bl': 'borderBottomLeftRadius',
+      'rounded-br': 'borderBottomRightRadius'
+    };
+    
+    return mappings[property] || property;
+  }
+
+  /**
+   * Border 값 변환 헬퍼 메서드
+   */
+  private static convertBorderValue(property: string, value: string): string {
+    const numericValue = parseFloat(value);
+    if (!isNaN(numericValue)) {
+      return `${numericValue}px`;
+    }
+    return value;
   }
 } 

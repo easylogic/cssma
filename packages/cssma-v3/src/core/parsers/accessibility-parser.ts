@@ -4,7 +4,7 @@
  * sr-only, forced-color-adjust 등의 접근성 관련 속성을 처리합니다.
  */
 
-import { ParsedClass, ParsedStyle, ParsedStyles, DesignPreset } from '../../types';
+import { ParsedClass, ParsedStyle, ParsedStyles, DesignPreset, ParserContext } from '../../types';
 
 export class AccessibilityParser {
   /**
@@ -51,15 +51,12 @@ export class AccessibilityParser {
   }
 
   /**
-   * 접근성 스타일을 적용합니다.
-   * @param parsedClass 파싱된 클래스
-   * @param styles 스타일 객체
-   * @param preset 디자인 프리셋
+   * Context Pattern을 사용한 접근성 스타일 적용 메서드
    */
   static applyAccessibilityStyle(
     parsedClass: ParsedClass,
     styles: Partial<ParsedStyles>,
-    preset: DesignPreset
+    context: ParserContext
   ): void {
     const { property, value } = parsedClass;
 
@@ -67,8 +64,11 @@ export class AccessibilityParser {
       styles.accessibility = {};
     }
 
+    // Context에서 preset 추출 (현재는 사용하지 않지만 일관성을 위해)
+    const preset = context.preset;
+
     if (property === 'screenReader') {
-      if (value === 'true') {
+      if (value === 'true' || value === 'sr-only') {
         // sr-only 스타일 적용
         styles.accessibility.position = 'absolute';
         styles.accessibility.width = '1px';
@@ -79,7 +79,7 @@ export class AccessibilityParser {
         styles.accessibility.clip = 'rect(0, 0, 0, 0)';
         styles.accessibility.whiteSpace = 'nowrap';
         styles.accessibility.borderWidth = '0';
-      } else if (value === 'false') {
+      } else if (value === 'false' || value === 'not-sr-only') {
         // not-sr-only 스타일 적용
         styles.accessibility.position = 'static';
         styles.accessibility.width = 'auto';
@@ -102,12 +102,7 @@ export class AccessibilityParser {
    * @returns 접근성 관련 클래스 여부
    */
   static isAccessibilityClass(className: string): boolean {
-    return (
-      className === 'sr-only' ||
-      className === 'not-sr-only' ||
-      className === 'forced-color-adjust-auto' ||
-      className === 'forced-color-adjust-none'
-    );
+    return this.isValidClass(className);
   }
 
   /**

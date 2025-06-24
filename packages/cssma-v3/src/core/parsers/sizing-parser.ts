@@ -410,34 +410,11 @@ export class SizingParser {
   }
 
   /**
-   * Legacy 호환성을 위한 기존 메서드 (테스트 호환)
-   */
-  static applySizingStyleLegacy(
-    parsedClass: ParsedClass,
-    styles: Partial<ParsedStyles>,
-    preset: DesignPreset
-  ): void {
-    // Legacy 호출을 Context Pattern으로 변환
-    const context: ParserContext = {
-      config: {} as any, // 임시 - 필요시 추가
-      preset,
-      utils: {
-        color: null as any,
-        unit: null as any,
-        spacing: null as any,
-        typography: null as any
-      }
-    };
-    
-    this.applySizingStyle(parsedClass, styles, context);
-  }
-
-  /**
    * 크기 값을 변환합니다. (Context Pattern 버전)
    */
   private static convertSizeValue(value: string, isArbitrary: boolean, context: ParserContext, property?: string): string {
     if (isArbitrary) {
-      return value; // 임의값은 그대로 반환
+      return value; // 임의 값은 그대로 반환
     }
     
     // 분수 처리 (예: 1/2)

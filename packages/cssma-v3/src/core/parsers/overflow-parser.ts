@@ -1,4 +1,4 @@
-import { ParsedStyle } from '../../types';
+import { ParsedStyle, ParsedClass, ParsedStyles, ParserContext } from '../../types';
 
 export class OverflowParser {
   private static readonly OVERFLOW_VALUES: Record<string, string> = {
@@ -385,22 +385,151 @@ export class OverflowParser {
     return null;
   }
 
-  static applyOverflowStyle(parsedClass: { property: string; value: any; baseClassName: string }, styles: Record<string, any>, preset: any): void {
-    const parsed = this.parse(parsedClass.baseClassName);
-    if (!parsed) return;
-
+  /**
+   * Context Pattern을 사용한 새로운 스타일 적용 메서드
+   */
+  static applyOverflowStyle(
+    parsedClass: ParsedClass, 
+    styles: Partial<ParsedStyles>, 
+    context: ParserContext
+  ): void {
+    const { property, value, isArbitrary } = parsedClass;
+    
     if (!styles.overflow) {
       styles.overflow = {};
     }
 
-    // Apply main property
-    styles.overflow[parsed.property] = parsed.value;
+    // Context에서 preset 추출
+    const preset = context.preset;
 
-    // Apply additional properties if they exist
-    if ('additionalProperties' in parsed && parsed.additionalProperties) {
-      for (const additional of parsed.additionalProperties) {
-        styles.overflow[additional.property] = additional.value;
-      }
+    // 속성별 처리
+    switch (property) {
+      // 기본 overflow
+      case 'overflow':
+        styles.overflow.overflow = this.convertOverflowValue(value, isArbitrary);
+        break;
+        
+      // overflow-x
+      case 'overflow-x':
+        styles.overflow.overflowX = this.convertOverflowValue(value, isArbitrary);
+        break;
+        
+      // overflow-y
+      case 'overflow-y':
+        styles.overflow.overflowY = this.convertOverflowValue(value, isArbitrary);
+        break;
+        
+      // overscroll-behavior
+      case 'overscroll':
+        styles.overflow.overscrollBehavior = this.convertOverscrollValue(value, isArbitrary);
+        break;
+        
+      // overscroll-behavior-x
+      case 'overscroll-x':
+        styles.overflow.overscrollBehaviorX = this.convertOverscrollValue(value, isArbitrary);
+        break;
+        
+      // overscroll-behavior-y
+      case 'overscroll-y':
+        styles.overflow.overscrollBehaviorY = this.convertOverscrollValue(value, isArbitrary);
+        break;
+        
+      // 특수 유틸리티들 처리
+      case 'truncate':
+        styles.overflow.overflow = 'hidden';
+        styles.overflow.textOverflow = 'ellipsis';
+        styles.overflow.whiteSpace = 'nowrap';
+        break;
+        
+      case 'text-ellipsis':
+        styles.overflow.textOverflow = 'ellipsis';
+        break;
+        
+      case 'text-clip':
+        styles.overflow.textOverflow = 'clip';
+        break;
+        
+      // visibility
+      case 'visible':
+        styles.overflow.visibility = 'visible';
+        break;
+      case 'invisible':
+        styles.overflow.visibility = 'hidden';
+        break;
+      case 'collapse':
+        styles.overflow.visibility = 'collapse';
+        break;
+        
+      // whitespace
+      case 'whitespace-normal':
+        styles.overflow.whiteSpace = 'normal';
+        break;
+      case 'whitespace-nowrap':
+        styles.overflow.whiteSpace = 'nowrap';
+        break;
+      case 'whitespace-pre':
+        styles.overflow.whiteSpace = 'pre';
+        break;
+      case 'whitespace-pre-line':
+        styles.overflow.whiteSpace = 'pre-line';
+        break;
+      case 'whitespace-pre-wrap':
+        styles.overflow.whiteSpace = 'pre-wrap';
+        break;
+      case 'whitespace-break-spaces':
+        styles.overflow.whiteSpace = 'break-spaces';
+        break;
+        
+      // word break / overflow wrap
+      case 'break-normal':
+        styles.overflow.overflowWrap = 'normal';
+        break;
+      case 'break-words':
+        styles.overflow.overflowWrap = 'break-word';
+        break;
+      case 'break-all':
+        styles.overflow.wordBreak = 'break-all';
+        break;
+      case 'break-keep':
+        styles.overflow.wordBreak = 'keep-all';
+        break;
+        
+      // hyphens
+      case 'hyphens-none':
+        styles.overflow.hyphens = 'none';
+        break;
+      case 'hyphens-manual':
+        styles.overflow.hyphens = 'manual';
+        break;
+      case 'hyphens-auto':
+        styles.overflow.hyphens = 'auto';
+        break;
     }
+  }
+
+  /**
+   * overflow 값을 변환합니다
+   */
+  private static convertOverflowValue(value: string, isArbitrary: boolean): string {
+    if (isArbitrary) {
+      return value;
+    }
+    
+    // 표준 overflow 값들
+    const validValues = ['auto', 'hidden', 'visible', 'scroll', 'clip'];
+    return validValues.includes(value) ? value : 'auto';
+  }
+
+  /**
+   * overscroll 값을 변환합니다
+   */
+  private static convertOverscrollValue(value: string, isArbitrary: boolean): string {
+    if (isArbitrary) {
+      return value;
+    }
+    
+    // 표준 overscroll-behavior 값들
+    const validValues = ['auto', 'contain', 'none'];
+    return validValues.includes(value) ? value : 'auto';
   }
 } 

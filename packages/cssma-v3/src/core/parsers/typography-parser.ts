@@ -507,29 +507,6 @@ export class TypographyParser {
   }
 
   /**
-   * Legacy 호환성을 위한 기존 메서드 (테스트 호환)
-   */
-  static applyTypographyStyleLegacy(
-    parsedClass: ParsedClass, 
-    styles: Partial<ParsedStyles>, 
-    preset: DesignPreset
-  ): void {
-    // Legacy 호출을 Context Pattern으로 변환
-    const context: ParserContext = {
-      config: {} as any, // 임시 - 필요시 추가
-      preset,
-      utils: {
-        color: null as any,
-        unit: null as any,
-        spacing: null as any,
-        typography: null as any
-      }
-    };
-    
-    this.applyTypographyStyle(parsedClass, styles, context);
-  }
-
-  /**
    * 폰트 크기를 적용합니다.
    */
   private static applyFontSize(value: string, isArbitrary: boolean, typography: EnhancedTypographyStyles, context: ParserContext): void {
@@ -1108,5 +1085,15 @@ export class TypographyParser {
 
     // 기본값
     return '#000000';
+  }
+
+  // ===== Utility 메서드 =====
+  
+  private static determineCategory(
+    property: string,
+    isColor: boolean
+  ): 'typography' | 'colors' {
+    if (isColor) return 'colors';
+    return 'typography';
   }
 } 

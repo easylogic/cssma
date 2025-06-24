@@ -4,7 +4,7 @@
  * scale, rotate, translate, skew 등의 변형 관련 속성을 처리합니다.
  */
 
-import { ParsedClass, TransformStyles, DesignPreset } from '../../types';
+import { ParsedClass, TransformStyles, DesignPreset, ParsedStyles, ParserContext } from '../../types';
 
 export class TransformParser {
   /**
@@ -153,21 +153,21 @@ export class TransformParser {
   }
 
   /**
-   * 변형 스타일을 적용합니다.
-   * @param parsedClass 파싱된 클래스
-   * @param styles 스타일 객체
-   * @param preset 디자인 프리셋
+   * Context Pattern을 사용한 새로운 스타일 적용 메서드
    */
   static applyTransformStyle(
     parsedClass: ParsedClass, 
-    styles: { transform?: TransformStyles }, 
-    preset: DesignPreset
+    styles: Partial<ParsedStyles>, 
+    context: ParserContext
   ): void {
     if (!styles.transform) {
       styles.transform = {};
     }
 
     const { property, value, isArbitrary } = parsedClass;
+    
+    // Context에서 preset 추출
+    const preset = context.preset;
     
     if (property === 'scale') {
       // 스케일 (모든 축)
@@ -212,6 +212,15 @@ export class TransformParser {
       // 변형 원점
       this.handleTransformOrigin(value, isArbitrary || false, styles.transform);
     }
+  }
+
+  /**
+   * Transform 관련 클래스인지 확인합니다.
+   * @param className 클래스명
+   * @returns Transform 관련 클래스 여부
+   */
+  static isTransformClass(className: string): boolean {
+    return this.isValidClass(className);
   }
 
   /**

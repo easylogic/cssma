@@ -4,7 +4,7 @@
  * mix-blend-mode, background-blend-mode 등의 블렌드 관련 속성을 처리합니다.
  */
 
-import { ParsedStyle, BlendModesStyles } from '../../types';
+import { ParsedStyle, BlendModesStyles, ParsedClass, ParsedStyles, ParserContext } from '../../types';
 
 const BLEND_MODES_CLASSES = {
   'mix-blend-normal': 'normal',
@@ -149,24 +149,108 @@ export class BlendModesParser {
   }
 
   /**
-   * 블렌드 모드 스타일을 적용합니다.
+   * Context Pattern을 사용한 새로운 스타일 적용 메서드
    */
   static applyBlendModesStyle(
-    parsedClass: { property: string; value: string; baseClassName: string },
-    styles: { blendModes?: BlendModesStyles },
-    preset: any
+    parsedClass: ParsedClass,
+    styles: Partial<ParsedStyles>,
+    context: ParserContext
   ): void {
-    const parsed = this.parse(parsedClass.baseClassName);
-    if (!parsed) return;
-
     if (!styles.blendModes) {
       styles.blendModes = {};
     }
 
-    if (parsed.property === 'mixBlendMode') {
-      styles.blendModes.mixBlendMode = parsed.value;
-    } else if (parsed.property === 'backgroundBlendMode') {
-      styles.blendModes.backgroundBlendMode = parsed.value;
+    const { property, value, isArbitrary } = parsedClass;
+    
+    // Context에서 preset 추출
+    const preset = context.preset;
+
+    // 속성별 처리
+    switch (property) {
+      // Mix blend mode
+      case 'mix-blend-mode':
+        this.handleMixBlendMode(value, isArbitrary, styles.blendModes);
+        break;
+        
+      // Background blend mode
+      case 'bg-blend-mode':
+        this.handleBackgroundBlendMode(value, isArbitrary, styles.blendModes);
+        break;
+        
+      default:
+        // Generic property 처리
+        styles.blendModes[property] = isArbitrary ? value : this.convertBlendModeValue(property, value);
+        break;
     }
+  }
+
+  /**
+   * Mix blend mode 처리 헬퍼 메서드
+   */
+  private static handleMixBlendMode(value: string, isArbitrary: boolean, blendModeStyles: any): void {
+    if (isArbitrary) {
+      blendModeStyles.mixBlendMode = value;
+    } else {
+      // 표준 blend mode 값 매핑
+      const blendModeMap: Record<string, string> = {
+        'normal': 'normal',
+        'multiply': 'multiply',
+        'screen': 'screen',
+        'overlay': 'overlay',
+        'darken': 'darken',
+        'lighten': 'lighten',
+        'color-dodge': 'color-dodge',
+        'color-burn': 'color-burn',
+        'hard-light': 'hard-light',
+        'soft-light': 'soft-light',
+        'difference': 'difference',
+        'exclusion': 'exclusion',
+        'hue': 'hue',
+        'saturation': 'saturation',
+        'color': 'color',
+        'luminosity': 'luminosity'
+      };
+      
+      blendModeStyles.mixBlendMode = blendModeMap[value] || value;
+    }
+  }
+
+  /**
+   * Background blend mode 처리 헬퍼 메서드
+   */
+  private static handleBackgroundBlendMode(value: string, isArbitrary: boolean, blendModeStyles: any): void {
+    if (isArbitrary) {
+      blendModeStyles.backgroundBlendMode = value;
+    } else {
+      // 표준 blend mode 값 매핑
+      const blendModeMap: Record<string, string> = {
+        'normal': 'normal',
+        'multiply': 'multiply',
+        'screen': 'screen',
+        'overlay': 'overlay',
+        'darken': 'darken',
+        'lighten': 'lighten',
+        'color-dodge': 'color-dodge',
+        'color-burn': 'color-burn',
+        'hard-light': 'hard-light',
+        'soft-light': 'soft-light',
+        'difference': 'difference',
+        'exclusion': 'exclusion',
+        'hue': 'hue',
+        'saturation': 'saturation',
+        'color': 'color',
+        'luminosity': 'luminosity'
+      };
+      
+      blendModeStyles.backgroundBlendMode = blendModeMap[value] || value;
+    }
+  }
+
+  /**
+   * Blend mode 값 변환 헬퍼 메서드
+   */
+  private static convertBlendModeValue(property: string, value: string): string {
+    // 특정 property에 따른 값 변환 로직
+    return value;
   }
 } 

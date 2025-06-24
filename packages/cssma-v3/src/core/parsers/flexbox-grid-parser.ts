@@ -3,7 +3,7 @@
  * Tailwind CSS의 모든 Flexbox 및 Grid 유틸리티 클래스를 파싱합니다.
  */
 
-import { ParsedStyle, ParsedClass, FlexboxGridStyles, DesignPreset } from '../../types';
+import { ParsedStyle, ParsedClass, FlexboxGridStyles, DesignPreset, ParserContext } from '../../types';
 
 export class FlexboxGridParser {
   /**
@@ -84,123 +84,145 @@ export class FlexboxGridParser {
   }
 
   /**
-   * FlexboxGrid 스타일을 적용합니다.
-   * @param parsedClass 파싱된 클래스
-   * @param styles 스타일 객체
-   * @param preset 디자인 프리셋 (옵션)
+   * Context Pattern을 사용한 새로운 스타일 적용 메서드
    */
   static applyFlexboxGridStyle(
     parsedClass: ParsedClass, 
     styles: { flexboxGrid?: FlexboxGridStyles }, 
-    preset?: DesignPreset
+    context: ParserContext
   ): void {
-    const result = this.parse(parsedClass.baseClassName);
-    if (!result) return;
-
+    const { property, value } = parsedClass;
+    const isArbitrary = Boolean(parsedClass.isArbitrary);
+    
     if (!styles.flexboxGrid) {
       styles.flexboxGrid = {};
     }
 
-
-
-    // 개별 파서를 사용하여 속성 값 설정
-    if (result.property) {
-      switch (result.property) {
-        case 'display':
-          styles.flexboxGrid.display = result.value;
-          break;
-        case 'flexDirection':
-          styles.flexboxGrid.flexDirection = result.value;
-          break;
-        case 'flexWrap':
-          styles.flexboxGrid.flexWrap = result.value;
-          break;
-        case 'flex':
-          styles.flexboxGrid.flex = result.value;
-          break;
-        case 'flexGrow':
-          styles.flexboxGrid.flexGrow = result.value;
-          break;
-        case 'flexShrink':
-          styles.flexboxGrid.flexShrink = result.value;
-          break;
-        case 'flexBasis':
-          styles.flexboxGrid.flexBasis = result.value;
-          break;
-        case 'order':
-          styles.flexboxGrid.order = result.value;
-          break;
-        case 'gridTemplateColumns':
-          styles.flexboxGrid.gridTemplateColumns = result.value;
-          break;
-        case 'gridColumn':
-          styles.flexboxGrid.gridColumn = result.value;
-          break;
-        case 'gridTemplateRows':
-          styles.flexboxGrid.gridTemplateRows = result.value;
-          break;
-        case 'gridRow':
-          styles.flexboxGrid.gridRow = result.value;
-          break;
-        case 'gridColumnStart':
-          styles.flexboxGrid.gridColumnStart = result.value;
-          break;
-        case 'gridColumnEnd':
-          styles.flexboxGrid.gridColumnEnd = result.value;
-          break;
-        case 'gridRowStart':
-          styles.flexboxGrid.gridRowStart = result.value;
-          break;
-        case 'gridRowEnd':
-          styles.flexboxGrid.gridRowEnd = result.value;
-          break;
-        case 'gridAutoFlow':
-          styles.flexboxGrid.gridAutoFlow = result.value;
-          break;
-        case 'gap':
-          styles.flexboxGrid.gap = result.value;
-          break;
-        case 'columnGap':
-          styles.flexboxGrid.columnGap = result.value;
-          break;
-        case 'rowGap':
-          styles.flexboxGrid.rowGap = result.value;
-          break;
-        case 'justifyContent':
-          styles.flexboxGrid.justifyContent = result.value;
-          break;
-        case 'justifyItems':
-          styles.flexboxGrid.justifyItems = result.value;
-          break;
-        case 'justifySelf':
-          styles.flexboxGrid.justifySelf = result.value;
-          break;
-        case 'alignContent':
-          styles.flexboxGrid.alignContent = result.value;
-          break;
-        case 'alignItems':
-          styles.flexboxGrid.alignItems = result.value;
-          break;
-        case 'alignSelf':
-          styles.flexboxGrid.alignSelf = result.value;
-          break;
-        case 'placeContent':
-          styles.flexboxGrid.placeContent = result.value;
-          break;
-        case 'placeItems':
-          styles.flexboxGrid.placeItems = result.value;
-          break;
-        case 'placeSelf':
-          styles.flexboxGrid.placeSelf = result.value;
-          break;
-        case 'gridAutoColumns':
-          styles.flexboxGrid.gridAutoColumns = result.value;
-          break;
-        case 'gridAutoRows':
-          styles.flexboxGrid.gridAutoRows = result.value;
-          break;
-      }
+    // Context에서 preset 추출
+    const preset = context.preset;
+    
+    // 속성별 처리 - Context의 UnitUtils 사용
+    switch (property) {
+      case 'display':
+        styles.flexboxGrid.display = value;
+        break;
+      case 'flexDirection':
+        styles.flexboxGrid.flexDirection = value;
+        break;
+      case 'flexWrap':
+        styles.flexboxGrid.flexWrap = value;
+        break;
+      case 'flex':
+        styles.flexboxGrid.flex = value;
+        break;
+      case 'flexGrow':
+        styles.flexboxGrid.flexGrow = value;
+        break;
+      case 'flexShrink':
+        styles.flexboxGrid.flexShrink = value;
+        break;
+      case 'flexBasis':
+        styles.flexboxGrid.flexBasis = this.convertSpacingValue(value, isArbitrary, context);
+        break;
+      case 'order':
+        styles.flexboxGrid.order = value;
+        break;
+      case 'gridTemplateColumns':
+        styles.flexboxGrid.gridTemplateColumns = value;
+        break;
+      case 'gridColumn':
+        styles.flexboxGrid.gridColumn = value;
+        break;
+      case 'gridTemplateRows':
+        styles.flexboxGrid.gridTemplateRows = value;
+        break;
+      case 'gridRow':
+        styles.flexboxGrid.gridRow = value;
+        break;
+      case 'gridColumnStart':
+        styles.flexboxGrid.gridColumnStart = value;
+        break;
+      case 'gridColumnEnd':
+        styles.flexboxGrid.gridColumnEnd = value;
+        break;
+      case 'gridRowStart':
+        styles.flexboxGrid.gridRowStart = value;
+        break;
+      case 'gridRowEnd':
+        styles.flexboxGrid.gridRowEnd = value;
+        break;
+      case 'gridAutoFlow':
+        styles.flexboxGrid.gridAutoFlow = value;
+        break;
+      case 'gap':
+        styles.flexboxGrid.gap = this.convertSpacingValue(value, isArbitrary, context);
+        break;
+      case 'columnGap':
+        styles.flexboxGrid.columnGap = this.convertSpacingValue(value, isArbitrary, context);
+        break;
+      case 'rowGap':
+        styles.flexboxGrid.rowGap = this.convertSpacingValue(value, isArbitrary, context);
+        break;
+      case 'justifyContent':
+        styles.flexboxGrid.justifyContent = value;
+        break;
+      case 'justifyItems':
+        styles.flexboxGrid.justifyItems = value;
+        break;
+      case 'justifySelf':
+        styles.flexboxGrid.justifySelf = value;
+        break;
+      case 'alignContent':
+        styles.flexboxGrid.alignContent = value;
+        break;
+      case 'alignItems':
+        styles.flexboxGrid.alignItems = value;
+        break;
+      case 'alignSelf':
+        styles.flexboxGrid.alignSelf = value;
+        break;
+      case 'placeContent':
+        styles.flexboxGrid.placeContent = value;
+        break;
+      case 'placeItems':
+        styles.flexboxGrid.placeItems = value;
+        break;
+      case 'placeSelf':
+        styles.flexboxGrid.placeSelf = value;
+        break;
+      case 'gridAutoColumns':
+        styles.flexboxGrid.gridAutoColumns = value;
+        break;
+      case 'gridAutoRows':
+        styles.flexboxGrid.gridAutoRows = value;
+        break;
     }
+  }
+
+  /**
+   * 간격 값을 변환합니다. (Context Pattern 버전)
+   */
+  private static convertSpacingValue(value: string, isArbitrary: boolean, context: ParserContext): string {
+    if (isArbitrary) {
+      return value; // 임의값은 그대로 반환
+    }
+    
+    // 특수 값들
+    switch (value) {
+      case '0': return '0px';
+      case 'px': return '1px';
+      case 'auto': return 'auto';
+      case 'full': return '100%';
+    }
+    
+    // 숫자 값을 rem으로 변환 (Tailwind 표준: 4 = 1rem)
+    if (/^\d+(\.\d+)?$/.test(value)) {
+      const numValue = parseFloat(value);
+      if (numValue === 0) return '0px';
+      return `${numValue / 4}rem`;
+    }
+    
+    return value;
   }
 
   // Display 관련
@@ -655,8 +677,6 @@ export class FlexboxGridParser {
     return null;
   }
 
-  // Gap - 제거됨: SpacingParser에서 처리하고 FlexboxGrid로 연동됨
-
   // Justify Content (Safe Alignment 포함)
   static parseJustifyContent(className: string): ParsedStyle | null {
     const justifyContentMap: Record<string, string> = {
@@ -1060,5 +1080,14 @@ export class FlexboxGridParser {
     }
 
     return null;
+  }
+
+  /**
+   * Flexbox/Grid 관련 클래스인지 확인합니다.
+   * @param className 클래스명
+   * @returns Flexbox/Grid 관련 클래스 여부
+   */
+  static isFlexboxGridClass(className: string): boolean {
+    return this.isValidClass(className);
   }
 } 

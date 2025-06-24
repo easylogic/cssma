@@ -5,7 +5,7 @@
  * CSS filter, backdrop-filter, box-shadow, text-shadow, opacity 등의 시각적 효과를 포함합니다.
  */
 
-import { ParsedClass, EffectsStyles, DesignPreset } from '../../types';
+import { ParsedClass, EffectsStyles, DesignPreset, ParsedStyles, ParserContext } from '../../types';
 
 export class EffectsParser {
   /**
@@ -273,21 +273,21 @@ export class EffectsParser {
   }
 
   /**
-   * 효과 스타일을 적용합니다.
-   * @param parsedClass 파싱된 클래스
-   * @param styles 스타일 객체
-   * @param preset 디자인 프리셋
+   * Context Pattern을 사용한 새로운 스타일 적용 메서드
    */
   static applyEffectStyle(
     parsedClass: ParsedClass, 
-    styles: { effects?: EffectsStyles }, 
-    preset: DesignPreset
+    styles: Partial<ParsedStyles>, 
+    context: ParserContext
   ): void {
     if (!styles.effects) {
       styles.effects = {};
     }
 
     const { property, value, isArbitrary } = parsedClass;
+    
+    // Context에서 preset 추출
+    const preset = context.preset;
 
     if (property === 'shadow') {
       // 그림자
@@ -323,6 +323,15 @@ export class EffectsParser {
     else if (property.startsWith('backdrop-')) {
       this.handleBackdropFilter(property, value, isArbitrary || false, styles.effects, preset);
     }
+  }
+
+  /**
+   * Effects 관련 클래스인지 확인합니다.
+   * @param className 클래스명
+   * @returns Effects 관련 클래스 여부
+   */
+  static isEffectClass(className: string): boolean {
+    return this.isValidClass(className);
   }
 
   /**
