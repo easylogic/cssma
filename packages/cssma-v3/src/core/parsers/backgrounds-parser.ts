@@ -120,8 +120,20 @@ export class BackgroundsParser {
       return null;
     }
 
+    // Gradient directions
+    if (className.startsWith('bg-gradient-')) {
+      const direction = this.GRADIENT_DIRECTIONS[className];
+      if (direction) {
+        return {
+          property: 'bg-gradient',
+          value: direction,
+          isArbitrary: false
+        };
+      }
+    }
+
     // Background color patterns
-    if (className.startsWith('bg-') && !className.includes('-to-') && !className.includes('-via-')) {
+    if (className.startsWith('bg-') && !className.includes('-to-') && !className.includes('-via-') && !className.includes('gradient')) {
       // bg-red-500, bg-[#ff0000], bg-transparent, bg-current
       if (className.startsWith('bg-[') && className.endsWith(']')) {
         const value = className.slice(4, -1); // Remove 'bg-[' and ']'
