@@ -65,7 +65,9 @@ export class ModifierParser {
     const parts: string[] = [];
     let currentPart = '';
     let bracketDepth = 0;
+    let parenthesesDepth = 0;
     let inBrackets = false;
+    let inParentheses = false;
     
     for (let i = 0; i < className.length; i++) {
       const char = className[i];
@@ -80,7 +82,17 @@ export class ModifierParser {
           inBrackets = false;
         }
         currentPart += char;
-      } else if (char === ':' && !inBrackets) {
+      } else if (char === '(') {
+        parenthesesDepth++;
+        inParentheses = true;
+        currentPart += char;
+      } else if (char === ')') {
+        parenthesesDepth--;
+        if (parenthesesDepth === 0) {
+          inParentheses = false;
+        }
+        currentPart += char;
+      } else if (char === ':' && !inBrackets && !inParentheses) {
         // Only split on colons that are not inside brackets
         parts.push(currentPart);
         currentPart = '';
@@ -147,7 +159,6 @@ export class ModifierParser {
 
     // Process each modifier part
     for (const modifierPart of modifierParts) {
-      console.log('modifierPart', modifierPart);
       this.processModifierPart(modifierPart, modifiers);
     }
 
@@ -219,7 +230,6 @@ export class ModifierParser {
    * Try arbitrary variant parser (new in v4.1)
    */
   private static tryArbitraryVariantParser(modifier: string, modifiers: ParsedModifiers): boolean {
-    console.log('tryArbitraryVariantParser', modifier);
     if (ArbitraryVariantParser.isValidArbitraryVariant(modifier)) {
       const result = ArbitraryVariantParser.parseArbitraryVariant(modifier);
       if (result) {
@@ -250,7 +260,6 @@ export class ModifierParser {
    * Try arbitrary attribute modifier parser
    */
   private static tryArbitraryAttributeParser(modifier: string, modifiers: ParsedModifiers): boolean {
-    console.log('tryArbitraryAttributeParser', modifier);
     if (ArbitraryAttributeSelectorModifierParser.isValidArbitraryAttributeSelector(modifier)) {
       const result = ArbitraryAttributeSelectorModifierParser.parseArbitraryAttributeModifier(modifier);
       if (result) {
@@ -420,7 +429,6 @@ export class ModifierParser {
     if (SpecialModifierParser.isSpecialModifier(modifier)) {
       const result = SpecialModifierParser.parseSpecialModifier(modifier);
       if (result) {
-        console.log(`DEBUG: Special modifier "${modifier}" parsed as:`, result);
         
         // Handle different types of special modifiers
         if (result.type === 'noscript') {
@@ -429,14 +437,11 @@ export class ModifierParser {
           modifiers.starting = true;
         } else if (result.type === 'media-feature' && result.condition) {
           // All pointer variants and media feature variants
-          console.log(`DEBUG: Processing media-feature "${modifier}" with condition "${result.condition}"`);
           if (result.condition.startsWith(':')) {
             // Pseudo-classes like :user-valid, :user-invalid
-            console.log(`DEBUG: Setting pseudo-class state: ${result.condition}`);
             modifiers.state = result.condition;
           } else {
             // Media queries like pointer: fine, inverted-colors: inverted
-            console.log(`DEBUG: Setting media query state: @media (${result.condition})`);
             modifiers.state = `@media (${result.condition})`;
           }
         } else if (result.type === 'supports' && result.condition) {

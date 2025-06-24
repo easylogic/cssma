@@ -397,8 +397,6 @@ describe('Effects Parser (Filters Integration)', () => {
       const result = parser.parse('backdrop-blur-md backdrop-brightness-125 backdrop-contrast-110 backdrop-grayscale backdrop-saturate-150');
       
       const backdropFilterValue = result.effects?.backdropFilter || '';
-
-      console.log(backdropFilterValue);
       
       // Each backdrop filter type should be present
       expect(backdropFilterValue).toContain('blur(');

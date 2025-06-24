@@ -232,7 +232,6 @@ describe('Tailwind CSS Modifier System Tests', () => {
     it('should parse arbitrary attribute selectors', () => {
       const className = '[my-property="value"]';
       const result = parser.parseClassName(className);
-      console.log(result);
 
       expect(result).toBeDefined();
       // 이것은 arbitrary property이므로 baseClassName으로 처리되어야 함

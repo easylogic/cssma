@@ -48,6 +48,9 @@ interface ParserInfo {
 
 // 파서 맵핑 (우선순위 순서로 정렬)
 const PARSER_MAP: ParserInfo[] = [
+  // v4.1 배경 시스템 최우선 처리 (다른 파서들이 가로채지 못하도록)
+  { parser: BackgroundsParser, category: "backgrounds" },
+  
   // 특수 케이스들 우선 처리
   { parser: AccessibilityParser, category: "accessibility" },
   { parser: TypographyParser, category: "typography" },
@@ -70,7 +73,6 @@ const PARSER_MAP: ParserInfo[] = [
 
   // 시각적 효과 (각자 색상 포함, Filters 통합)
   { parser: BordersParser, category: "borders" },
-  { parser: BackgroundsParser, category: "backgrounds" },
   { parser: EffectsParser, category: "effects" },
   { parser: BlendModesParser, category: "blend-modes" },
   { parser: MaskParser, category: "mask" },

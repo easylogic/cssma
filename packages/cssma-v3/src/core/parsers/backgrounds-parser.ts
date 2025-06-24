@@ -3,11 +3,11 @@ import { ParsedStyle } from '../../types';
 const BACKGROUND_CLASSES = {
   'bg-none': 'none',
   'bg-image-none': 'none',
-  'bg-image-transparent': 'transparent',
-  'bg-image-current': 'currentColor',
-  'bg-image-inherit': 'inherit',
-  'bg-image-initial': 'initial',
-  'bg-image-unset': 'unset',
+  'bg-transparent': 'transparent',
+  'bg-current': 'currentColor',
+  'bg-inherit': 'inherit',
+  'bg-initial': 'initial',
+  'bg-unset': 'unset',
   'bg-auto': 'auto',
   'bg-cover': 'cover',
   'bg-contain': 'contain',
@@ -84,6 +84,7 @@ export class BackgroundsParser {
     'bg-origin-content': 'content-box'
   };
 
+  // 기존 그라데이션 방향 (v3.x 호환성)
   private static readonly GRADIENT_DIRECTIONS: Record<string, string> = {
     'bg-gradient-to-t': 'to top',
     'bg-gradient-to-tr': 'to top right',
@@ -93,6 +94,18 @@ export class BackgroundsParser {
     'bg-gradient-to-bl': 'to bottom left',
     'bg-gradient-to-l': 'to left',
     'bg-gradient-to-tl': 'to top left'
+  };
+
+  // v4.1 새로운 선형 그라데이션 방향
+  private static readonly LINEAR_GRADIENT_DIRECTIONS: Record<string, string> = {
+    'bg-linear-to-t': 'to top',
+    'bg-linear-to-tr': 'to top right',
+    'bg-linear-to-r': 'to right',
+    'bg-linear-to-br': 'to bottom right',
+    'bg-linear-to-b': 'to bottom',
+    'bg-linear-to-bl': 'to bottom left',
+    'bg-linear-to-l': 'to left',
+    'bg-linear-to-tl': 'to top left'
   };
 
   private static readonly BACKGROUND_IMAGE_VALUES: Record<string, string> = {
@@ -105,16 +118,35 @@ export class BackgroundsParser {
     'bg-image-unset': 'unset'
   };
 
+  // v4.1 배경 투명도 값들
+  private static readonly BACKGROUND_OPACITY_VALUES: Record<string, string> = {
+    'bg-opacity-0': '0',
+    'bg-opacity-5': '0.05',
+    'bg-opacity-10': '0.1',
+    'bg-opacity-20': '0.2',
+    'bg-opacity-25': '0.25',
+    'bg-opacity-30': '0.3',
+    'bg-opacity-40': '0.4',
+    'bg-opacity-50': '0.5',
+    'bg-opacity-60': '0.6',
+    'bg-opacity-70': '0.7',
+    'bg-opacity-75': '0.75',
+    'bg-opacity-80': '0.8',
+    'bg-opacity-90': '0.9',
+    'bg-opacity-95': '0.95',
+    'bg-opacity-100': '1'
+  };
+
   /**
    * 표준 인터페이스: 클래스가 background 관련인지 확인합니다.
    */
   static isValidClass(className: string): boolean {
     // Background patterns (색상 포함)
     const patterns = [
-      /^bg-/, // bg-red-500, bg-transparent, bg-gradient-to-r, bg-fixed, etc.
-      /^from-/, // from-red-500 (gradient start)
-      /^via-/, // via-blue-500 (gradient middle)
-      /^to-/, // to-green-500 (gradient end)
+      /^(-?)bg-/, // bg-red-500, bg-transparent, bg-gradient-to-r, bg-linear-to-r, bg-radial, bg-conic-45, bg-fixed, etc.
+      /^from-/, // from-red-500, from-10% (gradient start)
+      /^via-/, // via-blue-500, via-30% (gradient middle)
+      /^to-/, // to-green-500, to-90% (gradient end)
     ];
 
     return patterns.some(pattern => pattern.test(className));
@@ -132,7 +164,146 @@ export class BackgroundsParser {
       return null;
     }
 
-    // Gradient directions
+    // v4.1 커스텀 속성 배경 이미지 (bg-(image:--my-image))
+    if (className.startsWith('bg-(') && className.endsWith(')')) {
+      const value = className.slice(4, -1); // Remove 'bg-(' and ')'
+
+      if (value.startsWith('image:')) {
+        return {
+          property: 'bg-image-custom-property',
+          value: value,
+          isArbitrary: false
+        };
+      }
+
+      return {
+        property: 'bg-custom-property',
+        value,
+        isArbitrary: false
+      };
+    }
+
+    // v4.1 새로운 선형 그라데이션 방향
+    if (className.startsWith('bg-linear-to-')) {
+      const direction = this.LINEAR_GRADIENT_DIRECTIONS[className];
+      if (direction) {
+        return {
+          property: 'bg-linear',
+          value: direction,
+          isArbitrary: false
+        };
+      }
+    }
+
+    // v4.1 각도 기반 선형 그라데이션 (bg-linear-45, -bg-linear-90)
+    const linearAngleMatch = className.match(/^(-?)bg-linear-(\d+)(?:\/(.+))?$/);
+    if (linearAngleMatch) {
+      const [, negative, angle, interpolation] = linearAngleMatch;
+      const actualAngle = negative ? `-${angle}deg` : `${angle}deg`;
+      const interpolationMode = interpolation || 'oklab';
+      return {
+        property: 'bg-linear-angle',
+        value: `${actualAngle} in ${interpolationMode}`,
+        isArbitrary: false
+      };
+    }
+
+    // v4.1 보간 모드가 있는 선형 그라데이션 (bg-linear-to-r/srgb)
+    const linearInterpolationMatch = className.match(/^bg-linear-to-([a-z]+)\/(.+)$/);
+    if (linearInterpolationMatch) {
+      const [, direction, interpolation] = linearInterpolationMatch;
+      const directionValue = this.getDirectionValue(direction);
+      if (directionValue) {
+        return {
+          property: 'bg-linear-interpolation',
+          value: `to ${directionValue} in ${interpolation}`,
+          isArbitrary: false
+        };
+      }
+    }
+
+    // v4.1 방사형 그라데이션 (bg-radial, bg-radial/hsl)
+    const radialMatch = className.match(/^bg-radial(?:\/(.+))?$/);
+    if (radialMatch) {
+      const [, interpolation] = radialMatch;
+      const interpolationMode = interpolation || 'oklab';
+      return {
+        property: 'bg-radial',
+        value: `in ${interpolationMode}`,
+        isArbitrary: false
+      };
+    }
+
+    // v4.1 원뿔형 그라데이션 (bg-conic-45, -bg-conic-90)
+    const conicAngleMatch = className.match(/^(-?)bg-conic-?(\d+)?(?:\/(.+))?$/);
+    if (conicAngleMatch) {
+      const [, negative, angle, interpolation] = conicAngleMatch;
+      const actualAngle = angle ? (negative ? `-${angle}deg` : `${angle}deg`) : '0deg';
+      const interpolationMode = interpolation || 'oklab';
+      return {
+        property: 'bg-conic',
+        value: `from ${actualAngle} in ${interpolationMode}`,
+        isArbitrary: false
+      };
+    }
+
+    // v4.1 임의 그라데이션 (bg-linear-[...], bg-radial-[...], bg-conic-[...])
+    if (className.startsWith('bg-linear-[') && className.endsWith(']')) {
+      const value = className.slice(11, -1); // Remove 'bg-linear-[' and ']'
+      return {
+        property: 'bg-linear-arbitrary',
+        value,
+        isArbitrary: true
+      };
+    }
+
+    if (className.startsWith('bg-radial-[') && className.endsWith(']')) {
+      const value = className.slice(11, -1); // Remove 'bg-radial-[' and ']'
+      return {
+        property: 'bg-radial-arbitrary',
+        value,
+        isArbitrary: true
+      };
+    }
+
+    if (className.startsWith('bg-conic-[') && className.endsWith(']')) {
+      const value = className.slice(10, -1); // Remove 'bg-conic-[' and ']'
+      return {
+        property: 'bg-conic-arbitrary',
+        value,
+        isArbitrary: true
+      };
+    }
+
+    // v4.1 커스텀 속성 그라데이션 (bg-linear-(<custom-property>))
+    if (className.startsWith('bg-linear-(') && className.endsWith(')')) {
+      const value = className.slice(11, -1); // Remove 'bg-linear-(' and ')'
+      return {
+        property: 'bg-linear-custom',
+        value,
+        isArbitrary: false
+      };
+    }
+
+    if (className.startsWith('bg-radial-(') && className.endsWith(')')) {
+      const value = className.slice(11, -1); // Remove 'bg-radial-(' and ')'
+      return {
+        property: 'bg-radial-custom',
+        value,
+        isArbitrary: false
+      };
+    }
+
+    if (className.startsWith('bg-conic-(') && className.endsWith(')')) {
+      const value = className.slice(10, -1); // Remove 'bg-conic-(' and ')'
+      return {
+        property: 'bg-conic-custom',
+        value,
+        isArbitrary: false
+      };
+    }
+
+    // 기존 그라데이션 방향 (v3.x 호환성)
     if (className.startsWith('bg-gradient-')) {
       const direction = this.GRADIENT_DIRECTIONS[className];
       if (direction) {
@@ -144,8 +315,29 @@ export class BackgroundsParser {
       }
     }
 
+    // v4.1 배경 투명도 (bg-opacity-50)
+    if (className.startsWith('bg-opacity-')) {
+      if (className.startsWith('bg-opacity-[') && className.endsWith(']')) {
+        const value = className.slice(12, -1); // Remove 'bg-opacity-[' and ']'
+        return {
+          property: 'bg-opacity',
+          value,
+          isArbitrary: true
+        };
+      }
+      
+      const opacity = this.BACKGROUND_OPACITY_VALUES[className];
+      if (opacity) {
+        return {
+          property: 'bg-opacity',
+          value: opacity,
+          isArbitrary: false
+        };
+      }
+    }
+
     // Background color patterns
-    if (className.startsWith('bg-') && !className.includes('-to-') && !className.includes('-via-') && !className.includes('gradient')) {
+    if (className.startsWith('bg-') && !className.includes('-to-') && !className.includes('-via-') && !className.includes('gradient') && !className.includes('linear') && !className.includes('radial') && !className.includes('conic')) {
       // bg-red-500, bg-[#ff0000], bg-transparent, bg-current
       if (className.startsWith('bg-[') && className.endsWith(']')) {
         const value = className.slice(4, -1); // Remove 'bg-[' and ']'
@@ -164,7 +356,7 @@ export class BackgroundsParser {
       };
     }
 
-    // Gradient start color (from-)
+    // v4.1 향상된 그라데이션 정지점 (from-10%, via-30%, to-90%)
     if (className.startsWith('from-')) {
       if (className.startsWith('from-[') && className.endsWith(']')) {
         const value = className.slice(6, -1); // Remove 'from-[' and ']'
@@ -172,6 +364,26 @@ export class BackgroundsParser {
           property: 'from',
           value,
           isArbitrary: true
+        };
+      }
+
+      // 커스텀 속성 (from-(<custom-property>))
+      if (className.startsWith('from-(') && className.endsWith(')')) {
+        const value = className.slice(6, -1); // Remove 'from-(' and ')'
+        return {
+          property: 'from-custom',
+          value,
+          isArbitrary: false
+        };
+      }
+
+      // 퍼센트 위치 (from-10%)
+      if (className.match(/^from-\d+%$/)) {
+        const value = className.substring(5); // Remove 'from-'
+        return {
+          property: 'from-position',
+          value,
+          isArbitrary: false
         };
       }
       
@@ -193,6 +405,26 @@ export class BackgroundsParser {
           isArbitrary: true
         };
       }
+
+      // 커스텀 속성 (via-(<custom-property>))
+      if (className.startsWith('via-(') && className.endsWith(')')) {
+        const value = className.slice(5, -1); // Remove 'via-(' and ')'
+        return {
+          property: 'via-custom',
+          value,
+          isArbitrary: false
+        };
+      }
+
+      // 퍼센트 위치 (via-30%)
+      if (className.match(/^via-\d+%$/)) {
+        const value = className.substring(4); // Remove 'via-'
+        return {
+          property: 'via-position',
+          value,
+          isArbitrary: false
+        };
+      }
       
       const value = className.substring(4); // Remove 'via-'
       return {
@@ -210,6 +442,26 @@ export class BackgroundsParser {
           property: 'to',
           value,
           isArbitrary: true
+        };
+      }
+
+      // 커스텀 속성 (to-(<custom-property>))
+      if (className.startsWith('to-(') && className.endsWith(')')) {
+        const value = className.slice(4, -1); // Remove 'to-(' and ')'
+        return {
+          property: 'to-custom',
+          value,
+          isArbitrary: false
+        };
+      }
+
+      // 퍼센트 위치 (to-90%)
+      if (className.match(/^to-\d+%$/)) {
+        const value = className.substring(3); // Remove 'to-'
+        return {
+          property: 'to-position',
+          value,
+          isArbitrary: false
         };
       }
       
@@ -233,6 +485,25 @@ export class BackgroundsParser {
   }
 
   static parse(className: string): ParsedStyle | null {
+    // v4.1 배경 투명도
+    if (this.BACKGROUND_OPACITY_VALUES[className]) {
+      return {
+        property: '--tw-bg-opacity',
+        value: this.BACKGROUND_OPACITY_VALUES[className],
+        variant: 'preset'
+      };
+    }
+
+    // v4.1 임의 배경 투명도
+    if (className.startsWith('bg-opacity-[') && className.endsWith(']')) {
+      const value = className.slice(12, -1);
+      return {
+        property: '--tw-bg-opacity',
+        value: value,
+        variant: 'arbitrary'
+      };
+    }
+
     // Background size
     if (this.BACKGROUND_SIZE_VALUES[className]) {
       return {
@@ -295,19 +566,171 @@ export class BackgroundsParser {
       };
     }
 
-    // Background gradients
+    // v4.1 새로운 선형 그라데이션
+    if (className.startsWith('bg-linear-')) {
+      return this.parseLinearGradient(className);
+    }
+
+    // v4.1 방사형 그라데이션
+    if (className.startsWith('bg-radial')) {
+      return this.parseRadialGradient(className);
+    }
+
+    // v4.1 원뿔형 그라데이션
+    if (className.startsWith('bg-conic')) {
+      return this.parseConicGradient(className);
+    }
+
+    // 기존 그라데이션 (v3.x 호환성)
     if (className.startsWith('bg-gradient-')) {
       return this.parseGradient(className);
     }
 
-    // Gradient color stops
+    // 그라데이션 색상 정지점 (향상된 v4.1 기능 포함)
     if (className.startsWith('from-') || className.startsWith('via-') || className.startsWith('to-')) {
       return this.parseGradientColorStop(className);
     }
 
     // Background colors (check this last among bg- patterns)
-    if (className.startsWith('bg-') && !className.includes('gradient') && !className.includes('clip') && !className.includes('origin')) {
+    if (className.startsWith('bg-') && !className.includes('gradient') && !className.includes('linear') && !className.includes('radial') && !className.includes('conic') && !className.includes('clip') && !className.includes('origin') && !className.includes('opacity')) {
       return this.parseBackgroundColor(className);
+    }
+
+    return null;
+  }
+
+  // v4.1 새로운 선형 그라데이션 파싱
+  private static parseLinearGradient(className: string): ParsedStyle | null {
+    // 방향 기반 (bg-linear-to-r)
+    if (this.LINEAR_GRADIENT_DIRECTIONS[className]) {
+      return {
+        property: 'backgroundImage',
+        value: `linear-gradient(${this.LINEAR_GRADIENT_DIRECTIONS[className]}, var(--tw-gradient-stops))`,
+        variant: 'preset'
+      };
+    }
+
+    // 각도 기반 (bg-linear-45, -bg-linear-90)
+    const angleMatch = className.match(/^(-?)bg-linear-(\d+)(?:\/(.+))?$/);
+    if (angleMatch) {
+      const [, negative, angle, interpolation] = angleMatch;
+      const actualAngle = negative ? `-${angle}deg` : `${angle}deg`;
+      const interpolationMode = interpolation || 'oklab';
+      return {
+        property: 'backgroundImage',
+        value: `linear-gradient(${actualAngle} in ${interpolationMode}, var(--tw-gradient-stops))`,
+        variant: 'preset'
+      };
+    }
+
+    // 보간 모드만 있는 경우 (bg-linear-to-r/srgb)
+    const interpolationMatch = className.match(/^bg-linear-to-([a-z]+)\/(.+)$/);
+    if (interpolationMatch) {
+      const [, direction, interpolation] = interpolationMatch;
+      const directionKey = `bg-linear-to-${direction}`;
+      const directionValue = this.LINEAR_GRADIENT_DIRECTIONS[directionKey];
+      if (directionValue) {
+        return {
+          property: 'backgroundImage',
+          value: `linear-gradient(${directionValue} in ${interpolation}, var(--tw-gradient-stops))`,
+          variant: 'preset'
+        };
+      }
+    }
+
+    // 임의값 (bg-linear-[25deg,red_5%,yellow_60%,lime_90%,teal])
+    if (className.startsWith('bg-linear-[') && className.endsWith(']')) {
+      const value = className.slice(11, -1);
+      return {
+        property: 'backgroundImage',
+        value: `linear-gradient(var(--tw-gradient-stops, ${value}))`,
+        variant: 'arbitrary'
+      };
+    }
+
+    // 커스텀 속성 (bg-linear-(<custom-property>))
+    if (className.startsWith('bg-linear-(') && className.endsWith(')')) {
+      const value = className.slice(11, -1);
+      return {
+        property: 'backgroundImage',
+        value: `linear-gradient(var(--tw-gradient-stops, var(${value})))`,
+        variant: 'preset'
+      };
+    }
+
+    return null;
+  }
+
+  // v4.1 방사형 그라데이션 파싱
+  private static parseRadialGradient(className: string): ParsedStyle | null {
+    // 기본 방사형 (bg-radial, bg-radial/hsl)
+    const basicMatch = className.match(/^bg-radial(?:\/(.+))?$/);
+    if (basicMatch) {
+      const [, interpolation] = basicMatch;
+      const interpolationMode = interpolation || 'oklab';
+      return {
+        property: 'backgroundImage',
+        value: `radial-gradient(in ${interpolationMode}, var(--tw-gradient-stops))`,
+        variant: 'preset'
+      };
+    }
+
+    // 임의값 (bg-radial-[at_50%_75%])
+    if (className.startsWith('bg-radial-[') && className.endsWith(']')) {
+      const value = className.slice(11, -1);
+      return {
+        property: 'backgroundImage',
+        value: `radial-gradient(var(--tw-gradient-stops, ${value}))`,
+        variant: 'arbitrary'
+      };
+    }
+
+    // 커스텀 속성 (bg-radial-(<custom-property>))
+    if (className.startsWith('bg-radial-(') && className.endsWith(')')) {
+      const value = className.slice(11, -1);
+      return {
+        property: 'backgroundImage',
+        value: `radial-gradient(var(--tw-gradient-stops, var(${value})))`,
+        variant: 'preset'
+      };
+    }
+
+    return null;
+  }
+
+  // v4.1 원뿔형 그라데이션 파싱
+  private static parseConicGradient(className: string): ParsedStyle | null {
+    // 각도 기반 (bg-conic-45, -bg-conic-90)
+    const angleMatch = className.match(/^(-?)bg-conic-?(\d+)?(?:\/(.+))?$/);
+    if (angleMatch) {
+      const [, negative, angle, interpolation] = angleMatch;
+      const actualAngle = angle ? (negative ? `-${angle}deg` : `${angle}deg`) : '0deg';
+      const interpolationMode = interpolation || 'oklab';
+      return {
+        property: 'backgroundImage',
+        value: `conic-gradient(from ${actualAngle} in ${interpolationMode}, var(--tw-gradient-stops))`,
+        variant: 'preset'
+      };
+    }
+
+    // 임의값 (bg-conic-[from_45deg_at_center])
+    if (className.startsWith('bg-conic-[') && className.endsWith(']')) {
+      const value = className.slice(10, -1);
+      return {
+        property: 'backgroundImage',
+        value: `conic-gradient(${value})`,
+        variant: 'arbitrary'
+      };
+    }
+
+    // 커스텀 속성 (bg-conic-(<custom-property>))
+    if (className.startsWith('bg-conic-(') && className.endsWith(')')) {
+      const value = className.slice(10, -1);
+      return {
+        property: 'backgroundImage',
+        value: `var(${value})`,
+        variant: 'preset'
+      };
     }
 
     return null;
@@ -363,15 +786,16 @@ export class BackgroundsParser {
       };
     }
 
-    // Handle color palette with opacity
+    // v4.1 색상/투명도 조합 (bg-red-500/50)
     if (value.includes('/')) {
       const [colorPart, opacityPart] = value.split('/');
       const opacity = parseInt(opacityPart) / 100;
       
       if (this.isValidColor(colorPart)) {
+        const colorValue = this.getColorValue(colorPart);
         return {
           property: 'backgroundColor',
-          value: `${this.getColorValue(colorPart)}`,
+          value: `${colorValue}`,
           variant: 'preset'
         };
       }
@@ -405,6 +829,15 @@ export class BackgroundsParser {
     const prefix = className.split('-')[0];
     const value = className.substring(prefix.length + 1);
 
+    // v4.1 퍼센트 위치 (from-10%, via-30%, to-90%)
+    if (value.match(/^\d+%$/)) {
+      return {
+        property: `--tw-gradient-${prefix}-position`,
+        value: value,
+        variant: 'preset'
+      };
+    }
+
     // Handle arbitrary values
     if (value.startsWith('[') && value.endsWith(']')) {
       const color = value.slice(1, -1);
@@ -412,6 +845,16 @@ export class BackgroundsParser {
         property: `--tw-gradient-${prefix}`,
         value: color,
         variant: 'arbitrary'
+      };
+    }
+
+    // v4.1 커스텀 속성 (from-(<custom-property>))
+    if (value.startsWith('(') && value.endsWith(')')) {
+      const customProperty = value.slice(1, -1);
+      return {
+        property: `--tw-gradient-${prefix}`,
+        value: `var(${customProperty})`,
+        variant: 'preset'
       };
     }
 
@@ -446,16 +889,73 @@ export class BackgroundsParser {
   }
 
   static applyBackgroundsStyle(parsedClass: { property: string; value: any; baseClassName: string }, styles: Record<string, any>, preset: any): void {
-    console.log('parsedClass', parsedClass);
-
     const parsed = this.parse(parsedClass.baseClassName);
-    console.log('parsed', parsed);
     if (!parsed) return;
 
     if (!styles.backgrounds) {
       styles.backgrounds = {};
     }
 
-    styles.backgrounds[parsed.property] = parsed.value;
+    // v4.1 새로운 속성들 처리
+    switch (parsed.property) {
+      case 'bg-custom-property':
+        styles.backgrounds.backgroundImage = `var(${parsed.value})`;
+        break;
+      case 'bg-linear-angle':
+        styles.backgrounds.backgroundImage = `linear-gradient(${parsed.value}, var(--tw-gradient-stops))`;
+        break;
+      case 'bg-linear-interpolation':
+        styles.backgrounds.backgroundImage = `linear-gradient(${parsed.value}, var(--tw-gradient-stops))`;
+        break;
+      case 'bg-radial':
+        styles.backgrounds.backgroundImage = `radial-gradient(${parsed.value}, var(--tw-gradient-stops))`;
+        break;
+      case 'bg-conic':
+        styles.backgrounds.backgroundImage = `conic-gradient(${parsed.value}, var(--tw-gradient-stops))`;
+        break;
+      case 'bg-linear-arbitrary':
+        styles.backgrounds.backgroundImage = `linear-gradient(${parsed.value})`;
+        break;
+      case 'bg-radial-arbitrary':
+        styles.backgrounds.backgroundImage = `radial-gradient(${parsed.value})`;
+        break;
+      case 'bg-conic-arbitrary':
+        styles.backgrounds.backgroundImage = `conic-gradient(${parsed.value})`;
+        break;
+      case 'bg-linear-custom':
+        styles.backgrounds.backgroundImage = `var(${parsed.value})`;
+        break;
+      case 'bg-radial-custom':
+        styles.backgrounds.backgroundImage = `var(${parsed.value})`;
+        break;
+      case 'bg-conic-custom':
+        styles.backgrounds.backgroundImage = `var(${parsed.value})`;
+        break;
+      case 'bg-opacity':
+        styles.backgrounds.backgroundOpacity = parsed.value;
+        break;
+      default:
+        // 기존 속성들 처리
+        styles.backgrounds[parsed.property] = parsed.value;
+        break;
+    }
+  }
+
+  /**
+   * 방향 문자열을 CSS 값으로 변환하는 헬퍼 메서드
+   */
+  private static getDirectionValue(direction: string): string | null {
+    const directionMap: Record<string, string> = {
+      't': 'top',
+      'tr': 'top right', 
+      'r': 'right',
+      'br': 'bottom right',
+      'b': 'bottom',
+      'bl': 'bottom left',
+      'l': 'left',
+      'tl': 'top left'
+    };
+    
+    return directionMap[direction] || null;
   }
 } 
