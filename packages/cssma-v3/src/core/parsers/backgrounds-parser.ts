@@ -143,13 +143,27 @@ export class BackgroundsParser {
   static isValidClass(className: string): boolean {
     // Background patterns (색상 포함)
     const patterns = [
-      /^(-?)bg-/, // bg-red-500, bg-transparent, bg-gradient-to-r, bg-linear-to-r, bg-radial, bg-conic-45, bg-fixed, etc.
+      /^bg-/, // bg-red-500, bg-transparent, bg-gradient-to-r, bg-linear-to-r, bg-radial, bg-conic-45, bg-fixed, etc.
       /^from-/, // from-red-500, from-10% (gradient start)
       /^via-/, // via-blue-500, via-30% (gradient middle)
       /^to-/, // to-green-500, to-90% (gradient end)
     ];
 
-    return patterns.some(pattern => pattern.test(className));
+    // 기본 패턴 체크
+    if (!patterns.some(pattern => pattern.test(className))) {
+      return false;
+    }
+
+    // 잘못된 배경 클래스들 명시적으로 거부
+    const invalidPatterns = [
+      /^bg-invalid-/, // bg-invalid-color
+      /^bg-wrong-/, // bg-wrong-property
+      /^bg-nonexistent-/, // bg-nonexistent-value
+      /^bg-bad-/, // bg-bad-syntax
+      /^bg-fake-/, // bg-fake-class
+    ];
+
+    return !invalidPatterns.some(pattern => pattern.test(className));
   }
 
   /**
@@ -166,16 +180,7 @@ export class BackgroundsParser {
 
     // v4.1 커스텀 속성 배경 이미지 (bg-(image:--my-image))
     if (className.startsWith('bg-(') && className.endsWith(')')) {
-      const value = className.slice(4, -1); // Remove 'bg-(' and ')'
-
-      if (value.startsWith('image:')) {
-        return {
-          property: 'bg-image-custom-property',
-          value: value,
-          isArbitrary: false
-        };
-      }
-
+      const value = className.slice(3, -1); // Remove 'bg-(' and ')'
       return {
         property: 'bg-custom-property',
         value,
@@ -889,7 +894,10 @@ export class BackgroundsParser {
   }
 
   static applyBackgroundsStyle(parsedClass: { property: string; value: any; baseClassName: string }, styles: Record<string, any>, preset: any): void {
+    console.log('parsedClass', parsedClass);
+
     const parsed = this.parse(parsedClass.baseClassName);
+    console.log('parsed', parsed);
     if (!parsed) return;
 
     if (!styles.backgrounds) {

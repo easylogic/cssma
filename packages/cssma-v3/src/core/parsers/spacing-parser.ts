@@ -613,6 +613,7 @@ export class SpacingParser {
       const cssValue = this.valueToCSS(spacingValue.x);
       if (parsedClass.original.startsWith('gap')) {
         // gap-x인 경우 - gap이 padding보다 우선
+        // console.log(`🔧 Setting gap.column for ${parsedClass.original}:`, spacingValue.x, 'current gap:', styles.spacing.gap);
         if (!styles.spacing.gap || typeof styles.spacing.gap !== 'object') {
           // 기존 gap이 숫자인 경우 객체로 변환
           const existingGap = styles.spacing.gap;

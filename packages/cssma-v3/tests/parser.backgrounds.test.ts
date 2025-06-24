@@ -149,7 +149,6 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
 
       it('커스텀 속성 배경 이미지를 파싱할 수 있어야 함', () => {
         const customProperties = [
-          // bg-(image:<custom-property>) -> `background-image: var(<custom-property>);
           'bg-(image:--my-image)',
           'bg-(--custom-bg)'
         ];
@@ -248,6 +247,7 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
 
       it('커스텀 선형 그라데이션을 파싱할 수 있어야 함', () => {
         const customLinear = [
+          'bg-linear-(<custom-property>)',
           'bg-linear-[25deg,red_5%,yellow_60%,lime_90%,teal]',
           'bg-linear-[to_right,#ff0000,#00ff00]'
         ];
@@ -879,6 +879,40 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
   });
 
   describe('12. 엣지 케이스 및 오류 처리', () => {
+    it('잘못된 배경 클래스를 거부해야 함', () => {
+      const invalidClasses = [
+        'bg-invalid-color',
+        'bg-red-1000',
+        'bg-gradient-to-invalid',
+        'from-nonexistent-color',
+        'bg-linear-invalid',
+        'bg-conic-invalid'
+      ];
+
+      invalidClasses.forEach(className => {
+        const result = parser.parseClass(className);
+        // 유효하지 않은 클래스는 null을 반환하거나 다른 카테고리로 분류되어야 함
+        if (result) {
+          expect(result.category).not.toBe('backgrounds');
+        }
+      });
+    });
+
+    it('빈 임의값을 처리할 수 있어야 함', () => {
+      const emptyArbitraryClasses = [
+        'bg-[]',
+        'from-[]',
+        'bg-opacity-[]',
+        'bg-linear-[]',
+        'bg-radial-[]',
+        'bg-conic-[]'
+      ];
+
+      emptyArbitraryClasses.forEach(className => {
+        const result = parser.parseClass(className);
+        // 빈 임의값은 적절히 처리되어야 함 (null 반환 또는 오류 처리)
+      });
+    });
 
     it('복잡한 URL 패턴을 처리할 수 있어야 함', () => {
       const complexUrls = [

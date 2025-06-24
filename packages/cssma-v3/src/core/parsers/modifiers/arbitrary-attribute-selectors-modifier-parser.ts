@@ -82,6 +82,7 @@ export class ArbitraryAttributeSelectorModifierParser {
   }
 
   static canParse(input: string): boolean {
+    console.log('canParse', input);
     return input.startsWith('[') && input.endsWith(']') && input.length > 2;
   }
 

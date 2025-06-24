@@ -282,6 +282,7 @@ export class CSSParser {
 
     // 각 파서에게 baseClassName 인식을 요청 (우선순위 순서)
     for (const { parser, category } of PARSER_MAP) {
+      console.log('baseClassName', baseClassName, parser.isValidClass(baseClassName));
       if (parser.isValidClass && parser.isValidClass(baseClassName)) {
         // 해당 파서가 클래스를 인식했으므로 파싱 진행
         const parseResult = parser.parseValue
