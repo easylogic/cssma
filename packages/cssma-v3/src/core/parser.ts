@@ -225,7 +225,6 @@ export class CSSParser {
     // 각 토큰 처리
     for (const token of tokens) {
       const parsedClass = this.parseClassName(token);
-      console.dir(parsedClass);
       if (parsedClass) {
         this.applyParsedClassToStyles(parsedClass, result);
       }
@@ -274,11 +273,8 @@ export class CSSParser {
       processedClassName = className.slice(this.config.prefix.length);
     }
 
-    console.log('processedClassName', processedClassName);
-
     // Parse modifiers using Tailwind CSS v4.1 approach
     const modifierResult = ModifierParser.parseModifiers(processedClassName);
-    console.log('modifierResult', modifierResult);
     const modifiers = modifierResult.modifiers;
     const baseClassName = modifierResult.baseClassName;
 

@@ -265,6 +265,21 @@ describe('CSSParser - 배경(Backgrounds)', () => {
         expect(styles.backgrounds).toBeDefined();
         expect(styles.backgrounds?.backgroundOrigin).toBe('padding-box');
       });
+
+      it('배경 이미지 none 을 적용할 수 있어야 함', () => {
+        const styles = parser.parse('bg-none');
+
+        expect(styles.backgrounds).toBeDefined();
+        expect(styles.backgrounds?.backgroundImage).toBe('none');
+      });
+
+      it('배경 이미지 클래스를 파싱할 수 있어야 함', () => {
+        const styles = parser.parse('bg-[url(https://example.com/image.png)]');
+
+        expect(styles.backgrounds).toBeDefined();
+        expect(styles.backgrounds?.backgroundImage).toBe('url(https://example.com/image.png)');
+      });
+      
     });
   });
 });

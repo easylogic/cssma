@@ -1,6 +1,13 @@
 import { ParsedStyle } from '../../types';
 
 const BACKGROUND_CLASSES = {
+  'bg-none': 'none',
+  'bg-image-none': 'none',
+  'bg-image-transparent': 'transparent',
+  'bg-image-current': 'currentColor',
+  'bg-image-inherit': 'inherit',
+  'bg-image-initial': 'initial',
+  'bg-image-unset': 'unset',
   'bg-auto': 'auto',
   'bg-cover': 'cover',
   'bg-contain': 'contain',
@@ -30,11 +37,6 @@ const PREFIX_CLASSES = [
 ];
 
 export class BackgroundsParser {
-  private static readonly COLOR_PALETTE = [
-    'slate', 'gray', 'zinc', 'neutral', 'stone', 'red', 'orange', 'amber',
-    'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue',
-    'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose'
-  ];
 
   private static readonly BACKGROUND_SIZE_VALUES: Record<string, string> = {
     'bg-auto': 'auto',
@@ -91,6 +93,16 @@ export class BackgroundsParser {
     'bg-gradient-to-bl': 'to bottom left',
     'bg-gradient-to-l': 'to left',
     'bg-gradient-to-tl': 'to top left'
+  };
+
+  private static readonly BACKGROUND_IMAGE_VALUES: Record<string, string> = {
+    'bg-image-none': 'none',
+    'bg-none': 'none',
+    'bg-image-transparent': 'transparent',
+    'bg-image-current': 'currentColor',
+    'bg-image-inherit': 'inherit',
+    'bg-image-initial': 'initial',
+    'bg-image-unset': 'unset'
   };
 
   /**
@@ -275,6 +287,14 @@ export class BackgroundsParser {
       };
     }
 
+    if (this.BACKGROUND_IMAGE_VALUES[className]) {
+      return {
+        property: 'backgroundImage',
+        value: this.BACKGROUND_IMAGE_VALUES[className],
+        variant: 'preset'
+      };
+    }
+
     // Background gradients
     if (className.startsWith('bg-gradient-')) {
       return this.parseGradient(className);
@@ -426,7 +446,10 @@ export class BackgroundsParser {
   }
 
   static applyBackgroundsStyle(parsedClass: { property: string; value: any; baseClassName: string }, styles: Record<string, any>, preset: any): void {
+    console.log('parsedClass', parsedClass);
+
     const parsed = this.parse(parsedClass.baseClassName);
+    console.log('parsed', parsed);
     if (!parsed) return;
 
     if (!styles.backgrounds) {
