@@ -184,7 +184,10 @@ export class InteractivityParser {
     }
     
     // 개별 파서를 사용하여 속성 값 설정
-    const result = this.parse(parsedClass.baseClassName);
+    console.log(parsedClass.baseClassName);
+    const result = this.parse(parsedClass.baseClassName, context);
+
+    console.log(result);
     if (result) {
       switch (result.property) {
         case 'accentColor':
@@ -364,31 +367,19 @@ export class InteractivityParser {
   }
 
   // Caret Color
-  static parseCaretColor(className: string): ParsedStyle | null {
+  static parseCaretColor(className: string, context: ParserContext): ParsedStyle | null {
+    console.log({className});
     if (!className.startsWith('caret-')) return null;
 
     const value = className.slice(6);
-    
-    // Use same color map as accent color
-    const colorMap: Record<string, string> = {
-      'inherit': 'inherit',
-      'current': 'currentColor',
-      'transparent': 'transparent',
-      'black': '#000000',
-      'white': '#ffffff',
-      'slate-500': '#64748b',
-      'red-500': '#ef4444',
-      'blue-500': '#3b82f6',
-      'green-500': '#10b981',
-      'yellow-500': '#f59e0b',
-      'purple-500': '#8b5cf6',
-      'pink-500': '#ec4899'
-    };
+    const colorMap = context.preset.colors;
+
+    console.log({colorMap});
 
     if (value in colorMap) {
       return {
         property: 'caretColor',
-        value: colorMap[value],
+        value: colorMap[value] as unknown as string,
         variant: 'preset'
       };
     }
@@ -813,13 +804,13 @@ export class InteractivityParser {
   /**
    * 메인 파싱 메서드 - 모든 interactivity 관련 클래스를 파싱
    */
-  static parse(className: string): ParsedStyle | null {
+  static parse(className: string, context: ParserContext): ParsedStyle | null {
     // 각 파싱 메서드를 순서대로 시도
     return (
-      this.parseAccentColor(className) ||
+      this.parseAccentColor(className, context) ||
       this.parseAppearance(className) ||
       this.parseCursor(className) ||
-      this.parseCaretColor(className) ||
+      this.parseCaretColor(className, context) ||
       this.parsePointerEvents(className) ||
       this.parseResize(className) ||
       this.parseScrollBehavior(className) ||

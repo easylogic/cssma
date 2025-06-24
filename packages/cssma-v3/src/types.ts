@@ -1183,10 +1183,10 @@ export interface ParserContext {
   config: Config;
   preset: DesignPreset;
   utils: {
-    color: typeof ColorUtils;
-    unit: typeof UnitUtils;
-    spacing: typeof SpacingUtils;
-    typography: typeof TypographyUtils;
+    color: ColorUtils;
+    unit: UnitUtils;
+    spacing: SpacingUtils;
+    typography: TypographyUtils;
   };
 }
 

@@ -965,55 +965,55 @@ export class BackgroundsParser {
       // Background color
       case 'bg':
       case 'backgroundColor':
-        this.handleBackgroundColor(value, isArbitrary, styles.backgrounds, preset, config);
+        this.handleBackgroundColor(value, isArbitrary!, styles.backgrounds, preset, config);
         break;
         
       // Background image
       case 'backgroundImage':
       case 'bg-image':
-        this.handleBackgroundImage(value, isArbitrary, styles.backgrounds);
+        this.handleBackgroundImage(value, isArbitrary!, styles.backgrounds);
         break;
         
       // Background size
       case 'backgroundSize':
       case 'bg-size':
-        this.handleBackgroundSize(value, isArbitrary, styles.backgrounds);
+        this.handleBackgroundSize(value, isArbitrary!, styles.backgrounds);
         break;
         
       // Background position
       case 'backgroundPosition':
       case 'bg-position':
-        this.handleBackgroundPosition(value, isArbitrary, styles.backgrounds);
+        this.handleBackgroundPosition(value, isArbitrary!, styles.backgrounds);
         break;
         
       // Background repeat
       case 'backgroundRepeat':
       case 'bg-repeat':
-        this.handleBackgroundRepeat(value, isArbitrary, styles.backgrounds);
+        this.handleBackgroundRepeat(value, isArbitrary!, styles.backgrounds);
         break;
         
       // Background attachment
       case 'backgroundAttachment':
       case 'bg-attachment':
-        this.handleBackgroundAttachment(value, isArbitrary, styles.backgrounds);
+        this.handleBackgroundAttachment(value, isArbitrary!, styles.backgrounds);
         break;
         
       // Background clip
       case 'backgroundClip':
       case 'bg-clip':
-        this.handleBackgroundClip(value, isArbitrary, styles.backgrounds);
+        this.handleBackgroundClip(value, isArbitrary!, styles.backgrounds);
         break;
         
       // Background origin
       case 'backgroundOrigin':
       case 'bg-origin':
-        this.handleBackgroundOrigin(value, isArbitrary, styles.backgrounds);
+        this.handleBackgroundOrigin(value, isArbitrary!, styles.backgrounds);
         break;
         
       // Background opacity
       case 'backgroundOpacity':
       case 'bg-opacity':
-        this.handleBackgroundOpacity(value, isArbitrary, styles.backgrounds);
+        this.handleBackgroundOpacity(value, isArbitrary!, styles.backgrounds);
         break;
         
       // Gradient directions
@@ -1021,19 +1021,19 @@ export class BackgroundsParser {
       case 'linearGradient':
       case 'radialGradient':
       case 'conicGradient':
-        this.handleGradient(property, value, isArbitrary, styles.backgrounds);
+        this.handleGradient(property, value, isArbitrary!, styles.backgrounds);
         break;
         
       // Gradient color stops
       case 'from':
       case 'via':
       case 'to':
-        this.handleGradientColorStop(property, value, isArbitrary, styles.backgrounds, preset, config);
+        this.handleGradientColorStop(property, value, isArbitrary!, styles.backgrounds, preset, config);
         break;
         
       default:
         // Generic property 처리
-        styles.backgrounds[property] = isArbitrary ? value : this.convertBackgroundValue(property, value);
+        styles.backgrounds[property] = isArbitrary! ? value : this.convertBackgroundValue(property, value);
         break;
     }
   }

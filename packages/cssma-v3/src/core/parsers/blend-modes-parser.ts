@@ -169,12 +169,12 @@ export class BlendModesParser {
     switch (property) {
       // Mix blend mode
       case 'mix-blend-mode':
-        this.handleMixBlendMode(value, isArbitrary, styles.blendModes);
+        this.handleMixBlendMode(value, isArbitrary!, styles.blendModes);
         break;
         
       // Background blend mode
       case 'bg-blend-mode':
-        this.handleBackgroundBlendMode(value, isArbitrary, styles.blendModes);
+        this.handleBackgroundBlendMode(value, isArbitrary!, styles.blendModes);
         break;
         
       default:
