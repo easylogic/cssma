@@ -11,6 +11,11 @@ export class TransformParser {
    * 표준 인터페이스: 클래스가 transform 관련인지 확인합니다.
    */
   static isValidClass(className: string): boolean {
+    // Transform none (특수 케이스)
+    if (className === 'transform-none') {
+      return true;
+    }
+
     // Transform patterns
     const patterns = [
       /^scale(-[xyz])?-/, // scale-150, scale-x-50, scale-y-125, scale-z-110, scale-[1.5]
@@ -33,6 +38,15 @@ export class TransformParser {
   } | null {
     if (!this.isValidClass(className)) {
       return null;
+    }
+
+    // Transform none (특수 케이스)
+    if (className === 'transform-none') {
+      return {
+        property: 'transform-none',
+        value: 'none',
+        isArbitrary: false
+      };
     }
 
     // Scale patterns (3D 지원)
@@ -169,7 +183,10 @@ export class TransformParser {
     // Context에서 preset 추출
     const preset = context.preset;
     
-    if (property === 'scale') {
+    if (property === 'transform-none') {
+      // 모든 transform 제거
+      styles.transform.transform = 'none';
+    } else if (property === 'scale') {
       // 스케일 (모든 축)
       this.handleScale(value, isArbitrary || false, styles.transform);
     } else if (property === 'scale-x') {

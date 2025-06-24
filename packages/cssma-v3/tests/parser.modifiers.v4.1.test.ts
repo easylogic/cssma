@@ -102,7 +102,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
       const result = parser.parseClassName(className);
 
       expect(result).toBeDefined();
-      expect(result?.modifiers?.state).toBe(':user-valid');
+      expect(result?.modifiers?.state).toEqual([':user-valid']);
       expect(result?.baseClassName).toBe('border-green-500');
     });
 
@@ -111,7 +111,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
       const result = parser.parseClassName(className);
 
       expect(result).toBeDefined();
-      expect(result?.modifiers?.state).toBe('@media (inverted-colors: inverted)');
+      expect(result?.modifiers?.state).toEqual(['@media (inverted-colors: inverted)']);
       expect(result?.baseClassName).toBe('invert');
     });
 
@@ -120,7 +120,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
       const result = parser.parseClassName(className);
 
       expect(result).toBeDefined();
-      expect(result?.modifiers?.state).toBe('@media (pointer: fine)');
+      expect(result?.modifiers?.state).toEqual(['@media (pointer: fine)']);
       expect(result?.baseClassName).toBe('bg-gray-100');
     });
   });
@@ -244,7 +244,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
       const result = parser.parseClassName(className);
 
       expect(result).toBeDefined();
-      expect(result?.modifiers?.state).toBe(':hover');
+      expect(result?.modifiers?.state).toEqual([':hover']);
       expect(result?.modifiers?.pseudoElement).toBe('::before');
       expect(result?.baseClassName).toBe('content-["Hello_World"]');
     });

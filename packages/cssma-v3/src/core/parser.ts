@@ -306,6 +306,28 @@ export class CSSParser {
         }
       }
     }
+
+    // 🎯 Fallback: Arbitrary selectors, properties, 또는 알려지지 않은 클래스 처리
+    // Tailwind CSS v4.1에서는 모든 클래스를 유효하다고 간주하고 CSS로 출력
+    if (baseClassName) {
+      // Arbitrary selector 감지 ([...])
+      const isArbitrarySelector = baseClassName.startsWith('[') && baseClassName.endsWith(']');
+      
+      return {
+        original: className,
+        className: processedClassName,
+        baseClassName: baseClassName,
+        property: isArbitrarySelector ? 'arbitrary-selector' : baseClassName,
+        value: isArbitrarySelector ? baseClassName : "",
+        category: isArbitrarySelector ? "accessibility" : "layout", // 임시 카테고리
+        isArbitrary: isArbitrarySelector || (modifierResult ? modifierResult.isArbitrary : false),
+        
+        // 🎯 Tailwind CSS v4.1 방식의 modifier 정보
+        modifiers: modifiers,
+      };
+    }
+
+    return undefined;
   }
 
   /**
