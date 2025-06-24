@@ -511,12 +511,19 @@ export class TypographyParser {
       typography.fontSize = this.parseArbitraryValue(value);
     } else if (this.FONT_SIZE_SCALE[value]) {
       const scale = this.FONT_SIZE_SCALE[value];
-      typography.fontSize = scale.size;
+      // 픽셀 값을 rem으로 변환 (16px = 1rem 기준)
+      typography.fontSize = `${scale.size / 16}rem`;
       if (scale.lineHeight) {
         typography.lineHeight = scale.lineHeight / scale.size;
       }
     } else if (preset.typography?.fontSize?.[value]) {
-      typography.fontSize = preset.typography.fontSize[value];
+      const presetSize = preset.typography.fontSize[value];
+      // 숫자인 경우 rem으로 변환, 문자열인 경우 그대로 사용
+      if (typeof presetSize === 'number') {
+        typography.fontSize = `${presetSize / 16}rem`;
+      } else {
+        typography.fontSize = presetSize;
+      }
     }
   }
 

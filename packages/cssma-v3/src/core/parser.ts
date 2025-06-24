@@ -282,7 +282,6 @@ export class CSSParser {
 
     // 각 파서에게 baseClassName 인식을 요청 (우선순위 순서)
     for (const { parser, category } of PARSER_MAP) {
-      console.log('baseClassName', baseClassName, parser.isValidClass(baseClassName));
       if (parser.isValidClass && parser.isValidClass(baseClassName)) {
         // 해당 파서가 클래스를 인식했으므로 파싱 진행
         const parseResult = parser.parseValue
@@ -477,9 +476,10 @@ export class CSSParser {
       return;
     }
 
-    // State modifier 처리 (v4.1: 단일 문자열)
-    if (modifiers.state) {
-      const stateKey = modifiers.state;
+    // State modifier 처리 (v4.1: 배열 지원)
+    if (modifiers.state && Array.isArray(modifiers.state) && modifiers.state.length > 0) {
+      // 여러 상태를 조합하여 복합 키 생성 (예: "@media (any-pointer: fine) and :hover")
+      const stateKey = modifiers.state.join(' and ');
       
       if (!styles.states) {
         styles.states = {} as Record<string, Partial<ParsedStyles>>;

@@ -161,9 +161,31 @@ export class BackgroundsParser {
       /^bg-nonexistent-/, // bg-nonexistent-value
       /^bg-bad-/, // bg-bad-syntax
       /^bg-fake-/, // bg-fake-class
+      // v4.1: 잘못된 색상 강도 거부 (1000 이상은 없음)
+      /^bg-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{4,}$/,
+      /^bg-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(0|1|2|3|4|6|7|8|9|1[0-9]|2[0-9]|3[0-9]|4[0-9]|51|52|53|54|55|56|57|58|59|60|61|62|63|64|65|66|67|68|69|70|71|72|73|74|[7-9][5-9]|[8-9]\d+|[1-9]\d{3,})$/,
+      // 잘못된 그라데이션 방향 거부
+      /^bg-gradient-to-invalid$/,
+      /^bg-linear-to-invalid$/,
+      /^bg-radial-invalid$/,
+      /^bg-conic-invalid$/,
+      // 존재하지 않는 색상 거부
+      /^(from|via|to)-nonexistent-/,
     ];
 
-    return !invalidPatterns.some(pattern => pattern.test(className));
+    if (invalidPatterns.some(pattern => pattern.test(className))) {
+      return false;
+    }
+
+    // 유효한 색상 강도 체크 (50-950 범위)
+    const colorIntensityMatch = className.match(/^bg-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(\d+)$/);
+    if (colorIntensityMatch) {
+      const [, , intensity] = colorIntensityMatch;
+      const validIntensities = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+      return validIntensities.includes(parseInt(intensity));
+    }
+
+    return true;
   }
 
   /**
@@ -239,10 +261,10 @@ export class BackgroundsParser {
       };
     }
 
-    // v4.1 원뿔형 그라데이션 (bg-conic-45, -bg-conic-90)
-    const conicAngleMatch = className.match(/^(-?)bg-conic-?(\d+)?(?:\/(.+))?$/);
-    if (conicAngleMatch) {
-      const [, negative, angle, interpolation] = conicAngleMatch;
+    // v4.1 원뿔형 그라데이션 (bg-conic-0, bg-conic-45, -bg-conic-90)
+    const conicMatch = className.match(/^(-?)bg-conic(?:-(\d+))?(?:\/(.+))?$/);
+    if (conicMatch) {
+      const [, negative, angle, interpolation] = conicMatch;
       const actualAngle = angle ? (negative ? `-${angle}deg` : `${angle}deg`) : '0deg';
       const interpolationMode = interpolation || 'oklab';
       return {
@@ -885,23 +907,51 @@ export class BackgroundsParser {
     return colorPattern.test(colorName) || basicColors.includes(colorName);
   }
 
-  private static getColorValue(colorName: string): string {
+  private static getColorValue(colorName: string, preset?: any): string {
     if (colorName === 'black') return '#000000';
     if (colorName === 'white') return '#ffffff';
     
-    // For color palette, return CSS custom property reference
+    // Parse color-scale pattern (e.g., red-500)
+    const match = colorName.match(/^(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(\d{2,3})$/);
+    
+    if (match && preset?.colors) {
+      const [, colorFamily, shade] = match;
+      const colorData = preset.colors[colorFamily]?.[shade];
+      
+      if (colorData) {
+        // Convert RGB values to hex
+        const r = Math.round(colorData.r * 255);
+        const g = Math.round(colorData.g * 255);
+        const b = Math.round(colorData.b * 255);
+        return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+      }
+    }
+    
+    // Fallback to CSS custom property reference
     return `var(--color-${colorName.replace('-', '-')})`;
   }
 
   static applyBackgroundsStyle(parsedClass: { property: string; value: any; baseClassName: string }, styles: Record<string, any>, preset: any): void {
-    console.log('parsedClass', parsedClass);
-
     const parsed = this.parse(parsedClass.baseClassName);
-    console.log('parsed', parsed);
     if (!parsed) return;
 
     if (!styles.backgrounds) {
       styles.backgrounds = {};
+    }
+
+    // Handle backgroundColor with preset color conversion
+    if (parsed.property === 'backgroundColor' && typeof parsed.value === 'string') {
+      // If it's a CSS variable reference, convert to actual color
+      if (parsed.value.startsWith('var(--color-')) {
+        const colorName = parsed.value.match(/var\(--color-(.*)\)/)?.[1];
+        if (colorName) {
+          // Convert back to standard color name format
+          const standardColorName = colorName.replace('-', '-');
+          const actualColor = this.getColorValue(standardColorName, preset);
+          styles.backgrounds.backgroundColor = actualColor;
+          return;
+        }
+      }
     }
 
     // v4.1 새로운 속성들 처리

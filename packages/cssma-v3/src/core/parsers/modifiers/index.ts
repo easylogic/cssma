@@ -348,8 +348,12 @@ export class ModifierParser {
     if (StateModifierParser.isValidStateModifier(modifier)) {
       const result = StateModifierParser.parse(modifier);
       if (result) {
-        modifiers.state = this.convertStateToCSS(result.modifier);
-      return true;
+        // Initialize state array if not exists and push new state
+        if (!modifiers.state) {
+          modifiers.state = [];
+        }
+        modifiers.state.push(this.convertStateToCSS(result.modifier));
+        return true;
       }
     }
     return false;
@@ -430,19 +434,34 @@ export class ModifierParser {
         } else if (result.type === 'media-feature' && result.condition) {
           // All pointer variants and media feature variants
           console.log(`DEBUG: Processing media-feature "${modifier}" with condition "${result.condition}"`);
+          let stateValue: string;
           if (result.condition.startsWith(':')) {
             // Pseudo-classes like :user-valid, :user-invalid
             console.log(`DEBUG: Setting pseudo-class state: ${result.condition}`);
-            modifiers.state = result.condition;
+            stateValue = result.condition;
           } else {
             // Media queries like pointer: fine, inverted-colors: inverted
             console.log(`DEBUG: Setting media query state: @media (${result.condition})`);
-            modifiers.state = `@media (${result.condition})`;
+            stateValue = `@media (${result.condition})`;
           }
+          
+          // Initialize state array if not exists and push new state
+          if (!modifiers.state) {
+            modifiers.state = [];
+          }
+          modifiers.state.push(stateValue);
         } else if (result.type === 'supports' && result.condition) {
-          modifiers.state = `@supports (${result.condition})`;
+          // Initialize state array if not exists and push supports query
+          if (!modifiers.state) {
+            modifiers.state = [];
+          }
+          modifiers.state.push(`@supports (${result.condition})`);
         } else {
-          modifiers.state = modifier; // fallback for other special modifiers
+          // fallback for other special modifiers
+          if (!modifiers.state) {
+            modifiers.state = [];
+          }
+          modifiers.state.push(modifier);
         }
         return true;
       }
@@ -454,12 +473,18 @@ export class ModifierParser {
    * Convert state modifier to CSS format
    */
   private static convertStateToCSS(state: string): string {
-    // Special modifiers that need media query format
+    // Pointer device variants - need media query format
+    if (state === 'pointer-fine') return '@media (pointer: fine)';
+    if (state === 'pointer-coarse') return '@media (pointer: coarse)';
+    if (state === 'pointer-none') return '@media (pointer: none)';
+    if (state === 'any-pointer-fine') return '@media (any-pointer: fine)';
+    if (state === 'any-pointer-coarse') return '@media (any-pointer: coarse)';
+    if (state === 'any-pointer-none') return '@media (any-pointer: none)';
+    
+    // Other special modifiers that need media query format
     if (state === 'user-valid') return ':user-valid';
     if (state === 'user-invalid') return ':user-invalid';
     if (state === 'inverted-colors') return '@media (inverted-colors: inverted)';
-    if (state === 'pointer-fine') return '@media (pointer: fine)';
-    if (state === 'pointer-coarse') return '@media (pointer: coarse)';
     if (state === 'dark') return '@media (prefers-color-scheme: dark)';
     if (state === 'light') return '@media (prefers-color-scheme: light)';
     if (state === 'print') return '@media print';
