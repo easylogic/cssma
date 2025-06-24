@@ -13,6 +13,7 @@ import {
   ParsedStyles,
   DesignPreset,
   StyleCategory,
+  ParserContext,
 } from "../types";
 import {
   LayoutParser,
@@ -37,6 +38,7 @@ import {
   MaskParser,
 } from "./parsers";
 import { ModifierParser } from "./parsers/modifiers";
+import { createParserContext } from "../utils";
 
 /**
  * 파서 정보 인터페이스
@@ -91,8 +93,7 @@ const PARSER_MAP: ParserInfo[] = [
 export class CSSParser {
   private config: Config;
   private preset: DesignPreset;
-
-
+  private parserContext: ParserContext;
 
   /**
    * 파서를 초기화합니다.
@@ -102,6 +103,7 @@ export class CSSParser {
   constructor(config: Config, preset: DesignPreset) {
     this.config = config;
     this.preset = preset;
+    this.parserContext = createParserContext(config, preset);
   }
 
   /**
@@ -637,84 +639,84 @@ export class CSSParser {
 
     switch (category) {
       case "spacing":
-        SpacingParser.applySpacingStyle(parsedClass, styles, this.preset);
+        SpacingParser.applySpacingStyle(parsedClass, styles, this.parserContext);
         break;
       case "colors":
-        ColorParser.applyColorStyle(parsedClass, styles, this.preset);
+        ColorParser.applyColorStyle(parsedClass, styles, this.parserContext);
         break;
       case "typography":
-        TypographyParser.applyTypographyStyle(parsedClass, styles, this.preset);
+        TypographyParser.applyTypographyStyle(parsedClass, styles, this.parserContext);
         break;
       case "layout":
-        LayoutParser.applyLayoutStyle(parsedClass, styles);
+        LayoutParser.applyLayoutStyle(parsedClass, styles, this.parserContext);
         break;
       case "effects":
-        EffectsParser.applyEffectStyle(parsedClass, styles, this.preset);
+        EffectsParser.applyEffectStyle(parsedClass, styles, this.parserContext);
         break;
       case "animation":
-        AnimationParser.applyAnimationStyle(parsedClass, styles, this.preset);
+        AnimationParser.applyAnimationStyle(parsedClass, styles, this.parserContext);
         break;
       case "position":
-        PositionParser.applyPositionStyle(parsedClass, styles, this.preset);
+        PositionParser.applyPositionStyle(parsedClass, styles, this.parserContext);
         break;
       case "transform":
-        TransformParser.applyTransformStyle(parsedClass, styles, this.preset);
+        TransformParser.applyTransformStyle(parsedClass, styles, this.parserContext);
         break;
       case "sizing":
-        SizingParser.applySizingStyle(parsedClass, styles, this.preset);
+        SizingParser.applySizingStyle(parsedClass, styles, this.parserContext);
         break;
       case "flexbox-grid":
         FlexboxGridParser.applyFlexboxGridStyle(
           parsedClass,
           styles,
-          this.preset
+          this.parserContext
         );
         break;
       case "interactivity":
         InteractivityParser.applyInteractivityStyle(
           parsedClass,
           styles,
-          this.preset
+          this.parserContext
         );
         break;
       case "tables":
-        TablesParser.applyTablesStyle(parsedClass, styles, this.preset);
+        TablesParser.applyTablesStyle(parsedClass, styles, this.parserContext);
         break;
       case "svg":
-        SVGParser.applySVGStyle(parsedClass, styles, this.preset);
+        SVGParser.applySVGStyle(parsedClass, styles, this.parserContext);
         break;
       case "transitions":
         TransitionsParser.applyTransitionsStyle(
           parsedClass,
           styles,
-          this.preset
+          this.parserContext
         );
         break;
       case "backgrounds":
         BackgroundsParser.applyBackgroundsStyle(
           parsedClass,
           styles,
-          this.preset
+          this.parserContext
         );
         break;
       case "borders":
-        BordersParser.applyBordersStyle(parsedClass, styles, this.preset);
+        BordersParser.applyBordersStyle(parsedClass, styles, this.parserContext);
         break;
       case "overflow":
-        OverflowParser.applyOverflowStyle(parsedClass, styles, this.preset);
+        OverflowParser.applyOverflowStyle(parsedClass, styles, this.parserContext);
         break;
       case "accessibility":
         AccessibilityParser.applyAccessibilityStyle(
           parsedClass,
           styles,
-          this.preset
+          this.parserContext
         );
         break;
       case "blend-modes":
-        BlendModesParser.applyBlendModesStyle(parsedClass, styles, this.preset);
+        BlendModesParser.applyBlendModesStyle(parsedClass, styles, this.parserContext);
         break;
       case "mask":
-        MaskParser.applyMaskStyle(parsedClass, styles, this.preset);
+        MaskParser.applyMaskStyle(parsedClass, styles, this.parserContext);
         break;
     }
   }

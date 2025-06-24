@@ -4,7 +4,7 @@
  * min-width, max-width, min-height, max-height, size 등의 크기 관련 속성을 처리합니다.
  */
 
-import { ParsedClass, ParsedStyle, ParsedStyles, DesignPreset } from '../../types';
+import { ParsedClass, ParsedStyle, ParsedStyles, DesignPreset, ParserContext } from '../../types';
 
 export class SizingParser {
   /**
@@ -356,23 +356,157 @@ export class SizingParser {
   }
 
   /**
-   * 크기 스타일을 적용합니다.
-   * @param parsedClass 파싱된 클래스
-   * @param styles 스타일 객체
-   * @param preset 디자인 프리셋
+   * Context Pattern을 사용한 새로운 스타일 적용 메서드
    */
   static applySizingStyle(
     parsedClass: ParsedClass,
     styles: Partial<ParsedStyles>,
+    context: ParserContext
+  ): void {
+    const { property, value } = parsedClass;
+    const isArbitrary = Boolean(parsedClass.isArbitrary);
+    
+    if (!styles.sizing) {
+      styles.sizing = {};
+    }
+    
+    // Context에서 preset 추출
+    const preset = context.preset;
+    
+    // 속성별 처리 - Context의 UnitUtils 사용
+    switch (property) {
+      case 'w':
+        styles.sizing.width = this.convertSizeValue(value, isArbitrary, context, 'w');
+        break;
+        
+      case 'h':
+        styles.sizing.height = this.convertSizeValue(value, isArbitrary, context, 'h');
+        break;
+        
+      case 'min-w':
+        styles.sizing.minWidth = this.convertSizeValue(value, isArbitrary, context, 'min-w');
+        break;
+        
+      case 'max-w':
+        styles.sizing.maxWidth = this.convertMaxWidthValue(value, isArbitrary, context);
+        break;
+        
+      case 'min-h':
+        styles.sizing.minHeight = this.convertSizeValue(value, isArbitrary, context, 'min-h');
+        break;
+        
+      case 'max-h':
+        styles.sizing.maxHeight = this.convertSizeValue(value, isArbitrary, context, 'max-h');
+        break;
+        
+      case 'size':
+        const sizeValue = this.convertSizeValue(value, isArbitrary, context, 'size');
+        styles.sizing.size = sizeValue;
+        // size는 width와 height 모두 설정
+        styles.sizing.width = sizeValue;
+        styles.sizing.height = sizeValue;
+        break;
+    }
+  }
+
+  /**
+   * Legacy 호환성을 위한 기존 메서드 (테스트 호환)
+   */
+  static applySizingStyleLegacy(
+    parsedClass: ParsedClass,
+    styles: Partial<ParsedStyles>,
     preset: DesignPreset
   ): void {
-    const sizingStyles = this.parseSizing(parsedClass.baseClassName);
-    
-    if (sizingStyles) {
-      if (!styles.sizing) {
-        styles.sizing = {};
+    // Legacy 호출을 Context Pattern으로 변환
+    const context: ParserContext = {
+      config: {} as any, // 임시 - 필요시 추가
+      preset,
+      utils: {
+        color: null as any,
+        unit: null as any,
+        spacing: null as any,
+        typography: null as any
       }
-      Object.assign(styles.sizing, sizingStyles);
+    };
+    
+    this.applySizingStyle(parsedClass, styles, context);
+  }
+
+  /**
+   * 크기 값을 변환합니다. (Context Pattern 버전)
+   */
+  private static convertSizeValue(value: string, isArbitrary: boolean, context: ParserContext, property?: string): string {
+    if (isArbitrary) {
+      return value; // 임의값은 그대로 반환
+    }
+    
+    // 분수 처리 (예: 1/2)
+    if (value.includes('/')) {
+      const [numerator, denominator] = value.split('/');
+      const percentage = (parseInt(numerator) / parseInt(denominator)) * 100;
+      return `${percentage}%`;
+    }
+    
+    // 특수 값들
+    switch (value) {
+      case '0': return '0px';
+      case 'px': return '1px';
+      case 'auto': return 'auto';
+      case 'full': return '100%';
+      case 'screen':
+        // width인 경우 viewport width, height인 경우 viewport height
+        if (property === 'w' || property === 'min-w' || property === 'max-w') {
+          return '100vw';
+        }
+        return '100vh';
+      case 'svh': return '100svh';
+      case 'lvh': return '100lvh';
+      case 'dvh': return '100dvh';
+      case 'min': return 'min-content';
+      case 'max': return 'max-content';
+      case 'fit': return 'fit-content';
+      case 'none': return 'none';
+    }
+    
+    // 숫자 값을 rem으로 변환 (Tailwind 표준: 4 = 1rem)
+    if (/^\d+(\.\d+)?$/.test(value)) {
+      const numValue = parseFloat(value);
+      if (numValue === 0) return '0px';
+      return `${numValue / 4}rem`;
+    }
+    
+    return value;
+  }
+
+  /**
+   * Max Width 값을 변환합니다. (Context Pattern 버전)
+   */
+  private static convertMaxWidthValue(value: string, isArbitrary: boolean, context: ParserContext): string {
+    if (isArbitrary) {
+      return value;
+    }
+    
+    // Max Width 특수 값들
+    switch (value) {
+      case 'none': return 'none';
+      case 'xs': return '20rem';
+      case 'sm': return '24rem';
+      case 'md': return '28rem';
+      case 'lg': return '32rem';
+      case 'xl': return '36rem';
+      case '2xl': return '42rem';
+      case '3xl': return '48rem';
+      case '4xl': return '56rem';
+      case '5xl': return '64rem';
+      case '6xl': return '72rem';
+      case '7xl': return '80rem';
+      case 'full': return '100%';
+      case 'min': return 'min-content';
+      case 'max': return 'max-content';
+      case 'fit': return 'fit-content';
+      case 'prose': return '65ch';
+      default:
+        return this.convertSizeValue(value, isArbitrary, context);
     }
   }
 

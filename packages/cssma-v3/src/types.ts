@@ -16,7 +16,7 @@ export interface ParsedStyle {
 }
 
 /**
- * 기본 설정 타입
+ * 기본 설정 타입 (Tailwind v4 확장)
  */
 export interface Config {
   prefix: string;
@@ -25,12 +25,28 @@ export interface Config {
   enableArbitraryValues: boolean;
   enableStateModifiers: boolean;
   enableResponsiveModifiers: boolean;
+  // Tailwind v4 새로운 설정들
+  colorFormat?: 'rgb' | 'hsl' | 'oklch' | 'hex';  // 색상 출력 형식
+  outputCSSVariables?: boolean;                   // CSS 변수로 출력할지 여부
+  useOKLCH?: boolean;                            // OKLCH 색상 공간 사용 여부
+  enableColorMix?: boolean;                       // color-mix() 함수 사용 여부
+  enableCascadeLayers?: boolean;                  // @layer 지원 여부
+  themeProvider?: 'css-variables' | 'direct';     // 테마 제공 방식
 }
 
 /**
- * 색상 타입 - RGB 객체 또는 CSS 색상 문자열 지원
+ * OKLCH 색상 타입 (Tailwind v4)
  */
-export interface Color {
+export interface OKLCHColor {
+  l: number;  // Lightness (0-1)
+  c: number;  // Chroma (0-0.4 일반적)
+  h: number;  // Hue (0-360도)
+}
+
+/**
+ * RGB 색상 타입 (기존)
+ */
+export interface RGBColor {
   r: number;
   g: number;
   b: number;
@@ -38,9 +54,14 @@ export interface Color {
 }
 
 /**
+ * 색상 타입 - OKLCH, RGB 객체 또는 CSS 색상 문자열 지원 (v4 업데이트)
+ */
+export interface Color extends OKLCHColor {}
+
+/**
  * 색상 값 타입 - Color 객체 또는 CSS 색상 문자열
  */
-export type ColorValue = Color | string;
+export type ColorValue = Color | RGBColor | string;
 
 /**
  * 간격 타입 (상하좌우)
@@ -96,31 +117,33 @@ export interface Transition {
   delay: number;
 }
 
-// 색상 팔레트 
+/**
+ * 색상 팔레트 (v4 OKLCH 지원)
+ */
 export interface ColorPalette {
-  blue: Record<string, Color>;
-  green: Record<string, Color>;
-  red: Record<string, Color>;
-  slate: Record<string, Color>;
-  gray: Record<string, Color>;
-  zinc: Record<string, Color>;
-  neutral: Record<string, Color>;
-  stone: Record<string, Color>;
-  orange: Record<string, Color>;
-  amber: Record<string, Color>;
-  yellow: Record<string, Color>;
-  lime: Record<string, Color>;
-  emerald: Record<string, Color>;
-  teal: Record<string, Color>;
-  cyan: Record<string, Color>;
-  sky: Record<string, Color>;
-  indigo: Record<string, Color>;
-  violet: Record<string, Color>;
-  purple: Record<string, Color>;
-  fuchsia: Record<string, Color>;
-  pink: Record<string, Color>;
-  rose: Record<string, Color>;
-  [key: string]: Record<string, Color> | undefined;
+  blue: Record<string, Color | RGBColor>;
+  green: Record<string, Color | RGBColor>;
+  red: Record<string, Color | RGBColor>;
+  slate: Record<string, Color | RGBColor>;
+  gray: Record<string, Color | RGBColor>;
+  zinc: Record<string, Color | RGBColor>;
+  neutral: Record<string, Color | RGBColor>;
+  stone: Record<string, Color | RGBColor>;
+  orange: Record<string, Color | RGBColor>;
+  amber: Record<string, Color | RGBColor>;
+  yellow: Record<string, Color | RGBColor>;
+  lime: Record<string, Color | RGBColor>;
+  emerald: Record<string, Color | RGBColor>;
+  teal: Record<string, Color | RGBColor>;
+  cyan: Record<string, Color | RGBColor>;
+  sky: Record<string, Color | RGBColor>;
+  indigo: Record<string, Color | RGBColor>;
+  violet: Record<string, Color | RGBColor>;
+  purple: Record<string, Color | RGBColor>;
+  fuchsia: Record<string, Color | RGBColor>;
+  pink: Record<string, Color | RGBColor>;
+  rose: Record<string, Color | RGBColor>;
+  [key: string]: Record<string, Color | RGBColor> | undefined;
 }
 
 /**
@@ -370,8 +393,8 @@ export interface ParsedModifiers {
   container?: Record<string, string>;     // { "@md": "@container (min-width: 768px)" }
   motion?: string | null;                 // "@media (prefers-reduced-motion: no-preference)"
   
-  // States (pseudo-classes) - 단일 문자열
-  state?: string | null;                  // ":hover", ":focus", ":active"
+  // States (pseudo-classes) - 배열 형태로 복합 상태 지원 (v4 업데이트)
+  state?: string[] | null;                // [":hover", "@media (pointer: fine)"] 등
   
   // Pseudo-elements - 단일 문자열
   pseudoElement?: string | null;          // "::before", "::after", "::placeholder"
@@ -1150,4 +1173,73 @@ export interface GridStyles {
   placeContent?: string;
   placeItems?: string;
   placeSelf?: string;
+}
+
+/**
+ * Parser Context - 모든 파서가 공유하는 컨텍스트
+ * Tailwind v4 스타일의 통합 설정 및 유틸리티 시스템
+ */
+export interface ParserContext {
+  config: Config;
+  preset: DesignPreset;
+  utils: {
+    color: typeof ColorUtils;
+    unit: typeof UnitUtils;
+    spacing: typeof SpacingUtils;
+    typography: typeof TypographyUtils;
+  };
+}
+
+/**
+ * 유틸리티 클래스들의 인터페이스 정의
+ */
+export interface ColorUtils {
+  getColorValue(colorName: string, preset: DesignPreset, config: Config): string;
+  oklchToRgb(l: number, c: number, h: number): { r: number; g: number; b: number };
+  oklchToHex(l: number, c: number, h: number): string;
+  hexToOklch(hex: string): OKLCHColor;
+  parseColorValue(value: string): string;
+  generateCSSVariables(colors: ColorPalette): Record<string, string>;
+}
+
+export interface UnitUtils {
+  pxToRem(px: number): string;
+  remToPx(rem: string): number;
+  parseSpacing(value: string, preset: DesignPreset): string;
+  parseFontSize(value: string | number, preset: DesignPreset): string;
+  parseLineHeight(value: string | number): string | number;
+  convertArbitraryValue(value: string, unit?: 'px' | 'rem' | 'em'): string;
+}
+
+export interface SpacingUtils {
+  getSpacingValue(key: string, preset: DesignPreset): string;
+  parseSpacingDirection(property: string, value: string): Record<string, string>;
+  convertSpacingToCSS(spacing: any): Record<string, string>;
+}
+
+export interface TypographyUtils {
+  getFontSize(size: string, preset: DesignPreset): { fontSize: string; lineHeight?: number };
+  getFontFamily(family: string, preset: DesignPreset): string;
+  parseTextTransform(value: string): string;
+  parseTextAlign(value: string): string;
+}
+
+/**
+ * 표준화된 파서 인터페이스
+ * 모든 파서가 이 인터페이스를 구현해야 함
+ */
+export interface StandardParserInterface {
+  isValidClass(className: string): boolean;
+  parseValue(className: string): ParseResult | null;
+  applyStyle(parsedClass: ParsedClass, styles: Partial<ParsedStyles>, context: ParserContext): void;
+}
+
+/**
+ * 파서 적용 결과
+ */
+export interface ParseResult {
+  property: string;
+  value: any;
+  isArbitrary?: boolean;
+  modifier?: string;
 } 

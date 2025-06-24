@@ -1,4 +1,5 @@
 import { ParsedStyle } from '../../types';
+import { ColorUtils } from '../../config';
 
 const BACKGROUND_CLASSES = {
   'bg-none': 'none',
@@ -907,31 +908,41 @@ export class BackgroundsParser {
     return colorPattern.test(colorName) || basicColors.includes(colorName);
   }
 
-  private static getColorValue(colorName: string, preset?: any): string {
+  private static getColorValue(colorName: string, preset?: any, config?: any): string {
+    // ColorUtils의 표준 색상 처리 함수 사용
+    if (preset && config) {
+      return ColorUtils.getColorValue(colorName, preset, config);
+    }
+    
+    // 기본 색상들 (fallback)
     if (colorName === 'black') return '#000000';
     if (colorName === 'white') return '#ffffff';
     
     // Parse color-scale pattern (e.g., red-500)
-    const match = colorName.match(/^(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(\d{2,3})$/);
+    const match = colorName.match(/^(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(\\d{2,3})$/);
     
     if (match && preset?.colors) {
       const [, colorFamily, shade] = match;
       const colorData = preset.colors[colorFamily]?.[shade];
       
       if (colorData) {
-        // Convert RGB values to hex
-        const r = Math.round(colorData.r * 255);
-        const g = Math.round(colorData.g * 255);
-        const b = Math.round(colorData.b * 255);
-        return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+        // OKLCH 형식인지 확인
+        if ('l' in colorData && 'c' in colorData && 'h' in colorData) {
+          const rgb = ColorUtils.oklchToRgb(colorData.l, colorData.c, colorData.h);
+          return ColorUtils.rgbToHex(rgb.r, rgb.g, rgb.b);
+        }
+        // 기존 RGB 형식 지원
+        else if ('r' in colorData && 'g' in colorData && 'b' in colorData) {
+          return ColorUtils.rgbToHex(colorData.r, colorData.g, colorData.b);
+        }
       }
     }
     
-    // Fallback to CSS custom property reference
-    return `var(--color-${colorName.replace('-', '-')})`;
+    // 기본값: CSS 변수 형태로 반환
+    return `var(--color-${colorName})`;
   }
 
-  static applyBackgroundsStyle(parsedClass: { property: string; value: any; baseClassName: string }, styles: Record<string, any>, preset: any): void {
+  static applyBackgroundsStyle(parsedClass: { property: string; value: any; baseClassName: string }, styles: Record<string, any>, preset: any, config?: any): void {
     const parsed = this.parse(parsedClass.baseClassName);
     if (!parsed) return;
 
@@ -943,59 +954,21 @@ export class BackgroundsParser {
     if (parsed.property === 'backgroundColor' && typeof parsed.value === 'string') {
       // If it's a CSS variable reference, convert to actual color
       if (parsed.value.startsWith('var(--color-')) {
-        const colorName = parsed.value.match(/var\(--color-(.*)\)/)?.[1];
+        const colorName = parsed.value.match(/var\\(--color-(.*)\\)/)?.[1];
         if (colorName) {
           // Convert back to standard color name format
           const standardColorName = colorName.replace('-', '-');
-          const actualColor = this.getColorValue(standardColorName, preset);
-          styles.backgrounds.backgroundColor = actualColor;
-          return;
+          styles.backgrounds.backgroundColor = this.getColorValue(standardColorName, preset, config);
+        } else {
+          styles.backgrounds.backgroundColor = parsed.value;
         }
+      } else {
+        // Direct color value or already processed
+        styles.backgrounds.backgroundColor = parsed.value;
       }
-    }
-
-    // v4.1 새로운 속성들 처리
-    switch (parsed.property) {
-      case 'bg-custom-property':
-        styles.backgrounds.backgroundImage = `var(${parsed.value})`;
-        break;
-      case 'bg-linear-angle':
-        styles.backgrounds.backgroundImage = `linear-gradient(${parsed.value}, var(--tw-gradient-stops))`;
-        break;
-      case 'bg-linear-interpolation':
-        styles.backgrounds.backgroundImage = `linear-gradient(${parsed.value}, var(--tw-gradient-stops))`;
-        break;
-      case 'bg-radial':
-        styles.backgrounds.backgroundImage = `radial-gradient(${parsed.value}, var(--tw-gradient-stops))`;
-        break;
-      case 'bg-conic':
-        styles.backgrounds.backgroundImage = `conic-gradient(${parsed.value}, var(--tw-gradient-stops))`;
-        break;
-      case 'bg-linear-arbitrary':
-        styles.backgrounds.backgroundImage = `linear-gradient(${parsed.value})`;
-        break;
-      case 'bg-radial-arbitrary':
-        styles.backgrounds.backgroundImage = `radial-gradient(${parsed.value})`;
-        break;
-      case 'bg-conic-arbitrary':
-        styles.backgrounds.backgroundImage = `conic-gradient(${parsed.value})`;
-        break;
-      case 'bg-linear-custom':
-        styles.backgrounds.backgroundImage = `var(${parsed.value})`;
-        break;
-      case 'bg-radial-custom':
-        styles.backgrounds.backgroundImage = `var(${parsed.value})`;
-        break;
-      case 'bg-conic-custom':
-        styles.backgrounds.backgroundImage = `var(${parsed.value})`;
-        break;
-      case 'bg-opacity':
-        styles.backgrounds.backgroundOpacity = parsed.value;
-        break;
-      default:
-        // 기존 속성들 처리
-        styles.backgrounds[parsed.property] = parsed.value;
-        break;
+    } else {
+      // Apply other background properties directly
+      Object.assign(styles.backgrounds, parsed);
     }
   }
 
