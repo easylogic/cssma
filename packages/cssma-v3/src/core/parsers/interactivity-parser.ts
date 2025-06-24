@@ -3,7 +3,7 @@
  * Tailwind CSS의 모든 Interactivity 유틸리티 클래스를 파싱합니다.
  */
 
-import { ParsedStyle, ParsedClass, InteractivityStyles, DesignPreset } from '../../types';
+import { ParsedStyle, ParsedClass, InteractivityStyles, ParserContext } from '../../types';
 
 const INTERACTIVITY_CLASSES = {
   'accent': 'accent',
@@ -177,7 +177,7 @@ export class InteractivityParser {
   static applyInteractivityStyle(
     parsedClass: ParsedClass, 
     styles: { interactivity?: InteractivityStyles }, 
-    preset?: DesignPreset
+    context: ParserContext
   ): void {
     if (!styles.interactivity) {
       styles.interactivity = {};
@@ -188,130 +188,91 @@ export class InteractivityParser {
     if (result) {
       switch (result.property) {
         case 'accentColor':
-          styles.interactivity.accentColor = result.value;
+          styles.interactivity.accentColor = result.value as string;
           break;
         case 'appearance':
-          styles.interactivity.appearance = result.value;
+          styles.interactivity.appearance = result.value as string;
           break;
         case 'cursor':
-          styles.interactivity.cursor = result.value;
+          styles.interactivity.cursor = result.value as string;
           break;
         case 'caretColor':
-          styles.interactivity.caretColor = result.value;
+          styles.interactivity.caretColor = result.value as string;
           break;
         case 'pointerEvents':
-          styles.interactivity.pointerEvents = result.value;
+          styles.interactivity.pointerEvents = result.value as string;
           break;
         case 'resize':
-          styles.interactivity.resize = result.value;
+          styles.interactivity.resize = result.value as string;
           break;
         case 'scrollBehavior':
-          styles.interactivity.scrollBehavior = result.value;
+          styles.interactivity.scrollBehavior = result.value as string;
           break;
         case 'scrollMargin':
-          styles.interactivity.scrollMargin = result.value;
+          styles.interactivity.scrollMargin = result.value as string;
           break;
         case 'scrollMarginTop':
-          styles.interactivity.scrollMarginTop = result.value;
+          styles.interactivity.scrollMarginTop = result.value as string;
           break;
         case 'scrollMarginRight':
-          styles.interactivity.scrollMarginRight = result.value;
+          styles.interactivity.scrollMarginRight = result.value as string;
           break;
         case 'scrollMarginBottom':
-          styles.interactivity.scrollMarginBottom = result.value;
+          styles.interactivity.scrollMarginBottom = result.value as string;
           break;
         case 'scrollMarginLeft':
-          styles.interactivity.scrollMarginLeft = result.value;
+          styles.interactivity.scrollMarginLeft = result.value as string;
           break;
         case 'scrollPadding':
-          styles.interactivity.scrollPadding = result.value;
+          styles.interactivity.scrollPadding = result.value as string;
           break;
         case 'scrollPaddingTop':
-          styles.interactivity.scrollPaddingTop = result.value;
+          styles.interactivity.scrollPaddingTop = result.value as string;
           break;
         case 'scrollPaddingRight':
-          styles.interactivity.scrollPaddingRight = result.value;
+          styles.interactivity.scrollPaddingRight = result.value as string;
           break;
         case 'scrollPaddingBottom':
-          styles.interactivity.scrollPaddingBottom = result.value;
+          styles.interactivity.scrollPaddingBottom = result.value as string;
           break;
         case 'scrollPaddingLeft':
-          styles.interactivity.scrollPaddingLeft = result.value;
+          styles.interactivity.scrollPaddingLeft = result.value as string;
           break;
         case 'scrollSnapAlign':
-          styles.interactivity.scrollSnapAlign = result.value;
+          styles.interactivity.scrollSnapAlign = result.value as string;
           break;
         case 'scrollSnapStop':
-          styles.interactivity.scrollSnapStop = result.value;
+          styles.interactivity.scrollSnapStop = result.value as string;
           break;
         case 'scrollSnapType':
-          styles.interactivity.scrollSnapType = result.value;
+          styles.interactivity.scrollSnapType = result.value as string;
           break;
         case 'touchAction':
-          styles.interactivity.touchAction = result.value;
+            styles.interactivity.touchAction = result.value as string;
           break;
         case 'userSelect':
-          styles.interactivity.userSelect = result.value;
+          styles.interactivity.userSelect = result.value as string;
           break;
         case 'willChange':
-          styles.interactivity.willChange = result.value;
+          styles.interactivity.willChange = result.value as string;
           break;
       }
     }
   }
 
   // Accent Color
-  static parseAccentColor(className: string): ParsedStyle | null {
+  static parseAccentColor(className: string, context: ParserContext): ParsedStyle | null {
     if (!className.startsWith('accent-')) return null;
 
     const value = className.slice(7);
+
+    const colorMap = context.preset.colors;
     
-    // Standard colors
-    const colorMap: Record<string, string> = {
-      'inherit': 'inherit',
-      'current': 'currentColor',
-      'transparent': 'transparent',
-      'black': '#000000',
-      'white': '#ffffff',
-      // Gray scale
-      'slate-50': '#f8fafc',
-      'slate-100': '#f1f5f9',
-      'slate-200': '#e2e8f0',
-      'slate-300': '#cbd5e1',
-      'slate-400': '#94a3b8',
-      'slate-500': '#64748b',
-      'slate-600': '#475569',
-      'slate-700': '#334155',
-      'slate-800': '#1e293b',
-      'slate-900': '#0f172a',
-      // Red
-      'red-50': '#fef2f2',
-      'red-100': '#fee2e2',
-      'red-200': '#fecaca',
-      'red-300': '#fca5a5',
-      'red-400': '#f87171',
-      'red-500': '#ef4444',
-      'red-600': '#dc2626',
-      'red-700': '#b91c1c',
-      'red-800': '#991b1b',
-      'red-900': '#7f1d1d',
-      // Blue
-      'blue-50': '#eff6ff',
-      'blue-100': '#dbeafe',
-      'blue-200': '#bfdbfe',
-      'blue-300': '#93c5fd',
-      'blue-400': '#60a5fa',
-      'blue-500': '#3b82f6',
-      'blue-600': '#2563eb',
-      'blue-700': '#1d4ed8',
-      'blue-800': '#1e40af',
-      'blue-900': '#1e3a8a'
-    };
 
     if (value in colorMap) {
       return {
         property: 'accentColor',
-        value: colorMap[value],
+        value: colorMap[value] as unknown as string,
         variant: 'preset'
       };
     }

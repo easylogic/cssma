@@ -126,12 +126,12 @@ describe('Text Shadow Parser Tests', () => {
   describe('State modifiers with text-shadow', () => {
     test('should parse hover:text-shadow-lg', () => {
       const result = parser.parse('hover:text-shadow-lg');
-      expect(result.states?.hover?.effects?.textShadow).toBe('0 10px 15px rgb(0 0 0 / 0.1), 0 4px 6px rgb(0 0 0 / 0.05)');
+      expect(result.states?.[':hover']?.effects?.textShadow).toBe('0 10px 15px rgb(0 0 0 / 0.1), 0 4px 6px rgb(0 0 0 / 0.05)');
     });
 
     test('should parse focus:text-shadow-md', () => {
       const result = parser.parse('focus:text-shadow-md');
-      expect(result.states?.focus?.effects?.textShadow).toBe('0 4px 6px rgb(0 0 0 / 0.07), 0 2px 4px rgb(0 0 0 / 0.06)');
+      expect(result.states?.[':focus']?.effects?.textShadow).toBe('0 4px 6px rgb(0 0 0 / 0.07), 0 2px 4px rgb(0 0 0 / 0.06)');
     });
   });
 
@@ -150,7 +150,7 @@ describe('Text Shadow Parser Tests', () => {
   describe('Combined modifiers', () => {
     test('should parse md:hover:text-shadow-lg', () => {
       const result = parser.parse('md:hover:text-shadow-lg');
-      expect(result.breakpoints?.md?.states?.hover?.effects?.textShadow).toBe('0 10px 15px rgb(0 0 0 / 0.1), 0 4px 6px rgb(0 0 0 / 0.05)');
+      expect(result.breakpoints?.md?.states?.[':hover']?.effects?.textShadow).toBe('0 10px 15px rgb(0 0 0 / 0.1), 0 4px 6px rgb(0 0 0 / 0.05)');
     });
   });
 }); 

@@ -107,8 +107,13 @@ export class DataModifierParser {
       return false;
     }
 
-    // Value should be quoted
-    return /^["'][^"']*["']$/.test(value);
+    // Value can be quoted or unquoted
+    if (/^["'][^"']*["']$/.test(value)) {
+      return true; // Quoted value
+    }
+    
+    // Allow unquoted values (alphanumeric, dashes, underscores)
+    return /^[a-zA-Z0-9_-]+$/.test(value);
   }
 
   static parseDataModifier(modifier: string): DataModifier | null {
@@ -158,10 +163,15 @@ export class DataModifierParser {
       const [attribute, ...valueParts] = content.split('=');
       const value = valueParts.join('=');
 
+      // Remove quotes if present, otherwise use value as-is
+      const cleanValue = /^["'][^"']*["']$/.test(value) 
+        ? value.slice(1, -1)  // Remove quotes
+        : value;              // Use as-is
+
       return {
         type: 'data',
         attribute,
-        value: value.slice(1, -1), // Remove quotes
+        value: cleanValue,
         priority: 20
       };
     }

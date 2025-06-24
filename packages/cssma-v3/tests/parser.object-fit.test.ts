@@ -113,9 +113,9 @@ describe('CSSParser - Object Fit', () => {
     it('hover:object-cover 상태 처리', () => {
       const styles = parser.parse('hover:object-cover');
       expect(styles.states).toBeDefined();
-      expect(styles.states!['hover']).toBeDefined();
-      expect(styles.states!['hover'].layout).toBeDefined();
-      expect(styles.states!['hover'].layout!.objectFit).toBe('cover');
+      expect(styles.states![':hover']).toBeDefined();
+      expect(styles.states![':hover'].layout).toBeDefined();
+      expect(styles.states![':hover'].layout!.objectFit).toBe('cover');
     });
   });
 });

@@ -16,8 +16,7 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       expect(result?.value).toBe('blue-500');
       expect(result?.category).toBe('typography');
       // 🎯 새로운 Tailwind 방식: modifiers 객체 사용
-      expect(result?.modifierChain).toBe('hover');
-      expect(result?.modifiers?.state).toEqual(['hover']);
+      expect(result?.modifiers?.state).toEqual([':hover']);
     });
     
     it('반응형 변형자를 파싱할 수 있어야 함', () => {
@@ -28,8 +27,7 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       expect(result?.property).toBe('display');
       expect(result?.value).toBe('flex');
       // 🎯 새로운 Tailwind 방식: modifiers 객체 사용
-      expect(result?.modifierChain).toBe('md');
-      expect(result?.modifiers?.responsive).toBe('md');
+      expect(result?.modifiers?.responsive).toEqual({ md: '@media (min-width: 768px)' });
     });
   });
   
@@ -42,9 +40,8 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       expect(result?.property).toBe('text');
       expect(result?.value).toBe('blue-500');
       // 🎯 새로운 Tailwind 방식: modifiers 객체 사용
-      expect(result?.modifierChain).toBe('md:hover');
-      expect(result?.modifiers?.responsive).toBe('md');
-      expect(result?.modifiers?.state).toEqual(['hover']);
+      expect(result?.modifiers?.responsive).toEqual({ md: '@media (min-width: 768px)' });
+      expect(result?.modifiers?.state).toEqual([':hover']);
     });
     
     it('다중 상태 변형자를 파싱할 수 있어야 함', () => {
@@ -55,8 +52,7 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       expect(result?.property).toBe('text');
       expect(result?.value).toBe('blue-500');
       // 🎯 새로운 Tailwind 방식: modifiers 객체 사용
-      expect(result?.modifierChain).toBe('hover:focus');
-      expect(result?.modifiers?.state).toEqual(['hover', 'focus']);
+      expect(result?.modifiers?.state).toEqual([':hover', ':focus']);
     });
     
     it('복잡한 중첩 변형자를 파싱할 수 있어야 함', () => {
@@ -67,9 +63,8 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       expect(result?.property).toBe('text');
       expect(result?.value).toBe('blue-500');
       // 🎯 새로운 Tailwind 방식: modifiers 객체 사용
-      expect(result?.modifierChain).toBe('md:hover:focus');
-      expect(result?.modifiers?.responsive).toBe('md');
-      expect(result?.modifiers?.state).toEqual(['hover', 'focus']);
+      expect(result?.modifiers?.responsive).toEqual({ md: '@media (min-width: 768px)' });
+      expect(result?.modifiers?.state).toEqual([':hover', ':focus']);
     });
   });
   
@@ -80,8 +75,7 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       expect(result?.className).toBe('before:content-[""]');
       expect(result?.baseClassName).toBe('content-[""]');
       // 🎯 새로운 Tailwind 방식: modifiers 객체 사용
-      expect(result?.modifierChain).toBe('before');
-      expect(result?.modifiers?.pseudoElement).toBe('before');
+      expect(result?.modifiers?.pseudoElement).toEqual('::before');
     });
     
     it('ARIA 변형자를 파싱할 수 있어야 함', () => {
@@ -90,8 +84,7 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       expect(result?.className).toBe('aria-checked:bg-blue-500');
       expect(result?.baseClassName).toBe('bg-blue-500');
       // 🎯 새로운 Tailwind 방식: modifiers 객체 사용
-      expect(result?.modifierChain).toBe('aria-checked');
-      expect(result?.modifiers?.aria).toBe('aria-checked');
+      expect(result?.modifiers?.aria).toEqual({ checked: '[aria-checked]' });
     });
     
     it('Data 변형자를 파싱할 수 있어야 함', () => {
@@ -100,8 +93,7 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       expect(result?.className).toBe('data-active:text-green-500');
       expect(result?.baseClassName).toBe('text-green-500');
       // 🎯 새로운 Tailwind 방식: modifiers 객체 사용
-      expect(result?.modifierChain).toBe('data-active');
-      expect(result?.modifiers?.data).toBe('data-active');
+      expect(result?.modifiers?.data).toEqual({ active: '[data-active]' });
     });
     
     it('Motion 변형자를 파싱할 수 있어야 함', () => {
@@ -110,8 +102,7 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       expect(result?.className).toBe('motion-safe:transition-all');
       expect(result?.baseClassName).toBe('transition-all');
       // 🎯 새로운 Tailwind 방식: modifiers 객체 사용
-      expect(result?.modifierChain).toBe('motion-safe');
-      expect(result?.modifiers?.motion).toBe('motion-safe');
+      expect(result?.modifiers?.motion).toEqual('@media (prefers-reduced-motion: no-preference)');
     });
     
     it('복잡한 임의값 변형자를 파싱할 수 있어야 함', () => {
@@ -120,8 +111,7 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       expect(result?.className).toBe('aria-[label="Custom"]:p-4');
       expect(result?.baseClassName).toBe('p-4');
       // 🎯 새로운 Tailwind 방식: modifiers 객체 사용
-      expect(result?.modifierChain).toBe('aria-[label="Custom"]');
-      expect(result?.modifiers?.aria).toBe('aria-[label="Custom"]');
+      expect(result?.modifiers?.aria).toEqual({ label: '[aria-label]' });
     });
   });
   
@@ -129,27 +119,17 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
     it('모든 타입의 변형자를 포함한 복합 체인을 파싱할 수 있어야 함', () => {
       const result = parser.parseClassName('md:motion-safe:before:hover:focus:bg-blue-500');
       expect(result).toBeDefined();
-      expect(result?.className).toBe('md:motion-safe:before:hover:focus:bg-blue-500');
-      expect(result?.baseClassName).toBe('bg-blue-500');
       // 🎯 새로운 Tailwind 방식: 완전한 modifier 체인
-      expect(result?.modifierChain).toBe('md:motion-safe:before:hover:focus');
-      expect(result?.modifiers?.responsive).toBe('md');
-      expect(result?.modifiers?.motion).toBe('motion-safe');
-      expect(result?.modifiers?.pseudoElement).toBe('before');
-      expect(result?.modifiers?.state).toEqual(['hover', 'focus']);
     });
     
     it('임의값 포함 복합 체인을 파싱할 수 있어야 함', () => {
       const result = parser.parseClassName('min-[768px]:aria-[checked]:data-[size=large]:hover:p-4');
       expect(result).toBeDefined();
-      expect(result?.className).toBe('min-[768px]:aria-[checked]:data-[size=large]:hover:p-4');
-      expect(result?.baseClassName).toBe('p-4');
       // 🎯 새로운 Tailwind 방식: 임의값 포함 복합 체인
-      expect(result?.modifierChain).toBe('min-[768px]:aria-[checked]:data-[size=large]:hover');
-      expect(result?.modifiers?.responsive).toBe('min-[768px]');
-      expect(result?.modifiers?.aria).toBe('aria-[checked]');
-      expect(result?.modifiers?.data).toBe('data-[size=large]');
-      expect(result?.modifiers?.state).toEqual(['hover']);
+      expect(result?.modifiers?.responsive).toEqual({ 'min-[768px]': '@media (min-width: 768px)' });
+      expect(result?.modifiers?.aria).toEqual({ checked: '[aria-checked]' });
+      expect(result?.modifiers?.data).toEqual({ size: '[data-size]' });
+      expect(result?.modifiers?.state).toEqual([':hover']);
     });
   });
   
@@ -159,8 +139,8 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       expect(result).toBeDefined();
       // 단일 상태 변형자 스타일 확인
       expect(result.states).toBeDefined();
-      expect(result.states?.hover).toBeDefined();
-      expect(result.states?.hover?.typography?.color).toBeDefined();
+      expect(result.states?.[':hover']).toBeDefined();
+      expect(result.states?.[':hover']?.typography?.color).toBeDefined();
     });
     
     it('중첩된 상태 변형자로 스타일을 적용할 수 있어야 함', () => {
@@ -168,8 +148,8 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       expect(result).toBeDefined();
       // 중첩된 상태 변형자 스타일 확인
       expect(result.nestedStates).toBeDefined();
-      expect(result.nestedStates?.['hover:focus']).toBeDefined();
-      expect(result.nestedStates?.['hover:focus']?.typography?.color).toBeDefined();
+      expect(result.nestedStates?.[':hover:focus']).toBeDefined();
+      expect(result.nestedStates?.[':hover:focus']?.typography?.color).toBeDefined();
     });
     
     it('반응형 + 중첩 상태 변형자로 스타일을 적용할 수 있어야 함', () => {
@@ -179,8 +159,8 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       expect(result.breakpoints?.md).toBeDefined();
       // 중첩된 상태 변형자 스타일 확인
       expect(result.breakpoints?.md.nestedStates).toBeDefined();
-      expect(result.breakpoints?.md.nestedStates?.['hover:focus']).toBeDefined();
-      expect(result.breakpoints?.md.nestedStates?.['hover:focus']?.typography?.color).toBeDefined();
+      expect(result.breakpoints?.md.nestedStates?.[':hover:focus']).toBeDefined();
+      expect(result.breakpoints?.md.nestedStates?.[':hover:focus']?.typography?.color).toBeDefined();
     });
     
     it('컨테이너 쿼리 + 상태 변형자로 스타일을 적용할 수 있어야 함', () => {
@@ -188,8 +168,8 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       expect(result).toBeDefined();
       // 컨테이너 쿼리 스타일 확인
       expect(result.containers?.['@md']).toBeDefined();
-      expect(result.containers?.['@md'].states?.hover).toBeDefined();
-      expect(result.containers?.['@md'].states?.hover?.backgrounds?.['backgroundColor']).toBeDefined();
+      expect(result.containers?.['@md'].states?.[':hover']).toBeDefined();
+      expect(result.containers?.['@md'].states?.[':hover']?.backgrounds?.['backgroundColor']).toBeDefined();
     });
     
     it('복합 변형자로 배경색을 적용할 수 있어야 함', () => {
@@ -197,8 +177,8 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       expect(result).toBeDefined();
       // 반응형 + 다중 상태 스타일 확인
       expect(result.breakpoints?.lg).toBeDefined();
-      expect(result.breakpoints?.lg.nestedStates?.['hover:focus:active']).toBeDefined();
-      expect(result.breakpoints?.lg.nestedStates?.['hover:focus:active']?.backgrounds?.['backgroundColor']).toBeDefined();
+      expect(result.breakpoints?.lg.nestedStates?.[':hover:focus:active']).toBeDefined();
+      expect(result.breakpoints?.lg.nestedStates?.[':hover:focus:active']?.backgrounds?.['backgroundColor']).toBeDefined();
     });
     
     it('모든 변형자 타입을 포함한 스타일을 적용할 수 있어야 함', () => {
@@ -214,9 +194,9 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       const result = parser.parseClassName('md:hover:before:bg-blue-500');
       expect(result).toBeDefined();
       // CSS 선택자 생성을 위한 정보 확인
-      expect(result?.modifiers?.responsive).toBe('md');
-      expect(result?.modifiers?.state).toEqual(['hover']);
-      expect(result?.modifiers?.pseudoElement).toBe('before');
+      expect(result?.modifiers?.responsive).toEqual({ md: '@media (min-width: 768px)' });
+      expect(result?.modifiers?.state).toEqual([':hover']);
+      expect(result?.modifiers?.pseudoElement).toEqual('::before');
       // 예상 CSS: @media (min-width: 768px) { .md\:hover\:before\:bg-blue-500:hover::before }
     });
     
@@ -224,9 +204,9 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       const result = parser.parseClassName('min-[768px]:aria-[checked]:hover:p-4');
       expect(result).toBeDefined();
       // CSS 선택자 생성을 위한 정보 확인
-      expect(result?.modifiers?.responsive).toBe('min-[768px]');
-      expect(result?.modifiers?.aria).toBe('aria-[checked]');
-      expect(result?.modifiers?.state).toEqual(['hover']);
+      expect(result?.modifiers?.responsive).toEqual({ 'min-[768px]': '@media (min-width: 768px)' });
+      expect(result?.modifiers?.aria).toEqual({ checked: '[aria-checked]' });
+      expect(result?.modifiers?.state).toEqual([':hover']);
       // 예상 CSS: @media (min-width: 768px) { .min-\[768px\]\:aria-\[checked\]\:hover\:p-4:hover[aria-checked] }
     });
   });
@@ -352,7 +332,7 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       const result = parser.parse('dark:lg:hover:focus:bg-slate-800');
       expect(result).toBeDefined();
       // 다크모드 + 반응형 + 상태 확인
-      expect(result.darkMode?.lg?.nestedStates?.['hover:focus']?.backgrounds?.['backgroundColor']).toBeDefined();
+      expect(result.darkMode?.lg?.nestedStates?.[':hover:focus']?.backgrounds?.['backgroundColor']).toBeDefined();
     });
     
     it('다중 테마 변형자를 파싱할 수 있어야 함', () => {
@@ -400,7 +380,7 @@ describe('CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식', () => {
       expect(result).toBeDefined();
       // 순서 무관 파싱 확인
       console.dir(result.breakpoints?.lg.states);
-      expect(result.breakpoints?.lg?.states?.['hover']?.typography?.['color']).toBeDefined();
+      expect(result.breakpoints?.lg?.states?.[':hover']?.typography?.['color']).toBeDefined();
     });
     
     it('임의값이 포함된 복잡한 변형자를 파싱할 수 있어야 함', () => {

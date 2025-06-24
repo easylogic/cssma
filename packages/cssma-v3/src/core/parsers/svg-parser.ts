@@ -85,17 +85,16 @@ export class SVGParser {
    * SVG 스타일을 적용합니다.
    * @param parsedClass 파싱된 클래스
    * @param styles 스타일 객체
-   * @param preset 디자인 프리셋 (옵션)
+   * @param context 파서 컨텍스트
    */
   static applySVGStyle(
-    parsedClass: ParsedClass, 
-    styles: { svg?: SVGStyles }, 
-    preset?: DesignPreset
+    parsedClass: ParsedClass,
+    styles: { svg?: SVGStyles },
+    context: ParserContext
   ): void {
     if (!styles.svg) {
       styles.svg = {};
     }
-    
     // 개별 파서를 사용하여 속성 값 설정
     const result = this.parse(parsedClass.baseClassName);
     if (result) {

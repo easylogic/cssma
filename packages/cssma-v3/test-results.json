@@ -1,0 +1,5202 @@
+
+> cssma-v3@0.1.0 test /Users/user/github/figmaikr/packages/cssma-v3
+> vitest run
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v1.6.1 /Users/user/github/figmaikr/packages/cssma-v3
+
+ ✓ tests/parser.text-shadow-colors.test.ts  (22 tests) 11ms
+ ✓ tests/parser.modifiers.parseClassNameParts.test.ts  (66 tests) 8ms
+ ✓ tests/parser.modifiers.priority.test.ts  (23 tests) 5ms
+ ✓ tests/parser.spacing.test.ts  (41 tests) 8ms
+ ✓ tests/parser.mask.test.ts  (23 tests) 16ms
+stdout | tests/parser.mask.test.ts > Mask Utilities Parser > Integration Tests > should work with modifiers
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+ ❯ tests/parser.animation.test.ts  (46 tests | 4 failed) 26ms
+   ❯ tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 클래스 파싱 > 상태 모디파이어가 있는 애니메이션 클래스를 파싱할 수 있어야 함
+     → expected [ ':hover' ] to be ':hover' // Object.is equality
+   ❯ tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 클래스 파싱 > 복합 모디파이어가 있는 애니메이션 클래스를 파싱할 수 있어야 함
+     → expected [ ':hover' ] to be ':hover' // Object.is equality
+   ❯ tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 클래스 파싱 > 상태 모디파이어가 있는 임의 애니메이션 클래스를 파싱할 수 있어야 함
+     → expected [ ':hover' ] to be ':hover' // Object.is equality
+   ❯ tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 클래스 파싱 > 복합 모디파이어가 있는 임의 애니메이션 클래스를 파싱할 수 있어야 함
+     → expected [ ':hover' ] to be ':hover' // Object.is equality
+stdout | tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 클래스 파싱 > 상태 모디파이어가 있는 애니메이션 클래스를 파싱할 수 있어야 함
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 클래스 파싱 > 반응형 모디파이어가 있는 애니메이션 클래스를 파싱할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+stdout | tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 클래스 파싱 > 복합 모디파이어가 있는 애니메이션 클래스를 파싱할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 클래스 파싱 > 상태 모디파이어가 있는 임의 애니메이션 클래스를 파싱할 수 있어야 함
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 클래스 파싱 > 반응형 모디파이어가 있는 임의 애니메이션 클래스를 파싱할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+stdout | tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 클래스 파싱 > 복합 모디파이어가 있는 임의 애니메이션 클래스를 파싱할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 스타일 적용 > 상태 모디파이어가 있는 애니메이션 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 스타일 적용 > 반응형 모디파이어가 있는 애니메이션 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+stdout | tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 스타일 적용 > 복합 모디파이어가 있는 애니메이션 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 스타일 적용 > 상태 모디파이어가 있는 임의 애니메이션 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 스타일 적용 > 복합 모디파이어가 있는 여러 애니메이션 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 스타일 적용 > 다양한 모디파이어 조합을 함께 적용할 수 있어야 함
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.animation.test.ts > CSSParser - 애니메이션 > 추가 애니메이션 테스트 > 중첩된 복합 모디파이어 테스트
+tryArbitraryVariantParser dark
+tryArbitraryAttributeParser dark
+canParse dark
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser dark
+tryArbitraryAttributeParser dark
+canParse dark
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.animation.test.ts > CSSParser - 애니메이션 > 추가 애니메이션 테스트 > 여러 중첩 모디파이어 조합 테스트
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser dark
+tryArbitraryAttributeParser dark
+canParse dark
+
+stdout | tests/parser.animation.test.ts > CSSParser - 애니메이션 > 추가 애니메이션 테스트 > 모디파이어 내에서의 애니메이션 속성 충돌 테스트
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+ ✓ tests/parser.drop-shadow-colors.test.ts  (24 tests) 22ms
+stdout | tests/parser.typography.test.ts > CSSParser - 타이포그래피(Typography) - Tailwind v4 > Text Wrap Utilities (v4.1) > should work with modifiers
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+ ✓ tests/parser.typography.test.ts  (44 tests) 13ms
+ ✓ tests/parser.effects.test.ts  (38 tests) 15ms
+stdout | tests/parser.filters.test.ts > Effects Parser (Filters Integration) > Responsive & States > should handle responsive filter classes
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+
+stdout | tests/parser.filters.test.ts > Effects Parser (Filters Integration) > Responsive & States > should handle hover state filter classes
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.filters.test.ts > Effects Parser (Filters Integration) > Responsive & States > should handle complex responsive and state combinations
+tryArbitraryVariantParser sm
+tryArbitraryAttributeParser sm
+canParse sm
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+
+stdout | tests/parser.filters.test.ts > Effects Parser (Filters Integration) > Responsive & States > should handle backdrop filters with modifiers
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+ ❯ tests/parser.filters.test.ts  (45 tests | 2 failed) 27ms
+   ❯ tests/parser.filters.test.ts > Effects Parser (Filters Integration) > Responsive & States > should handle hover state filter classes
+     → expected undefined not to be undefined
+   ❯ tests/parser.filters.test.ts > Effects Parser (Filters Integration) > Responsive & States > should handle backdrop filters with modifiers
+     → expected undefined not to be undefined
+stdout | tests/parser.position.test.ts > Position Parser > Responsive Position > should parse responsive position classes
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+
+stdout | tests/parser.position.test.ts > Position Parser > Responsive Position > should parse responsive position values
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+
+stdout | tests/parser.position.test.ts > Position Parser > State Modifiers > should parse hover position styles
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.position.test.ts > Position Parser > State Modifiers > should parse focus position styles
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+
+ ✓ tests/parser.position.test.ts  (28 tests) 15ms
+ ✓ tests/parser.flexbox-grid.test.ts  (58 tests) 16ms
+ ❯ tests/parser.variants.test.ts  (46 tests | 18 failed) 64ms
+   ❯ tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 고급 변형자 파싱 - Tailwind CSS 방식 > Pseudo-element 변형자를 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 완전한 복합 변형자 체인 > 임의값 포함 복합 체인을 파싱할 수 있어야 함
+     → expected undefined to deeply equal { size: '[data-size]' }
+   ❯ tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 스타일 적용 - Tailwind CSS 방식 > 중첩된 상태 변형자로 스타일을 적용할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 스타일 적용 - Tailwind CSS 방식 > 반응형 + 중첩 상태 변형자로 스타일을 적용할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 스타일 적용 - Tailwind CSS 방식 > 복합 변형자로 배경색을 적용할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 극한 복합 변형자 테스트 > 다중 임의값 변형자를 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 극한 복합 변형자 테스트 > 깊은 중첩 변형자 체인을 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 조건부 변형자 고급 테스트 > 복잡한 aria 상태 변형자를 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 다양한 의사 클래스 조합 테스트 > 모든 상호작용 상태를 포함한 변형자를 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 다양한 의사 클래스 조합 테스트 > 모든 위치 기반 의사 클래스를 포함한 변형자를 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 미디어 쿼리 복합 테스트 > 모든 프리퍼 변형자를 포함한 스타일을 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 다크모드 및 테마 변형자 테스트 > 다크모드와 반응형을 결합한 변형자를 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 다크모드 및 테마 변형자 테스트 > 다중 테마 변형자를 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 심화 테스트 > 복잡한 컨테이너 쿼리 변형자를 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 심화 테스트 > 컨테이너 크기와 상태를 결합한 변형자를 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 특수 케이스 및 에지 케이스 테스트 > 중복된 변형자를 포함한 스타일을 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 특수 케이스 및 에지 케이스 테스트 > 잘못된 순서의 변형자를 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 특수 케이스 및 에지 케이스 테스트 > 임의값이 포함된 복잡한 변형자를 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 기본 변형자 파싱 > 상태 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 기본 변형자 파싱 > 반응형 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 중첩된 변형자 파싱 > 상태 + 반응형 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 중첩된 변형자 파싱 > 다중 상태 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 중첩된 변형자 파싱 > 복잡한 중첩 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 고급 변형자 파싱 - Tailwind CSS 방식 > Pseudo-element 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser before
+tryArbitraryAttributeParser before
+canParse before
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 고급 변형자 파싱 - Tailwind CSS 방식 > ARIA 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser aria-checked
+tryArbitraryAttributeParser aria-checked
+canParse aria-checked
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 고급 변형자 파싱 - Tailwind CSS 방식 > Data 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser data-active
+tryArbitraryAttributeParser data-active
+canParse data-active
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 고급 변형자 파싱 - Tailwind CSS 방식 > Motion 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser motion-safe
+tryArbitraryAttributeParser motion-safe
+canParse motion-safe
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 고급 변형자 파싱 - Tailwind CSS 방식 > 복잡한 임의값 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser aria-[label="Custom"]
+tryArbitraryAttributeParser aria-[label="Custom"]
+canParse aria-[label="Custom"]
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 완전한 복합 변형자 체인 > 모든 타입의 변형자를 포함한 복합 체인을 파싱할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser motion-safe
+tryArbitraryAttributeParser motion-safe
+canParse motion-safe
+tryArbitraryVariantParser before
+tryArbitraryAttributeParser before
+canParse before
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 완전한 복합 변형자 체인 > 임의값 포함 복합 체인을 파싱할 수 있어야 함
+tryArbitraryVariantParser min-[768px]
+tryArbitraryAttributeParser min-[768px]
+canParse min-[768px]
+tryArbitraryVariantParser aria-[checked]
+tryArbitraryAttributeParser aria-[checked]
+canParse aria-[checked]
+tryArbitraryVariantParser data-[size=large]
+tryArbitraryAttributeParser data-[size=large]
+canParse data-[size=large]
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stderr | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 완전한 복합 변형자 체인 > 임의값 포함 복합 체인을 파싱할 수 있어야 함
+Unknown modifier: data-[size=large]
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 스타일 적용 - Tailwind CSS 방식 > 단일 상태 변형자로 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 스타일 적용 - Tailwind CSS 방식 > 중첩된 상태 변형자로 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 스타일 적용 - Tailwind CSS 방식 > 반응형 + 중첩 상태 변형자로 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 스타일 적용 - Tailwind CSS 방식 > 컨테이너 쿼리 + 상태 변형자로 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser @md
+tryArbitraryAttributeParser @md
+canParse @md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 스타일 적용 - Tailwind CSS 방식 > 복합 변형자로 배경색을 적용할 수 있어야 함
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+tryArbitraryVariantParser motion-safe
+tryArbitraryAttributeParser motion-safe
+canParse motion-safe
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 스타일 적용 - Tailwind CSS 방식 > 모든 변형자 타입을 포함한 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser motion-safe
+tryArbitraryAttributeParser motion-safe
+canParse motion-safe
+tryArbitraryVariantParser before
+tryArbitraryAttributeParser before
+canParse before
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > CSS 선택자 호환성 테스트 > 복합 변형자의 CSS 선택자 정보를 생성할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser before
+tryArbitraryAttributeParser before
+canParse before
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > CSS 선택자 호환성 테스트 > 임의값 변형자의 CSS 선택자 정보를 생성할 수 있어야 함
+tryArbitraryVariantParser min-[768px]
+tryArbitraryAttributeParser min-[768px]
+canParse min-[768px]
+tryArbitraryVariantParser aria-[checked]
+tryArbitraryAttributeParser aria-[checked]
+canParse aria-[checked]
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 극한 복합 변형자 테스트 > 모든 변형자 타입을 포함한 극한 복합 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser xl
+tryArbitraryAttributeParser xl
+canParse xl
+tryArbitraryVariantParser motion-reduce
+tryArbitraryAttributeParser motion-reduce
+canParse motion-reduce
+tryArbitraryVariantParser dark
+tryArbitraryAttributeParser dark
+canParse dark
+tryArbitraryVariantParser rtl
+tryArbitraryAttributeParser rtl
+canParse rtl
+tryArbitraryVariantParser print
+tryArbitraryAttributeParser print
+canParse print
+tryArbitraryVariantParser first
+tryArbitraryAttributeParser first
+canParse first
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser after
+tryArbitraryAttributeParser after
+canParse after
+
+stderr | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 극한 복합 변형자 테스트 > 모든 변형자 타입을 포함한 극한 복합 변형자를 파싱할 수 있어야 함
+Unknown modifier: rtl
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 극한 복합 변형자 테스트 > 다중 임의값 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser min-[1280px]
+tryArbitraryAttributeParser min-[1280px]
+canParse min-[1280px]
+tryArbitraryVariantParser max-[1920px]
+tryArbitraryAttributeParser max-[1920px]
+canParse max-[1920px]
+tryArbitraryVariantParser supports-[display:grid]
+tryArbitraryAttributeParser supports-[display:grid]
+canParse supports-[display:grid]
+DEBUG: Special modifier "supports-[display:grid]" parsed as: {
+  type: 'supports',
+  condition: 'display:grid',
+  raw: 'supports-[display:grid]',
+  priority: 22
+}
+tryArbitraryVariantParser data-[state=open]
+tryArbitraryAttributeParser data-[state=open]
+canParse data-[state=open]
+tryArbitraryVariantParser peer-[.active]
+tryArbitraryAttributeParser peer-[.active]
+canParse peer-[.active]
+tryArbitraryVariantParser group-[.expanded]
+tryArbitraryAttributeParser group-[.expanded]
+canParse group-[.expanded]
+
+stderr | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 극한 복합 변형자 테스트 > 다중 임의값 변형자를 파싱할 수 있어야 함
+Unknown modifier: data-[state=open]
+Unknown modifier: peer-[.active]
+Unknown modifier: group-[.expanded]
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 극한 복합 변형자 테스트 > 깊은 중첩 변형자 체인을 파싱할 수 있어야 함
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+tryArbitraryVariantParser group-hover
+tryArbitraryAttributeParser group-hover
+canParse group-hover
+tryArbitraryVariantParser peer-focus
+tryArbitraryAttributeParser peer-focus
+canParse peer-focus
+tryArbitraryVariantParser has-[:checked]
+tryArbitraryAttributeParser has-[:checked]
+canParse has-[:checked]
+tryArbitraryVariantParser not-[:disabled]
+tryArbitraryAttributeParser not-[:disabled]
+canParse not-[:disabled]
+tryArbitraryVariantParser first-of-type
+tryArbitraryAttributeParser first-of-type
+canParse first-of-type
+
+stderr | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 극한 복합 변형자 테스트 > 깊은 중첩 변형자 체인을 파싱할 수 있어야 함
+Unknown modifier: has-[:checked]
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 조건부 변형자 고급 테스트 > 복잡한 supports 쿼리 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser supports-[backdrop-filter]
+tryArbitraryAttributeParser supports-[backdrop-filter]
+canParse supports-[backdrop-filter]
+DEBUG: Special modifier "supports-[backdrop-filter]" parsed as: {
+  type: 'supports',
+  condition: 'backdrop-filter',
+  raw: 'supports-[backdrop-filter]',
+  priority: 22
+}
+tryArbitraryVariantParser supports-[mask]
+tryArbitraryAttributeParser supports-[mask]
+canParse supports-[mask]
+DEBUG: Special modifier "supports-[mask]" parsed as: {
+  type: 'supports',
+  condition: 'mask',
+  raw: 'supports-[mask]',
+  priority: 22
+}
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 조건부 변형자 고급 테스트 > 다중 data 속성 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser data-[state=open]
+tryArbitraryAttributeParser data-[state=open]
+canParse data-[state=open]
+tryArbitraryVariantParser data-[side=top]
+tryArbitraryAttributeParser data-[side=top]
+canParse data-[side=top]
+tryArbitraryVariantParser data-[orientation=vertical]
+tryArbitraryAttributeParser data-[orientation=vertical]
+canParse data-[orientation=vertical]
+
+stderr | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 조건부 변형자 고급 테스트 > 다중 data 속성 변형자를 파싱할 수 있어야 함
+Unknown modifier: data-[state=open]
+Unknown modifier: data-[side=top]
+Unknown modifier: data-[orientation=vertical]
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 조건부 변형자 고급 테스트 > 복잡한 aria 상태 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser aria-[expanded=true]
+tryArbitraryAttributeParser aria-[expanded=true]
+canParse aria-[expanded=true]
+tryArbitraryVariantParser aria-[level=2]
+tryArbitraryAttributeParser aria-[level=2]
+canParse aria-[level=2]
+tryArbitraryVariantParser aria-[selected]
+tryArbitraryAttributeParser aria-[selected]
+canParse aria-[selected]
+
+stderr | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 조건부 변형자 고급 테스트 > 복잡한 aria 상태 변형자를 파싱할 수 있어야 함
+Unknown modifier: aria-[expanded=true]
+Unknown modifier: aria-[level=2]
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 그룹 및 피어 변형자 심화 테스트 > 중첩된 그룹 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser group/sidebar
+tryArbitraryAttributeParser group/sidebar
+canParse group/sidebar
+tryArbitraryVariantParser group-hover/sidebar
+tryArbitraryAttributeParser group-hover/sidebar
+canParse group-hover/sidebar
+tryArbitraryVariantParser group-focus/sidebar
+tryArbitraryAttributeParser group-focus/sidebar
+canParse group-focus/sidebar
+
+stderr | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 그룹 및 피어 변형자 심화 테스트 > 중첩된 그룹 변형자를 파싱할 수 있어야 함
+Unknown modifier: group/sidebar
+Unknown modifier: group-hover/sidebar
+Unknown modifier: group-focus/sidebar
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 그룹 및 피어 변형자 심화 테스트 > 복잡한 피어 셀렉터 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser peer/label
+tryArbitraryAttributeParser peer/label
+canParse peer/label
+tryArbitraryVariantParser peer-checked/label
+tryArbitraryAttributeParser peer-checked/label
+canParse peer-checked/label
+tryArbitraryVariantParser peer-invalid/label
+tryArbitraryAttributeParser peer-invalid/label
+canParse peer-invalid/label
+
+stderr | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 그룹 및 피어 변형자 심화 테스트 > 복잡한 피어 셀렉터 변형자를 파싱할 수 있어야 함
+Unknown modifier: peer/label
+Unknown modifier: peer-checked/label
+Unknown modifier: peer-invalid/label
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 그룹 및 피어 변형자 심화 테스트 > 그룹과 피어가 혼합된 복잡한 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser group-hover
+tryArbitraryAttributeParser group-hover
+canParse group-hover
+tryArbitraryVariantParser peer-focus
+tryArbitraryAttributeParser peer-focus
+canParse peer-focus
+tryArbitraryVariantParser has-[:invalid]
+tryArbitraryAttributeParser has-[:invalid]
+canParse has-[:invalid]
+tryArbitraryVariantParser before
+tryArbitraryAttributeParser before
+canParse before
+tryArbitraryVariantParser after
+tryArbitraryAttributeParser after
+canParse after
+
+stderr | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 그룹 및 피어 변형자 심화 테스트 > 그룹과 피어가 혼합된 복잡한 변형자를 파싱할 수 있어야 함
+Unknown modifier: has-[:invalid]
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 다양한 의사 클래스 조합 테스트 > 모든 상호작용 상태를 포함한 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser focus-within
+tryArbitraryAttributeParser focus-within
+canParse focus-within
+tryArbitraryVariantParser focus-visible
+tryArbitraryAttributeParser focus-visible
+canParse focus-visible
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser visited
+tryArbitraryAttributeParser visited
+canParse visited
+tryArbitraryVariantParser target
+tryArbitraryAttributeParser target
+canParse target
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 다양한 의사 클래스 조합 테스트 > 모든 폼 상태를 포함한 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser required
+tryArbitraryAttributeParser required
+canParse required
+tryArbitraryVariantParser invalid
+tryArbitraryAttributeParser invalid
+canParse invalid
+tryArbitraryVariantParser valid
+tryArbitraryAttributeParser valid
+canParse valid
+tryArbitraryVariantParser in-range
+tryArbitraryAttributeParser in-range
+canParse in-range
+tryArbitraryVariantParser out-of-range
+tryArbitraryAttributeParser out-of-range
+canParse out-of-range
+tryArbitraryVariantParser placeholder-shown
+tryArbitraryAttributeParser placeholder-shown
+canParse placeholder-shown
+tryArbitraryVariantParser autofill
+tryArbitraryAttributeParser autofill
+canParse autofill
+tryArbitraryVariantParser read-only
+tryArbitraryAttributeParser read-only
+canParse read-only
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 다양한 의사 클래스 조합 테스트 > 모든 위치 기반 의사 클래스를 포함한 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser first
+tryArbitraryAttributeParser first
+canParse first
+tryArbitraryVariantParser last
+tryArbitraryAttributeParser last
+canParse last
+tryArbitraryVariantParser only
+tryArbitraryAttributeParser only
+canParse only
+tryArbitraryVariantParser first-of-type
+tryArbitraryAttributeParser first-of-type
+canParse first-of-type
+tryArbitraryVariantParser last-of-type
+tryArbitraryAttributeParser last-of-type
+canParse last-of-type
+tryArbitraryVariantParser only-of-type
+tryArbitraryAttributeParser only-of-type
+canParse only-of-type
+tryArbitraryVariantParser nth-child
+tryArbitraryAttributeParser nth-child
+canParse nth-child
+tryArbitraryVariantParser nth-last-child
+tryArbitraryAttributeParser nth-last-child
+canParse nth-last-child
+
+stderr | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 다양한 의사 클래스 조합 테스트 > 모든 위치 기반 의사 클래스를 포함한 변형자를 파싱할 수 있어야 함
+Unknown modifier: nth-child
+Unknown modifier: nth-last-child
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 미디어 쿼리 복합 테스트 > 모든 반응형 변형자를 포함한 스타일을 파싱할 수 있어야 함
+tryArbitraryVariantParser sm
+tryArbitraryAttributeParser sm
+canParse sm
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+tryArbitraryVariantParser xl
+tryArbitraryAttributeParser xl
+canParse xl
+tryArbitraryVariantParser 2xl
+tryArbitraryAttributeParser 2xl
+canParse 2xl
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 미디어 쿼리 복합 테스트 > 사용자 정의 미디어 쿼리 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser min-[640px]
+tryArbitraryAttributeParser min-[640px]
+canParse min-[640px]
+tryArbitraryVariantParser max-[1024px]
+tryArbitraryAttributeParser max-[1024px]
+canParse max-[1024px]
+tryArbitraryVariantParser min-h-[768px]
+tryArbitraryAttributeParser min-h-[768px]
+canParse min-h-[768px]
+tryArbitraryVariantParser orientation-landscape
+tryArbitraryAttributeParser orientation-landscape
+canParse orientation-landscape
+
+stderr | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 미디어 쿼리 복합 테스트 > 사용자 정의 미디어 쿼리 변형자를 파싱할 수 있어야 함
+Unknown modifier: min-h-[768px]
+Unknown modifier: orientation-landscape
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 미디어 쿼리 복합 테스트 > 모든 프리퍼 변형자를 포함한 스타일을 파싱할 수 있어야 함
+tryArbitraryVariantParser motion-safe
+tryArbitraryAttributeParser motion-safe
+canParse motion-safe
+tryArbitraryVariantParser motion-reduce
+tryArbitraryAttributeParser motion-reduce
+canParse motion-reduce
+tryArbitraryVariantParser contrast-more
+tryArbitraryAttributeParser contrast-more
+canParse contrast-more
+tryArbitraryVariantParser contrast-less
+tryArbitraryAttributeParser contrast-less
+canParse contrast-less
+tryArbitraryVariantParser prefers-reduced-data
+tryArbitraryAttributeParser prefers-reduced-data
+canParse prefers-reduced-data
+
+stderr | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 미디어 쿼리 복합 테스트 > 모든 프리퍼 변형자를 포함한 스타일을 파싱할 수 있어야 함
+Unknown modifier: contrast-more
+Unknown modifier: contrast-less
+Unknown modifier: prefers-reduced-data
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 다크모드 및 테마 변형자 테스트 > 다크모드와 반응형을 결합한 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser dark
+tryArbitraryAttributeParser dark
+canParse dark
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 다크모드 및 테마 변형자 테스트 > 다중 테마 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser dark
+tryArbitraryAttributeParser dark
+canParse dark
+tryArbitraryVariantParser light
+tryArbitraryAttributeParser light
+canParse light
+tryArbitraryVariantParser contrast-more
+tryArbitraryAttributeParser contrast-more
+canParse contrast-more
+tryArbitraryVariantParser contrast-less
+tryArbitraryAttributeParser contrast-less
+canParse contrast-less
+
+stderr | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 다크모드 및 테마 변형자 테스트 > 다중 테마 변형자를 파싱할 수 있어야 함
+Unknown modifier: contrast-more
+Unknown modifier: contrast-less
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 심화 테스트 > 복잡한 컨테이너 쿼리 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser @container/sidebar
+tryArbitraryAttributeParser @container/sidebar
+canParse @container/sidebar
+tryArbitraryVariantParser @md
+tryArbitraryAttributeParser @md
+canParse @md
+tryArbitraryVariantParser @lg
+tryArbitraryAttributeParser @lg
+canParse @lg
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+
+stderr | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 심화 테스트 > 복잡한 컨테이너 쿼리 변형자를 파싱할 수 있어야 함
+Unknown modifier: @container/sidebar
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 심화 테스트 > 컨테이너 크기와 상태를 결합한 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser @xs
+tryArbitraryAttributeParser @xs
+canParse @xs
+tryArbitraryVariantParser @sm
+tryArbitraryAttributeParser @sm
+canParse @sm
+tryArbitraryVariantParser @md
+tryArbitraryAttributeParser @md
+canParse @md
+tryArbitraryVariantParser @lg
+tryArbitraryAttributeParser @lg
+canParse @lg
+tryArbitraryVariantParser @xl
+tryArbitraryAttributeParser @xl
+canParse @xl
+tryArbitraryVariantParser @2xl
+tryArbitraryAttributeParser @2xl
+canParse @2xl
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 특수 케이스 및 에지 케이스 테스트 > 매우 긴 변형자 체인을 파싱할 수 있어야 함
+tryArbitraryVariantParser xl
+tryArbitraryAttributeParser xl
+canParse xl
+tryArbitraryVariantParser dark
+tryArbitraryAttributeParser dark
+canParse dark
+tryArbitraryVariantParser motion-safe
+tryArbitraryAttributeParser motion-safe
+canParse motion-safe
+tryArbitraryVariantParser group-hover
+tryArbitraryAttributeParser group-hover
+canParse group-hover
+tryArbitraryVariantParser peer-focus
+tryArbitraryAttributeParser peer-focus
+canParse peer-focus
+tryArbitraryVariantParser has-[:checked]
+tryArbitraryAttributeParser has-[:checked]
+canParse has-[:checked]
+tryArbitraryVariantParser first
+tryArbitraryAttributeParser first
+canParse first
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser before
+tryArbitraryAttributeParser before
+canParse before
+tryArbitraryVariantParser after
+tryArbitraryAttributeParser after
+canParse after
+tryArbitraryVariantParser aria-[expanded]
+tryArbitraryAttributeParser aria-[expanded]
+canParse aria-[expanded]
+tryArbitraryVariantParser data-[state=open]
+tryArbitraryAttributeParser data-[state=open]
+canParse data-[state=open]
+tryArbitraryVariantParser supports-[backdrop-filter]
+tryArbitraryAttributeParser supports-[backdrop-filter]
+canParse supports-[backdrop-filter]
+DEBUG: Special modifier "supports-[backdrop-filter]" parsed as: {
+  type: 'supports',
+  condition: 'backdrop-filter',
+  raw: 'supports-[backdrop-filter]',
+  priority: 22
+}
+tryArbitraryVariantParser min-[1280px]
+tryArbitraryAttributeParser min-[1280px]
+canParse min-[1280px]
+tryArbitraryVariantParser max-[1920px]
+tryArbitraryAttributeParser max-[1920px]
+canParse max-[1920px]
+
+stderr | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 특수 케이스 및 에지 케이스 테스트 > 매우 긴 변형자 체인을 파싱할 수 있어야 함
+Unknown modifier: has-[:checked]
+Unknown modifier: data-[state=open]
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 특수 케이스 및 에지 케이스 테스트 > 중복된 변형자를 포함한 스타일을 파싱할 수 있어야 함
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 특수 케이스 및 에지 케이스 테스트 > 잘못된 순서의 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+tryArbitraryVariantParser dark
+tryArbitraryAttributeParser dark
+canParse dark
+tryArbitraryVariantParser before
+tryArbitraryAttributeParser before
+canParse before
+tryArbitraryVariantParser group-hover
+tryArbitraryAttributeParser group-hover
+canParse group-hover
+{
+  ':hover and @media (prefers-color-scheme: dark)': {
+    spacing: { padding: {}, margin: {}, gap: {} },
+    colors: {},
+    typography: {},
+    layout: {},
+    effects: {},
+    animation: {},
+    position: {},
+    transform: {},
+    sizing: {},
+    flexboxGrid: {},
+    filters: {},
+    interactivity: {},
+    tables: {},
+    svg: {},
+    transitions: {},
+    backgrounds: {},
+    borders: {},
+    overflow: {},
+    accessibility: {},
+    blendModes: {},
+    mask: {},
+    states: {},
+    pseudoElements: { '::before': [Object] },
+    breakpoints: {},
+    containers: {},
+    motion: {},
+    attributes: {},
+    complexSelectors: {},
+    groupStates: {},
+    peerStates: {},
+    contrast: {},
+    colorScheme: {},
+    orientation: {},
+    print: {},
+    scripting: {},
+    pointer: {},
+    noscript: {},
+    userValidation: {},
+    invertedColors: {},
+    detailsContent: {},
+    starting: {},
+    nthSelectors: {}
+  }
+}
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 특수 케이스 및 에지 케이스 테스트 > 임의값이 포함된 복잡한 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser min-[calc(100vh-200px)]
+tryArbitraryAttributeParser min-[calc(100vh-200px)]
+canParse min-[calc(100vh-200px)]
+tryArbitraryVariantParser supports-[display:subgrid]
+tryArbitraryAttributeParser supports-[display:subgrid]
+canParse supports-[display:subgrid]
+DEBUG: Special modifier "supports-[display:subgrid]" parsed as: {
+  type: 'supports',
+  condition: 'display:subgrid',
+  raw: 'supports-[display:subgrid]',
+  priority: 22
+}
+tryArbitraryVariantParser has-[.custom-selector]
+tryArbitraryAttributeParser has-[.custom-selector]
+canParse has-[.custom-selector]
+tryArbitraryVariantParser peer-[&:nth-child(2n)]
+tryArbitraryAttributeParser peer-[&:nth-child(2n)]
+canParse peer-[&:nth-child(2n)]
+
+stderr | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 특수 케이스 및 에지 케이스 테스트 > 임의값이 포함된 복잡한 변형자를 파싱할 수 있어야 함
+Unknown modifier: has-[.custom-selector]
+Unknown modifier: peer-[&:nth-child(2n)]
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 특수 케이스 및 에지 케이스 테스트 > 특수 문자가 포함된 변형자를 파싱할 수 있어야 함
+tryArbitraryVariantParser data-[state="open"]
+tryArbitraryAttributeParser data-[state="open"]
+canParse data-[state="open"]
+tryArbitraryVariantParser menu"]
+tryArbitraryAttributeParser menu"]
+canParse menu"]
+
+stderr | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 특수 케이스 및 에지 케이스 테스트 > 특수 문자가 포함된 변형자를 파싱할 수 있어야 함
+Unknown modifier: menu"]
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 성능 및 확장성 테스트 > 대량의 변형자 조합을 빠르게 파싱할 수 있어야 함
+tryArbitraryVariantParser sm
+tryArbitraryAttributeParser sm
+canParse sm
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+tryArbitraryVariantParser xl
+tryArbitraryAttributeParser xl
+canParse xl
+tryArbitraryVariantParser 2xl
+tryArbitraryAttributeParser 2xl
+canParse 2xl
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser dark
+tryArbitraryAttributeParser dark
+canParse dark
+tryArbitraryVariantParser motion-safe
+tryArbitraryAttributeParser motion-safe
+canParse motion-safe
+tryArbitraryVariantParser group-hover
+tryArbitraryAttributeParser group-hover
+canParse group-hover
+tryArbitraryVariantParser peer-focus
+tryArbitraryAttributeParser peer-focus
+canParse peer-focus
+tryArbitraryVariantParser @container
+tryArbitraryAttributeParser @container
+canParse @container
+tryArbitraryVariantParser @md
+tryArbitraryAttributeParser @md
+canParse @md
+tryArbitraryVariantParser @lg
+tryArbitraryAttributeParser @lg
+canParse @lg
+tryArbitraryVariantParser before
+tryArbitraryAttributeParser before
+canParse before
+tryArbitraryVariantParser after
+tryArbitraryAttributeParser after
+canParse after
+tryArbitraryVariantParser min-[768px]
+tryArbitraryAttributeParser min-[768px]
+canParse min-[768px]
+tryArbitraryVariantParser max-[1024px]
+tryArbitraryAttributeParser max-[1024px]
+canParse max-[1024px]
+tryArbitraryVariantParser supports-[grid]
+tryArbitraryAttributeParser supports-[grid]
+canParse supports-[grid]
+DEBUG: Special modifier "supports-[grid]" parsed as: {
+  type: 'supports',
+  condition: 'grid',
+  raw: 'supports-[grid]',
+  priority: 22
+}
+tryArbitraryVariantParser data-[state=open]
+tryArbitraryAttributeParser data-[state=open]
+canParse data-[state=open]
+tryArbitraryVariantParser aria-[expanded]
+tryArbitraryAttributeParser aria-[expanded]
+canParse aria-[expanded]
+tryArbitraryVariantParser first
+tryArbitraryAttributeParser first
+canParse first
+tryArbitraryVariantParser last
+tryArbitraryAttributeParser last
+canParse last
+
+stderr | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 성능 및 확장성 테스트 > 대량의 변형자 조합을 빠르게 파싱할 수 있어야 함
+Unknown modifier: @container
+Unknown modifier: data-[state=open]
+
+stdout | tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 성능 및 확장성 테스트 > 메모리 효율적으로 파싱 결과를 저장할 수 있어야 함
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+
+stdout | tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 2. 배경 이미지 시스템 (v4.1 완전 지원) > 2.1 기본 배경 이미지 > 커스텀 속성 배경 이미지를 파싱할 수 있어야 함
+tryArbitraryVariantParser bg-(image
+tryArbitraryAttributeParser bg-(image
+canParse bg-(image
+
+stderr | tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 2. 배경 이미지 시스템 (v4.1 완전 지원) > 2.1 기본 배경 이미지 > 커스텀 속성 배경 이미지를 파싱할 수 있어야 함
+Unknown modifier: bg-(image
+
+stdout | tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 10. 반응형 및 상태 변형자 > 반응형 배경 클래스를 파싱할 수 있어야 함
+tryArbitraryVariantParser sm
+tryArbitraryAttributeParser sm
+canParse sm
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+tryArbitraryVariantParser xl
+tryArbitraryAttributeParser xl
+canParse xl
+
+stdout | tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 10. 반응형 및 상태 변형자 > 상태 변형자 배경 클래스를 파싱할 수 있어야 함
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+tryArbitraryVariantParser disabled
+tryArbitraryAttributeParser disabled
+canParse disabled
+
+stdout | tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 10. 반응형 및 상태 변형자 > 다크 모드 배경 클래스를 파싱할 수 있어야 함
+tryArbitraryVariantParser dark
+tryArbitraryAttributeParser dark
+canParse dark
+
+ ❯ tests/parser.backgrounds.test.ts  (65 tests | 24 failed) 57ms
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 2. 배경 이미지 시스템 (v4.1 완전 지원) > 2.1 기본 배경 이미지 > 커스텀 속성 배경 이미지를 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 2. 배경 이미지 시스템 (v4.1 완전 지원) > 2.2 선형 그라데이션 (Linear Gradients) > 각도 기반 선형 그라데이션을 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 2. 배경 이미지 시스템 (v4.1 완전 지원) > 2.2 선형 그라데이션 (Linear Gradients) > 커스텀 선형 그라데이션을 파싱할 수 있어야 함
+     → expected false to be true // Object.is equality
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 2. 배경 이미지 시스템 (v4.1 완전 지원) > 2.4 원뿔형 그라데이션 (Conic Gradients) > 각도 기반 원뿔형 그라데이션을 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.2 그라데이션 적용 > 기본 그라데이션을 적용할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.2 그라데이션 적용 > 복합 그라데이션을 적용할 수 있어야 함
+     → the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.2 그라데이션 적용 > 새로운 v4.1 선형 그라데이션을 적용할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.2 그라데이션 적용 > 각도 기반 그라데이션을 적용할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.2 그라데이션 적용 > 방사형 그라데이션을 적용할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.2 그라데이션 적용 > 원뿔형 그라데이션을 적용할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.3 배경 이미지 적용 > 배경 이미지 none을 적용할 수 있어야 함
+     → expected undefined to be 'none' // Object.is equality
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.3 배경 이미지 적용 > 배경 이미지 URL을 적용할 수 있어야 함
+     → expected undefined to be 'url(\'/img/hero.jpg\')' // Object.is equality
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.3 배경 이미지 적용 > 복잡한 배경 이미지를 적용할 수 있어야 함
+     → expected undefined to be 'url(https://example.com/image.png)' // Object.is equality
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.4 배경 속성 적용 > 배경 위치를 적용할 수 있어야 함
+     → expected undefined to be 'center' // Object.is equality
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.4 배경 속성 적용 > 배경 크기를 적용할 수 있어야 함
+     → expected undefined to be 'cover' // Object.is equality
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.4 배경 속성 적용 > 배경 반복을 적용할 수 있어야 함
+     → expected undefined to be 'no-repeat' // Object.is equality
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.4 배경 속성 적용 > 배경 첨부를 적용할 수 있어야 함
+     → expected undefined to be 'fixed' // Object.is equality
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.4 배경 속성 적용 > 배경 클립을 적용할 수 있어야 함
+     → expected undefined to be 'text' // Object.is equality
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.4 배경 속성 적용 > 배경 원점을 적용할 수 있어야 함
+     → expected undefined to be 'padding-box' // Object.is equality
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.5 복합 배경 스타일 > 여러 배경 속성을 동시에 적용할 수 있어야 함
+     → expected undefined to be 'cover' // Object.is equality
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.5 복합 배경 스타일 > 그라데이션과 배경 속성을 조합할 수 있어야 함
+     → the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.5 복합 배경 스타일 > v4.1 새로운 그라데이션과 속성을 조합할 수 있어야 함
+     → the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 10. 반응형 및 상태 변형자 > 반응형 배경 클래스를 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 10. 반응형 및 상태 변형자 > 다크 모드 배경 클래스를 파싱할 수 있어야 함
+     → expected undefined not to be undefined
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Basic Modifier Parsing > should parse simple responsive modifiers
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Basic Modifier Parsing > should parse state modifiers
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Basic Modifier Parsing > should parse pseudo-element modifiers
+tryArbitraryVariantParser before
+tryArbitraryAttributeParser before
+canParse before
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Container Query Modifiers > should parse basic container queries
+tryArbitraryVariantParser @md
+tryArbitraryAttributeParser @md
+canParse @md
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Container Query Modifiers > should parse named container queries
+tryArbitraryVariantParser @container/sidebar
+tryArbitraryAttributeParser @container/sidebar
+canParse @container/sidebar
+
+stderr | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Container Query Modifiers > should parse named container queries
+Unknown modifier: @container/sidebar
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Motion Preference Modifiers > should parse motion-safe modifier
+tryArbitraryVariantParser motion-safe
+tryArbitraryAttributeParser motion-safe
+canParse motion-safe
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Motion Preference Modifiers > should parse motion-reduce modifier
+tryArbitraryVariantParser motion-reduce
+tryArbitraryAttributeParser motion-reduce
+canParse motion-reduce
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Modern Modifiers > should parse noscript modifier
+tryArbitraryVariantParser noscript
+tryArbitraryAttributeParser noscript
+canParse noscript
+DEBUG: Special modifier "noscript" parsed as: { type: 'noscript', raw: 'noscript', priority: 20, condition: null }
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Modern Modifiers > should parse user-valid modifier
+tryArbitraryVariantParser user-valid
+tryArbitraryAttributeParser user-valid
+canParse user-valid
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Modern Modifiers > should parse inverted-colors modifier
+tryArbitraryVariantParser inverted-colors
+tryArbitraryAttributeParser inverted-colors
+canParse inverted-colors
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Modern Modifiers > should parse pointer-fine modifier
+tryArbitraryVariantParser pointer-fine
+tryArbitraryAttributeParser pointer-fine
+canParse pointer-fine
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Complex Modifier Chains > should parse responsive + state combination
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Complex Modifier Chains > should parse container + motion + state combination
+tryArbitraryVariantParser @lg
+tryArbitraryAttributeParser @lg
+canParse @lg
+tryArbitraryVariantParser motion-safe
+tryArbitraryAttributeParser motion-safe
+canParse motion-safe
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Complex Modifier Chains > should parse full modifier chain
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser @container/main
+tryArbitraryAttributeParser @container/main
+canParse @container/main
+tryArbitraryVariantParser motion-safe
+tryArbitraryAttributeParser motion-safe
+canParse motion-safe
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser before
+tryArbitraryAttributeParser before
+canParse before
+
+stderr | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Complex Modifier Chains > should parse full modifier chain
+Unknown modifier: @container/main
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Attribute Modifiers > should parse aria modifiers
+tryArbitraryVariantParser aria-checked
+tryArbitraryAttributeParser aria-checked
+canParse aria-checked
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Attribute Modifiers > should parse data modifiers
+tryArbitraryVariantParser data-active
+tryArbitraryAttributeParser data-active
+canParse data-active
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Group and Peer Modifiers > should parse group modifiers
+tryArbitraryVariantParser group-hover
+tryArbitraryAttributeParser group-hover
+canParse group-hover
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Group and Peer Modifiers > should parse peer modifiers
+tryArbitraryVariantParser peer-focus
+tryArbitraryAttributeParser peer-focus
+canParse peer-focus
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > v4.1 Arbitrary Values > should parse arbitrary attribute selectors
+undefined
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > v4.1 Arbitrary Values > should parse arbitrary attribute selector as modifier
+tryArbitraryVariantParser [data-state="active"]
+tryArbitraryAttributeParser [data-state="active"]
+canParse [data-state="active"]
+canParse [data-state="active"]
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > v4.1 Arbitrary Values > should parse arbitrary values with modifiers
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > v4.1 Arbitrary Values > should parse complex arbitrary values
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser before
+tryArbitraryAttributeParser before
+canParse before
+
+stdout | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Parser Integration > should handle unknown modifiers gracefully
+tryArbitraryVariantParser unknown-modifier
+tryArbitraryAttributeParser unknown-modifier
+canParse unknown-modifier
+
+stderr | tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Parser Integration > should handle unknown modifiers gracefully
+Unknown modifier: unknown-modifier
+
+ ❯ tests/parser.modifiers.test.ts  (27 tests | 4 failed | 3 skipped) 24ms
+   ❯ tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Basic Modifier Parsing > should parse pseudo-element modifiers
+     → expected undefined not to be undefined
+   ❯ tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Motion Preference Modifiers > should parse motion-reduce modifier
+     → expected undefined not to be undefined
+   ❯ tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > v4.1 Arbitrary Values > should parse arbitrary attribute selectors
+     → expected undefined not to be undefined
+   ❯ tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > v4.1 Arbitrary Values > should parse complex arbitrary values
+     → expected undefined not to be undefined
+ ✓ tests/parser.modifiers.extended.test.ts  (21 tests) 9ms
+stdout | tests/parser.modifiers.arbitraryVariants.test.ts > ArbitraryVariantParser > Integration with ModifierParser > should handle arbitrary selector variants in class parsing
+tryArbitraryVariantParser [&:nth-child(3n+1)]
+
+stdout | tests/parser.modifiers.arbitraryVariants.test.ts > ArbitraryVariantParser > Integration with ModifierParser > should handle arbitrary media query variants
+tryArbitraryVariantParser [@media(min-width:400px)]
+
+stdout | tests/parser.modifiers.arbitraryVariants.test.ts > ArbitraryVariantParser > Integration with ModifierParser > should handle arbitrary container query variants
+tryArbitraryVariantParser [@container(min-width:400px)]
+
+stdout | tests/parser.modifiers.arbitraryVariants.test.ts > ArbitraryVariantParser > Integration with ModifierParser > should handle arbitrary supports query variants
+tryArbitraryVariantParser [@supports(display:grid)]
+
+stdout | tests/parser.modifiers.arbitraryVariants.test.ts > ArbitraryVariantParser > Integration with ModifierParser > should handle multiple arbitrary variants
+tryArbitraryVariantParser [@media(min-width:400px)]
+tryArbitraryVariantParser [&:nth-child(3n+1)]
+
+stdout | tests/parser.modifiers.arbitraryVariants.test.ts > ArbitraryVariantParser > Complex Real-World Cases > should handle descendant selectors with Tailwind classes
+tryArbitraryVariantParser [&_img]
+
+stdout | tests/parser.modifiers.arbitraryVariants.test.ts > ArbitraryVariantParser > Complex Real-World Cases > should handle sibling selectors
+tryArbitraryVariantParser [&+*]
+
+stdout | tests/parser.modifiers.arbitraryVariants.test.ts > ArbitraryVariantParser > Complex Real-World Cases > should handle complex pseudo-selectors
+tryArbitraryVariantParser [&:nth-child(3n+1)]
+tryArbitraryVariantParser first-of-type
+tryArbitraryAttributeParser first-of-type
+canParse first-of-type
+
+stdout | tests/parser.modifiers.arbitraryVariants.test.ts > ArbitraryVariantParser > Complex Real-World Cases > should handle arbitrary media queries with complex conditions
+tryArbitraryVariantParser [@media(min-width:640px)_and_(max-width:1024px)]
+
+ ✓ tests/parser.modifiers.arbitraryVariants.test.ts  (21 tests) 7ms
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Basic Modifier Parsing > should parse simple responsive modifiers
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Basic Modifier Parsing > should parse state modifiers
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Basic Modifier Parsing > should parse pseudo-element modifiers
+tryArbitraryVariantParser before
+tryArbitraryAttributeParser before
+canParse before
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Container Query Modifiers > should parse basic container queries
+tryArbitraryVariantParser @md
+tryArbitraryAttributeParser @md
+canParse @md
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Container Query Modifiers > should parse named container queries
+tryArbitraryVariantParser @container/sidebar
+tryArbitraryAttributeParser @container/sidebar
+canParse @container/sidebar
+
+stderr | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Container Query Modifiers > should parse named container queries
+Unknown modifier: @container/sidebar
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Motion Preference Modifiers > should parse motion-safe modifier
+tryArbitraryVariantParser motion-safe
+tryArbitraryAttributeParser motion-safe
+canParse motion-safe
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Motion Preference Modifiers > should parse motion-reduce modifier
+tryArbitraryVariantParser motion-reduce
+tryArbitraryAttributeParser motion-reduce
+canParse motion-reduce
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Modern Modifiers > should parse noscript modifier
+tryArbitraryVariantParser noscript
+tryArbitraryAttributeParser noscript
+canParse noscript
+DEBUG: Special modifier "noscript" parsed as: { type: 'noscript', raw: 'noscript', priority: 20, condition: null }
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Modern Modifiers > should parse user-valid modifier
+tryArbitraryVariantParser user-valid
+tryArbitraryAttributeParser user-valid
+canParse user-valid
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Modern Modifiers > should parse inverted-colors modifier
+tryArbitraryVariantParser inverted-colors
+tryArbitraryAttributeParser inverted-colors
+canParse inverted-colors
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Modern Modifiers > should parse pointer-fine modifier
+tryArbitraryVariantParser pointer-fine
+tryArbitraryAttributeParser pointer-fine
+canParse pointer-fine
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Complex Modifier Chains > should parse responsive + state combination
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Complex Modifier Chains > should parse container + motion + state combination
+tryArbitraryVariantParser @lg
+tryArbitraryAttributeParser @lg
+canParse @lg
+tryArbitraryVariantParser motion-safe
+tryArbitraryAttributeParser motion-safe
+canParse motion-safe
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Complex Modifier Chains > should parse full modifier chain
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser @container/main
+tryArbitraryAttributeParser @container/main
+canParse @container/main
+tryArbitraryVariantParser motion-safe
+tryArbitraryAttributeParser motion-safe
+canParse motion-safe
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser before
+tryArbitraryAttributeParser before
+canParse before
+
+stderr | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Complex Modifier Chains > should parse full modifier chain
+Unknown modifier: @container/main
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Attribute Modifiers > should parse aria modifiers
+tryArbitraryVariantParser aria-checked
+tryArbitraryAttributeParser aria-checked
+canParse aria-checked
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Attribute Modifiers > should parse data modifiers
+tryArbitraryVariantParser data-active
+tryArbitraryAttributeParser data-active
+canParse data-active
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Group and Peer Modifiers > should parse group modifiers
+tryArbitraryVariantParser group-hover
+tryArbitraryAttributeParser group-hover
+canParse group-hover
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Group and Peer Modifiers > should parse peer modifiers
+tryArbitraryVariantParser peer-focus
+tryArbitraryAttributeParser peer-focus
+canParse peer-focus
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > v4.1 Arbitrary Values > should parse arbitrary values with modifiers
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > v4.1 Arbitrary Values > should parse complex arbitrary values
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser before
+tryArbitraryAttributeParser before
+canParse before
+
+stdout | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Parser Integration > should handle unknown modifiers gracefully
+tryArbitraryVariantParser unknown-modifier
+tryArbitraryAttributeParser unknown-modifier
+canParse unknown-modifier
+
+stderr | tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Parser Integration > should handle unknown modifiers gracefully
+Unknown modifier: unknown-modifier
+
+ ❯ tests/parser.modifiers.v4.1.test.ts  (25 tests | 6 failed | 3 skipped) 20ms
+   ❯ tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Basic Modifier Parsing > should parse pseudo-element modifiers
+     → expected undefined not to be undefined
+   ❯ tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Motion Preference Modifiers > should parse motion-reduce modifier
+     → expected undefined not to be undefined
+   ❯ tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Modern Modifiers > should parse user-valid modifier
+     → expected [ ':user-valid' ] to be ':user-valid' // Object.is equality
+   ❯ tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Modern Modifiers > should parse inverted-colors modifier
+     → expected [ Array(1) ] to be '@media (inverted-colors: inverted)' // Object.is equality
+   ❯ tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Modern Modifiers > should parse pointer-fine modifier
+     → expected [ '@media (pointer: fine)' ] to be '@media (pointer: fine)' // Object.is equality
+   ❯ tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > v4.1 Arbitrary Values > should parse complex arbitrary values
+     → expected undefined not to be undefined
+ ❯ tests/converter.test.ts  (5 tests | 3 failed) 9ms
+   ❯ tests/converter.test.ts > CSSConverter > 스타일 변환 > 파싱된 스타일을 CSS 객체로 변환할 수 있어야 함
+     → expected undefined to be 'rgb(64, 128, 255)' // Object.is equality
+   ❯ tests/converter.test.ts > CSSConverter > Figma 스타일 변환 > 파싱된 스타일을 Figma 스타일 객체로 변환할 수 있어야 함
+     → expected { r: 1, g: 1, b: 1, a: 1 } to deeply equal { r: 1, g: 1, b: 1 }
+   ❯ tests/converter.test.ts > CSSConverter > React 스타일 변환 > 파싱된 스타일을 React 스타일 객체로 변환할 수 있어야 함
+     → expected undefined to be 'rgb(64, 128, 255)' // Object.is equality
+stdout | tests/parser.position-transform.test.ts > CSSParser - 위치 및 변형 > 3D Transform Utilities (v4.1) > 모디파이어와 3D 변형 > 반응형 3D 변형을 적용할 수 있어야 함
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+ ✓ tests/parser.position-transform.test.ts  (30 tests) 8ms
+stdout | tests/parser.overflow.test.ts > CSSParser - Overflow > Responsive Overflow > md:overflow-hidden 반응형 처리
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+stdout | tests/parser.overflow.test.ts > CSSParser - Overflow > Responsive Overflow > lg:overflow-x-auto 반응형 처리
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+
+stdout | tests/parser.overflow.test.ts > CSSParser - Overflow > State Modifiers > hover:overflow-scroll 상태 처리
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.overflow.test.ts > CSSParser - Overflow > State Modifiers > focus:overflow-y-visible 상태 처리
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+
+ ✓ tests/parser.overflow.test.ts  (19 tests) 7ms
+stdout | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 기본 반응형 브레이크포인트 > 기본 브레이크포인트를 파싱할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+stdout | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 기본 반응형 브레이크포인트 > 스타일에 브레이크포인트를 적용할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+stdout | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 최대 너비 브레이크포인트 > 최대 너비 브레이크포인트를 파싱할 수 있어야 함
+tryArbitraryVariantParser max-md
+tryArbitraryAttributeParser max-md
+canParse max-md
+
+stdout | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 최대 너비 브레이크포인트 > 스타일에 최대 너비 브레이크포인트를 적용할 수 있어야 함
+tryArbitraryVariantParser max-md
+tryArbitraryAttributeParser max-md
+canParse max-md
+
+stdout | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 임의 브레이크포인트 > 임의 최소 너비 브레이크포인트를 파싱할 수 있어야 함
+tryArbitraryVariantParser min-[640px]
+tryArbitraryAttributeParser min-[640px]
+canParse min-[640px]
+
+stdout | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 임의 브레이크포인트 > 임의 최대 너비 브레이크포인트를 파싱할 수 있어야 함
+tryArbitraryVariantParser max-[1024px]
+tryArbitraryAttributeParser max-[1024px]
+canParse max-[1024px]
+
+stdout | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 임의 브레이크포인트 > 스타일에 임의 브레이크포인트를 적용할 수 있어야 함
+tryArbitraryVariantParser min-[768px]
+tryArbitraryAttributeParser min-[768px]
+canParse min-[768px]
+
+stdout | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 - Tailwind CSS 방식 > 기본 컨테이너 쿼리를 파싱할 수 있어야 함
+tryArbitraryVariantParser @md
+tryArbitraryAttributeParser @md
+canParse @md
+
+stdout | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 - Tailwind CSS 방식 > 최대 너비 컨테이너 쿼리를 파싱할 수 있어야 함
+tryArbitraryVariantParser @max-md
+tryArbitraryAttributeParser @max-md
+canParse @max-md
+
+stdout | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 - Tailwind CSS 방식 > 임의 컨테이너 쿼리를 파싱할 수 있어야 함
+tryArbitraryVariantParser @min-[320px]
+tryArbitraryAttributeParser @min-[320px]
+canParse @min-[320px]
+
+stderr | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 - Tailwind CSS 방식 > 임의 컨테이너 쿼리를 파싱할 수 있어야 함
+Unknown modifier: @min-[320px]
+
+stdout | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 - Tailwind CSS 방식 > 명명된 컨테이너 쿼리를 파싱할 수 있어야 함
+tryArbitraryVariantParser @md/sidebar
+tryArbitraryAttributeParser @md/sidebar
+canParse @md/sidebar
+
+stdout | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 - Tailwind CSS 방식 > 스타일에 컨테이너 쿼리를 적용할 수 있어야 함
+tryArbitraryVariantParser @md
+tryArbitraryAttributeParser @md
+canParse @md
+
+stdout | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 복합 반응형 패턴 - Tailwind CSS 방식 > 복합 modifier 체인을 파싱할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+
+stdout | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 복합 반응형 패턴 - Tailwind CSS 방식 > 브레이크포인트와 상태 모디파이어를 함께 적용할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 복합 반응형 패턴 - Tailwind CSS 방식 > 컨테이너 쿼리와 상태 모디파이어를 함께 적용할 수 있어야 함
+tryArbitraryVariantParser @md
+tryArbitraryAttributeParser @md
+canParse @md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 복합 반응형 패턴 - Tailwind CSS 방식 > 다중 상태 모디파이어를 적용할 수 있어야 함
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+
+stdout | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > CSS 선택자 생성 테스트 > 복합 modifier의 CSS 선택자를 생성할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser motion-safe
+tryArbitraryAttributeParser motion-safe
+canParse motion-safe
+tryArbitraryVariantParser before
+tryArbitraryAttributeParser before
+canParse before
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > CSS 선택자 생성 테스트 > 임의값 modifier의 CSS 선택자를 생성할 수 있어야 함
+tryArbitraryVariantParser min-[768px]
+tryArbitraryAttributeParser min-[768px]
+canParse min-[768px]
+tryArbitraryVariantParser aria-[checked]
+tryArbitraryAttributeParser aria-[checked]
+canParse aria-[checked]
+tryArbitraryVariantParser data-[active]
+tryArbitraryAttributeParser data-[active]
+canParse data-[active]
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+ ❯ tests/parser.responsive.test.ts  (18 tests | 11 failed) 16ms
+   ❯ tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 최대 너비 브레이크포인트 > 최대 너비 브레이크포인트를 파싱할 수 있어야 함
+     → expected undefined to be 'max-md' // Object.is equality
+   ❯ tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 임의 브레이크포인트 > 임의 최소 너비 브레이크포인트를 파싱할 수 있어야 함
+     → expected undefined to be 'min-[640px]' // Object.is equality
+   ❯ tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 임의 브레이크포인트 > 임의 최대 너비 브레이크포인트를 파싱할 수 있어야 함
+     → expected undefined to be 'max-[1024px]' // Object.is equality
+   ❯ tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 - Tailwind CSS 방식 > 기본 컨테이너 쿼리를 파싱할 수 있어야 함
+     → expected undefined to be '@md' // Object.is equality
+   ❯ tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 - Tailwind CSS 방식 > 최대 너비 컨테이너 쿼리를 파싱할 수 있어야 함
+     → expected undefined to be '@max-md' // Object.is equality
+   ❯ tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 - Tailwind CSS 방식 > 임의 컨테이너 쿼리를 파싱할 수 있어야 함
+     → expected undefined to be '@min-[320px]' // Object.is equality
+   ❯ tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 - Tailwind CSS 방식 > 명명된 컨테이너 쿼리를 파싱할 수 있어야 함
+     → expected undefined to be '@md/sidebar' // Object.is equality
+   ❯ tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 복합 반응형 패턴 - Tailwind CSS 방식 > 복합 modifier 체인을 파싱할 수 있어야 함
+     → expected undefined to be 'md:hover:focus' // Object.is equality
+   ❯ tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 복합 반응형 패턴 - Tailwind CSS 방식 > 다중 상태 모디파이어를 적용할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > CSS 선택자 생성 테스트 > 복합 modifier의 CSS 선택자를 생성할 수 있어야 함
+     → expected undefined to be 'md:motion-safe:before:hover' // Object.is equality
+   ❯ tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > CSS 선택자 생성 테스트 > 임의값 modifier의 CSS 선택자를 생성할 수 있어야 함
+     → expected undefined to be 'min-[768px]:aria-[checked]:data-[acti…' // Object.is equality
+ ❯ tests/parser.display.test.ts  (31 tests | 4 failed) 22ms
+   ❯ tests/parser.display.test.ts > Display Parser Tests > State Modifier Display > display with state modifiers should work
+     → expected undefined not to be undefined
+   ❯ tests/parser.display.test.ts > Display Parser Tests > Complex Display Combinations > responsive + state modifiers should work
+     → expected undefined not to be undefined
+   ❯ tests/parser.display.test.ts > Display Parser Tests > Edge Cases and Error Handling > unknown display class should return null
+     → expected undefined to be truthy
+   ❯ tests/parser.display.test.ts > Display Parser Tests > Edge Cases and Error Handling > malformed display class should return null
+     → expected undefined to be truthy
+stdout | tests/parser.display.test.ts > Display Parser Tests > Responsive Display > responsive display classes should work
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+tryArbitraryVariantParser xl
+tryArbitraryAttributeParser xl
+canParse xl
+tryArbitraryVariantParser sm
+tryArbitraryAttributeParser sm
+canParse sm
+
+stdout | tests/parser.display.test.ts > Display Parser Tests > State Modifier Display > display with state modifiers should work
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.display.test.ts > Display Parser Tests > Complex Display Combinations > responsive + state modifiers should work
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.display.test.ts > Display Parser Tests > Complex Display Combinations > screen reader only with responsive should work
+tryArbitraryVariantParser sm
+tryArbitraryAttributeParser sm
+canParse sm
+
+stdout | tests/parser.overscroll-behavior.test.ts > CSSParser - Overscroll Behavior > Responsive Overscroll Behavior > md:overscroll-contain 반응형 처리
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+stdout | tests/parser.overscroll-behavior.test.ts > CSSParser - Overscroll Behavior > Responsive Overscroll Behavior > lg:overscroll-x-none 반응형 처리
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+
+stdout | tests/parser.overscroll-behavior.test.ts > CSSParser - Overscroll Behavior > State Modifiers > hover:overscroll-none 상태 처리
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.overscroll-behavior.test.ts > CSSParser - Overscroll Behavior > State Modifiers > focus:overscroll-y-contain 상태 처리
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+
+ ✓ tests/parser.overscroll-behavior.test.ts  (16 tests) 7ms
+ ✓ tests/parser.sizing.test.ts  (20 tests) 6ms
+stdout | tests/parser.pointer-variants.test.ts > Pointer & Input Device Variants Parser > Pointer Precision Variants > should parse pointer-fine modifier
+tryArbitraryVariantParser pointer-fine
+tryArbitraryAttributeParser pointer-fine
+canParse pointer-fine
+
+stdout | tests/parser.pointer-variants.test.ts > Pointer & Input Device Variants Parser > Pointer Precision Variants > should parse pointer-coarse modifier
+tryArbitraryVariantParser pointer-coarse
+tryArbitraryAttributeParser pointer-coarse
+canParse pointer-coarse
+
+stdout | tests/parser.pointer-variants.test.ts > Pointer & Input Device Variants Parser > Pointer Precision Variants > should parse pointer-none modifier
+tryArbitraryVariantParser pointer-none
+tryArbitraryAttributeParser pointer-none
+canParse pointer-none
+
+stdout | tests/parser.pointer-variants.test.ts > Pointer & Input Device Variants Parser > Any-Pointer Variants > should parse any-pointer-fine modifier
+tryArbitraryVariantParser any-pointer-fine
+tryArbitraryAttributeParser any-pointer-fine
+canParse any-pointer-fine
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.pointer-variants.test.ts > Pointer & Input Device Variants Parser > Any-Pointer Variants > should parse any-pointer-coarse modifier
+tryArbitraryVariantParser any-pointer-coarse
+tryArbitraryAttributeParser any-pointer-coarse
+canParse any-pointer-coarse
+
+stdout | tests/parser.pointer-variants.test.ts > Pointer & Input Device Variants Parser > Any-Pointer Variants > should parse any-pointer-none modifier
+tryArbitraryVariantParser any-pointer-none
+tryArbitraryAttributeParser any-pointer-none
+canParse any-pointer-none
+
+stdout | tests/parser.pointer-variants.test.ts > Pointer & Input Device Variants Parser > Complex Combinations > should work with responsive modifiers
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser pointer-fine
+tryArbitraryAttributeParser pointer-fine
+canParse pointer-fine
+
+stdout | tests/parser.pointer-variants.test.ts > Pointer & Input Device Variants Parser > Complex Combinations > should work with state modifiers
+tryArbitraryVariantParser pointer-coarse
+tryArbitraryAttributeParser pointer-coarse
+canParse pointer-coarse
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.pointer-variants.test.ts > Pointer & Input Device Variants Parser > Complex Combinations > should chain multiple pointer conditions
+tryArbitraryVariantParser any-pointer-fine
+tryArbitraryAttributeParser any-pointer-fine
+canParse any-pointer-fine
+tryArbitraryVariantParser pointer-coarse
+tryArbitraryAttributeParser pointer-coarse
+canParse pointer-coarse
+
+stdout | tests/parser.pointer-variants.test.ts > Pointer & Input Device Variants Parser > Style Application > should apply pointer-fine styles correctly
+tryArbitraryVariantParser pointer-fine
+tryArbitraryAttributeParser pointer-fine
+canParse pointer-fine
+
+stdout | tests/parser.pointer-variants.test.ts > Pointer & Input Device Variants Parser > Style Application > should apply any-pointer-coarse styles correctly
+tryArbitraryVariantParser any-pointer-coarse
+tryArbitraryAttributeParser any-pointer-coarse
+canParse any-pointer-coarse
+
+stdout | tests/parser.pointer-variants.test.ts > Pointer & Input Device Variants Parser > Style Application > should handle multiple pointer variants in one parse
+tryArbitraryVariantParser pointer-fine
+tryArbitraryAttributeParser pointer-fine
+canParse pointer-fine
+tryArbitraryVariantParser pointer-coarse
+tryArbitraryAttributeParser pointer-coarse
+canParse pointer-coarse
+
+stdout | tests/parser.pointer-variants.test.ts > Pointer & Input Device Variants Parser > Real-world Use Cases > should handle touch-optimized interactions
+tryArbitraryVariantParser pointer-coarse
+tryArbitraryAttributeParser pointer-coarse
+canParse pointer-coarse
+tryArbitraryVariantParser pointer-fine
+tryArbitraryAttributeParser pointer-fine
+canParse pointer-fine
+
+stdout | tests/parser.pointer-variants.test.ts > Pointer & Input Device Variants Parser > Real-world Use Cases > should handle device-specific hover states
+tryArbitraryVariantParser any-pointer-fine
+tryArbitraryAttributeParser any-pointer-fine
+canParse any-pointer-fine
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser pointer-coarse
+tryArbitraryAttributeParser pointer-coarse
+canParse pointer-coarse
+tryArbitraryVariantParser active
+tryArbitraryAttributeParser active
+canParse active
+
+stdout | tests/parser.pointer-variants.test.ts > Pointer & Input Device Variants Parser > Real-world Use Cases > should handle mixed device environments
+tryArbitraryVariantParser any-pointer-fine
+tryArbitraryAttributeParser any-pointer-fine
+canParse any-pointer-fine
+tryArbitraryVariantParser pointer-coarse
+tryArbitraryAttributeParser pointer-coarse
+canParse pointer-coarse
+tryArbitraryVariantParser any-pointer-coarse
+tryArbitraryAttributeParser any-pointer-coarse
+canParse any-pointer-coarse
+
+stdout | tests/parser.pointer-variants.test.ts > Pointer & Input Device Variants Parser > Invalid Classes > should reject invalid pointer modifiers
+tryArbitraryVariantParser pointer-medium
+tryArbitraryAttributeParser pointer-medium
+canParse pointer-medium
+tryArbitraryVariantParser pointer
+tryArbitraryAttributeParser pointer
+canParse pointer
+tryArbitraryVariantParser any-pointer
+tryArbitraryAttributeParser any-pointer
+canParse any-pointer
+tryArbitraryVariantParser pointer-fine-coarse
+tryArbitraryAttributeParser pointer-fine-coarse
+canParse pointer-fine-coarse
+
+stderr | tests/parser.pointer-variants.test.ts > Pointer & Input Device Variants Parser > Invalid Classes > should reject invalid pointer modifiers
+Unknown modifier: pointer-medium
+Unknown modifier: pointer
+Unknown modifier: any-pointer
+Unknown modifier: pointer-fine-coarse
+
+ ✓ tests/parser.pointer-variants.test.ts  (16 tests) 18ms
+stdout | tests/engine.test.ts > CSSEngine > 클래스 처리 > 복잡한 클래스 조합을 처리할 수 있어야 함
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+ ❯ tests/engine.test.ts  (7 tests | 5 failed) 25ms
+   ❯ tests/engine.test.ts > CSSEngine > 클래스 처리 > 기본 클래스를 처리할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/engine.test.ts > CSSEngine > 클래스 처리 > 복잡한 클래스 조합을 처리할 수 있어야 함
+     → expected undefined to be 'flex' // Object.is equality
+   ❯ tests/engine.test.ts > CSSEngine > 출력 형식 > 다양한 출력 형식을 지원해야 함
+     → expected undefined to be 'flex' // Object.is equality
+   ❯ tests/engine.test.ts > CSSEngine > 설정 및 프리셋 > 커스텀 설정으로 인스턴스를 생성할 수 있어야 함
+     → expected undefined not to be undefined
+   ❯ tests/engine.test.ts > CSSEngine > 설정 및 프리셋 > 커스텀 프리셋으로 인스턴스를 생성할 수 있어야 함
+     → expected undefined to deeply equal { r: 0.1, g: 0.2, b: 0.8 }
+stdout | tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > 단일 Modifier 파싱 > Responsive breakpoint
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+stdout | tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > 단일 Modifier 파싱 > State pseudo-class
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > 단일 Modifier 파싱 > Pseudo-element
+tryArbitraryVariantParser before
+tryArbitraryAttributeParser before
+canParse before
+
+stdout | tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > 복합 Modifier 체인 파싱 > md:hover:before - 복합 modifier
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser before
+tryArbitraryAttributeParser before
+canParse before
+
+stdout | tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > 복합 Modifier 체인 파싱 > lg:motion-safe:focus:after - 전체 복합
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+tryArbitraryVariantParser motion-safe
+tryArbitraryAttributeParser motion-safe
+canParse motion-safe
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser after
+tryArbitraryAttributeParser after
+canParse after
+
+stdout | tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > 복합 Modifier 체인 파싱 > data-active:aria-checked:hover - 속성 기반 modifier
+tryArbitraryVariantParser data-active
+tryArbitraryAttributeParser data-active
+canParse data-active
+tryArbitraryVariantParser aria-checked
+tryArbitraryAttributeParser aria-checked
+canParse aria-checked
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > 임의값 Modifier 파싱 > min-[768px] - 임의 breakpoint
+tryArbitraryVariantParser min-[768px]
+tryArbitraryAttributeParser min-[768px]
+canParse min-[768px]
+
+stdout | tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > 임의값 Modifier 파싱 > aria-[label] - 임의 ARIA 속성
+tryArbitraryVariantParser aria-[label]
+tryArbitraryAttributeParser aria-[label]
+canParse aria-[label]
+
+stdout | tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > 임의값 Modifier 파싱 > data-[size=large] - 임의 data 속성
+tryArbitraryVariantParser data-[size=large]
+tryArbitraryAttributeParser data-[size=large]
+canParse data-[size=large]
+
+stderr | tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > 임의값 Modifier 파싱 > data-[size=large] - 임의 data 속성
+Unknown modifier: data-[size=large]
+
+stdout | tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > CSS 선택자 생성 > 단일 pseudo-class 선택자
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > CSS 선택자 생성 > Media query 선택자
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+stdout | tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > CSS 선택자 생성 > 복합 선택자
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+tryArbitraryVariantParser before
+tryArbitraryAttributeParser before
+canParse before
+
+stdout | tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > CSS 선택자 생성 > 복잡한 중첩 media query
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+tryArbitraryVariantParser motion-safe
+tryArbitraryAttributeParser motion-safe
+canParse motion-safe
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+tryArbitraryVariantParser after
+tryArbitraryAttributeParser after
+canParse after
+
+ ❯ tests/parser.tailwind-modifiers.test.ts  (15 tests | 7 failed) 11ms
+   ❯ tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > 임의값 Modifier 파싱 > data-[size=large] - 임의 data 속성
+     → expected undefined to deeply equal { size: '[data-size]' }
+   ❯ tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > CSS 선택자 생성 > 단일 pseudo-class 선택자
+     → expected '.hover\:bg-blue-500' to be '.hover\:bg-blue-500:hover' // Object.is equality
+   ❯ tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > CSS 선택자 생성 > Media query 선택자
+     → expected '.md\:text-xl' to be '@media (min-width: 768px) { .md\:text…' // Object.is equality
+   ❯ tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > CSS 선택자 생성 > 복합 선택자
+     → expected '.md\:hover\:before\:bg-blue-500' to be '@media (min-width: 768px) { .md\:hove…' // Object.is equality
+   ❯ tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > CSS 선택자 생성 > 복잡한 중첩 media query
+     → expected '.lg\:motion-safe\:focus\:after\:text-…' to be '@media (prefers-reduced-motion: no-pr…' // Object.is equality
+   ❯ tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > Modifier 없는 클래스 > 기본 클래스는 null 반환
+     → expected { modifiers: { …(28) }, …(3) } to be null
+   ❯ tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > Modifier 없는 클래스 > 기본 클래스는 호환성 메서드에서도 null 반환
+     → expected { modifiers: { …(28) }, …(3) } to be null
+stdout | tests/parser.break-inside.test.ts > CSSParser - 브레이크 인사이드(Break Inside) > 브레이크 인사이드 스타일 적용 > 반응형 break-inside 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+ ✓ tests/parser.break-inside.test.ts  (17 tests) 12ms
+ ✓ tests/parser.break-before.test.ts  (17 tests) 7ms
+stdout | tests/parser.break-before.test.ts > CSSParser - 브레이크 비포어(Break After) > 브레이크 비포어 스타일 적용 > 반응형 break-before 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+ ✓ tests/parser.break-after.test.ts  (17 tests) 7ms
+stdout | tests/parser.break-after.test.ts > CSSParser - 브레이크 애프터(Break After) > 브레이크 애프터 스타일 적용 > 반응형 break-after 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+ ✓ tests/config.test.ts  (8 tests) 5ms
+stdout | tests/parser.object-fit.test.ts > CSSParser - Object Fit > Responsive Object Fit > md:object-cover 반응형 처리
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+ ✓ tests/parser.object-fit.test.ts  (13 tests) 6ms
+stdout | tests/parser.object-fit.test.ts > CSSParser - Object Fit > State Modifiers > hover:object-cover 상태 처리
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.text-shadows.test.ts > Text Shadow Parser Tests > State modifiers with text-shadow > should parse hover:text-shadow-lg
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+stdout | tests/parser.text-shadows.test.ts > Text Shadow Parser Tests > State modifiers with text-shadow > should parse focus:text-shadow-md
+tryArbitraryVariantParser focus
+tryArbitraryAttributeParser focus
+canParse focus
+
+stdout | tests/parser.text-shadows.test.ts > Text Shadow Parser Tests > Responsive text-shadow > should parse md:text-shadow-lg
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+stdout | tests/parser.text-shadows.test.ts > Text Shadow Parser Tests > Responsive text-shadow > should parse lg:text-shadow-xl
+tryArbitraryVariantParser lg
+tryArbitraryAttributeParser lg
+canParse lg
+
+stdout | tests/parser.text-shadows.test.ts > Text Shadow Parser Tests > Combined modifiers > should parse md:hover:text-shadow-lg
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+ ✓ tests/parser.text-shadows.test.ts  (14 tests) 7ms
+ ✓ tests/parser.layout.test.ts  (11 tests) 8ms
+ ✓ tests/parser.colors.test.ts  (9 tests) 6ms
+ ❯ tests/parser.aspect-ratio.test.ts  (13 tests | 1 failed) 13ms
+   ❯ tests/parser.aspect-ratio.test.ts > CSSParser - 애스펙트 비율(Aspect Ratio) > 애스펙트 비율 스타일 적용 > CSS 변수를 사용한 애스펙트 비율 스타일을 적용할 수 있어야 함
+     → expected '(--my-aspect-ratio)' to be 'var(--my-aspect-ratio)' // Object.is equality
+stdout | tests/parser.aspect-ratio.test.ts > CSSParser - 애스펙트 비율(Aspect Ratio) > 애스펙트 비율 스타일 적용 > 반응형 애스펙트 비율 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+stdout | tests/parser.clear.test.ts > CSSParser - 클리어(Clear) > 클리어 스타일 적용 > 반응형 clear 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+ ✓ tests/parser.clear.test.ts  (13 tests) 7ms
+stdout | tests/parser.float.test.ts > CSSParser - 플로트(Float) > 플로트 스타일 적용 > 반응형 float 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+ ✓ tests/parser.float.test.ts  (11 tests) 4ms
+stdout | tests/parser.columns.test.ts > CSSParser - 컬럼(Columns) > 컬럼 스타일 적용 > 반응형 컬럼 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+ ❯ tests/parser.columns.test.ts  (11 tests | 1 failed) 8ms
+   ❯ tests/parser.columns.test.ts > CSSParser - 컬럼(Columns) > 컬럼 스타일 적용 > CSS 변수 컬럼 스타일을 적용할 수 있어야 함
+     → expected '(--my-columns)' to be 'var(--my-columns)' // Object.is equality
+ ✓ tests/parser.box-decoration-break.test.ts  (5 tests) 4ms
+stdout | tests/parser.box-decoration-break.test.ts > CSSParser - 박스 데코레이션 브레이크(Box Decoration Break) > 박스 데코레이션 브레이크 스타일 적용 > 반응형 box-decoration 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+stdout | tests/parser.debug.test.ts > CSSParser - 디버그 테스트 > md:flex 클래스를 파싱할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+파싱된 클래스: {
+  "original": "md:flex",
+  "className": "md:flex",
+  "baseClassName": "flex",
+  "property": "display",
+  "value": "flex",
+  "category": "flexbox-grid",
+  "isArbitrary": false,
+  "modifiers": {
+    "responsive": {
+      "md": "@media (min-width: 768px)"
+    }
+  }
+}
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+파싱 결과: {
+  "spacing": {
+    "padding": {},
+    "margin": {},
+    "gap": {}
+  },
+  "colors": {},
+  "typography": {},
+  "layout": {},
+  "effects": {},
+  "animation": {},
+  "position": {},
+  "transform": {},
+  "sizing": {},
+  "flexboxGrid": {},
+  "filters": {},
+  "interactivity": {},
+  "tables": {},
+  "svg": {},
+  "transitions": {},
+  "backgrounds": {},
+  "borders": {},
+  "overflow": {},
+  "accessibility": {},
+  "blendModes": {},
+  "mask": {},
+  "breakpoints": {
+    "md": {
+      "spacing": {
+        "padding": {},
+        "margin": {},
+        "gap": {}
+      },
+      "colors": {},
+      "typography": {},
+      "layout": {},
+      "effects": {},
+      "animation": {},
+      "position": {},
+      "transform": {},
+      "sizing": {},
+      "flexboxGrid": {
+        "display": "flex"
+      },
+      "filters": {},
+      "interactivity": {},
+      "tables": {},
+      "svg": {},
+      "transitions": {},
+      "backgrounds": {},
+      "borders": {},
+      "overflow": {},
+      "accessibility": {},
+      "blendModes": {},
+      "mask": {},
+      "states": {},
+      "pseudoElements": {},
+      "breakpoints": {},
+      "containers": {},
+      "motion": {},
+      "attributes": {},
+      "complexSelectors": {},
+      "groupStates": {},
+      "peerStates": {},
+      "contrast": {},
+      "colorScheme": {},
+      "orientation": {},
+      "print": {},
+      "scripting": {},
+      "pointer": {},
+      "noscript": {},
+      "userValidation": {},
+      "invertedColors": {},
+      "detailsContent": {},
+      "starting": {},
+      "nthSelectors": {}
+    }
+  },
+  "containers": {},
+  "states": {},
+  "pseudoElements": {},
+  "motion": {},
+  "attributes": {},
+  "complexSelectors": {},
+  "groupStates": {},
+  "peerStates": {},
+  "contrast": {},
+  "colorScheme": {},
+  "orientation": {},
+  "print": {},
+  "scripting": {},
+  "pointer": {},
+  "noscript": {},
+  "userValidation": {},
+  "invertedColors": {},
+  "detailsContent": {},
+  "starting": {},
+  "nthSelectors": {},
+  "meta": {
+    "originalClasses": [
+      "md:flex"
+    ],
+    "originalInput": "md:flex",
+    "preset": "default",
+    "parseTime": 1,
+    "warnings": []
+  }
+}
+
+stdout | tests/parser.debug.test.ts > CSSParser - 디버그 테스트 > md:max-lg:flex 클래스를 파싱할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser max-lg
+tryArbitraryAttributeParser max-lg
+canParse max-lg
+중첩 브레이크포인트 파싱된 클래스: {
+  "original": "md:max-lg:flex",
+  "className": "md:max-lg:flex",
+  "baseClassName": "flex",
+  "property": "display",
+  "value": "flex",
+  "category": "flexbox-grid",
+  "isArbitrary": false,
+  "modifiers": {
+    "responsive": {
+      "max-lg": "@media (max-width: 1024px)"
+    }
+  }
+}
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser max-lg
+tryArbitraryAttributeParser max-lg
+canParse max-lg
+중첩 브레이크포인트 파싱 결과: {
+  "spacing": {
+    "padding": {},
+    "margin": {},
+    "gap": {}
+  },
+  "colors": {},
+  "typography": {},
+  "layout": {},
+  "effects": {},
+  "animation": {},
+  "position": {},
+  "transform": {},
+  "sizing": {},
+  "flexboxGrid": {},
+  "filters": {},
+  "interactivity": {},
+  "tables": {},
+  "svg": {},
+  "transitions": {},
+  "backgrounds": {},
+  "borders": {},
+  "overflow": {},
+  "accessibility": {},
+  "blendModes": {},
+  "mask": {},
+  "breakpoints": {
+    "max-lg": {
+      "spacing": {
+        "padding": {},
+        "margin": {},
+        "gap": {}
+      },
+      "colors": {},
+      "typography": {},
+      "layout": {},
+      "effects": {},
+      "animation": {},
+      "position": {},
+      "transform": {},
+      "sizing": {},
+      "flexboxGrid": {
+        "display": "flex"
+      },
+      "filters": {},
+      "interactivity": {},
+      "tables": {},
+      "svg": {},
+      "transitions": {},
+      "backgrounds": {},
+      "borders": {},
+      "overflow": {},
+      "accessibility": {},
+      "blendModes": {},
+      "mask": {},
+      "states": {},
+      "pseudoElements": {},
+      "breakpoints": {},
+      "containers": {},
+      "motion": {},
+      "attributes": {},
+      "complexSelectors": {},
+      "groupStates": {},
+      "peerStates": {},
+      "contrast": {},
+      "colorScheme": {},
+      "orientation": {},
+      "print": {},
+      "scripting": {},
+      "pointer": {},
+      "noscript": {},
+      "userValidation": {},
+      "invertedColors": {},
+      "detailsContent": {},
+      "starting": {},
+      "nthSelectors": {}
+    }
+  },
+  "containers": {},
+  "states": {},
+  "pseudoElements": {},
+  "motion": {},
+  "attributes": {},
+  "complexSelectors": {},
+  "groupStates": {},
+  "peerStates": {},
+  "contrast": {},
+  "colorScheme": {},
+  "orientation": {},
+  "print": {},
+  "scripting": {},
+  "pointer": {},
+  "noscript": {},
+  "userValidation": {},
+  "invertedColors": {},
+  "detailsContent": {},
+  "starting": {},
+  "nthSelectors": {},
+  "meta": {
+    "originalClasses": [
+      "md:max-lg:flex"
+    ],
+    "originalInput": "md:max-lg:flex",
+    "preset": "default",
+    "parseTime": 0,
+    "warnings": []
+  }
+}
+
+ ✓ tests/parser.debug.test.ts  (4 tests) 4ms
+stdout | tests/parser.debug.test.ts > CSSParser - 디버그 테스트 > md:hover:flex 클래스를 파싱할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+브레이크포인트 + 상태 파싱된 클래스: {
+  "original": "md:hover:flex",
+  "className": "md:hover:flex",
+  "baseClassName": "flex",
+  "property": "display",
+  "value": "flex",
+  "category": "flexbox-grid",
+  "isArbitrary": false,
+  "modifiers": {
+    "responsive": {
+      "md": "@media (min-width: 768px)"
+    },
+    "state": [
+      ":hover"
+    ]
+  }
+}
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+브레이크포인트 + 상태 파싱 결과: {
+  "spacing": {
+    "padding": {},
+    "margin": {},
+    "gap": {}
+  },
+  "colors": {},
+  "typography": {},
+  "layout": {},
+  "effects": {},
+  "animation": {},
+  "position": {},
+  "transform": {},
+  "sizing": {},
+  "flexboxGrid": {},
+  "filters": {},
+  "interactivity": {},
+  "tables": {},
+  "svg": {},
+  "transitions": {},
+  "backgrounds": {},
+  "borders": {},
+  "overflow": {},
+  "accessibility": {},
+  "blendModes": {},
+  "mask": {},
+  "breakpoints": {
+    "md": {
+      "spacing": {
+        "padding": {},
+        "margin": {},
+        "gap": {}
+      },
+      "colors": {},
+      "typography": {},
+      "layout": {},
+      "effects": {},
+      "animation": {},
+      "position": {},
+      "transform": {},
+      "sizing": {},
+      "flexboxGrid": {},
+      "filters": {},
+      "interactivity": {},
+      "tables": {},
+      "svg": {},
+      "transitions": {},
+      "backgrounds": {},
+      "borders": {},
+      "overflow": {},
+      "accessibility": {},
+      "blendModes": {},
+      "mask": {},
+      "states": {
+        ":hover": {
+          "spacing": {
+            "padding": {},
+            "margin": {},
+            "gap": {}
+          },
+          "colors": {},
+          "typography": {},
+          "layout": {},
+          "effects": {},
+          "animation": {},
+          "position": {},
+          "transform": {},
+          "sizing": {},
+          "flexboxGrid": {
+            "display": "flex"
+          },
+          "filters": {},
+          "interactivity": {},
+          "tables": {},
+          "svg": {},
+          "transitions": {},
+          "backgrounds": {},
+          "borders": {},
+          "overflow": {},
+          "accessibility": {},
+          "blendModes": {},
+          "mask": {},
+          "states": {},
+          "pseudoElements": {},
+          "breakpoints": {},
+          "containers": {},
+          "motion": {},
+          "attributes": {},
+          "complexSelectors": {},
+          "groupStates": {},
+          "peerStates": {},
+          "contrast": {},
+          "colorScheme": {},
+          "orientation": {},
+          "print": {},
+          "scripting": {},
+          "pointer": {},
+          "noscript": {},
+          "userValidation": {},
+          "invertedColors": {},
+          "detailsContent": {},
+          "starting": {},
+          "nthSelectors": {}
+        }
+      },
+      "pseudoElements": {},
+      "breakpoints": {},
+      "containers": {},
+      "motion": {},
+      "attributes": {},
+      "complexSelectors": {},
+      "groupStates": {},
+      "peerStates": {},
+      "contrast": {},
+      "colorScheme": {},
+      "orientation": {},
+      "print": {},
+      "scripting": {},
+      "pointer": {},
+      "noscript": {},
+      "userValidation": {},
+      "invertedColors": {},
+      "detailsContent": {},
+      "starting": {},
+      "nthSelectors": {}
+    }
+  },
+  "containers": {},
+  "states": {},
+  "pseudoElements": {},
+  "motion": {},
+  "attributes": {},
+  "complexSelectors": {},
+  "groupStates": {},
+  "peerStates": {},
+  "contrast": {},
+  "colorScheme": {},
+  "orientation": {},
+  "print": {},
+  "scripting": {},
+  "pointer": {},
+  "noscript": {},
+  "userValidation": {},
+  "invertedColors": {},
+  "detailsContent": {},
+  "starting": {},
+  "nthSelectors": {},
+  "meta": {
+    "originalClasses": [
+      "md:hover:flex"
+    ],
+    "originalInput": "md:hover:flex",
+    "preset": "default",
+    "parseTime": 0,
+    "warnings": []
+  }
+}
+
+stdout | tests/parser.debug.test.ts > CSSParser - 디버그 테스트 > @md:hover:flex 클래스를 파싱할 수 있어야 함
+tryArbitraryVariantParser @md
+tryArbitraryAttributeParser @md
+canParse @md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+컨테이너 + 상태 파싱된 클래스: {
+  "original": "@md:hover:flex",
+  "className": "@md:hover:flex",
+  "baseClassName": "flex",
+  "property": "display",
+  "value": "flex",
+  "category": "flexbox-grid",
+  "isArbitrary": false,
+  "modifiers": {
+    "container": {
+      "@md": "@container (min-width: 768px)"
+    },
+    "state": [
+      ":hover"
+    ]
+  }
+}
+tryArbitraryVariantParser @md
+tryArbitraryAttributeParser @md
+canParse @md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+컨테이너 + 상태 파싱 결과: {
+  "spacing": {
+    "padding": {},
+    "margin": {},
+    "gap": {}
+  },
+  "colors": {},
+  "typography": {},
+  "layout": {},
+  "effects": {},
+  "animation": {},
+  "position": {},
+  "transform": {},
+  "sizing": {},
+  "flexboxGrid": {},
+  "filters": {},
+  "interactivity": {},
+  "tables": {},
+  "svg": {},
+  "transitions": {},
+  "backgrounds": {},
+  "borders": {},
+  "overflow": {},
+  "accessibility": {},
+  "blendModes": {},
+  "mask": {},
+  "breakpoints": {},
+  "containers": {
+    "@md": {
+      "spacing": {
+        "padding": {},
+        "margin": {},
+        "gap": {}
+      },
+      "colors": {},
+      "typography": {},
+      "layout": {},
+      "effects": {},
+      "animation": {},
+      "position": {},
+      "transform": {},
+      "sizing": {},
+      "flexboxGrid": {},
+      "filters": {},
+      "interactivity": {},
+      "tables": {},
+      "svg": {},
+      "transitions": {},
+      "backgrounds": {},
+      "borders": {},
+      "overflow": {},
+      "accessibility": {},
+      "blendModes": {},
+      "mask": {},
+      "states": {
+        ":hover": {
+          "spacing": {
+            "padding": {},
+            "margin": {},
+            "gap": {}
+          },
+          "colors": {},
+          "typography": {},
+          "layout": {},
+          "effects": {},
+          "animation": {},
+          "position": {},
+          "transform": {},
+          "sizing": {},
+          "flexboxGrid": {
+            "display": "flex"
+          },
+          "filters": {},
+          "interactivity": {},
+          "tables": {},
+          "svg": {},
+          "transitions": {},
+          "backgrounds": {},
+          "borders": {},
+          "overflow": {},
+          "accessibility": {},
+          "blendModes": {},
+          "mask": {},
+          "states": {},
+          "pseudoElements": {},
+          "breakpoints": {},
+          "containers": {},
+          "motion": {},
+          "attributes": {},
+          "complexSelectors": {},
+          "groupStates": {},
+          "peerStates": {},
+          "contrast": {},
+          "colorScheme": {},
+          "orientation": {},
+          "print": {},
+          "scripting": {},
+          "pointer": {},
+          "noscript": {},
+          "userValidation": {},
+          "invertedColors": {},
+          "detailsContent": {},
+          "starting": {},
+          "nthSelectors": {}
+        }
+      },
+      "pseudoElements": {},
+      "breakpoints": {},
+      "containers": {},
+      "motion": {},
+      "attributes": {},
+      "complexSelectors": {},
+      "groupStates": {},
+      "peerStates": {},
+      "contrast": {},
+      "colorScheme": {},
+      "orientation": {},
+      "print": {},
+      "scripting": {},
+      "pointer": {},
+      "noscript": {},
+      "userValidation": {},
+      "invertedColors": {},
+      "detailsContent": {},
+      "starting": {},
+      "nthSelectors": {}
+    }
+  },
+  "states": {},
+  "pseudoElements": {},
+  "motion": {},
+  "attributes": {},
+  "complexSelectors": {},
+  "groupStates": {},
+  "peerStates": {},
+  "contrast": {},
+  "colorScheme": {},
+  "orientation": {},
+  "print": {},
+  "scripting": {},
+  "pointer": {},
+  "noscript": {},
+  "userValidation": {},
+  "invertedColors": {},
+  "detailsContent": {},
+  "starting": {},
+  "nthSelectors": {},
+  "meta": {
+    "originalClasses": [
+      "@md:hover:flex"
+    ],
+    "originalInput": "@md:hover:flex",
+    "preset": "default",
+    "parseTime": 0,
+    "warnings": []
+  }
+}
+
+stdout | tests/parser.box-sizing.test.ts > CSSParser - 박스 사이징(Box Sizing) > 박스 사이징 스타일 적용 > 반응형 box-sizing 스타일을 적용할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+ ✓ tests/parser.box-sizing.test.ts  (5 tests) 4ms
+stdout | tests/parser.isolation.test.ts > CSSParser - Isolation > 반응형 isolation
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+
+stdout | tests/parser.isolation.test.ts > CSSParser - Isolation > 상태 수정자
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+ ❯ tests/parser.isolation.test.ts  (4 tests | 1 failed) 7ms
+   ❯ tests/parser.isolation.test.ts > CSSParser - Isolation > 상태 수정자
+     → expected undefined not to be undefined
+stdout | tests/parser.core.test.ts > CSSParser - 코어 기능 > 복합 클래스 파싱 > 여러 클래스를 파싱할 수 있어야 함
+tryArbitraryVariantParser md
+tryArbitraryAttributeParser md
+canParse md
+tryArbitraryVariantParser hover
+tryArbitraryAttributeParser hover
+canParse hover
+
+ ✓ tests/parser.core.test.ts  (4 tests) 6ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 91 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/converter.test.ts > CSSConverter > 스타일 변환 > 파싱된 스타일을 CSS 객체로 변환할 수 있어야 함
+AssertionError: expected undefined to be 'rgb(64, 128, 255)' // Object.is equality
+
+- Expected: 
+"rgb(64, 128, 255)"
+
++ Received: 
+undefined
+
+ ❯ tests/converter.test.ts:54:31
+     52|       
+     53|       expect(cssObject).toBeDefined();
+     54|       expect(cssObject.color).toBe('rgb(64, 128, 255)');
+       |                               ^
+     55|       expect(cssObject.backgroundColor).toBe('rgb(255, 255, 255)');
+     56|       expect(cssObject.padding).toBe('16px');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/91]⎯
+
+ FAIL  tests/converter.test.ts > CSSConverter > Figma 스타일 변환 > 파싱된 스타일을 Figma 스타일 객체로 변환할 수 있어야 함
+AssertionError: expected { r: 1, g: 1, b: 1, a: 1 } to deeply equal { r: 1, g: 1, b: 1 }
+
+- Expected
++ Received
+
+  Object {
++   "a": 1,
+    "b": 1,
+    "g": 1,
+    "r": 1,
+  }
+
+ ❯ tests/converter.test.ts:133:42
+    131|       expect(figmaStyles).toBeDefined();
+    132|       expect(figmaStyles.fills).toBeDefined();
+    133|       expect(figmaStyles.fills[0].color).toEqual({ r: 1, g: 1, b: 1 });
+       |                                          ^
+    134|       expect(figmaStyles.strokes).toBeDefined();
+    135|       expect(figmaStyles.strokeWeight).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/91]⎯
+
+ FAIL  tests/converter.test.ts > CSSConverter > React 스타일 변환 > 파싱된 스타일을 React 스타일 객체로 변환할 수 있어야 함
+AssertionError: expected undefined to be 'rgb(64, 128, 255)' // Object.is equality
+
+- Expected: 
+"rgb(64, 128, 255)"
+
++ Received: 
+undefined
+
+ ❯ tests/converter.test.ts:183:33
+    181|       
+    182|       expect(reactStyles).toBeDefined();
+    183|       expect(reactStyles.color).toBe('rgb(64, 128, 255)');
+       |                                 ^
+    184|       expect(reactStyles.backgroundColor).toBe('rgb(255, 255, 255)');
+    185|       expect(reactStyles.padding).toBe(16);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/91]⎯
+
+ FAIL  tests/engine.test.ts > CSSEngine > 클래스 처리 > 기본 클래스를 처리할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/engine.test.ts:29:41
+     27|       
+     28|       // 파싱 결과 확인
+     29|       expect(result.parsed.colors.text).toBeDefined();
+       |                                         ^
+     30|       expect(result.parsed.spacing.padding).toBeDefined();
+     31|       
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/91]⎯
+
+ FAIL  tests/engine.test.ts > CSSEngine > 클래스 처리 > 복잡한 클래스 조합을 처리할 수 있어야 함
+AssertionError: expected undefined to be 'flex' // Object.is equality
+
+- Expected: 
+"flex"
+
++ Received: 
+undefined
+
+ ❯ tests/engine.test.ts:56:44
+     54|       
+     55|       // 파싱 결과 확인
+     56|       expect(result.parsed.layout.display).toBe('flex');
+       |                                            ^
+     57|       expect(result.parsed.spacing.padding).toBeDefined();
+     58|       expect(result.parsed.colors.text).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/91]⎯
+
+ FAIL  tests/engine.test.ts > CSSEngine > 출력 형식 > 다양한 출력 형식을 지원해야 함
+AssertionError: expected undefined to be 'flex' // Object.is equality
+
+- Expected: 
+"flex"
+
++ Received: 
+undefined
+
+ ❯ tests/engine.test.ts:93:33
+     91|       expect(cssObject.color).toBeDefined();
+     92|       expect(cssObject.padding).toBeDefined();
+     93|       expect(cssObject.display).toBe('flex');
+       |                                 ^
+     94|       
+     95|       // CSS 문자열 형식
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/91]⎯
+
+ FAIL  tests/engine.test.ts > CSSEngine > 설정 및 프리셋 > 커스텀 설정으로 인스턴스를 생성할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/engine.test.ts:127:41
+    125|       const result = customEngine.process('tw-text-blue-500 tw-p-4');
+    126|       
+    127|       expect(result.parsed.colors.text).toBeDefined();
+       |                                         ^
+    128|       expect(result.parsed.spacing.padding).toBeDefined();
+    129|       expect(result.cssObject.color).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/91]⎯
+
+ FAIL  tests/engine.test.ts > CSSEngine > 설정 및 프리셋 > 커스텀 프리셋으로 인스턴스를 생성할 수 있어야 함
+AssertionError: expected undefined to deeply equal { r: 0.1, g: 0.2, b: 0.8 }
+
+- Expected: 
+Object {
+  "b": 0.8,
+  "g": 0.2,
+  "r": 0.1,
+}
+
++ Received: 
+undefined
+
+ ❯ tests/engine.test.ts:145:41
+    143|       const result = customEngine.process('text-brand');
+    144|       
+    145|       expect(result.parsed.colors.text).toEqual({ r: 0.1, g: 0.2, b: 0…
+       |                                         ^
+    146|       expect(result.cssObject.color).toBeDefined();
+    147|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/91]⎯
+
+ FAIL  tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 클래스 파싱 > 상태 모디파이어가 있는 애니메이션 클래스를 파싱할 수 있어야 함
+AssertionError: expected [ ':hover' ] to be ':hover' // Object.is equality
+
+- Expected: 
+":hover"
+
++ Received: 
+Array [
+  ":hover",
+]
+
+ ❯ tests/parser.animation.test.ts:231:40
+    229|       expect(result?.property).toBe('animate');
+    230|       expect(result?.value).toBe('spin');
+    231|       expect(result?.modifiers?.state).toBe(':hover');
+       |                                        ^
+    232|     });
+    233| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/91]⎯
+
+ FAIL  tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 클래스 파싱 > 복합 모디파이어가 있는 애니메이션 클래스를 파싱할 수 있어야 함
+AssertionError: expected [ ':hover' ] to be ':hover' // Object.is equality
+
+- Expected: 
+":hover"
+
++ Received: 
+Array [
+  ":hover",
+]
+
+ ❯ tests/parser.animation.test.ts:252:40
+    250|       expect(result?.property).toBe('animate');
+    251|       expect(result?.value).toBe('spin');
+    252|       expect(result?.modifiers?.state).toBe(':hover');
+       |                                        ^
+    253|       expect(result?.modifiers?.responsive).toBeDefined();
+    254|       expect(result?.modifiers?.responsive?.md).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/91]⎯
+
+ FAIL  tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 클래스 파싱 > 상태 모디파이어가 있는 임의 애니메이션 클래스를 파싱할 수 있어야 함
+AssertionError: expected [ ':hover' ] to be ':hover' // Object.is equality
+
+- Expected: 
+":hover"
+
++ Received: 
+Array [
+  ":hover",
+]
+
+ ❯ tests/parser.animation.test.ts:264:40
+    262|       expect(result?.property).toBe('duration');
+    263|       expect(result?.value).toBe('500ms');
+    264|       expect(result?.modifiers?.state).toBe(':hover');
+       |                                        ^
+    265|       expect(result?.isArbitrary).toBe(true);
+    266|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/91]⎯
+
+ FAIL  tests/parser.animation.test.ts > CSSParser - 애니메이션 > 모디파이어가 있는 애니메이션 클래스 파싱 > 복합 모디파이어가 있는 임의 애니메이션 클래스를 파싱할 수 있어야 함
+AssertionError: expected [ ':hover' ] to be ':hover' // Object.is equality
+
+- Expected: 
+":hover"
+
++ Received: 
+Array [
+  ":hover",
+]
+
+ ❯ tests/parser.animation.test.ts:288:40
+    286|       expect(result?.value).toBe('500ms');
+    287|       expect(result?.isArbitrary).toBe(true);
+    288|       expect(result?.modifiers?.state).toBe(':hover');
+       |                                        ^
+    289|       expect(result?.modifiers?.responsive).toBeDefined();
+    290|       expect(result?.modifiers?.responsive?.md).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/91]⎯
+
+ FAIL  tests/parser.aspect-ratio.test.ts > CSSParser - 애스펙트 비율(Aspect Ratio) > 애스펙트 비율 스타일 적용 > CSS 변수를 사용한 애스펙트 비율 스타일을 적용할 수 있어야 함
+AssertionError: expected '(--my-aspect-ratio)' to be 'var(--my-aspect-ratio)' // Object.is equality
+
+- Expected
++ Received
+
+- var(--my-aspect-ratio)
++ (--my-aspect-ratio)
+
+ ❯ tests/parser.aspect-ratio.test.ts:99:41
+     97|       const result = parser.parse('aspect-(--my-aspect-ratio)');
+     98|       expect(result.layout.aspectRatio).toBeDefined();
+     99|       expect(result.layout.aspectRatio).toBe('var(--my-aspect-ratio)');
+       |                                         ^
+    100|     });
+    101|     
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 2. 배경 이미지 시스템 (v4.1 완전 지원) > 2.1 기본 배경 이미지 > 커스텀 속성 배경 이미지를 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.backgrounds.test.ts:158:26
+    156|         customProperties.forEach(className => {
+    157|           const result = parser.parseClass(className);
+    158|           expect(result).toBeDefined();
+       |                          ^
+    159|           expect(result?.className).toBe(className);
+    160|           expect(result?.category).toBe('backgrounds');
+ ❯ tests/parser.backgrounds.test.ts:156:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 2. 배경 이미지 시스템 (v4.1 완전 지원) > 2.2 선형 그라데이션 (Linear Gradients) > 각도 기반 선형 그라데이션을 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.backgrounds.test.ts:222:26
+    220|         angleGradients.forEach(className => {
+    221|           const result = parser.parseClass(className);
+    222|           expect(result).toBeDefined();
+       |                          ^
+    223|           expect(result?.className).toBe(className);
+    224|           expect(result?.category).toBe('backgrounds');
+ ❯ tests/parser.backgrounds.test.ts:220:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 2. 배경 이미지 시스템 (v4.1 완전 지원) > 2.2 선형 그라데이션 (Linear Gradients) > 커스텀 선형 그라데이션을 파싱할 수 있어야 함
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/parser.backgrounds.test.ts:260:39
+    258|           expect(result?.className).toBe(className);
+    259|           expect(result?.category).toBe('backgrounds');
+    260|           expect(result?.isArbitrary).toBe(true);
+       |                                       ^
+    261|         });
+    262|       });
+ ❯ tests/parser.backgrounds.test.ts:255:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 2. 배경 이미지 시스템 (v4.1 완전 지원) > 2.4 원뿔형 그라데이션 (Conic Gradients) > 각도 기반 원뿔형 그라데이션을 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.backgrounds.test.ts:329:26
+    327|         conicAngles.forEach(className => {
+    328|           const result = parser.parseClass(className);
+    329|           expect(result).toBeDefined();
+       |                          ^
+    330|           expect(result?.className).toBe(className);
+    331|           expect(result?.category).toBe('backgrounds');
+ ❯ tests/parser.backgrounds.test.ts:327:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.2 그라데이션 적용 > 기본 그라데이션을 적용할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.backgrounds.test.ts:626:53
+    624|         
+    625|         expect(styles.backgrounds).toBeDefined();
+    626|         expect(styles.backgrounds?.backgroundImage).toBeDefined();
+       |                                                     ^
+    627|         expect(styles.backgrounds?.backgroundImage).toContain('linear-…
+    628|         expect(styles.backgrounds?.backgroundImage).toContain('to righ…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.2 그라데이션 적용 > 복합 그라데이션을 적용할 수 있어야 함
+AssertionError: the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string
+ ❯ tests/parser.backgrounds.test.ts:642:53
+    640|         
+    641|         expect(styles.backgrounds).toBeDefined();
+    642|         expect(styles.backgrounds?.backgroundImage).toContain('linear-…
+       |                                                     ^
+    643|         expect(styles.backgrounds?.['--tw-gradient-from']).toBeDefined…
+    644|       });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.2 그라데이션 적용 > 새로운 v4.1 선형 그라데이션을 적용할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.backgrounds.test.ts:650:53
+    648|         
+    649|         expect(styles.backgrounds).toBeDefined();
+    650|         expect(styles.backgrounds?.backgroundImage).toBeDefined();
+       |                                                     ^
+    651|         expect(styles.backgrounds?.backgroundImage).toContain('linear-…
+    652|       });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.2 그라데이션 적용 > 각도 기반 그라데이션을 적용할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.backgrounds.test.ts:658:53
+    656|         
+    657|         expect(styles.backgrounds).toBeDefined();
+    658|         expect(styles.backgrounds?.backgroundImage).toBeDefined();
+       |                                                     ^
+    659|         expect(styles.backgrounds?.backgroundImage).toContain('linear-…
+    660|       });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.2 그라데이션 적용 > 방사형 그라데이션을 적용할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.backgrounds.test.ts:666:53
+    664|         
+    665|         expect(styles.backgrounds).toBeDefined();
+    666|         expect(styles.backgrounds?.backgroundImage).toBeDefined();
+       |                                                     ^
+    667|         expect(styles.backgrounds?.backgroundImage).toContain('radial-…
+    668|       });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.2 그라데이션 적용 > 원뿔형 그라데이션을 적용할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.backgrounds.test.ts:674:53
+    672|         
+    673|         expect(styles.backgrounds).toBeDefined();
+    674|         expect(styles.backgrounds?.backgroundImage).toBeDefined();
+       |                                                     ^
+    675|         expect(styles.backgrounds?.backgroundImage).toContain('conic-g…
+    676|       });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.3 배경 이미지 적용 > 배경 이미지 none을 적용할 수 있어야 함
+AssertionError: expected undefined to be 'none' // Object.is equality
+
+- Expected: 
+"none"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.backgrounds.test.ts:684:53
+    682| 
+    683|         expect(styles.backgrounds).toBeDefined();
+    684|         expect(styles.backgrounds?.backgroundImage).toBe('none');
+       |                                                     ^
+    685|       });
+    686| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.3 배경 이미지 적용 > 배경 이미지 URL을 적용할 수 있어야 함
+AssertionError: expected undefined to be 'url(\'/img/hero.jpg\')' // Object.is equality
+
+- Expected: 
+"url('/img/hero.jpg')"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.backgrounds.test.ts:691:53
+    689| 
+    690|         expect(styles.backgrounds).toBeDefined();
+    691|         expect(styles.backgrounds?.backgroundImage).toBe("url('/img/he…
+       |                                                     ^
+    692|       });
+    693| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.3 배경 이미지 적용 > 복잡한 배경 이미지를 적용할 수 있어야 함
+AssertionError: expected undefined to be 'url(https://example.com/image.png)' // Object.is equality
+
+- Expected: 
+"url(https://example.com/image.png)"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.backgrounds.test.ts:698:53
+    696| 
+    697|         expect(styles.backgrounds).toBeDefined();
+    698|         expect(styles.backgrounds?.backgroundImage).toBe('url(https://…
+       |                                                     ^
+    699|       });
+    700|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.4 배경 속성 적용 > 배경 위치를 적용할 수 있어야 함
+AssertionError: expected undefined to be 'center' // Object.is equality
+
+- Expected: 
+"center"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.backgrounds.test.ts:707:56
+    705|         
+    706|         expect(styles.backgrounds).toBeDefined();
+    707|         expect(styles.backgrounds?.backgroundPosition).toBe('center');
+       |                                                        ^
+    708|       });
+    709|       
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.4 배경 속성 적용 > 배경 크기를 적용할 수 있어야 함
+AssertionError: expected undefined to be 'cover' // Object.is equality
+
+- Expected: 
+"cover"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.backgrounds.test.ts:714:52
+    712|         
+    713|         expect(styles.backgrounds).toBeDefined();
+    714|         expect(styles.backgrounds?.backgroundSize).toBe('cover');
+       |                                                    ^
+    715|       });
+    716|       
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.4 배경 속성 적용 > 배경 반복을 적용할 수 있어야 함
+AssertionError: expected undefined to be 'no-repeat' // Object.is equality
+
+- Expected: 
+"no-repeat"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.backgrounds.test.ts:721:54
+    719|         
+    720|         expect(styles.backgrounds).toBeDefined();
+    721|         expect(styles.backgrounds?.backgroundRepeat).toBe('no-repeat');
+       |                                                      ^
+    722|       });
+    723|       
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.4 배경 속성 적용 > 배경 첨부를 적용할 수 있어야 함
+AssertionError: expected undefined to be 'fixed' // Object.is equality
+
+- Expected: 
+"fixed"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.backgrounds.test.ts:728:58
+    726|         
+    727|         expect(styles.backgrounds).toBeDefined();
+    728|         expect(styles.backgrounds?.backgroundAttachment).toBe('fixed');
+       |                                                          ^
+    729|       });
+    730|       
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.4 배경 속성 적용 > 배경 클립을 적용할 수 있어야 함
+AssertionError: expected undefined to be 'text' // Object.is equality
+
+- Expected: 
+"text"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.backgrounds.test.ts:735:52
+    733|         
+    734|         expect(styles.backgrounds).toBeDefined();
+    735|         expect(styles.backgrounds?.backgroundClip).toBe('text');
+       |                                                    ^
+    736|       });
+    737|       
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.4 배경 속성 적용 > 배경 원점을 적용할 수 있어야 함
+AssertionError: expected undefined to be 'padding-box' // Object.is equality
+
+- Expected: 
+"padding-box"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.backgrounds.test.ts:742:54
+    740|         
+    741|         expect(styles.backgrounds).toBeDefined();
+    742|         expect(styles.backgrounds?.backgroundOrigin).toBe('padding-box…
+       |                                                      ^
+    743|       });
+    744|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[32/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.5 복합 배경 스타일 > 여러 배경 속성을 동시에 적용할 수 있어야 함
+AssertionError: expected undefined to be 'cover' // Object.is equality
+
+- Expected: 
+"cover"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.backgrounds.test.ts:752:52
+    750|         expect(styles.backgrounds).toBeDefined();
+    751|         expect(styles.backgrounds?.backgroundColor).toBeDefined();
+    752|         expect(styles.backgrounds?.backgroundSize).toBe('cover');
+       |                                                    ^
+    753|         expect(styles.backgrounds?.backgroundPosition).toBe('center');
+    754|         expect(styles.backgrounds?.backgroundRepeat).toBe('no-repeat');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[33/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.5 복합 배경 스타일 > 그라데이션과 배경 속성을 조합할 수 있어야 함
+AssertionError: the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string
+ ❯ tests/parser.backgrounds.test.ts:762:53
+    760|         
+    761|         expect(styles.backgrounds).toBeDefined();
+    762|         expect(styles.backgrounds?.backgroundImage).toContain('linear-…
+       |                                                     ^
+    763|         expect(styles.backgrounds?.backgroundSize).toBe('cover');
+    764|         expect(styles.backgrounds?.backgroundPosition).toBe('center');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[34/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 9. 배경 스타일 적용 테스트 > 9.5 복합 배경 스타일 > v4.1 새로운 그라데이션과 속성을 조합할 수 있어야 함
+AssertionError: the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string
+ ❯ tests/parser.backgrounds.test.ts:771:53
+    769|         
+    770|         expect(styles.backgrounds).toBeDefined();
+    771|         expect(styles.backgrounds?.backgroundImage).toContain('linear-…
+       |                                                     ^
+    772|         expect(styles.backgrounds?.backgroundSize).toBe('cover');
+    773|       });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[35/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 10. 반응형 및 상태 변형자 > 반응형 배경 클래스를 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.backgrounds.test.ts:789:24
+    787|       responsiveClasses.forEach(className => {
+    788|         const result = parser.parseClass(className);
+    789|         expect(result).toBeDefined();
+       |                        ^
+    790|         expect(result?.className).toBe(className);
+    791|         expect(result?.category).toBe('backgrounds');
+ ❯ tests/parser.backgrounds.test.ts:787:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[36/91]⎯
+
+ FAIL  tests/parser.backgrounds.test.ts > CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트 > 10. 반응형 및 상태 변형자 > 다크 모드 배경 클래스를 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.backgrounds.test.ts:822:24
+    820|       darkModeClasses.forEach(className => {
+    821|         const result = parser.parseClass(className);
+    822|         expect(result).toBeDefined();
+       |                        ^
+    823|         expect(result?.className).toBe(className);
+    824|         expect(result?.category).toBe('backgrounds');
+ ❯ tests/parser.backgrounds.test.ts:820:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[37/91]⎯
+
+ FAIL  tests/parser.columns.test.ts > CSSParser - 컬럼(Columns) > 컬럼 스타일 적용 > CSS 변수 컬럼 스타일을 적용할 수 있어야 함
+AssertionError: expected '(--my-columns)' to be 'var(--my-columns)' // Object.is equality
+
+- Expected
++ Received
+
+- var(--my-columns)
++ (--my-columns)
+
+ ❯ tests/parser.columns.test.ts:74:38
+     72|     it('CSS 변수 컬럼 스타일을 적용할 수 있어야 함', () => {
+     73|       const result = parser.parse('columns-(--my-columns)');
+     74|       expect(result.layout?.columns).toBe('var(--my-columns)');
+       |                                      ^
+     75|     });
+     76|     
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[38/91]⎯
+
+ FAIL  tests/parser.display.test.ts > Display Parser Tests > State Modifier Display > display with state modifiers should work
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.display.test.ts:148:39
+    146|         const styles = parser.parse(className);
+    147|         expect(styles.states).toBeDefined();
+    148|         expect(styles.states![state]).toBeDefined();
+       |                                       ^
+    149|         expect(styles.states![state].flexboxGrid).toBeDefined();
+    150|         expect(styles.states![state].flexboxGrid!.display).toBe(value);
+ ❯ tests/parser.display.test.ts:145:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39/91]⎯
+
+ FAIL  tests/parser.display.test.ts > Display Parser Tests > Complex Display Combinations > responsive + state modifiers should work
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.display.test.ts:161:58
+    159|       expect(styles.breakpoints!['md']).toBeDefined();
+    160|       expect(styles.breakpoints!['md'].states).toBeDefined();
+    161|       expect(styles.breakpoints!['md'].states!['hover']).toBeDefined();
+       |                                                          ^
+    162|       expect(styles.breakpoints!['md'].states!['hover'].flexboxGrid).t…
+    163|       expect(styles.breakpoints!['md'].states!['hover'].flexboxGrid!.d…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[40/91]⎯
+
+ FAIL  tests/parser.display.test.ts > Display Parser Tests > Edge Cases and Error Handling > unknown display class should return null
+AssertionError: expected undefined to be truthy
+
+- Expected: 
+undefined
+
++ Received: 
+false
+
+ ❯ tests/parser.display.test.ts:179:22
+    177|     test('unknown display class should return null', () => {
+    178|       const result = parser.parseClassName('display-unknown');
+    179|       expect(result).toBeTruthy();
+       |                      ^
+    180|     });
+    181| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[41/91]⎯
+
+ FAIL  tests/parser.display.test.ts > Display Parser Tests > Edge Cases and Error Handling > malformed display class should return null
+AssertionError: expected undefined to be truthy
+
+- Expected: 
+undefined
+
++ Received: 
+false
+
+ ❯ tests/parser.display.test.ts:184:22
+    182|     test('malformed display class should return null', () => {
+    183|       const result = parser.parseClassName('block-');
+    184|       expect(result).toBeTruthy();
+       |                      ^
+    185|     });
+    186|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[42/91]⎯
+
+ FAIL  tests/parser.filters.test.ts > Effects Parser (Filters Integration) > Responsive & States > should handle hover state filter classes
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.filters.test.ts:364:45
+    362|       
+    363|       expect(result.states).toBeDefined();
+    364|       expect(result.states?.hover?.effects).toBeDefined();
+       |                                             ^
+    365|     });
+    366| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[43/91]⎯
+
+ FAIL  tests/parser.filters.test.ts > Effects Parser (Filters Integration) > Responsive & States > should handle backdrop filters with modifiers
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.filters.test.ts:378:61
+    376|       
+    377|       expect(result.breakpoints?.md?.effects?.backdropFilter).toBeDefi…
+    378|       expect(result.states?.hover?.effects?.backdropFilter).toBeDefine…
+       |                                                             ^
+    379|     });
+    380|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[44/91]⎯
+
+ FAIL  tests/parser.isolation.test.ts > CSSParser - Isolation > 상태 수정자
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.isolation.test.ts:43:37
+     41|     const styles = parser.parse('hover:isolate');
+     42|     expect(styles.states).toBeDefined();
+     43|     expect(styles.states!['hover']).toBeDefined();
+       |                                     ^
+     44|     expect(styles.states!['hover'].layout).toBeDefined();
+     45|     expect(styles.states!['hover'].layout!.isolation).toBe('isolate');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[45/91]⎯
+
+ FAIL  tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Basic Modifier Parsing > should parse pseudo-element modifiers
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.modifiers.test.ts:44:22
+     42|       const result = parser.parseClassName(className);
+     43| 
+     44|       expect(result).toBeDefined();
+       |                      ^
+     45|       expect(result?.modifiers?.pseudoElement).toBe('::before');
+     46|       expect(result?.baseClassName).toBe('content-[""]');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[46/91]⎯
+
+ FAIL  tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > Motion Preference Modifiers > should parse motion-reduce modifier
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.modifiers.test.ts:84:22
+     82|       const result = parser.parseClassName(className);
+     83| 
+     84|       expect(result).toBeDefined();
+       |                      ^
+     85|       expect(result?.modifiers?.motion).toBe('@media (prefers-reduced-…
+     86|       expect(result?.baseClassName).toBe('transform-none');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[47/91]⎯
+
+ FAIL  tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > v4.1 Arbitrary Values > should parse arbitrary attribute selectors
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.modifiers.test.ts:237:22
+    235|       console.log(result);
+    236| 
+    237|       expect(result).toBeDefined();
+       |                      ^
+    238|       // 이것은 arbitrary property이므로 baseClassName으로 처리되어야 …
+    239|       expect(result?.baseClassName).toBe('[my-property="value"]');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[48/91]⎯
+
+ FAIL  tests/parser.modifiers.test.ts > Tailwind CSS Modifier System Tests > v4.1 Arbitrary Values > should parse complex arbitrary values
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.modifiers.test.ts:267:22
+    265|       const result = parser.parseClassName(className);
+    266| 
+    267|       expect(result).toBeDefined();
+       |                      ^
+    268|       expect(result?.modifiers?.state).toEqual([':hover']);
+    269|       expect(result?.modifiers?.pseudoElement).toBe('::before');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[49/91]⎯
+
+ FAIL  tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Basic Modifier Parsing > should parse pseudo-element modifiers
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.modifiers.v4.1.test.ts:44:22
+     42|       const result = parser.parseClassName(className);
+     43| 
+     44|       expect(result).toBeDefined();
+       |                      ^
+     45|       expect(result?.modifiers?.pseudoElement).toBe('::before');
+     46|       expect(result?.baseClassName).toBe('content-[""]');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[50/91]⎯
+
+ FAIL  tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Motion Preference Modifiers > should parse motion-reduce modifier
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.modifiers.v4.1.test.ts:84:22
+     82|       const result = parser.parseClassName(className);
+     83| 
+     84|       expect(result).toBeDefined();
+       |                      ^
+     85|       expect(result?.modifiers?.motion).toBe('@media (prefers-reduced-…
+     86|       expect(result?.baseClassName).toBe('transform-none');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[51/91]⎯
+
+ FAIL  tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Modern Modifiers > should parse user-valid modifier
+AssertionError: expected [ ':user-valid' ] to be ':user-valid' // Object.is equality
+
+- Expected: 
+":user-valid"
+
++ Received: 
+Array [
+  ":user-valid",
+]
+
+ ❯ tests/parser.modifiers.v4.1.test.ts:105:40
+    103| 
+    104|       expect(result).toBeDefined();
+    105|       expect(result?.modifiers?.state).toBe(':user-valid');
+       |                                        ^
+    106|       expect(result?.baseClassName).toBe('border-green-500');
+    107|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[52/91]⎯
+
+ FAIL  tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Modern Modifiers > should parse inverted-colors modifier
+AssertionError: expected [ Array(1) ] to be '@media (inverted-colors: inverted)' // Object.is equality
+
+- Expected: 
+"@media (inverted-colors: inverted)"
+
++ Received: 
+Array [
+  "@media (inverted-colors: inverted)",
+]
+
+ ❯ tests/parser.modifiers.v4.1.test.ts:114:40
+    112| 
+    113|       expect(result).toBeDefined();
+    114|       expect(result?.modifiers?.state).toBe('@media (inverted-colors: …
+       |                                        ^
+    115|       expect(result?.baseClassName).toBe('invert');
+    116|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[53/91]⎯
+
+ FAIL  tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > Modern Modifiers > should parse pointer-fine modifier
+AssertionError: expected [ '@media (pointer: fine)' ] to be '@media (pointer: fine)' // Object.is equality
+
+- Expected: 
+"@media (pointer: fine)"
+
++ Received: 
+Array [
+  "@media (pointer: fine)",
+]
+
+ ❯ tests/parser.modifiers.v4.1.test.ts:123:40
+    121| 
+    122|       expect(result).toBeDefined();
+    123|       expect(result?.modifiers?.state).toBe('@media (pointer: fine)');
+       |                                        ^
+    124|       expect(result?.baseClassName).toBe('bg-gray-100');
+    125|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[54/91]⎯
+
+ FAIL  tests/parser.modifiers.v4.1.test.ts > Tailwind CSS Modifier System Tests > v4.1 Arbitrary Values > should parse complex arbitrary values
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.modifiers.v4.1.test.ts:246:22
+    244|       const result = parser.parseClassName(className);
+    245| 
+    246|       expect(result).toBeDefined();
+       |                      ^
+    247|       expect(result?.modifiers?.state).toBe(':hover');
+    248|       expect(result?.modifiers?.pseudoElement).toBe('::before');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[55/91]⎯
+
+ FAIL  tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 최대 너비 브레이크포인트 > 최대 너비 브레이크포인트를 파싱할 수 있어야 함
+AssertionError: expected undefined to be 'max-md' // Object.is equality
+
+- Expected: 
+"max-md"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.responsive.test.ts:36:37
+     34|       expect(result?.property).toBe('display');
+     35|       expect(result?.value).toBe('flex');
+     36|       expect(result?.modifierChain).toBe('max-md');
+       |                                     ^
+     37|       expect(result?.modifiers?.responsive).toEqual({ 'max-md': '@medi…
+     38|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[56/91]⎯
+
+ FAIL  tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 임의 브레이크포인트 > 임의 최소 너비 브레이크포인트를 파싱할 수 있어야 함
+AssertionError: expected undefined to be 'min-[640px]' // Object.is equality
+
+- Expected: 
+"min-[640px]"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.responsive.test.ts:56:37
+     54|       expect(result?.property).toBe('display');
+     55|       expect(result?.value).toBe('flex');
+     56|       expect(result?.modifierChain).toBe('min-[640px]');
+       |                                     ^
+     57|       expect(result?.modifiers?.responsive).toEqual({ 'min-[640px]': '…
+     58|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[57/91]⎯
+
+ FAIL  tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 임의 브레이크포인트 > 임의 최대 너비 브레이크포인트를 파싱할 수 있어야 함
+AssertionError: expected undefined to be 'max-[1024px]' // Object.is equality
+
+- Expected: 
+"max-[1024px]"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.responsive.test.ts:67:37
+     65|       expect(result?.property).toBe('display');
+     66|       expect(result?.value).toBe('flex');
+     67|       expect(result?.modifierChain).toBe('max-[1024px]');
+       |                                     ^
+     68|       expect(result?.modifiers?.responsive).toEqual({ 'max-[1024px]': …
+     69|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[58/91]⎯
+
+ FAIL  tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 - Tailwind CSS 방식 > 기본 컨테이너 쿼리를 파싱할 수 있어야 함
+AssertionError: expected undefined to be '@md' // Object.is equality
+
+- Expected: 
+"@md"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.responsive.test.ts:87:37
+     85|       expect(result?.property).toBe('display');
+     86|       expect(result?.value).toBe('flex');
+     87|       expect(result?.modifierChain).toBe('@md');
+       |                                     ^
+     88|       expect(result?.modifiers?.container).toEqual({ '@md': '@media (m…
+     89|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[59/91]⎯
+
+ FAIL  tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 - Tailwind CSS 방식 > 최대 너비 컨테이너 쿼리를 파싱할 수 있어야 함
+AssertionError: expected undefined to be '@max-md' // Object.is equality
+
+- Expected: 
+"@max-md"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.responsive.test.ts:98:37
+     96|       expect(result?.property).toBe('display');
+     97|       expect(result?.value).toBe('flex');
+     98|       expect(result?.modifierChain).toBe('@max-md');
+       |                                     ^
+     99|       expect(result?.modifiers?.container).toEqual({ '@max-md': '@medi…
+    100|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[60/91]⎯
+
+ FAIL  tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 - Tailwind CSS 방식 > 임의 컨테이너 쿼리를 파싱할 수 있어야 함
+AssertionError: expected undefined to be '@min-[320px]' // Object.is equality
+
+- Expected: 
+"@min-[320px]"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.responsive.test.ts:109:37
+    107|       expect(result?.property).toBe('display');
+    108|       expect(result?.value).toBe('flex');
+    109|       expect(result?.modifierChain).toBe('@min-[320px]');
+       |                                     ^
+    110|       expect(result?.modifiers?.container).toEqual({ '@min-[320px]': '…
+    111|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[61/91]⎯
+
+ FAIL  tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 - Tailwind CSS 방식 > 명명된 컨테이너 쿼리를 파싱할 수 있어야 함
+AssertionError: expected undefined to be '@md/sidebar' // Object.is equality
+
+- Expected: 
+"@md/sidebar"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.responsive.test.ts:120:37
+    118|       expect(result?.property).toBe('display');
+    119|       expect(result?.value).toBe('flex');
+    120|       expect(result?.modifierChain).toBe('@md/sidebar');
+       |                                     ^
+    121|       expect(result?.modifiers?.container).toEqual({ '@md/sidebar': '@…
+    122|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[62/91]⎯
+
+ FAIL  tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 복합 반응형 패턴 - Tailwind CSS 방식 > 복합 modifier 체인을 파싱할 수 있어야 함
+AssertionError: expected undefined to be 'md:hover:focus' // Object.is equality
+
+- Expected: 
+"md:hover:focus"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.responsive.test.ts:138:37
+    136|       expect(result?.className).toBe('md:hover:focus:text-blue-500');
+    137|       expect(result?.baseClassName).toBe('text-blue-500');
+    138|       expect(result?.modifierChain).toBe('md:hover:focus');
+       |                                     ^
+    139|       expect(result?.modifiers?.responsive).toEqual({ md: '@media (min…
+    140|       expect(result?.modifiers?.state).toEqual([':hover', ':focus']);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[63/91]⎯
+
+ FAIL  tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > 복합 반응형 패턴 - Tailwind CSS 방식 > 다중 상태 모디파이어를 적용할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.responsive.test.ts:163:76
+    161|       expect(result).toBeDefined();
+    162|       expect(result.breakpoints?.lg).toBeDefined();
+    163|       expect(result.breakpoints?.lg.nestedStates?.[':hover:focus:activ…
+       |                                                                            ^
+    164|       expect(result.breakpoints?.lg.nestedStates?.[':hover:focus:activ…
+    165|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[64/91]⎯
+
+ FAIL  tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > CSS 선택자 생성 테스트 > 복합 modifier의 CSS 선택자를 생성할 수 있어야 함
+AssertionError: expected undefined to be 'md:motion-safe:before:hover' // Object.is equality
+
+- Expected: 
+"md:motion-safe:before:hover"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.responsive.test.ts:172:37
+    170|       const result = parser.parseClassName('md:motion-safe:before:hove…
+    171|       expect(result).toBeDefined();
+    172|       expect(result?.modifierChain).toBe('md:motion-safe:before:hover'…
+       |                                     ^
+    173|       expect(result?.modifiers?.responsive).toEqual({ md: '@media (min…
+    174|       expect(result?.modifiers?.motion).toBe('motion-safe');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[65/91]⎯
+
+ FAIL  tests/parser.responsive.test.ts > CSSParser - 반응형(Responsive) 기능 - Tailwind CSS 방식 > CSS 선택자 생성 테스트 > 임의값 modifier의 CSS 선택자를 생성할 수 있어야 함
+AssertionError: expected undefined to be 'min-[768px]:aria-[checked]:data-[acti…' // Object.is equality
+
+- Expected: 
+"min-[768px]:aria-[checked]:data-[active]:hover"
+
++ Received: 
+undefined
+
+ ❯ tests/parser.responsive.test.ts:182:37
+    180|       const result = parser.parseClassName('min-[768px]:aria-[checked]…
+    181|       expect(result).toBeDefined();
+    182|       expect(result?.modifierChain).toBe('min-[768px]:aria-[checked]:d…
+       |                                     ^
+    183|       expect(result?.modifiers?.responsive).toEqual({ 'min-[768px]': '…
+    184|       expect(result?.modifiers?.aria).toBe('aria-[checked]');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[66/91]⎯
+
+ FAIL  tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > 임의값 Modifier 파싱 > data-[size=large] - 임의 data 속성
+AssertionError: expected undefined to deeply equal { size: '[data-size]' }
+
+- Expected: 
+Object {
+  "size": "[data-size]",
+}
+
++ Received: 
+undefined
+
+ ❯ tests/parser.tailwind-modifiers.test.ts:72:37
+     70|       const result = ModifierParser.parseModifiers('data-[size=large]:…
+     71|       
+     72|       expect(result.modifiers.data).toEqual({ size: '[data-size]' });
+       |                                     ^
+     73|     });
+     74|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[67/91]⎯
+
+ FAIL  tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > CSS 선택자 생성 > 단일 pseudo-class 선택자
+AssertionError: expected '.hover\:bg-blue-500' to be '.hover\:bg-blue-500:hover' // Object.is equality
+
+- Expected
++ Received
+
+- .hover\:bg-blue-500:hover
++ .hover\:bg-blue-500
+
+ ❯ tests/parser.tailwind-modifiers.test.ts:81:27
+     79|       const cssSelector = ModifierParser.generateSelector('.hover\\:bg…
+     80|       
+     81|       expect(cssSelector).toBe('.hover\\:bg-blue-500:hover');
+       |                           ^
+     82|     });
+     83| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[68/91]⎯
+
+ FAIL  tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > CSS 선택자 생성 > Media query 선택자
+AssertionError: expected '.md\:text-xl' to be '@media (min-width: 768px) { .md\:text…' // Object.is equality
+
+- Expected
++ Received
+
+- @media (min-width: 768px) { .md\:text-xl }
++ .md\:text-xl
+
+ ❯ tests/parser.tailwind-modifiers.test.ts:88:27
+     86|       const cssSelector = ModifierParser.generateSelector('.md\\:text-…
+     87|       
+     88|       expect(cssSelector).toBe('@media (min-width: 768px) { .md\\:text…
+       |                           ^
+     89|     });
+     90| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[69/91]⎯
+
+ FAIL  tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > CSS 선택자 생성 > 복합 선택자
+AssertionError: expected '.md\:hover\:before\:bg-blue-500' to be '@media (min-width: 768px) { .md\:hove…' // Object.is equality
+
+- Expected
++ Received
+
+- @media (min-width: 768px) { .md\:hover\:before\:bg-blue-500:hover::before }
++ .md\:hover\:before\:bg-blue-500
+
+ ❯ tests/parser.tailwind-modifiers.test.ts:95:27
+     93|       const cssSelector = ModifierParser.generateSelector('.md\\:hover…
+     94|       
+     95|       expect(cssSelector).toBe('@media (min-width: 768px) { .md\\:hove…
+       |                           ^
+     96|     });
+     97| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[70/91]⎯
+
+ FAIL  tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > CSS 선택자 생성 > 복잡한 중첩 media query
+AssertionError: expected '.lg\:motion-safe\:focus\:after\:text-…' to be '@media (prefers-reduced-motion: no-pr…' // Object.is equality
+
+- Expected
++ Received
+
+- @media (prefers-reduced-motion: no-preference) { @media (min-width: 1024px) { .lg\:motion-safe\:focus\:after\:text-green-500:focus::after } }
++ .lg\:motion-safe\:focus\:after\:text-green-500
+
+ ❯ tests/parser.tailwind-modifiers.test.ts:102:27
+    100|       const cssSelector = ModifierParser.generateSelector('.lg\\:motio…
+    101|       
+    102|       expect(cssSelector).toBe('@media (prefers-reduced-motion: no-pre…
+       |                           ^
+    103|     });
+    104|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[71/91]⎯
+
+ FAIL  tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > Modifier 없는 클래스 > 기본 클래스는 null 반환
+AssertionError: expected { modifiers: { …(28) }, …(3) } to be null
+ ❯ tests/parser.tailwind-modifiers.test.ts:109:22
+    107|     test('기본 클래스는 null 반환', () => {
+    108|       const result = ModifierParser.parseModifiers('bg-blue-500');
+    109|       expect(result).toBeNull();
+       |                      ^
+    110|     });
+    111| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[72/91]⎯
+
+ FAIL  tests/parser.tailwind-modifiers.test.ts > Tailwind CSS Modifier System > Modifier 없는 클래스 > 기본 클래스는 호환성 메서드에서도 null 반환
+AssertionError: expected { modifiers: { …(28) }, …(3) } to be null
+ ❯ tests/parser.tailwind-modifiers.test.ts:114:22
+    112|     test('기본 클래스는 호환성 메서드에서도 null 반환', () => {
+    113|       const result = ModifierParser.parseClassName('text-xl');
+    114|       expect(result).toBeNull();
+       |                      ^
+    115|     });
+    116|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[73/91]⎯
+
+ FAIL  tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 고급 변형자 파싱 - Tailwind CSS 방식 > Pseudo-element 변형자를 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.variants.test.ts:74:22
+     72|     it('Pseudo-element 변형자를 파싱할 수 있어야 함', () => {
+     73|       const result = parser.parseClassName('before:content-[""]');
+     74|       expect(result).toBeDefined();
+       |                      ^
+     75|       expect(result?.className).toBe('before:content-[""]');
+     76|       expect(result?.baseClassName).toBe('content-[""]');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[74/91]⎯
+
+ FAIL  tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 완전한 복합 변형자 체인 > 임의값 포함 복합 체인을 파싱할 수 있어야 함
+AssertionError: expected undefined to deeply equal { size: '[data-size]' }
+
+- Expected: 
+Object {
+  "size": "[data-size]",
+}
+
++ Received: 
+undefined
+
+ ❯ tests/parser.variants.test.ts:131:39
+    129|       expect(result?.modifiers?.responsive).toEqual({ 'min-[768px]': '…
+    130|       expect(result?.modifiers?.aria).toEqual({ checked: '[aria-checke…
+    131|       expect(result?.modifiers?.data).toEqual({ size: '[data-size]' });
+       |                                       ^
+    132|       expect(result?.modifiers?.state).toEqual([':hover']);
+    133|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[75/91]⎯
+
+ FAIL  tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 스타일 적용 - Tailwind CSS 방식 > 중첩된 상태 변형자로 스타일을 적용할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.variants.test.ts:150:35
+    148|       expect(result).toBeDefined();
+    149|       // 중첩된 상태 변형자 스타일 확인
+    150|       expect(result.nestedStates).toBeDefined();
+       |                                   ^
+    151|       expect(result.nestedStates?.[':hover:focus']).toBeDefined();
+    152|       expect(result.nestedStates?.[':hover:focus']?.typography?.color)…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[76/91]⎯
+
+ FAIL  tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 스타일 적용 - Tailwind CSS 방식 > 반응형 + 중첩 상태 변형자로 스타일을 적용할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.variants.test.ts:161:51
+    159|       expect(result.breakpoints?.md).toBeDefined();
+    160|       // 중첩된 상태 변형자 스타일 확인
+    161|       expect(result.breakpoints?.md.nestedStates).toBeDefined();
+       |                                                   ^
+    162|       expect(result.breakpoints?.md.nestedStates?.[':hover:focus']).to…
+    163|       expect(result.breakpoints?.md.nestedStates?.[':hover:focus']?.ty…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[77/91]⎯
+
+ FAIL  tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 스타일 적용 - Tailwind CSS 방식 > 복합 변형자로 배경색을 적용할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.variants.test.ts:180:76
+    178|       // 반응형 + 다중 상태 스타일 확인
+    179|       expect(result.breakpoints?.lg).toBeDefined();
+    180|       expect(result.breakpoints?.lg.nestedStates?.[':hover:focus:activ…
+       |                                                                            ^
+    181|       expect(result.breakpoints?.lg.nestedStates?.[':hover:focus:activ…
+    182|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[78/91]⎯
+
+ FAIL  tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 극한 복합 변형자 테스트 > 다중 임의값 변형자를 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.variants.test.ts:227:44
+    225|       expect(result).toBeDefined();
+    226|       // 다중 임의값 변형자 확인
+    227|       expect(result.typography?.['color']).toBeDefined();
+       |                                            ^
+    228|     });
+    229|     
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[79/91]⎯
+
+ FAIL  tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 극한 복합 변형자 테스트 > 깊은 중첩 변형자 체인을 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.variants.test.ts:234:55
+    232|       expect(result).toBeDefined();
+    233|       // 깊은 중첩 변형자 확인
+    234|       expect(result.backgrounds?.['backgroundColor']).toBeDefined();
+       |                                                       ^
+    235|     });
+    236|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[80/91]⎯
+
+ FAIL  tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 조건부 변형자 고급 테스트 > 복잡한 aria 상태 변형자를 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.variants.test.ts:257:44
+    255|       expect(result).toBeDefined();
+    256|       // aria 상태 확인
+    257|       expect(result.typography?.['color']).toBeDefined();
+       |                                            ^
+    258|     });
+    259|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[81/91]⎯
+
+ FAIL  tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 다양한 의사 클래스 조합 테스트 > 모든 상호작용 상태를 포함한 변형자를 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.variants.test.ts:289:55
+    287|       expect(result).toBeDefined();
+    288|       // 다중 상호작용 상태 확인
+    289|       expect(result.backgrounds?.['backgroundColor']).toBeDefined();
+       |                                                       ^
+    290|     });
+    291|     
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[82/91]⎯
+
+ FAIL  tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 다양한 의사 클래스 조합 테스트 > 모든 위치 기반 의사 클래스를 포함한 변형자를 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.variants.test.ts:303:44
+    301|       expect(result).toBeDefined();
+    302|       // 위치 기반 의사 클래스 확인
+    303|       expect(result.typography?.['color']).toBeDefined();
+       |                                            ^
+    304|     });
+    305|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[83/91]⎯
+
+ FAIL  tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 미디어 쿼리 복합 테스트 > 모든 프리퍼 변형자를 포함한 스타일을 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.variants.test.ts:326:44
+    324|       expect(result).toBeDefined();
+    325|       // 프리퍼 변형자 확인
+    326|       expect(result.typography?.['color']).toBeDefined();
+       |                                            ^
+    327|     });
+    328|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[84/91]⎯
+
+ FAIL  tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 다크모드 및 테마 변형자 테스트 > 다크모드와 반응형을 결합한 변형자를 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.variants.test.ts:335:101
+    333|       expect(result).toBeDefined();
+    334|       // 다크모드 + 반응형 + 상태 확인
+    335|       expect(result.darkMode?.lg?.nestedStates?.[':hover:focus']?.back…
+       |                                                                                                     ^
+    336|     });
+    337|     
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[85/91]⎯
+
+ FAIL  tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 다크모드 및 테마 변형자 테스트 > 다중 테마 변형자를 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.variants.test.ts:342:55
+    340|       expect(result).toBeDefined();
+    341|       // 다중 테마 변형자 확인
+    342|       expect(result.backgrounds?.['backgroundColor']).toBeDefined();
+       |                                                       ^
+    343|     });
+    344|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[86/91]⎯
+
+ FAIL  tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 심화 테스트 > 복잡한 컨테이너 쿼리 변형자를 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.variants.test.ts:351:44
+    349|       expect(result).toBeDefined();
+    350|       // 명명된 컨테이너 쿼리 확인
+    351|       expect(result.typography?.['color']).toBeDefined();
+       |                                            ^
+    352|     });
+    353|     
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[87/91]⎯
+
+ FAIL  tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 컨테이너 쿼리 심화 테스트 > 컨테이너 크기와 상태를 결합한 변형자를 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.variants.test.ts:358:55
+    356|       expect(result).toBeDefined();
+    357|       // 다중 컨테이너 크기 + 상태 확인
+    358|       expect(result.backgrounds?.['backgroundColor']).toBeDefined();
+       |                                                       ^
+    359|     });
+    360|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[88/91]⎯
+
+ FAIL  tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 특수 케이스 및 에지 케이스 테스트 > 중복된 변형자를 포함한 스타일을 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.variants.test.ts:375:55
+    373|       expect(result).toBeDefined();
+    374|       // 중복 변형자 처리 확인
+    375|       expect(result.backgrounds?.['backgroundColor']).toBeDefined();
+       |                                                       ^
+    376|     });
+    377|     
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[89/91]⎯
+
+ FAIL  tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 특수 케이스 및 에지 케이스 테스트 > 잘못된 순서의 변형자를 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.variants.test.ts:383:81
+    381|       // 순서 무관 파싱 확인
+    382|       console.dir(result.breakpoints?.lg.states);
+    383|       expect(result.breakpoints?.lg?.states?.[':hover']?.typography?.[…
+       |                                                                                 ^
+    384|     });
+    385|     
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[90/91]⎯
+
+ FAIL  tests/parser.variants.test.ts > CSSParser - 변형자(Variants) 기능 - Tailwind CSS 방식 > 특수 케이스 및 에지 케이스 테스트 > 임의값이 포함된 복잡한 변형자를 파싱할 수 있어야 함
+AssertionError: expected undefined not to be undefined
+ ❯ tests/parser.variants.test.ts:390:97
+    388|       expect(result).toBeDefined();
+    389|       // 복잡한 임의값 변형자 확인
+    390|       expect(result.breakpoints?.['min-[calc(100vh-200px)]']?.backgrou…
+       |                                                                                                 ^
+    391|     });
+    392|     
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[91/91]⎯
+
+ Test Files  14 failed | 31 passed (45)
+      Tests  91 failed | 919 passed | 6 skipped (1016)
+   Start at  23:32:41
+   Duration  1.30s (transform 1.80s, setup 0ms, collect 7.25s, tests 607ms, environment 7ms, prepare 3.42s)
+

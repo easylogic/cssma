@@ -6,6 +6,7 @@
  */
 
 import { ParsedClass, MaskStyles, DesignPreset, ParsedStyles } from '../../types';
+import { ParserContext } from '../../types';
 
 export class MaskParser {
   /**
@@ -106,17 +107,16 @@ export class MaskParser {
    * 표준 인터페이스: mask 스타일을 적용합니다.
    */
   static applyMaskStyle(
-    parsedClass: ParsedClass, 
-    styles: Partial<ParsedStyles>, 
-    preset: DesignPreset
+    parsedClass: ParsedClass,
+    styles: Partial<ParsedStyles>,
+    context: ParserContext
   ): void {
     if (!styles.mask) {
       styles.mask = {};
     }
-
     const mask = styles.mask;
     const { property, value, isArbitrary } = parsedClass;
-
+    const preset = context.preset;
     switch (property) {
       case 'mask':
         this.handleMask(value, isArbitrary ?? false, mask, preset);

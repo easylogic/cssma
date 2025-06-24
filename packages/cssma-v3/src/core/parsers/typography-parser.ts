@@ -41,6 +41,9 @@ export interface EnhancedTypographyStyles extends TypographyStyles {
   
   // 텍스트 렌더링
   textRendering?: 'auto' | 'optimizeSpeed' | 'optimizeLegibility' | 'geometricPrecision';
+  
+  // Content 속성 (::before, ::after에서 사용)
+  content?: string;
 }
 
 export class TypographyParser {
@@ -129,7 +132,9 @@ export class TypographyParser {
     // 텍스트 오버플로우
     'truncate', 'text-ellipsis', 'text-clip',
     // 안티앨리어싱
-    'antialiased', 'subpixel-antialiased'
+    'antialiased', 'subpixel-antialiased',
+    // Content 속성
+    'content-none'
   ];
 
   /**
@@ -196,6 +201,7 @@ export class TypographyParser {
       /^indent-\[.*?\]$/, // 텍스트 들여쓰기 임의 값
       /^text-(left|center|right|justify|start|end)$/, // 텍스트 정렬
       /^align-(baseline|top|middle|bottom|text-top|text-bottom|sub|super)$/, // 수직 정렬
+      /^content-\[.*?\]$/, // Content 임의 값
     ];
 
     return prefixPatterns.some(pattern => pattern.test(className));
@@ -387,6 +393,12 @@ export class TypographyParser {
       return { property: 'verticalAlign', value: verticalAlignMatch[1] };
     }
 
+    // Content 속성 (content-[...])
+    const contentArbitraryMatch = className.match(/^content-\[(.*?)\]$/);
+    if (contentArbitraryMatch) {
+      return { property: 'content', value: this.parseArbitraryValue(contentArbitraryMatch[1]), isArbitrary: true };
+    }
+
     return null;
   }
 
@@ -492,6 +504,11 @@ export class TypographyParser {
         
       case 'indent':
         this.applyTextIndent(value, isArbitrary, styles.typography, context);
+        break;
+        
+      case 'content':
+        // Content 속성 적용
+        this.applyContent(value, isArbitrary, styles.typography, context);
         break;
         
       // 값이 없는 속성들 (italic, uppercase 등)
@@ -642,13 +659,30 @@ export class TypographyParser {
    */
   private static applyTextIndent(value: string, isArbitrary: boolean, typography: EnhancedTypographyStyles, context: ParserContext): void {
     if (isArbitrary) {
-      typography.textIndent = value;
+      typography.textIndent = this.parseArbitraryValue(value);
     } else {
-      // Tailwind v4: indent-4 = 0.25rem * 4 = 1rem
+      // Tailwind v4: indent-4 = 1rem
       const numValue = parseInt(value);
       if (!isNaN(numValue)) {
-        typography.textIndent = `${numValue * 0.25}rem`;
+        // context.unitUtils.remToPx를 사용하여 rem을 px로 변환
+        const remValue = numValue * 0.25; // 4 = 1rem (16px)
+        typography.textIndent = `${remValue}rem`;
       }
+    }
+  }
+
+  /**
+   * Content 속성을 적용합니다.
+   */
+  private static applyContent(value: string, isArbitrary: boolean, typography: EnhancedTypographyStyles, context: ParserContext): void {
+    if (isArbitrary) {
+      // 임의 값인 경우 따옴표 등을 그대로 유지
+      typography.content = this.parseArbitraryValue(value);
+    } else if (value === 'none') {
+      typography.content = 'none';
+    } else {
+      // 기본적으로 문자열로 처리
+      typography.content = value;
     }
   }
 
@@ -932,6 +966,11 @@ export class TypographyParser {
         typography.WebkitFontSmoothing = 'auto';
         typography.MozOsxFontSmoothing = 'auto';
         break;
+
+      // Content 속성
+      case 'content-none':
+        typography.content = 'none';
+        break;
     }
   }
 
@@ -1054,6 +1093,10 @@ export class TypographyParser {
 
     if (typography.textDecorationLine !== undefined) {
       css['text-decoration-line'] = typography.textDecorationLine;
+    }
+
+    if (typography.content !== undefined) {
+      css['content'] = typography.content;
     }
 
     return css;

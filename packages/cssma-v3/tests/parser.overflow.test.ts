@@ -213,17 +213,17 @@ describe('CSSParser - Overflow', () => {
     it('hover:overflow-scroll 상태 처리', () => {
       const styles = parser.parse('hover:overflow-scroll');
       expect(styles.states).toBeDefined();
-      expect(styles.states!['hover']).toBeDefined();
-      expect(styles.states!['hover'].overflow).toBeDefined();
-      expect(styles.states!['hover'].overflow!.overflow).toBe('scroll');
+      expect(styles.states![':hover']).toBeDefined();
+      expect(styles.states![':hover'].overflow).toBeDefined();
+      expect(styles.states![':hover'].overflow!.overflow).toBe('scroll');
     });
 
     it('focus:overflow-y-visible 상태 처리', () => {
       const styles = parser.parse('focus:overflow-y-visible');
       expect(styles.states).toBeDefined();
-      expect(styles.states!['focus']).toBeDefined();
-      expect(styles.states!['focus'].overflow).toBeDefined();
-      expect(styles.states!['focus'].overflow!.overflowY).toBe('visible');
+      expect(styles.states![':focus']).toBeDefined();
+      expect(styles.states![':focus'].overflow).toBeDefined();
+      expect(styles.states![':focus'].overflow!.overflowY).toBe('visible');
     });
   });
 }); 

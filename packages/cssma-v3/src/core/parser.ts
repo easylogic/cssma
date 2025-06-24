@@ -279,8 +279,8 @@ export class CSSParser {
 
     // Parse modifiers using Tailwind CSS v4.1 approach
     const modifierResult = ModifierParser.parseModifiers(processedClassName);
-    const modifiers = modifierResult.modifiers;
-    const baseClassName = modifierResult.baseClassName;
+    const modifiers = modifierResult ? modifierResult.modifiers : {};
+    const baseClassName = modifierResult ? modifierResult.baseClassName : processedClassName;
 
     // 각 파서에게 baseClassName 인식을 요청 (우선순위 순서)
     for (const { parser, category } of PARSER_MAP) {
@@ -288,7 +288,7 @@ export class CSSParser {
         // 해당 파서가 클래스를 인식했으므로 파싱 진행
         const parseResult = parser.parseValue
           ? parser.parseValue(baseClassName)
-          : this.fallbackParseValue(baseClassName);
+          : null;
 
         if (parseResult) {
           return {
@@ -298,7 +298,7 @@ export class CSSParser {
             property: parseResult.property || baseClassName,
             value: parseResult.value || "",
             category: category,
-            isArbitrary: modifierResult.isArbitrary || parseResult.isArbitrary || false,
+            isArbitrary: (modifierResult ? modifierResult.isArbitrary : false) || parseResult.isArbitrary || false,
             
             // 🎯 Tailwind CSS v4.1 방식의 modifier 정보
             modifiers: modifiers,
@@ -306,69 +306,6 @@ export class CSSParser {
         }
       }
     }
-
-    // 어떤 파서도 인식하지 못한 경우, fallback 처리
-    const fallbackResult = this.fallbackParseValue(baseClassName);
-    return {
-      original: className,
-      className: processedClassName,
-      baseClassName: baseClassName,
-      property: fallbackResult.property,
-      value: fallbackResult.value,
-      category: "layout", // 기본 카테고리
-      isArbitrary: modifierResult.isArbitrary || fallbackResult.isArbitrary,
-      
-      // 🎯 Tailwind CSS v4.1 방식의 modifier 정보
-      modifiers: modifiers,
-    };
-  }
-
-  /**
-   * Fallback 값 파싱 (기존 parseArbitraryValue의 일부 로직)
-   */
-  private fallbackParseValue(className: string): {
-    property: string;
-    value: string;
-    isArbitrary: boolean;
-  } {
-    // [값] 형태의 임의 값 체크
-    const arbitraryMatch = className.match(/^(.+?)-\[(.+)\]$/);
-
-    if (arbitraryMatch) {
-      return {
-        property: arbitraryMatch[1],
-        value: arbitraryMatch[2],
-        isArbitrary: true,
-      };
-    }
-
-    // CSS 변수 체크 (예: text-(--my-color), aspect-(--my-aspect-ratio))
-    const cssVarMatch = className.match(/^(.+?)-(--[\w-]+)$/);
-
-    if (cssVarMatch) {
-      return {
-        property: cssVarMatch[1],
-        value: `var(${cssVarMatch[2]})`,
-        isArbitrary: true,
-      };
-    }
-
-    // 일반 분리 (propertyName-value)
-    const lastDashIndex = className.lastIndexOf("-");
-    if (lastDashIndex > 0) {
-      return {
-        property: className.substring(0, lastDashIndex),
-        value: className.substring(lastDashIndex + 1),
-        isArbitrary: false,
-      };
-    }
-
-    // 값이 없는 속성 (예: flex, grid, hidden)
-    return {
-      property: className,
-      value: "",
-      isArbitrary: false,
-    };
   }
 
   /**
@@ -479,9 +416,11 @@ export class CSSParser {
     }
 
     // State modifier 처리 (v4.1: 배열 지원)
-    if (modifiers.state && Array.isArray(modifiers.state) && modifiers.state.length > 0) {
+    if (modifiers.state && modifiers.state.length > 0) {
+      // state가 string이면 배열로 변환
+      const stateArr = Array.isArray(modifiers.state) ? modifiers.state : [modifiers.state];
       // 여러 상태를 조합하여 복합 키 생성 (예: "@media (any-pointer: fine) and :hover")
-      const stateKey = modifiers.state.join(' and ');
+      const stateKey = stateArr.join(' and ');
       
       if (!styles.states) {
         styles.states = {} as Record<string, Partial<ParsedStyles>>;
@@ -561,69 +500,6 @@ export class CSSParser {
 
     // 모든 modifier 처리가 완료된 경우: 기본 스타일 적용
     this.applyStyleByCategory(parsedClass, styles);
-  }
-
-  /**
-   * 브레이크포인트 키를 생성합니다. (LEGACY - 사용하지 않음)
-   */
-  private getBreakpointKey(breakpoint: any): string {
-    // 임의 브레이크포인트인 경우 원래 형태 유지
-    if ((breakpoint as any).isArbitrary) {
-      return breakpoint.type === "max-width"
-        ? `max-[${breakpoint.value}]`
-        : `min-[${breakpoint.value}]`;
-    }
-
-    // 값에서 원래 브레이크포인트 이름을 찾기
-    const screens = this.preset.screens || {
-      sm: "640px",
-      md: "768px",
-      lg: "1024px",
-      xl: "1280px",
-      "2xl": "1536px",
-    };
-
-    const screenKey = Object.keys(screens).find(
-      (key) => screens[key] === breakpoint.value
-    );
-
-    if (screenKey) {
-      return breakpoint.type === "max-width" ? `max-${screenKey}` : screenKey;
-    }
-
-    // 임의 값인 경우
-    return breakpoint.type === "max-width"
-      ? `max-[${breakpoint.value}]`
-      : `min-[${breakpoint.value}]`;
-  }
-
-  /**
-   * 컨테이너 키를 생성합니다.
-   */
-  private getContainerKey(container: any): string {
-    // 값에서 원래 컨테이너 이름을 찾기
-    const screens = this.preset.screens || {
-      sm: "640px",
-      md: "768px",
-      lg: "1024px",
-      xl: "1280px",
-      "2xl": "1536px",
-    };
-
-    const screenKey = Object.keys(screens).find(
-      (key) => screens[key] === container.value
-    );
-
-    if (screenKey) {
-      return container.type === "max-width"
-        ? `@max-${screenKey}`
-        : `@${screenKey}`;
-    }
-
-    // 임의 값인 경우
-    return container.type === "max-width"
-      ? `@max-[${container.value}]`
-      : `@min-[${container.value}]`;
   }
 
   /**

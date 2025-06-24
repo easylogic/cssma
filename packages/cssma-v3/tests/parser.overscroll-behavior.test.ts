@@ -141,17 +141,17 @@ describe('CSSParser - Overscroll Behavior', () => {
     it('hover:overscroll-none 상태 처리', () => {
       const styles = parser.parse('hover:overscroll-none');
       expect(styles.states).toBeDefined();
-      expect(styles.states!['hover']).toBeDefined();
-      expect(styles.states!['hover'].overflow).toBeDefined();
-      expect(styles.states!['hover'].overflow!.overscrollBehavior).toBe('none');
+      expect(styles.states![':hover']).toBeDefined();
+      expect(styles.states![':hover'].overflow).toBeDefined();
+      expect(styles.states![':hover'].overflow!.overscrollBehavior).toBe('none');
     });
 
     it('focus:overscroll-y-contain 상태 처리', () => {
       const styles = parser.parse('focus:overscroll-y-contain');
       expect(styles.states).toBeDefined();
-      expect(styles.states!['focus']).toBeDefined();
-      expect(styles.states!['focus'].overflow).toBeDefined();
-      expect(styles.states!['focus'].overflow!.overscrollBehaviorY).toBe('contain');
+      expect(styles.states![':focus']).toBeDefined();
+      expect(styles.states![':focus'].overflow).toBeDefined();
+      expect(styles.states![':focus'].overflow!.overscrollBehaviorY).toBe('contain');
     });
   });
 

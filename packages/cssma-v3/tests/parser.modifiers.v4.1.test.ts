@@ -33,7 +33,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
       const result = parser.parseClassName(className);
 
       expect(result).toBeDefined();
-      expect(result?.modifiers?.state).toBe(':hover');
+      expect(result?.modifiers?.state).toEqual([':hover']);
       expect(result?.baseClassName).toBe('text-red-500');
     });
 
@@ -132,7 +132,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
 
       expect(result).toBeDefined();
       expect(result?.modifiers?.responsive).toEqual({ md: '@media (min-width: 768px)' });
-      expect(result?.modifiers?.state).toBe(':hover');
+      expect(result?.modifiers?.state).toEqual([':hover']);
       expect(result?.baseClassName).toBe('bg-blue-500');
     });
 
@@ -143,7 +143,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
       expect(result).toBeDefined();
       expect(result?.modifiers?.container).toEqual({ '@lg': '@container (min-width: 1024px)' });
       expect(result?.modifiers?.motion).toBe('@media (prefers-reduced-motion: no-preference)');
-      expect(result?.modifiers?.state).toBe(':hover');
+      expect(result?.modifiers?.state).toEqual([':hover']);
       expect(result?.baseClassName).toBe('scale-110');
     });
 
@@ -154,7 +154,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
       expect(result).toBeDefined();
       expect(result?.modifiers?.responsive).toEqual({ md: '@media (min-width: 768px)' });
       expect(result?.modifiers?.motion).toBe('@media (prefers-reduced-motion: no-preference)');
-      expect(result?.modifiers?.state).toBe(':hover');
+      expect(result?.modifiers?.state).toEqual([':hover']);
       expect(result?.modifiers?.pseudoElement).toBe('::before');
       expect(result?.baseClassName).toBe('bg-blue-500');
     });

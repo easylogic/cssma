@@ -33,7 +33,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
       const result = parser.parseClassName(className);
 
       expect(result).toBeDefined();
-      expect(result?.modifiers?.state).toBe(':hover');
+      expect(result?.modifiers?.state).toEqual([':hover']);
       expect(result?.baseClassName).toBe('text-red-500');
     });
 
@@ -102,7 +102,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
       const result = parser.parseClassName(className);
 
       expect(result).toBeDefined();
-      expect(result?.modifiers?.state).toBe(':user-valid');
+      expect(result?.modifiers?.state).toEqual([':user-valid']);
       expect(result?.baseClassName).toBe('border-green-500');
     });
 
@@ -111,7 +111,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
       const result = parser.parseClassName(className);
 
       expect(result).toBeDefined();
-      expect(result?.modifiers?.state).toBe('@media (inverted-colors: inverted)');
+      expect(result?.modifiers?.state).toEqual(['@media (inverted-colors: inverted)']);
       expect(result?.baseClassName).toBe('invert');
     });
 
@@ -120,7 +120,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
       const result = parser.parseClassName(className);
 
       expect(result).toBeDefined();
-      expect(result?.modifiers?.state).toBe('@media (pointer: fine)');
+      expect(result?.modifiers?.state).toEqual(['@media (pointer: fine)']);
       expect(result?.baseClassName).toBe('bg-gray-100');
     });
   });
@@ -132,7 +132,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
 
       expect(result).toBeDefined();
       expect(result?.modifiers?.responsive).toEqual({ md: '@media (min-width: 768px)' });
-      expect(result?.modifiers?.state).toBe(':hover');
+      expect(result?.modifiers?.state).toEqual([':hover']);
       expect(result?.baseClassName).toBe('bg-blue-500');
     });
 
@@ -143,7 +143,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
       expect(result).toBeDefined();
       expect(result?.modifiers?.container).toEqual({ '@lg': '@container (min-width: 1024px)' });
       expect(result?.modifiers?.motion).toBe('@media (prefers-reduced-motion: no-preference)');
-      expect(result?.modifiers?.state).toBe(':hover');
+      expect(result?.modifiers?.state).toEqual([':hover']);
       expect(result?.baseClassName).toBe('scale-110');
     });
 
@@ -154,7 +154,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
       expect(result).toBeDefined();
       expect(result?.modifiers?.responsive).toEqual({ md: '@media (min-width: 768px)' });
       expect(result?.modifiers?.motion).toBe('@media (prefers-reduced-motion: no-preference)');
-      expect(result?.modifiers?.state).toBe(':hover');
+      expect(result?.modifiers?.state).toEqual([':hover']);
       expect(result?.modifiers?.pseudoElement).toBe('::before');
       expect(result?.baseClassName).toBe('bg-blue-500');
     });
@@ -213,8 +213,8 @@ describe('Tailwind CSS Modifier System Tests', () => {
       const className = 'hover:text-red-500';
       const styles = parser.parse(className);
 
-      expect(styles.states?.['hover']).toBeDefined();
-      expect(styles.states?.['hover']?.colors?.text).toBeDefined();
+      expect(styles.states?.[':hover']).toBeDefined();
+      expect(styles.states?.[':hover']?.colors?.text).toBeDefined();
     });
 
     it('should apply complex modifier chains correctly', () => {
@@ -223,8 +223,8 @@ describe('Tailwind CSS Modifier System Tests', () => {
 
       expect(styles.breakpoints?.['md']).toBeDefined();
       // The hover state should be nested within the md breakpoint
-      expect(styles.breakpoints?.['md']?.states?.['hover']).toBeDefined();
-      expect(styles.breakpoints?.['md']?.states?.['hover']?.colors?.background).toBeDefined();
+      expect(styles.breakpoints?.['md']?.states?.[':hover']).toBeDefined();
+      expect(styles.breakpoints?.['md']?.states?.[':hover']?.colors?.background).toBeDefined();
     });
   });
 
@@ -265,7 +265,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
       const result = parser.parseClassName(className);
 
       expect(result).toBeDefined();
-      expect(result?.modifiers?.state).toBe(':hover');
+      expect(result?.modifiers?.state).toEqual([':hover']);
       expect(result?.modifiers?.pseudoElement).toBe('::before');
       expect(result?.baseClassName).toBe('content-["Hello_World"]');
     });

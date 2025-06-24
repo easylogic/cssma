@@ -7,7 +7,7 @@
  */
 export interface ParsedStyle {
   property: string;
-  value: string;
+  value: string | Color | RGBColor | undefined;
   variant: 'preset' | 'arbitrary' | 'custom';
   additionalProperties?: Array<{
     property: string;

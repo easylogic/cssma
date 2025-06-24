@@ -275,18 +275,18 @@ describe('Position Parser', () => {
     test('should parse hover position styles', () => {
       const result = parser.parse('hover:relative hover:top-4');
       
-      expect(result.states?.hover?.position?.position).toBe('relative');
-      expect(result.states?.hover?.position?.top).toBe(16);
+      expect(result.states?.[':hover']?.position?.position).toBe('relative');
+      expect(result.states?.[':hover']?.position?.top).toBe(16);
     });
 
     test('should parse focus position styles', () => {
       const result = parser.parse('focus:absolute focus:inset-0');
       
-      expect(result.states?.focus?.position?.position).toBe('absolute');
-      expect(result.states?.focus?.position?.top).toBe(0);
-      expect(result.states?.focus?.position?.right).toBe(0);
-      expect(result.states?.focus?.position?.bottom).toBe(0);
-      expect(result.states?.focus?.position?.left).toBe(0);
+      expect(result.states?.[':focus']?.position?.position).toBe('absolute');
+      expect(result.states?.[':focus']?.position?.top).toBe(0);
+      expect(result.states?.[':focus']?.position?.right).toBe(0);
+      expect(result.states?.[':focus']?.position?.bottom).toBe(0);
+      expect(result.states?.[':focus']?.position?.left).toBe(0);
     });
   });
 

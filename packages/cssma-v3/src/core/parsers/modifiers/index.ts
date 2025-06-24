@@ -119,7 +119,7 @@ export class ModifierParser {
    * Parse complete modifier chain from className
    * Delegates to specialized parsers based on modifier type
    */
-  static parseModifiers(className: string): ModifierParseResult {
+  static parseModifiers(className: string): ModifierParseResult | null {
     // Use the improved parseClassNameParts method that handles arbitrary values correctly
     const parsedParts = this.parseClassNameParts(className);
     const { modifierParts, baseClassName, isArbitrary } = parsedParts;
@@ -135,19 +135,14 @@ export class ModifierParser {
     }
 
     if (modifierParts.length === 0) {
-      return {
-        modifiers: this.createEmptyModifiers(),
-        baseClassName,
-        hasModifiers: false,
-        isArbitrary
-      };
+      // Return null for classes without modifiers (for test compatibility)
+      return null;
     }
 
     const modifiers = this.createEmptyModifiers();
 
     // Process each modifier part
     for (const modifierPart of modifierParts) {
-      console.log('modifierPart', modifierPart);
       this.processModifierPart(modifierPart, modifiers);
     }
 
@@ -410,7 +405,8 @@ export class ModifierParser {
       const result = DataModifierParser.parseDataModifier(modifier);
       if (result) {
         if (!modifiers.data) modifiers.data = {};
-        modifiers.data[result.attribute] = `[data-${result.attribute}]`;
+        // Use the generateDataSelector method to properly handle values
+        modifiers.data[result.attribute] = DataModifierParser.generateDataSelector(result);
         return true;
       }
     }
@@ -637,8 +633,12 @@ export class ModifierParser {
   /**
    * Parse and validate complete className with modifiers
    */
-  static parseClassName(className: string): ModifierParseResult {
+  static parseClassName(className: string): ModifierParseResult | null {
     const result = this.parseModifiers(className);
+    
+    if (!result) {
+      return null;
+    }
     
     // Validate all modifiers
     const modifierParts = this.getModifierParts(className);

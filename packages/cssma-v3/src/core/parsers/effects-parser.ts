@@ -25,48 +25,89 @@ export class EffectsParser {
       return true;
     }
 
-    // 패턴 매치 (Filters와 Effects 통합)
     const patterns = [
-      /^shadow-/, // box shadow (shadow-sm, shadow-lg, shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)])
-      /^text-shadow-(xs|sm|md|lg|xl|2xl|3xl|none|\[.*?\])$/, // text shadow sizes and arbitrary values
-      /^text-shadow-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)$/, // text shadow colors (text-shadow-red-500, text-shadow-blue-500)
-      /^text-shadow-(black|white|transparent|current)$/, // text shadow special colors
-      /^text-shadow-(xs|sm|md|lg|xl|2xl|3xl|(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)|black|white|transparent|current)\/\d+$/, // opacity modifiers
-      /^opacity-/, // opacity (opacity-50, opacity-[0.5])
+      // 🎯 Content 패턴 추가
+      /^content-\[.+\]$/, // content-["hello"], content-['world']
+      /^content-none$/, // content-none
+      /^content-["'].*["']$/, // content-"hello", content-'world'
       
-      // Filter 속성들 (통합) - 값이 반드시 필요한 클래스들
-      /^blur-/, // blur (blur-sm, blur-[10px]) - 'blur' 단독은 불가
-      /^brightness-/, // brightness (brightness-50, brightness-[1.5])
-      /^contrast-/, // contrast (contrast-50, contrast-[1.5])
-      /^drop-shadow-(xs|sm|md|lg|xl|2xl|none|\[.*?\])$/, // drop shadow sizes and arbitrary values
-      /^drop-shadow-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)$/, // drop shadow colors (drop-shadow-red-500, drop-shadow-blue-500)
-      /^drop-shadow-(black|white|transparent|current)$/, // drop shadow special colors
-      /^drop-shadow-(xs|sm|md|lg|xl|2xl|(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)|black|white|transparent|current)\/\d+$/, // drop shadow opacity modifiers
-      /^drop-shadow-(xs|sm|md|lg|xl|2xl|none)-(black|white|transparent|current)$/, // drop shadow size + special color
-      /^drop-shadow-(xs|sm|md|lg|xl|2xl|none)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)$/, // drop shadow size + color
-      /^drop-shadow-(xs|sm|md|lg|xl|2xl|none)-(black|white|transparent|current|(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950))\/\d+$/, // drop shadow size + color + opacity
-      /^hue-rotate-/, // hue-rotate (hue-rotate-15, hue-rotate-[30deg])
-      /^-hue-rotate-/, // negative hue-rotate (-hue-rotate-15)
-      /^saturate-/, // saturate (saturate-50, saturate-[1.5])
+      // Shadows
+      /^shadow-(xs|sm|md|lg|xl|2xl|inner|none)$/,
+      /^shadow-\[.+\]$/, // 임의값: shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)]
+      /^shadow-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)$/,
       
-      // 값이 있거나 없어도 되는 Filter 클래스들
-      /^grayscale($|-[0-9]|-\[)/, // grayscale, grayscale-0, grayscale-[0.5]
-      /^invert($|-[0-9]|-\[)/, // invert, invert-0, invert-[0.5] 
-      /^sepia($|-[0-9]|-\[)/, // sepia, sepia-0, sepia-[0.5]
+      // text-shadow 패턴들
+      /^text-shadow-(xs|sm|md|lg|xl|2xl|3xl|none|\[.*?\])$/,
+      /^text-shadow-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)$/,
+      /^text-shadow-(black|white|transparent|current)$/,
+      /^text-shadow-(xs|sm|md|lg|xl|2xl|3xl|(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)|black|white|transparent|current)\/\d+$/,
       
-      // Backdrop Filters - 값이 반드시 필요한 클래스들
-      /^backdrop-blur-/, // backdrop-blur (backdrop-blur-sm, backdrop-blur-[10px])
-      /^backdrop-brightness-/, // backdrop-brightness (backdrop-brightness-50)
-      /^backdrop-contrast-/, // backdrop-contrast (backdrop-contrast-125)
-      /^backdrop-hue-rotate-/, // backdrop-hue-rotate (backdrop-hue-rotate-15)
-      /^-backdrop-hue-rotate-/, // negative backdrop-hue-rotate
-      /^backdrop-opacity-/, // backdrop-opacity (backdrop-opacity-50)
-      /^backdrop-saturate-/, // backdrop-saturate (backdrop-saturate-150)
+      // opacity 패턴들
+      /^opacity-/,
       
-      // 값이 없어도 되는 Backdrop Filter 클래스들
-      /^backdrop-grayscale$/, // backdrop-grayscale (단독만)
-      /^backdrop-invert$/, // backdrop-invert (단독만)
-      /^backdrop-sepia$/ // backdrop-sepia (단독만)
+      // blur 패턴들
+      /^blur-/,
+      
+      // brightness 패턴들
+      /^brightness-/,
+      
+      // contrast 패턴들
+      /^contrast-/,
+      
+      // drop-shadow 패턴들
+      /^drop-shadow-(xs|sm|md|lg|xl|2xl|none|\[.*?\])$/,
+      /^drop-shadow-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)$/,
+      /^drop-shadow-(black|white|transparent|current)$/,
+      /^drop-shadow-(xs|sm|md|lg|xl|2xl|(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)|black|white|transparent|current)\/\d+$/,
+      /^drop-shadow-(xs|sm|md|lg|xl|2xl|none)-(black|white|transparent|current)$/,
+      /^drop-shadow-(xs|sm|md|lg|xl|2xl|none)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)$/,
+      /^drop-shadow-(xs|sm|md|lg|xl|2xl|none)-(black|white|transparent|current|(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950))\/\d+$/,
+      
+      // hue-rotate 패턴들
+      /^hue-rotate-/,
+      /^-hue-rotate-/,
+      
+      // saturate 패턴들
+      /^saturate-/,
+      
+      // grayscale 패턴들
+      /^grayscale($|-[0-9]|-\[)/,
+      
+      // invert 패턴들
+      /^invert($|-[0-9]|-\[)/,
+      
+      // sepia 패턴들
+      /^sepia($|-[0-9]|-\[)/,
+      
+      // backdrop-blur 패턴들
+      /^backdrop-blur-/,
+      
+      // backdrop-brightness 패턴들
+      /^backdrop-brightness-/,
+      
+      // backdrop-contrast 패턴들
+      /^backdrop-contrast-/,
+      
+      // backdrop-hue-rotate 패턴들
+      /^backdrop-hue-rotate-/,
+      
+      // negative backdrop-hue-rotate 패턴들
+      /^-backdrop-hue-rotate-/,
+      
+      // backdrop-opacity 패턴들
+      /^backdrop-opacity-/,
+      
+      // backdrop-saturate 패턴들
+      /^backdrop-saturate-/,
+      
+      // backdrop-grayscale 패턴들
+      /^backdrop-grayscale$/,
+      
+      // backdrop-invert 패턴들
+      /^backdrop-invert$/,
+      
+      // backdrop-sepia 패턴들
+      /^backdrop-sepia$/
     ];
 
     return patterns.some(pattern => pattern.test(className));

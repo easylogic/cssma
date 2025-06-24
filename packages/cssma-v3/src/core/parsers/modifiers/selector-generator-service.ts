@@ -24,19 +24,38 @@ export class SelectorGeneratorService {
     const { baseSelector, modifiers } = context;
     let selector = baseSelector;
 
-    // Apply modifiers in priority order
-    const modifierApplications = [
-      () => this.applyResponsiveModifiers(selector, modifiers),
-      () => this.applyContainerModifiers(selector, modifiers),
-      () => this.applyStateModifiers(selector, modifiers),
-      () => this.applyPseudoElementModifiers(selector, modifiers),
-      () => this.applyAttributeModifiers(selector, modifiers),
-      () => this.applySpecialModifiers(selector, modifiers)
-    ];
+    // Apply pseudo-element first (most specific)
+    if (modifiers.pseudoElement) {
+      selector = this.applyPseudoElementModifiers(selector, modifiers);
+    }
 
-    // Apply each modifier type
-    for (const applyModifier of modifierApplications) {
-      selector = applyModifier();
+    // Apply state modifiers (pseudo-classes)
+    if (modifiers.state && Array.isArray(modifiers.state) && modifiers.state.length > 0) {
+      selector = this.applyStateModifiers(selector, modifiers);
+    }
+
+    // Apply attribute modifiers (aria, data) - these are already complete selectors
+    if (modifiers.aria) {
+      selector = this.applyAriaModifiers(selector, modifiers);
+    }
+    
+    if (modifiers.data) {
+      selector = this.applyDataModifiers(selector, modifiers);
+    }
+
+    // Apply container queries (wrap in container query)
+    if (modifiers.container) {
+      selector = this.applyContainerModifiers(selector, modifiers);
+    }
+
+    // Apply motion preferences (wrap in media query)
+    if (modifiers.motion) {
+      selector = this.applyMotionModifiers(selector, modifiers);
+    }
+
+    // Apply responsive modifiers last (outermost wrapper)
+    if (modifiers.responsive) {
+      selector = this.applyResponsiveModifiers(selector, modifiers);
     }
 
     return selector;
@@ -51,10 +70,9 @@ export class SelectorGeneratorService {
   ): string {
     if (!modifiers.responsive) return selector;
 
-    const { breakpoint, minWidth } = modifiers.responsive;
-    
-    if (breakpoint && minWidth) {
-      return `@media (min-width: ${minWidth}) { ${selector} }`;
+    // modifiers.responsive is in the format { md: '@media (min-width: 768px)' }
+    for (const [breakpoint, mediaQuery] of Object.entries(modifiers.responsive)) {
+      selector = `${mediaQuery} { ${selector} }`;
     }
 
     return selector;
@@ -69,14 +87,9 @@ export class SelectorGeneratorService {
   ): string {
     if (!modifiers.container) return selector;
 
-    const { name, condition } = modifiers.container;
-    
-    if (condition) {
-      const containerQuery = name 
-        ? `@container ${name} (${condition})`
-        : `@container (${condition})`;
-      
-      return `${containerQuery} { ${selector} }`;
+    // modifiers.container is in the format { '@container': '@container (min-width: 400px)' }
+    for (const [key, containerQuery] of Object.entries(modifiers.container)) {
+      selector = `${containerQuery} { ${selector} }`;
     }
 
     return selector;
@@ -89,16 +102,22 @@ export class SelectorGeneratorService {
     selector: string,
     modifiers: ParsedModifiers
   ): string {
-    if (!modifiers.state) {
+    if (!modifiers.state || !Array.isArray(modifiers.state)) {
       return selector;
     }
 
     let modifiedSelector = selector;
 
-    // Apply the state modifier
-    const pseudoClass = this.getStatePseudoClass(modifiers.state);
-    if (pseudoClass) {
-      modifiedSelector = `${modifiedSelector}${pseudoClass}`;
+    // Apply each state modifier in the array
+    for (const state of modifiers.state) {
+      // state is already in CSS format like ':hover' or '@media (...)'
+      if (state.startsWith('@media') || state.startsWith('@supports')) {
+        // Media queries and supports queries wrap the selector
+        modifiedSelector = `${state} { ${modifiedSelector} }`;
+      } else {
+        // Pseudo-classes append to the selector
+        modifiedSelector = `${modifiedSelector}${state}`;
+      }
     }
 
     return modifiedSelector;
@@ -115,59 +134,54 @@ export class SelectorGeneratorService {
       return selector;
     }
 
-    let modifiedSelector = selector;
-
-    // Apply the pseudo-element
-    const pseudoElementSelector = this.getPseudoElementSelector(modifiers.pseudoElement);
-    if (pseudoElementSelector) {
-      modifiedSelector = `${modifiedSelector}${pseudoElementSelector}`;
-    }
-
-    return modifiedSelector;
+    // pseudoElement is already in CSS format like '::before'
+    return `${selector}${modifiers.pseudoElement}`;
   }
 
   /**
-   * Apply attribute modifiers (aria, data)
-   */
-  private static applyAttributeModifiers(
-    selector: string,
-    modifiers: ParsedModifiers
-  ): string {
-    let modifiedSelector = selector;
-
-    // Apply ARIA attributes
+    // Apply ARIA attributes - values are already complete selectors like '[aria-label]'
     if (modifiers.aria) {
-      for (const [attribute, value] of Object.entries(modifiers.aria)) {
-        const ariaSelector = value 
-          ? `[aria-${attribute}="${value}"]`
-          : `[aria-${attribute}]`;
+      for (const [attribute, ariaSelector] of Object.entries(modifiers.aria)) {
         modifiedSelector = `${modifiedSelector}${ariaSelector}`;
       }
     }
 
-    // Apply data attributes
+    // Apply data attributes - values are already complete selectors like '[data-size="large"]'
     if (modifiers.data) {
-      for (const [attribute, value] of Object.entries(modifiers.data)) {
-        const dataSelector = value 
-          ? `[data-${attribute}="${value}"]`
-          : `[data-${attribute}]`;
+      for (const [attribute, dataSelector] of Object.entries(modifiers.data)) {
         modifiedSelector = `${modifiedSelector}${dataSelector}`;
       }
+    }
+  /**
+   * Apply data attribute modifiers
+   */
+  private static applyDataModifiers(
+    selector: string,
+    modifiers: ParsedModifiers
+  ): string {
+    if (!modifiers.data) return selector;
+
+    let modifiedSelector = selector;
+
+    // modifiers.data values are already complete selectors like '[data-size="large"]'
+    for (const [attribute, dataSelector] of Object.entries(modifiers.data)) {
+      modifiedSelector = `${modifiedSelector}${dataSelector}`;
     }
 
     return modifiedSelector;
   }
 
   /**
-   * Apply special modifiers (noscript, starting, etc.)
+   * Apply motion preferences (wrap in media query)
    */
-  private static applySpecialModifiers(
+  private static applyMotionModifiers(
     selector: string,
     modifiers: ParsedModifiers
   ): string {
-    // This would need to be implemented when special modifiers are added to ParsedModifiers
-    // For now, return selector unchanged
-    return selector;
+    if (!modifiers.motion) return selector;
+
+    // modifiers.motion is already in media query format
+    return `${modifiers.motion} { ${selector} }`;
   }
 
   /**
@@ -237,102 +251,6 @@ export class SelectorGeneratorService {
     }
 
     return baseSelector;
-  }
-
-  /**
-   * Get CSS pseudo-class for state
-   */
-  private static getStatePseudoClass(state: string): string | null {
-    const stateMap: Record<string, string> = {
-      // Interactive states
-      'hover': ':hover',
-      'focus': ':focus',
-      'focus-within': ':focus-within',
-      'focus-visible': ':focus-visible',
-      'active': ':active',
-      'visited': ':visited',
-      'target': ':target',
-      
-      // Form states
-      'disabled': ':disabled',
-      'enabled': ':enabled',
-      'checked': ':checked',
-      'indeterminate': ':indeterminate',
-      'default': ':default',
-      'required': ':required',
-      'valid': ':valid',
-      'invalid': ':invalid',
-      'user-valid': ':user-valid',
-      'user-invalid': ':user-invalid',
-      'in-range': ':in-range',
-      'out-of-range': ':out-of-range',
-      'placeholder-shown': ':placeholder-shown',
-      'autofill': ':autofill',
-      'read-only': ':read-only',
-      'read-write': ':read-write',
-      
-      // Structural states
-      'first': ':first-child',
-      'last': ':last-child',
-      'only': ':only-child',
-      'odd': ':nth-child(odd)',
-      'even': ':nth-child(even)',
-      'first-of-type': ':first-of-type',
-      'last-of-type': ':last-of-type',
-      'only-of-type': ':only-of-type',
-      'empty': ':empty',
-      
-      // Interactive content states
-      'open': ':open',
-      'closed': ':closed',
-      
-      // Media preference states
-      'motion-safe': '@media (prefers-reduced-motion: no-preference)',
-      'motion-reduce': '@media (prefers-reduced-motion: reduce)',
-      'contrast-more': '@media (prefers-contrast: more)',
-      'contrast-less': '@media (prefers-contrast: less)',
-      'inverted-colors': '@media (inverted-colors: inverted)',
-      
-      // Pointer states
-      'pointer-fine': '@media (pointer: fine)',
-      'pointer-coarse': '@media (pointer: coarse)',
-      'pointer-none': '@media (pointer: none)',
-      'any-pointer-fine': '@media (any-pointer: fine)',
-      'any-pointer-coarse': '@media (any-pointer: coarse)',
-      'any-pointer-none': '@media (any-pointer: none)',
-      
-      // Hover capability
-      'can-hover': '@media (hover: hover)',
-      'no-hover': '@media (hover: none)',
-      
-      // Color scheme
-      'dark': '@media (prefers-color-scheme: dark)',
-      'light': '@media (prefers-color-scheme: light)',
-      
-      // Print
-      'print': '@media print'
-    };
-
-    return stateMap[state] || null;
-  }
-
-  /**
-   * Get CSS pseudo-element selector
-   */
-  private static getPseudoElementSelector(pseudoElement: string): string | null {
-    const pseudoElementMap: Record<string, string> = {
-      'before': '::before',
-      'after': '::after',
-      'first-line': '::first-line',
-      'first-letter': '::first-letter',
-      'selection': '::selection',
-      'file-selector-button': '::file-selector-button',
-      'placeholder': '::placeholder',
-      'marker': '::marker',
-      'backdrop': '::backdrop'
-    };
-
-    return pseudoElementMap[pseudoElement] || null;
   }
 
   /**

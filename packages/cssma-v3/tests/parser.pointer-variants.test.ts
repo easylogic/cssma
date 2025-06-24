@@ -90,7 +90,7 @@ describe('Pointer & Input Device Variants Parser', () => {
       const styles = parser.parse('pointer-fine:bg-blue-500');
       
       expect(styles.states?.['@media (pointer: fine)']).toBeDefined();
-      expect(styles.states?.['@media (pointer: fine)']?.backgrounds?.backgroundColor).toBe('#3b82f6');
+      expect(styles.states?.['@media (pointer: fine)']?.backgrounds?.backgroundColor).toBe('var(--color-blue-500)');
     });
 
     it('should apply any-pointer-coarse styles correctly', () => {
@@ -98,10 +98,10 @@ describe('Pointer & Input Device Variants Parser', () => {
       
       expect(styles.states?.['@media (any-pointer: coarse)']).toBeDefined();
       expect(styles.states?.['@media (any-pointer: coarse)']?.spacing?.padding).toEqual({
-        top: '1rem',
-        right: '1rem',
-        bottom: '1rem',
-        left: '1rem'
+        top: 16,
+        right: 16,
+        bottom: 16,
+        left: 16
       });
     });
 
@@ -110,8 +110,8 @@ describe('Pointer & Input Device Variants Parser', () => {
       
       expect(styles.states?.['@media (pointer: fine)']).toBeDefined();
       expect(styles.states?.['@media (pointer: coarse)']).toBeDefined();
-      expect(styles.states?.['@media (pointer: fine)']?.backgrounds?.backgroundColor).toBe('#3b82f6');
-      expect(styles.states?.['@media (pointer: coarse)']?.backgrounds?.backgroundColor).toBe('#ef4444');
+      expect(styles.states?.['@media (pointer: fine)']?.backgrounds?.backgroundColor).toBe('var(--color-blue-500)');
+      expect(styles.states?.['@media (pointer: coarse)']?.backgrounds?.backgroundColor).toBe('var(--color-red-500)');
     });
   });
 
@@ -121,17 +121,17 @@ describe('Pointer & Input Device Variants Parser', () => {
       
       // 터치 장치에서는 더 큰 패딩
       expect(styles.states?.['@media (pointer: coarse)']?.spacing?.padding).toEqual({
-        top: '1.5rem',
-        right: '1.5rem',
-        bottom: '1.5rem',
-        left: '1.5rem'
+        top: 24,
+        right: 24,
+        bottom: 24,
+        left: 24
       });
       // 정밀한 포인팅 장치에서는 작은 패딩
       expect(styles.states?.['@media (pointer: fine)']?.spacing?.padding).toEqual({
-        top: '0.75rem',
-        right: '0.75rem',
-        bottom: '0.75rem',
-        left: '0.75rem'
+        top: 12,
+        right: 12,
+        bottom: 12,
+        left: 12
       });
     });
 
@@ -140,20 +140,20 @@ describe('Pointer & Input Device Variants Parser', () => {
       
       // 정밀한 포인팅 장치가 있을 때만 hover 적용
       expect(styles.states?.['@media (any-pointer: fine) and :hover']).toBeDefined();
-      expect(styles.states?.['@media (any-pointer: fine) and :hover']?.backgrounds?.backgroundColor).toBe('#f4f4f4');
+      expect(styles.states?.['@media (any-pointer: fine) and :hover']?.backgrounds?.backgroundColor).toBe('var(--color-gray-100)');
       
       // 터치 장치에서는 active 상태 사용
       expect(styles.states?.['@media (pointer: coarse) and :active']).toBeDefined();
-      expect(styles.states?.['@media (pointer: coarse) and :active']?.backgrounds?.backgroundColor).toBe('#e5e5e5');
+      expect(styles.states?.['@media (pointer: coarse) and :active']?.backgrounds?.backgroundColor).toBe('var(--color-gray-200)');
     });
 
     it('should handle mixed device environments', () => {
       const styles = parser.parse('any-pointer-fine:text-sm pointer-coarse:text-lg any-pointer-coarse:select-none');
       
       // 정밀한 포인팅 장치가 있으면 작은 텍스트
-      expect(styles.states?.['@media (any-pointer: fine)']?.typography?.fontSize).toBe('0.875rem');
+      expect(styles.states?.['@media (any-pointer: fine)']?.typography?.fontSize).toBe(14);
       // 터치 포인팅만 있으면 큰 텍스트  
-      expect(styles.states?.['@media (pointer: coarse)']?.typography?.fontSize).toBe('1.125rem');
+      expect(styles.states?.['@media (pointer: coarse)']?.typography?.fontSize).toBe(18);
       // 터치 장치가 하나라도 있으면 텍스트 선택 비활성화
       expect(styles.states?.['@media (any-pointer: coarse)']?.interactivity?.userSelect).toBe('none');
     });
