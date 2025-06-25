@@ -1,42 +1,6 @@
 import { ParsedStyle, ParsedClass, ParsedStyles, ParserContext } from '../../types';
 import { ColorUtils } from '../../config';
 
-const BACKGROUND_CLASSES = {
-  'bg-none': 'none',
-  'bg-image-none': 'none',
-  'bg-transparent': 'transparent',
-  'bg-current': 'currentColor',
-  'bg-inherit': 'inherit',
-  'bg-initial': 'initial',
-  'bg-unset': 'unset',
-  'bg-auto': 'auto',
-  'bg-cover': 'cover',
-  'bg-contain': 'contain',
-  'bg-repeat': 'repeat',
-  'bg-no-repeat': 'no-repeat',
-  'bg-repeat-x': 'repeat-x',
-  'bg-repeat-y': 'repeat-y',
-  'bg-repeat-round': 'round',
-  'bg-repeat-space': 'space',
-  'bg-fixed': 'fixed',
-  'bg-local': 'local',
-  'bg-scroll': 'scroll',
-  'bg-clip-border': 'border-box',
-  'bg-clip-padding': 'padding-box',
-  'bg-clip-content': 'content-box',
-  'bg-clip-text': 'text',
-  'bg-origin-border': 'border-box',
-  'bg-origin-padding': 'padding-box',
-  'bg-origin-content': 'content-box'
-};
-
-const PREFIX_CLASSES = [
-  'bg-',
-  'from-',
-  'via-',
-  'to-'
-];
-
 export class BackgroundsParser {
 
   private static readonly BACKGROUND_SIZE_VALUES: Record<string, string> = {
@@ -175,10 +139,9 @@ export class BackgroundsParser {
       return false;
     }
 
-    // 유효한 컬러 이름인데 범위가 벗어난 경우
+    // 이름이 존재하는데 범위가 다르다면 거부
     const [ , colorPrefix , ...rest ] = className.split('-');
-    const colorName = [colorPrefix, ...rest].join('-');
-    if (context.utils.isColorName(colorPrefix) && !context.utils.isValidColor(colorName)) {
+    if (context.utils.isColorName(colorPrefix) && !context.utils.isValidColor(colorPrefix)) {
       return false;
     }
 
@@ -193,7 +156,6 @@ export class BackgroundsParser {
     value: string;
     isArbitrary: boolean;
   } | null {
-    // 디버깅 로그 추가
 
     if (!this.isValidClass(className, context)) {
       return null;
@@ -224,6 +186,9 @@ export class BackgroundsParser {
     // v4.1 각도 기반 선형 그라데이션 (bg-linear-45, -bg-linear-90)
     const linearAngleMatch = className.match(/^(-?)bg-linear-(\d+)(?:\/(.+))?$/);
     if (linearAngleMatch) {
+      if (className.startsWith('bg-linear-')) {
+        console.log('[BackgroundsParser] linearAngleMatch found for', className, ':', linearAngleMatch);
+      }
       const [, negative, angle, interpolation] = linearAngleMatch;
       const actualAngle = negative ? `-${angle}deg` : `${angle}deg`;
       const interpolationMode = interpolation || 'oklab';
@@ -438,6 +403,15 @@ export class BackgroundsParser {
       // bg-red-500, bg-[#ff0000], bg-transparent, bg-current
       if (className.startsWith('bg-[') && className.endsWith(']')) {
         const value = className.slice(4, -1); // Remove 'bg-[' and ']'
+
+        if (value.startsWith('url(')) {
+          return {
+            property: 'backgroundImage',
+            value,
+            isArbitrary: true
+          };
+        }
+
         return {
           property: 'bg',
           value,
@@ -587,15 +561,7 @@ export class BackgroundsParser {
     return null;
   }
 
-  static isBackgroundClass(className: string): boolean {
-    if (className in BACKGROUND_CLASSES || PREFIX_CLASSES.some(prefix => className.startsWith(prefix))) {
-      return true;
-    }
-
-    return false;
-  }
-
-  static parse(className: string, context: ParserContext): ParsedStyle | null {
+  static parse(className: string): ParsedStyle | null {
     // v4.1 배경 투명도
     if (this.BACKGROUND_OPACITY_VALUES[className]) {
       return {
@@ -679,39 +645,39 @@ export class BackgroundsParser {
 
     // v4.1 새로운 선형 그라데이션
     if (className.startsWith('bg-linear-')) {
-      return this.parseLinearGradient(className, context);
+      return this.parseLinearGradient(className);
     }
 
     // v4.1 방사형 그라데이션
     if (className.startsWith('bg-radial')) {
-      return this.parseRadialGradient(className, context);
+      return this.parseRadialGradient(className);
     }
 
     // v4.1 원뿔형 그라데이션
     if (className.startsWith('bg-conic')) {
-      return this.parseConicGradient(className, context);
+      return this.parseConicGradient(className);
     }
 
     // 기존 그라데이션 (v3.x 호환성)
     if (className.startsWith('bg-gradient-')) {
-      return this.parseGradient(className, context);
+      return this.parseGradient(className);
     }
 
     // 그라데이션 색상 정지점 (향상된 v4.1 기능 포함)
     if (className.startsWith('from-') || className.startsWith('via-') || className.startsWith('to-')) {
-      return this.parseGradientColorStop(className, context);
+      return this.parseGradientColorStop(className);
     }
 
     // Background colors (check this last among bg- patterns)
     if (className.startsWith('bg-') && !className.includes('gradient') && !className.includes('linear') && !className.includes('radial') && !className.includes('conic')) {
-      return this.parseBackgroundColor(className, context);
+      return this.parseBackgroundColor(className);
     }
 
     return null;
   }
 
   // v4.1 새로운 선형 그라데이션 파싱
-  private static parseLinearGradient(className: string, context: ParserContext): ParsedStyle | null {
+  private static parseLinearGradient(className: string): ParsedStyle | null {
     // 방향 기반 (bg-linear-to-r)
     if (this.LINEAR_GRADIENT_DIRECTIONS[className]) {
       return {
@@ -773,7 +739,7 @@ export class BackgroundsParser {
   }
 
   // v4.1 방사형 그라데이션 파싱
-  private static parseRadialGradient(className: string, context: ParserContext): ParsedStyle | null {
+  private static parseRadialGradient(className: string): ParsedStyle | null {
     // 기본 방사형 (bg-radial, bg-radial/hsl)
     const basicMatch = className.match(/^bg-radial(?:\/(.+))?$/);
     if (basicMatch) {
@@ -810,7 +776,7 @@ export class BackgroundsParser {
   }
 
   // v4.1 원뿔형 그라데이션 파싱
-  private static parseConicGradient(className: string, context: ParserContext): ParsedStyle | null {
+  private static parseConicGradient(className: string): ParsedStyle | null {
     // 각도 기반 (bg-conic-45, -bg-conic-90)
     const angleMatch = className.match(/^(-?)bg-conic-?(\d+)?(?:\/(.+))?$/);
     if (angleMatch) {
@@ -847,7 +813,7 @@ export class BackgroundsParser {
     return null;
   }
 
-  private static parseBackgroundColor(className: string, context: ParserContext): ParsedStyle | null {
+  private static parseBackgroundColor(className: string): ParsedStyle | null {
     const value = className.replace('bg-', '');
 
     // Handle transparent and current
@@ -902,8 +868,8 @@ export class BackgroundsParser {
       const [colorPart, opacityPart] = value.split('/');
       const opacity = parseInt(opacityPart) / 100;
       
-      if (this.isValidColor(colorPart, context)) {
-        const colorValue = this.getColorValue(colorPart, context);
+      if (this.isValidColor(colorPart)) {
+        const colorValue = this.getColorValue(colorPart);
         return {
           property: 'backgroundColor',
           value: `${colorValue}`,
@@ -913,10 +879,10 @@ export class BackgroundsParser {
     }
 
     // Handle standard color palette
-    if (this.isValidColor(value, context)) {
+    if (this.isValidColor(value)) {
       return {
         property: 'backgroundColor',
-        value: this.getColorValue(value, context),
+        value: this.getColorValue(value),
         variant: 'preset'
       };
     }
@@ -924,7 +890,7 @@ export class BackgroundsParser {
     return null;
   }
 
-  private static parseGradient(className: string, context: ParserContext): ParsedStyle | null {
+  private static parseGradient(className: string): ParsedStyle | null {
     if (this.GRADIENT_DIRECTIONS[className]) {
       return {
         property: 'backgroundImage',
@@ -936,7 +902,7 @@ export class BackgroundsParser {
     return null;
   }
 
-  private static parseGradientColorStop(className: string, context: ParserContext): ParsedStyle | null {
+  private static parseGradientColorStop(className: string): ParsedStyle | null {
     const prefix = className.split('-')[0];
     const value = className.substring(prefix.length + 1);
 
@@ -970,10 +936,10 @@ export class BackgroundsParser {
     }
 
     // Handle color palette
-    if (this.isValidColor(value, context)) {
+    if (this.isValidColor(value)) {
       return {
         property: `--tw-gradient-${prefix}`,
-        value: this.getColorValue(value, context),
+        value: this.getColorValue(value),
         variant: 'preset'
       };
     }
@@ -981,18 +947,44 @@ export class BackgroundsParser {
     return null;
   }
 
-  private static isValidColorName(colorName: string, context: ParserContext): boolean {
-    return context.utils.isColorName(colorName);
+  private static isValidColor(colorName: string): boolean {
+    // Check for color-scale pattern (e.g., red-500)
+    const colorPattern = /^(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3}$/;
+    
+    // Check for basic color names
+    const basicColors = ['black', 'white'];
+    
+    return colorPattern.test(colorName) || basicColors.includes(colorName);
   }
 
-  private static isValidColor(colorName: string, context: ParserContext): boolean {
-    return context.utils.isValidColor(colorName);
-  }
-
-  private static getColorValue(colorName: string, context: ParserContext): string {
+  private static getColorValue(colorName: string, preset?: any, config?: any): string {
     // ColorUtils의 표준 색상 처리 함수 사용
-    if (context) {
-      return context.utils.color(colorName);
+    if (preset && config) {
+      return ColorUtils.getColorValue(colorName, preset, config);
+    }
+    
+    // 기본 색상들 (fallback)
+    if (colorName === 'black') return '#000000';
+    if (colorName === 'white') return '#ffffff';
+    
+    // Parse color-scale pattern (e.g., red-500)
+    const match = colorName.match(/^(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(\\d{2,3})$/);
+    
+    if (match && preset?.colors) {
+      const [, colorFamily, shade] = match;
+      const colorData = preset.colors[colorFamily]?.[shade];
+      
+      if (colorData) {
+        // OKLCH 형식인지 확인
+        if ('l' in colorData && 'c' in colorData && 'h' in colorData) {
+          const rgb = ColorUtils.oklchToRgb(colorData.l, colorData.c, colorData.h);
+          return ColorUtils.rgbToHex(rgb.r, rgb.g, rgb.b);
+        }
+        // 기존 RGB 형식 지원
+        else if ('r' in colorData && 'g' in colorData && 'b' in colorData) {
+          return ColorUtils.rgbToHex(colorData.r, colorData.g, colorData.b);
+        }
+      }
     }
     
     // 기본값: CSS 변수 형태로 반환
@@ -1022,55 +1014,55 @@ export class BackgroundsParser {
       // Background color
       case 'bg':
       case 'backgroundColor':
-        this.handleBackgroundColor(value, isArbitrary!, styles.backgrounds, context);
+        this.handleBackgroundColor(value, isArbitrary, styles.backgrounds, preset, config);
         break;
         
       // Background image
       case 'backgroundImage':
       case 'bg-image':
-        this.handleBackgroundImage(value, isArbitrary!, styles.backgrounds, context);
+        this.handleBackgroundImage(value, isArbitrary, styles.backgrounds);
         break;
         
       // Background size
       case 'backgroundSize':
       case 'bg-size':
-        this.handleBackgroundSize(value, isArbitrary!, styles.backgrounds, context);
+        this.handleBackgroundSize(value, isArbitrary, styles.backgrounds);
         break;
         
       // Background position
       case 'backgroundPosition':
       case 'bg-position':
-        this.handleBackgroundPosition(value, isArbitrary!, styles.backgrounds, context);
+        this.handleBackgroundPosition(value, isArbitrary, styles.backgrounds);
         break;
         
       // Background repeat
       case 'backgroundRepeat':
       case 'bg-repeat':
-        this.handleBackgroundRepeat(value, isArbitrary!, styles.backgrounds, context);
+        this.handleBackgroundRepeat(value, isArbitrary, styles.backgrounds);
         break;
         
       // Background attachment
       case 'backgroundAttachment':
       case 'bg-attachment':
-        this.handleBackgroundAttachment(value, isArbitrary!, styles.backgrounds);
+        this.handleBackgroundAttachment(value, isArbitrary, styles.backgrounds);
         break;
         
       // Background clip
       case 'backgroundClip':
       case 'bg-clip':
-        this.handleBackgroundClip(value, isArbitrary!, styles.backgrounds, context);
+        this.handleBackgroundClip(value, isArbitrary, styles.backgrounds);
         break;
         
       // Background origin
       case 'backgroundOrigin':
       case 'bg-origin':
-        this.handleBackgroundOrigin(value, isArbitrary!, styles.backgrounds, context);
+        this.handleBackgroundOrigin(value, isArbitrary, styles.backgrounds);
         break;
         
       // Background opacity
       case 'backgroundOpacity':
       case 'bg-opacity':
-        this.handleBackgroundOpacity(value, isArbitrary!, styles.backgrounds, context);
+        this.handleBackgroundOpacity(value, isArbitrary, styles.backgrounds);
         break;
         
       // Arbitrary background values
@@ -1099,14 +1091,20 @@ export class BackgroundsParser {
       case 'bg-linear-interpolation':
       case 'bg-linear-arbitrary':
       case 'bg-linear-custom':
+        this.handleGradient(property, value, isArbitrary, styles.backgrounds);
+        break;
       case 'bg-radial':
       case 'bg-radial-arbitrary':
       case 'bg-radial-custom':
+        this.handleRadialGradient(property, value, isArbitrary, styles.backgrounds);
+        break;
       case 'bg-conic':
       case 'bg-conic-arbitrary':
       case 'bg-conic-custom':
+        this.handleConicGradient(property, value, isArbitrary, styles.backgrounds);
+        break;
       case 'bg-custom-property':
-        this.handleGradient(property, value, isArbitrary!, styles.backgrounds, context);
+        this.handleGradient(property, value, isArbitrary, styles.backgrounds);
         break;
         
       // Gradient color stops
@@ -1119,7 +1117,7 @@ export class BackgroundsParser {
       case 'from-custom':
       case 'via-custom':
       case 'to-custom':
-        this.handleGradientColorStop(property, value, isArbitrary!, styles.backgrounds, context);
+        this.handleGradientColorStop(property, value, isArbitrary, styles.backgrounds, preset, config);
         break;
         
       default:
@@ -1132,7 +1130,7 @@ export class BackgroundsParser {
   /**
    * Background color 처리 헬퍼 메서드
    */
-  private static handleBackgroundColor(value: string, isArbitrary: boolean, backgroundStyles: any, context: ParserContext): void {
+  private static handleBackgroundColor(value: string, isArbitrary: boolean, backgroundStyles: any, preset: any, config: any): void {
     if (isArbitrary) {
       backgroundStyles.backgroundColor = value;
     } else {
@@ -1141,14 +1139,14 @@ export class BackgroundsParser {
         const [colorPart, opacityPart] = value.split('/');
         const opacity = parseInt(opacityPart) / 100;
         
-        if (this.isValidColor(colorPart, context)) {
-          const colorValue = this.getColorValue(colorPart, context);
+        if (this.isValidColor(colorPart)) {
+          const colorValue = this.getColorValue(colorPart, preset, config);
           backgroundStyles.backgroundColor = colorValue;
           backgroundStyles.backgroundOpacity = opacity.toString();
         }
       } else {
         // 표준 색상 처리
-        backgroundStyles.backgroundColor = this.getColorValue(value, context);
+        backgroundStyles.backgroundColor = this.getColorValue(value, preset, config);
       }
     }
   }
@@ -1156,7 +1154,7 @@ export class BackgroundsParser {
   /**
    * Background image 처리 헬퍼 메서드
    */
-  private static handleBackgroundImage(value: string, isArbitrary: boolean, backgroundStyles: any, context: ParserContext): void {
+  private static handleBackgroundImage(value: string, isArbitrary: boolean, backgroundStyles: any): void {
     if (isArbitrary) {
       backgroundStyles.backgroundImage = value;
     } else {
@@ -1170,7 +1168,7 @@ export class BackgroundsParser {
   /**
    * Background size 처리 헬퍼 메서드
    */
-  private static handleBackgroundSize(value: string, isArbitrary: boolean, backgroundStyles: any, context: ParserContext): void {
+  private static handleBackgroundSize(value: string, isArbitrary: boolean, backgroundStyles: any): void {
     if (isArbitrary) {
       backgroundStyles.backgroundSize = value;
     } else {
@@ -1184,7 +1182,7 @@ export class BackgroundsParser {
   /**
    * Background position 처리 헬퍼 메서드
    */
-  private static handleBackgroundPosition(value: string, isArbitrary: boolean, backgroundStyles: any, context: ParserContext): void {
+  private static handleBackgroundPosition(value: string, isArbitrary: boolean, backgroundStyles: any): void {
     if (isArbitrary) {
       backgroundStyles.backgroundPosition = value;
     } else {
@@ -1198,7 +1196,7 @@ export class BackgroundsParser {
   /**
    * Background repeat 처리 헬퍼 메서드
    */
-  private static handleBackgroundRepeat(value: string, isArbitrary: boolean, backgroundStyles: any, context: ParserContext): void {
+  private static handleBackgroundRepeat(value: string, isArbitrary: boolean, backgroundStyles: any): void {
     if (isArbitrary) {
       backgroundStyles.backgroundRepeat = value;
     } else {
@@ -1226,7 +1224,7 @@ export class BackgroundsParser {
   /**
    * Background clip 처리 헬퍼 메서드
    */
-  private static handleBackgroundClip(value: string, isArbitrary: boolean, backgroundStyles: any, context: ParserContext): void {
+  private static handleBackgroundClip(value: string, isArbitrary: boolean, backgroundStyles: any): void {
     if (isArbitrary) {
       backgroundStyles.backgroundClip = value;
     } else {
@@ -1240,7 +1238,7 @@ export class BackgroundsParser {
   /**
    * Background origin 처리 헬퍼 메서드
    */
-  private static handleBackgroundOrigin(value: string, isArbitrary: boolean, backgroundStyles: any, context: ParserContext): void {
+  private static handleBackgroundOrigin(value: string, isArbitrary: boolean, backgroundStyles: any): void {
     if (isArbitrary) {
       backgroundStyles.backgroundOrigin = value;
     } else {
@@ -1254,7 +1252,7 @@ export class BackgroundsParser {
   /**
    * Background opacity 처리 헬퍼 메서드
    */
-  private static handleBackgroundOpacity(value: string, isArbitrary: boolean, backgroundStyles: any, context: ParserContext): void {
+  private static handleBackgroundOpacity(value: string, isArbitrary: boolean, backgroundStyles: any): void {
     if (isArbitrary) {
       backgroundStyles.backgroundOpacity = value;
     } else {
@@ -1267,7 +1265,7 @@ export class BackgroundsParser {
   /**
    * Gradient 처리 헬퍼 메서드
    */
-  private static handleGradient(property: string, value: string, isArbitrary: boolean, backgroundStyles: any, context: ParserContext): void {
+  private static handleGradient(property: string, value: string, isArbitrary: boolean, backgroundStyles: any): void {
     if (isArbitrary) {
       backgroundStyles.backgroundImage = value;
     } else {
@@ -1278,10 +1276,26 @@ export class BackgroundsParser {
     }
   }
 
+  private static handleRadialGradient(property: string, value: string, isArbitrary: boolean, backgroundStyles: any): void {
+    if (isArbitrary) {
+      backgroundStyles.backgroundImage = value;
+    } else {
+      backgroundStyles.backgroundImage = `radial-gradient(${value})`;
+    }
+  }
+
+  private static handleConicGradient(property: string, value: string, isArbitrary: boolean, backgroundStyles: any): void {
+    if (isArbitrary) {
+      backgroundStyles.backgroundImage = value;
+    } else {
+      backgroundStyles.backgroundImage = `conic-gradient(${value})`;
+    }
+  }
+
   /**
    * Gradient color stop 처리 헬퍼 메서드
    */
-  private static handleGradientColorStop(property: string, value: string, isArbitrary: boolean, backgroundStyles: any, context: ParserContext): void {
+  private static handleGradientColorStop(property: string, value: string, isArbitrary: boolean, backgroundStyles: any, preset: any, config: any): void {
     if (isArbitrary) {
       backgroundStyles[`--tw-gradient-${property}`] = value;
     } else {
@@ -1290,7 +1304,7 @@ export class BackgroundsParser {
         backgroundStyles[`--tw-gradient-${property}-position`] = value;
       } else {
         // 색상 처리
-        const colorValue = this.getColorValue(value, context);
+        const colorValue = this.getColorValue(value, preset, config);
         backgroundStyles[`--tw-gradient-${property}`] = colorValue;
       }
     }

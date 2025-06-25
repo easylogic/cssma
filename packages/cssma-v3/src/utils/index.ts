@@ -10,20 +10,12 @@ import { Config, DesignPreset, OKLCHColor, ColorPalette } from '../types';
  * OKLCH 색상 공간과 Tailwind v4 표준 지원
  */
 export class ColorUtils {
-
   static isColorName(colorName: string, preset: DesignPreset, config: Config): boolean {
     return preset.colors?.[colorName] !== undefined;
   }
 
   static isValidColor(colorName: string, preset: DesignPreset, config: Config): boolean {
-
-    const realColor = this.getColorValue(colorName, preset, config);
-
-    if (realColor && (colorName === 'transparent' || colorName === 'current' || colorName === 'inherit' || colorName === 'black' || colorName === 'white')) {
-      return true;
-    }
-
-    return realColor !== colorName;
+    return this.getColorValue(colorName, preset, config) !== colorName;
   }
   /**
    * 색상 이름을 실제 색상 값으로 변환
@@ -37,6 +29,13 @@ export class ColorUtils {
         colorName.startsWith('oklch(')) {
       return colorName;
     }
+
+    // 기본 색상들
+    if (colorName === 'transparent') return 'transparent';
+    if (colorName === 'current') return 'currentColor';
+    if (colorName === 'inherit') return 'inherit';
+    if (colorName === 'black') return '#000000';
+    if (colorName === 'white') return '#ffffff';
 
     // 단일 색상명 먼저 확인 (하이픈 없는 경우 우선 처리)
     if (preset?.colors?.[colorName]) {
@@ -491,9 +490,7 @@ export function createParserContext(config: Config, preset: DesignPreset) {
       /** HEX 또는 CSS 변수 반환 */
       color: (name: string) => ColorUtils.getColorValue(name, preset, config),
       isColorName: (name: string) => ColorUtils.isColorName(name, preset, config),
-      isValidColor: (name: string) => {
-        return ColorUtils.isValidColor(name, preset, config);
-      },
+      isValidColor: (name: string) => ColorUtils.isValidColor(name, preset, config),
       /** OKLCH CSS 반환 */
       oklch: (name: string) => {
         // blue-500 등에서 OKLCH CSS 반환

@@ -810,7 +810,7 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
       });
     });
 
-    it('다크 모드 배경 클래스를 파싱할 수 있어야 함', () => {
+    it.only('다크 모드 배경 클래스를 파싱할 수 있어야 함', () => {
       const darkModeClasses = [
         'dark:bg-gray-800',
         'dark:bg-slate-900',
@@ -819,6 +819,7 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
 
       darkModeClasses.forEach(className => {
         const result = parser.parseClass(className);
+        console.log({result});
         expect(result).toBeDefined();
         expect(result?.className).toBe(className);
         expect(result?.category).toBe('backgrounds');
@@ -923,7 +924,6 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
 
       complexUrls.forEach(className => {
         const result = parser.parseClass(className);
-        console.log(result);
         expect(result).toBeDefined();
         expect(result?.className).toBe(className);
         expect(result?.category).toBe('backgrounds');

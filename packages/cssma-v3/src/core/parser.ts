@@ -285,14 +285,15 @@ export class CSSParser {
 
     // 각 파서에게 baseClassName 인식을 요청 (우선순위 순서)
     for (const { parser, category } of PARSER_MAP) {
+      if (className.startsWith('bg-linear-')) {
+        console.log(`[parseClassName] Trying parser: ${parser.name} for category: ${category} with class: ${className}`);
+      }
       
       if (parser.isValidClass && parser.isValidClass(baseClassName, this.parserContext)) {
-        
         // 해당 파서가 클래스를 인식했으므로 파싱 진행
         const parseResult = parser.parseValue
           ? parser.parseValue(baseClassName, this.parserContext)
           : null;
-
 
         if (parseResult) {
           
@@ -379,7 +380,15 @@ export class CSSParser {
             modifiers: modifiers,
           };
           
+          if (className.startsWith('bg-linear-')) {
+            console.log(`[parseClassName] Final result:`, finalResult);
+          }
+          
           return finalResult;
+        } else {
+          if (className.startsWith('bg-linear-')) {
+            console.log(`[parseClassName] parseResult is null from parser: ${parser.name}`);
+          }
         }
       }
     }
@@ -616,9 +625,9 @@ export class CSSParser {
       case "spacing":
         SpacingParser.applySpacingStyle(parsedClass, styles, this.parserContext);
         break;
-      // case "colors":
-      //   ColorParser.applyColorStyle(parsedClass, styles, this.parserContext);
-      //   break;
+      case "colors":
+        ColorParser.applyColorStyle(parsedClass, styles, this.parserContext);
+        break;
       case "typography":
         TypographyParser.applyTypographyStyle(parsedClass, styles, this.parserContext);
         break;
