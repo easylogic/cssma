@@ -29,14 +29,28 @@ export class TablesParser {
     // border-collapse/separate
     if (['border-collapse', 'border-separate'].includes(className)) return true;
     
-    // border-spacing
-    if (className.startsWith('border-spacing-')) return true;
+    // border-spacing (including directional)
+    if (className.startsWith('border-spacing-')) {
+      const remainder = className.slice('border-spacing-'.length);
+      // Return false if no value after 'border-spacing-'
+      if (!remainder) return false;
+      // Support x- and y- prefixes for directional spacing
+      if (remainder.startsWith('x-') || remainder.startsWith('y-')) {
+        const value = remainder.slice(2);
+        return value.length > 0; // Must have value after x- or y-
+      }
+      return remainder.length > 0;
+    }
     
     // table-layout
     if (['table-auto', 'table-fixed'].includes(className)) return true;
     
     // caption-side
-    if (className.startsWith('caption-')) return true;
+    if (className.startsWith('caption-')) {
+      const value = className.slice('caption-'.length);
+      // Only valid if there's a value after 'caption-'
+      return value.length > 0;
+    }
     
     return false;
   }
@@ -55,13 +69,36 @@ export class TablesParser {
       return { property: 'border-separate', value: 'separate', isArbitrary: false };
     }
     
-    // border-spacing
+    // border-spacing with directional support
     if (className.startsWith('border-spacing-')) {
-      const value = className.slice('border-spacing-'.length);
-      const isArbitrary = value.startsWith('[') && value.endsWith(']');
+      const remainingPart = className.slice('border-spacing-'.length);
+      
+      // Check for directional variants (x- or y-)
+      if (remainingPart.startsWith('x-')) {
+        const value = remainingPart.slice(2); // Remove 'x-'
+        const isArbitrary = value.startsWith('[') && value.endsWith(']');
+        return {
+          property: 'border-spacing-x',
+          value: isArbitrary ? value.slice(1, -1) : value,
+          isArbitrary
+        };
+      }
+      
+      if (remainingPart.startsWith('y-')) {
+        const value = remainingPart.slice(2); // Remove 'y-'
+        const isArbitrary = value.startsWith('[') && value.endsWith(']');
+        return {
+          property: 'border-spacing-y',
+          value: isArbitrary ? value.slice(1, -1) : value,
+          isArbitrary
+        };
+      }
+      
+      // Regular border-spacing
+      const isArbitrary = remainingPart.startsWith('[') && remainingPart.endsWith(']');
       return {
         property: 'border-spacing',
-        value: isArbitrary ? value.slice(1, -1) : value,
+        value: isArbitrary ? remainingPart.slice(1, -1) : remainingPart,
         isArbitrary
       };
     }
@@ -77,6 +114,8 @@ export class TablesParser {
     // caption-side
     if (className.startsWith('caption-')) {
       const value = className.slice('caption-'.length);
+      // Don't return if value is empty (edge case)
+      if (!value) return null;
       return {
         property: 'caption-side',
         value: value,
@@ -125,9 +164,11 @@ export class TablesParser {
         this.handleBorderCollapse(property, value, styles.tables);
         break;
         
-      // Border spacing
+      // Border spacing (including directional)
       case 'border-spacing':
-        this.handleBorderSpacing(value, isArbitrary, styles.tables);
+      case 'border-spacing-x':
+      case 'border-spacing-y':
+        this.handleBorderSpacing(property, value, isArbitrary, styles.tables);
         break;
         
       // Table layout
@@ -172,7 +213,7 @@ export class TablesParser {
   /**
    * Border spacing 처리 헬퍼 메서드
    */
-  private static handleBorderSpacing(value: string, isArbitrary: boolean, tableStyles: any): void {
+  private static handleBorderSpacing(property: string, value: string, isArbitrary: boolean, tableStyles: any): void {
     if (isArbitrary) {
       tableStyles.borderSpacing = value;
     } else {
@@ -216,12 +257,12 @@ export class TablesParser {
       };
 
       // x/y 축별 spacing 처리
-      if (value.startsWith('x-')) {
-        const spacingValue = value.slice(2);
+      if (property === 'border-spacing-x') {
+        const spacingValue = value;
         const mappedValue = spacingMap[spacingValue] || `${spacingValue}px`;
         tableStyles.borderSpacing = `${mappedValue} 0px`;
-      } else if (value.startsWith('y-')) {
-        const spacingValue = value.slice(2);
+      } else if (property === 'border-spacing-y') {
+        const spacingValue = value;
         const mappedValue = spacingMap[spacingValue] || `${spacingValue}px`;
         tableStyles.borderSpacing = `0px ${mappedValue}`;
       } else {

@@ -65,7 +65,9 @@ export class ModifierParser {
     const parts: string[] = [];
     let currentPart = '';
     let bracketDepth = 0;
+    let parenthesesDepth = 0;
     let inBrackets = false;
+    let inParentheses = false;
     
     for (let i = 0; i < className.length; i++) {
       const char = className[i];
@@ -80,8 +82,18 @@ export class ModifierParser {
           inBrackets = false;
         }
         currentPart += char;
-      } else if (char === ':' && !inBrackets) {
-        // Only split on colons that are not inside brackets
+      } else if (char === '(') {
+        parenthesesDepth++;
+        inParentheses = true;
+        currentPart += char;
+      } else if (char === ')') {
+        parenthesesDepth--;
+        if (parenthesesDepth === 0) {
+          inParentheses = false;
+        }
+        currentPart += char;
+      } else if (char === ':' && !inBrackets && !inParentheses) {
+        // Only split on colons that are not inside brackets or parentheses
         parts.push(currentPart);
         currentPart = '';
       } else {

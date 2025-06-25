@@ -200,7 +200,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
     });
   });
 
-  describe.skip('Style Application', () => {
+  describe('Style Application', () => {
     it('should apply responsive styles correctly', () => {
       const className = 'md:bg-blue-500';
       const styles = parser.parse(className);

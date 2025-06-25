@@ -3,7 +3,7 @@
  * Tailwind CSS의 모든 SVG 관련 유틸리티 클래스를 파싱합니다.
  */
 
-import { ParsedStyle, ParsedClass, SVGStyles, DesignPreset } from '../../types';
+import { ParsedStyle, ParsedClass, SVGStyles, DesignPreset, ParserContext } from '../../types';
 
 const SVG_CLASSES = {
   'fill': 'fill',
@@ -24,10 +24,20 @@ export class SVGParser {
    */
   static isValidClass(className: string): boolean {
     // fill 관련
-    if (className.startsWith('fill-')) return true;
+    if (className.startsWith('fill-')) {
+      const value = className.slice('fill-'.length);
+      // 빈 값 체크
+      if (!value) return false;
+      return true;
+    }
     
     // stroke 관련
-    if (className.startsWith('stroke-')) return true;
+    if (className.startsWith('stroke-')) {
+      const value = className.slice('stroke-'.length);
+      // 빈 값 체크
+      if (!value) return false;
+      return true;
+    }
     
     return false;
   }
@@ -38,6 +48,11 @@ export class SVGParser {
    * @returns 파싱된 결과
    */
   static parseValue(className: string): { property: string; value: string; isArbitrary: boolean } | null {
+    // Invalid class 체크
+    if (!this.isValidClass(className)) {
+      return null;
+    }
+
     // fill 관련
     if (className.startsWith('fill-')) {
       const value = className.slice('fill-'.length);
@@ -49,23 +64,28 @@ export class SVGParser {
       };
     }
     
-    // stroke 관련
+    // stroke 관련 - stroke-width 우선 체크
     if (className.startsWith('stroke-')) {
       const value = className.slice('stroke-'.length);
       const isArbitrary = value.startsWith('[') && value.endsWith(']');
       
-      // stroke-width인지 확인 (숫자로 시작하면 width)
-      if (/^\d/.test(value) || value === '0') {
+      // stroke-width인지 확인 (숫자로 시작하거나 [숫자/단위]로 시작)
+      const actualValue = isArbitrary ? value.slice(1, -1) : value;
+      const isStrokeWidth = /^\d/.test(actualValue) || 
+                           actualValue === '0' ||
+                           /^\d+(px|em|rem|%|pt)$/.test(actualValue); // 단위 포함 체크
+      
+      if (isStrokeWidth) {
         return {
           property: 'stroke-width',
-          value: isArbitrary ? value.slice(1, -1) : value,
+          value: actualValue,
           isArbitrary
         };
       } else {
         // stroke color
         return {
           property: 'stroke',
-          value: isArbitrary ? value.slice(1, -1) : value,
+          value: actualValue,
           isArbitrary
         };
       }
@@ -81,6 +101,7 @@ export class SVGParser {
 
     return false;
   }
+
   /**
    * SVG 스타일을 적용합니다.
    * @param parsedClass 파싱된 클래스
@@ -105,7 +126,7 @@ export class SVGParser {
         case 'stroke':
           styles.svg.stroke = result.value;
           break;
-        case 'strokeWidth':
+        case 'stroke-width':
           styles.svg.strokeWidth = result.value;
           break;
       }
@@ -330,7 +351,7 @@ export class SVGParser {
 
     if (value in strokeWidthMap) {
       return {
-        property: 'strokeWidth',
+        property: 'stroke-width',
         value: strokeWidthMap[value],
         variant: 'preset'
       };
@@ -340,7 +361,7 @@ export class SVGParser {
     if (value.startsWith('[') && value.endsWith(']')) {
       const arbitraryValue = value.slice(1, -1);
       return {
-        property: 'strokeWidth',
+        property: 'stroke-width',
         value: arbitraryValue,
         variant: 'arbitrary'
       };

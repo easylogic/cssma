@@ -197,7 +197,16 @@ export class BackgroundsParser {
     value: string;
     isArbitrary: boolean;
   } | null {
+    // 디버깅 로그 추가
+    if (className.startsWith('bg-linear-')) {
+      console.log('[BackgroundsParser] parseValue called with:', className);
+      console.log('[BackgroundsParser] isValidClass result:', this.isValidClass(className));
+    }
+
     if (!this.isValidClass(className)) {
+      if (className.startsWith('bg-linear-')) {
+        console.log('[BackgroundsParser] Rejected by isValidClass for:', className);
+      }
       return null;
     }
 
@@ -226,14 +235,21 @@ export class BackgroundsParser {
     // v4.1 각도 기반 선형 그라데이션 (bg-linear-45, -bg-linear-90)
     const linearAngleMatch = className.match(/^(-?)bg-linear-(\d+)(?:\/(.+))?$/);
     if (linearAngleMatch) {
+      if (className.startsWith('bg-linear-')) {
+        console.log('[BackgroundsParser] linearAngleMatch found for', className, ':', linearAngleMatch);
+      }
       const [, negative, angle, interpolation] = linearAngleMatch;
       const actualAngle = negative ? `-${angle}deg` : `${angle}deg`;
       const interpolationMode = interpolation || 'oklab';
-      return {
+      const result = {
         property: 'bg-linear-angle',
         value: `${actualAngle} in ${interpolationMode}`,
         isArbitrary: false
       };
+      if (className.startsWith('bg-linear-')) {
+        console.log('[BackgroundsParser] Returning result for', className, ':', result);
+      }
+      return result;
     }
 
     // v4.1 보간 모드가 있는 선형 그라데이션 (bg-linear-to-r/srgb)
@@ -364,7 +380,77 @@ export class BackgroundsParser {
       }
     }
 
-    // Background color patterns
+    // Background size preset values (우선순위를 색상보다 높게)
+    const sizeValue = this.BACKGROUND_SIZE_VALUES[className];
+    if (sizeValue) {
+      return {
+        property: 'bg-size',
+        value: sizeValue,
+        isArbitrary: false
+      };
+    }
+
+    // Background position preset values
+    const positionValue = this.BACKGROUND_POSITION_VALUES[className];
+    if (positionValue) {
+      return {
+        property: 'bg-position',
+        value: positionValue,
+        isArbitrary: false
+      };
+    }
+
+    // Background repeat preset values
+    const repeatValue = this.BACKGROUND_REPEAT_VALUES[className];
+    if (repeatValue) {
+      return {
+        property: 'bg-repeat',
+        value: repeatValue,
+        isArbitrary: false
+      };
+    }
+
+    // Background attachment preset values
+    const attachmentValue = this.BACKGROUND_ATTACHMENT_VALUES[className];
+    if (attachmentValue) {
+      return {
+        property: 'bg-attachment',
+        value: attachmentValue,
+        isArbitrary: false
+      };
+    }
+
+    // Background clip preset values
+    const clipValue = this.BACKGROUND_CLIP_VALUES[className];
+    if (clipValue) {
+      return {
+        property: 'bg-clip',
+        value: clipValue,
+        isArbitrary: false
+      };
+    }
+
+    // Background origin preset values
+    const originValue = this.BACKGROUND_ORIGIN_VALUES[className];
+    if (originValue) {
+      return {
+        property: 'bg-origin',
+        value: originValue,
+        isArbitrary: false
+      };
+    }
+
+    // Background image preset values (bg-none)
+    const imageValue = this.BACKGROUND_IMAGE_VALUES[className];
+    if (imageValue) {
+      return {
+        property: 'bg-image',
+        value: imageValue,
+        isArbitrary: false
+      };
+    }
+
+    // Background color patterns (이제 마지막에 처리)
     if (className.startsWith('bg-') && !className.includes('-to-') && !className.includes('-via-') && !className.includes('gradient') && !className.includes('linear') && !className.includes('radial') && !className.includes('conic')) {
       // bg-red-500, bg-[#ff0000], bg-transparent, bg-current
       if (className.startsWith('bg-[') && className.endsWith(']')) {
@@ -501,6 +587,20 @@ export class BackgroundsParser {
       };
     }
 
+    // Background size (bg-cover, bg-contain, bg-auto, bg-[50%])
+    if (className.startsWith('bg-[') && className.endsWith(']') && !className.includes('gradient') && !className.includes('linear') && !className.includes('radial') && !className.includes('conic')) {
+      const value = className.slice(4, -1); // Remove 'bg-[' and ']'
+      // Check if it's a size value, position value, etc.
+      if (value.includes('%') || value.includes('px') || value.includes('rem') || value.includes('em') || value.includes(' ')) {
+        // Could be size or position
+        return {
+          property: 'bg-arbitrary',
+          value,
+          isArbitrary: true
+        };
+      }
+    }
+
     return null;
   }
 
@@ -620,7 +720,7 @@ export class BackgroundsParser {
     }
 
     // Background colors (check this last among bg- patterns)
-    if (className.startsWith('bg-') && !className.includes('gradient') && !className.includes('linear') && !className.includes('radial') && !className.includes('conic') && !className.includes('clip') && !className.includes('origin') && !className.includes('opacity')) {
+    if (className.startsWith('bg-') && !className.includes('gradient') && !className.includes('linear') && !className.includes('radial') && !className.includes('conic')) {
       return this.parseBackgroundColor(className);
     }
 
@@ -1016,11 +1116,39 @@ export class BackgroundsParser {
         this.handleBackgroundOpacity(value, isArbitrary, styles.backgrounds);
         break;
         
+      // Arbitrary background values
+      case 'bg-arbitrary':
+        // For arbitrary values like bg-[50%_50%], determine the most likely property
+        if (value.includes(' ') && (value.includes('%') || value.includes('px'))) {
+          // Likely a position value
+          styles.backgrounds.backgroundPosition = value;
+        } else if (value.includes('%') || value.includes('px') || value.includes('rem') || value.includes('em')) {
+          // Likely a size value  
+          styles.backgrounds.backgroundSize = value;
+        } else {
+          // Fallback to backgroundColor for color values
+          styles.backgrounds.backgroundColor = value;
+        }
+        break;
+        
       // Gradient directions
       case 'gradient':
       case 'linearGradient':
       case 'radialGradient':
       case 'conicGradient':
+      case 'bg-gradient':
+      case 'bg-linear':
+      case 'bg-linear-angle':
+      case 'bg-linear-interpolation':
+      case 'bg-linear-arbitrary':
+      case 'bg-linear-custom':
+      case 'bg-radial':
+      case 'bg-radial-arbitrary':
+      case 'bg-radial-custom':
+      case 'bg-conic':
+      case 'bg-conic-arbitrary':
+      case 'bg-conic-custom':
+      case 'bg-custom-property':
         this.handleGradient(property, value, isArbitrary, styles.backgrounds);
         break;
         
@@ -1028,6 +1156,12 @@ export class BackgroundsParser {
       case 'from':
       case 'via':
       case 'to':
+      case 'from-position':
+      case 'via-position':  
+      case 'to-position':
+      case 'from-custom':
+      case 'via-custom':
+      case 'to-custom':
         this.handleGradientColorStop(property, value, isArbitrary, styles.backgrounds, preset, config);
         break;
         

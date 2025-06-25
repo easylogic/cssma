@@ -113,9 +113,121 @@ export class InteractivityParser {
 
     // Pointer events patterns
     if (className.startsWith('pointer-events-')) {
-      const valueStr = className.substring(15); // Remove 'pointer-events-'
+      const value = className.substring(15); // Remove 'pointer-events-'
+      
       return {
         property: 'pointer-events',
+        value,
+        isArbitrary: false
+      };
+    }
+
+    // Scroll patterns (scroll-smooth, scroll-m-4, scroll-p-8)
+    if (className.startsWith('scroll-')) {
+      const parts = className.split('-');
+      if (parts.length >= 2) {
+        const scrollType = parts[1]; // smooth, auto, m, p, etc.
+        const value = parts.slice(2).join('-') || '';
+        
+        // Scroll behavior (scroll-smooth, scroll-auto)
+        if (scrollType === 'smooth' || scrollType === 'auto') {
+          return {
+            property: 'scroll-behavior',
+            value: scrollType,
+            isArbitrary: false
+          };
+        }
+        
+        // Scroll margin patterns
+        if (scrollType === 'm') {
+          return {
+            property: 'scroll-m',
+            value: value || 'default',
+            isArbitrary: value?.startsWith('[') && value?.endsWith(']')
+          };
+        }
+        
+        if (scrollType === 'mx') {
+          return {
+            property: 'scroll-mx',
+            value: value || 'default',
+            isArbitrary: value?.startsWith('[') && value?.endsWith(']')
+          };
+        }
+        
+        if (scrollType === 'my') {
+          return {
+            property: 'scroll-my',
+            value: value || 'default',
+            isArbitrary: value?.startsWith('[') && value?.endsWith(']')
+          };
+        }
+        
+        // Scroll padding patterns
+        if (scrollType === 'p') {
+          return {
+            property: 'scroll-p',
+            value: value || 'default',
+            isArbitrary: value?.startsWith('[') && value?.endsWith(']')
+          };
+        }
+        
+        if (scrollType === 'px') {
+          return {
+            property: 'scroll-px',
+            value: value || 'default',
+            isArbitrary: value?.startsWith('[') && value?.endsWith(']')
+          };
+        }
+        
+        if (scrollType === 'py') {
+          return {
+            property: 'scroll-py',
+            value: value || 'default',
+            isArbitrary: value?.startsWith('[') && value?.endsWith(']')
+          };
+        }
+      }
+    }
+
+    // Touch action patterns
+    if (className.startsWith('touch-')) {
+      const value = className.substring(6); // Remove 'touch-'
+      
+      return {
+        property: 'touch-action',
+        value,
+        isArbitrary: false
+      };
+    }
+
+    // User select patterns (select-none, select-text, etc.)
+    if (className.startsWith('select-')) {
+      const value = className.substring(7); // Remove 'select-'
+      
+      return {
+        property: 'select',
+        value,
+        isArbitrary: false
+      };
+    }
+
+    // Will change patterns  
+    if (className.startsWith('will-change-')) {
+      const valueStr = className.substring(12); // Remove 'will-change-'
+      
+      // Arbitrary value [...]
+      if (valueStr.startsWith('[') && valueStr.endsWith(']')) {
+        const value = valueStr.slice(1, -1);
+        return {
+          property: 'will-change',
+          value,
+          isArbitrary: true
+        };
+      }
+      
+      return {
+        property: 'will-change',
         value: valueStr,
         isArbitrary: false
       };
@@ -125,7 +237,6 @@ export class InteractivityParser {
     const simplePatterns = [
       { prefix: 'appearance', property: 'appearance' },
       { prefix: 'cursor', property: 'cursor' },
-      { prefix: 'select', property: 'select' },
       { prefix: 'user-select', property: 'user-select' },
       { prefix: 'will-change', property: 'will-change' }
     ];
@@ -175,48 +286,6 @@ export class InteractivityParser {
       };
     }
 
-    // Scroll patterns (scroll-smooth, scroll-m-4, scroll-p-8)
-    if (className.startsWith('scroll-')) {
-      const parts = className.split('-');
-      if (parts.length >= 2) {
-        const scrollType = parts[1]; // smooth, auto, m, p, etc.
-        const value = parts.slice(2).join('-') || '';
-        
-        // Scroll behavior (scroll-smooth, scroll-auto)
-        if (scrollType === 'smooth' || scrollType === 'auto') {
-          return {
-            property: 'scroll-behavior',
-            value: scrollType,
-            isArbitrary: false
-          };
-        }
-        
-        // Scroll margin/padding (scroll-m-4, scroll-p-8)
-        if (scrollType === 'm') {
-          return {
-            property: 'scroll-m',
-            value: value || 'default',
-            isArbitrary: value?.startsWith('[') && value?.endsWith(']')
-          };
-        }
-        
-        if (scrollType === 'p') {
-          return {
-            property: 'scroll-p',
-            value: value || 'default',
-            isArbitrary: value?.startsWith('[') && value?.endsWith(']')
-          };
-        }
-        
-        // Other scroll properties
-        return {
-          property: `scroll-${scrollType}`,
-          value: value || 'default',
-          isArbitrary: false
-        };
-      }
-    }
-
     // Snap patterns (snap-start, snap-end, snap-center, snap-normal, snap-always)
     if (className.startsWith('snap-')) {
       const valueStr = className.substring(5); // Remove 'snap-'
@@ -247,16 +316,6 @@ export class InteractivityParser {
           isArbitrary: false
         };
       }
-    }
-
-    // Touch patterns (touch-auto, touch-none, touch-pan-x)
-    if (className.startsWith('touch-')) {
-      const valueStr = className.substring(6); // Remove 'touch-'
-      return {
-        property: 'touch-action',
-        value: valueStr,
-        isArbitrary: false
-      };
     }
 
     return null;
@@ -342,17 +401,8 @@ export class InteractivityParser {
         case 'scrollPaddingLeft':
           styles.interactivity.scrollPaddingLeft = result.value as string;
           break;
-        case 'scrollSnapAlign':
-          styles.interactivity.scrollSnapAlign = result.value as string;
-          break;
-        case 'scrollSnapStop':
-          styles.interactivity.scrollSnapStop = result.value as string;
-          break;
-        case 'scrollSnapType':
-          styles.interactivity.scrollSnapType = result.value as string;
-          break;
         case 'touchAction':
-            styles.interactivity.touchAction = result.value as string;
+          styles.interactivity.touchAction = result.value as string;
           break;
         case 'userSelect':
           styles.interactivity.userSelect = result.value as string;
@@ -849,7 +899,7 @@ export class InteractivityParser {
 
     if (className in touchActionMap) {
       return {
-        property: 'touch-action',
+        property: 'touchAction',
         value: touchActionMap[className],
         variant: 'preset'
       };
@@ -869,7 +919,7 @@ export class InteractivityParser {
 
     if (className in userSelectMap) {
       return {
-        property: 'user-select',
+        property: 'userSelect',
         value: userSelectMap[className],
         variant: 'preset'
       };
@@ -889,7 +939,7 @@ export class InteractivityParser {
 
     if (className in willChangeMap) {
       return {
-        property: 'will-change',
+        property: 'willChange',
         value: willChangeMap[className],
         variant: 'preset'
       };

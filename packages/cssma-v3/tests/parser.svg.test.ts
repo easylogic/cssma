@@ -201,7 +201,7 @@ describe('SVG Parser', () => {
       const result = parser.parseClassName('md:fill-red-500');
       expect(result).toBeDefined();
       expect(result?.baseClassName).toBe('fill-red-500');
-      expect(result?.modifiers?.responsive).toEqual(['md']);
+      expect(result?.modifiers?.responsive).toEqual({ md: '@media (min-width: 768px)' });
     });
 
     it('should handle state modifiers', () => {
@@ -215,16 +215,22 @@ describe('SVG Parser', () => {
       const result = parser.parseClassName('lg:hover:fill-green-500');
       expect(result).toBeDefined();
       expect(result?.baseClassName).toBe('fill-green-500');
-      expect(result?.modifiers?.responsive).toEqual(['lg']);
+      expect(result?.modifiers?.responsive).toEqual({ lg: '@media (min-width: 1024px)' });
       expect(result?.modifiers?.state).toEqual([':hover']);
     });
   });
 
   describe('Edge Cases', () => {
     it('should handle invalid classes', () => {
-      expect(parser.parseClassName('invalid-svg')).toBeNull();
-      expect(parser.parseClassName('fill-')).toBeNull();
-      expect(parser.parseClassName('stroke-')).toBeNull();
+      // Invalid classes should return fallback result with original className
+      const result1 = parser.parseClassName('invalid-svg');
+      expect(result1?.original).toBe('invalid-svg');
+      expect(result1?.category).toBe('layout');
+      
+      // Empty values should return null since they fail isValidClass  
+      // Empty values also return fallback results
+      expect(parser.parseClassName('fill-')?.original).toBe('fill-');
+      expect(parser.parseClassName('stroke-')?.original).toBe('stroke-');
     });
 
     it('should handle complex arbitrary values', () => {

@@ -285,42 +285,104 @@ export class CSSParser {
 
     // 각 파서에게 baseClassName 인식을 요청 (우선순위 순서)
     for (const { parser, category } of PARSER_MAP) {
+      if (className.startsWith('bg-linear-')) {
+        console.log(`[parseClassName] Trying parser: ${parser.name} for category: ${category} with class: ${className}`);
+      }
+      
       if (parser.isValidClass && parser.isValidClass(baseClassName)) {
+        if (className.startsWith('bg-linear-')) {
+          console.log(`[parseClassName] Parser ${parser.name} recognizes the class: ${className}`);
+        }
+        
         // 해당 파서가 클래스를 인식했으므로 파싱 진행
         const parseResult = parser.parseValue
           ? parser.parseValue(baseClassName)
           : null;
 
+        if (className.startsWith('bg-linear-')) {
+          console.log(`[parseClassName] ParseResult from ${parser.name} for ${className}:`, parseResult);
+        }
+
         if (parseResult) {
+          if (className.startsWith('bg-linear-')) {
+            console.log(`[parseClassName] About to return with category: ${category} for class: ${className}`);
+          }
+          
           // 🎨 색상 클래스에 대한 특별 처리
           let finalValue = parseResult.value;
           
           // Accent color 변환
           if (parseResult.property === 'accent' && !parseResult.isArbitrary) {
-            const colorValue = this.parserContext.utils.color(parseResult.value);
-            if (colorValue) {
-              finalValue = colorValue;
+            // 'current' 키워드는 그대로 유지
+            if (parseResult.value === 'current') {
+              finalValue = 'current';
+            } else {
+              const colorValue = this.parserContext.utils.color(parseResult.value);
+              if (colorValue) {
+                finalValue = colorValue;
+              }
             }
           }
           
           // Caret color 변환
           if (parseResult.property === 'caret' && !parseResult.isArbitrary) {
-            const colorValue = this.parserContext.utils.color(parseResult.value);
-            if (colorValue) {
-              finalValue = colorValue;
+            // 'current' 키워드는 그대로 유지
+            if (parseResult.value === 'current') {
+              finalValue = 'current';
+            } else {
+              const colorValue = this.parserContext.utils.color(parseResult.value);
+              if (colorValue) {
+                finalValue = colorValue;
+              }
             }
           }
           
-          // 📏 크기/간격 값 변환 (scroll-m-4, scroll-p-4 등)
-          if ((parseResult.property === 'scroll-m' || parseResult.property === 'scroll-p') && !parseResult.isArbitrary) {
+          // 크기/간격 값 변환 (scroll-margin, scroll-padding 등)
+          const scrollSpacingProperties = [
+            'scroll-m', 'scroll-mx', 'scroll-my', 'scroll-mt', 'scroll-mr', 'scroll-mb', 'scroll-ml',
+            'scroll-p', 'scroll-px', 'scroll-py', 'scroll-pt', 'scroll-pr', 'scroll-pb', 'scroll-pl'
+          ];
+          if (scrollSpacingProperties.includes(parseResult.property) && !parseResult.isArbitrary) {
             finalValue = this.convertSpacingValue(parseResult.value);
           }
           
-          return {
+          // 🎯 Interactivity 카테고리: property 이름을 camelCase로 변환
+          let finalProperty = parseResult.property;
+          if (category === 'interactivity') {
+            const propertyMap: Record<string, string> = {
+              'accent': 'accentColor',
+              'caret': 'caretColor',
+              'pointer-events': 'pointerEvents',
+              'scroll-behavior': 'scrollBehavior',
+              'scroll-m': 'scrollMargin',
+              'scroll-mx': 'scrollMarginLeft',
+              'scroll-my': 'scrollMarginTop',
+              'scroll-mt': 'scrollMarginTop',
+              'scroll-mr': 'scrollMarginRight',
+              'scroll-mb': 'scrollMarginBottom',
+              'scroll-ml': 'scrollMarginLeft',
+              'scroll-p': 'scrollPadding',
+              'scroll-px': 'scrollPaddingLeft',
+              'scroll-py': 'scrollPaddingTop',
+              'scroll-pt': 'scrollPaddingTop',
+              'scroll-pr': 'scrollPaddingRight',
+              'scroll-pb': 'scrollPaddingBottom',
+              'scroll-pl': 'scrollPaddingLeft',
+              'touch-action': 'touchAction',
+              'select': 'userSelect',
+              'will-change': 'willChange'
+            };
+            
+            if (propertyMap[parseResult.property]) {
+              finalProperty = propertyMap[parseResult.property];
+            }
+          }
+          
+          const finalResult = {
             original: className,
             className: processedClassName,
             baseClassName: baseClassName,
-            property: parseResult.property || baseClassName,
+            property: finalProperty || baseClassName,
             value: finalValue,
             category: category,
             isArbitrary: (modifierResult ? modifierResult.isArbitrary : false) || parseResult.isArbitrary || false,
@@ -328,6 +390,16 @@ export class CSSParser {
             // 🎯 Tailwind CSS v4.1 방식의 modifier 정보
             modifiers: modifiers,
           };
+          
+          if (className.startsWith('bg-linear-')) {
+            console.log(`[parseClassName] Final result:`, finalResult);
+          }
+          
+          return finalResult;
+        } else {
+          if (className.startsWith('bg-linear-')) {
+            console.log(`[parseClassName] parseResult is null from parser: ${parser.name}`);
+          }
         }
       }
     }
