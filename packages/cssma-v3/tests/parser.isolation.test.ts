@@ -40,8 +40,8 @@ describe('CSSParser - Isolation', () => {
   it('상태 수정자', () => {
     const styles = parser.parse('hover:isolate');
     expect(styles.states).toBeDefined();
-    expect(styles.states!['hover']).toBeDefined();
-    expect(styles.states!['hover'].layout).toBeDefined();
-    expect(styles.states!['hover'].layout!.isolation).toBe('isolate');
+    expect(styles.states![':hover']).toBeDefined();
+    expect(styles.states![':hover'].layout).toBeDefined();
+    expect(styles.states![':hover'].layout!.isolation).toBe('isolate');
   });
 });

@@ -79,7 +79,7 @@ export class LayoutParser {
       const isCssVar = value.startsWith('(') && value.endsWith(')');
       return {
         property: 'aspect',
-        value: isArbitrary ? value.slice(1, -1) : value,
+        value: (isArbitrary || isCssVar) ? value.slice(1, -1) : value,
         isArbitrary: isArbitrary || isCssVar
       };
     }
@@ -91,7 +91,7 @@ export class LayoutParser {
       const isCssVar = value.startsWith('(') && value.endsWith(')');
       return {
         property: 'columns',
-        value: isArbitrary ? value.slice(1, -1) : value,
+        value: (isArbitrary || isCssVar) ? value.slice(1, -1) : value,
         isArbitrary: isArbitrary || isCssVar
       };
     }
@@ -381,20 +381,12 @@ export class LayoutParser {
    */
   private static convertAspectRatio(value: string, isArbitrary: boolean, context: ParserContext): string {
     if (isArbitrary) {
-      return value; // 임의값은 그대로 반환
+      if (value.startsWith('--')) {
+        return `var(${value})`;
+      }
+      return value.replace(/_/g, ' ').replace(/-/g, ' ');
     }
-    
-    if (value === 'auto') return 'auto';
-    if (value === 'square') return '1/1';
-    if (value === 'video') return '16/9';
-    
-    // CSS 변수 처리
-    if (value.startsWith('(') && value.endsWith(')')) {
-      return `var${value}`;
-    }
-    
-    // 분수 형태 처리
-    return value;
+    return context.preset.theme.aspectRatio?.[value] ?? value;
   }
 
   /**
@@ -402,7 +394,16 @@ export class LayoutParser {
    */
   private static convertColumnsValue(value: string, isArbitrary: boolean, context: ParserContext): string | number {
     if (isArbitrary) {
-      return value;
+      if (value.startsWith('--')) {
+        return `var(${value})`;
+      }
+      return value.replace(/_/g, ' ');
+    }
+    
+    const presetValue = context.preset.theme.columns?.[value];
+    
+    if (presetValue) {
+      return presetValue;
     }
     
     if (value === 'auto') return 'auto';

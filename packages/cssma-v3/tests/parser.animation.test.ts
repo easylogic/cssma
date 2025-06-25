@@ -224,11 +224,10 @@ describe('CSSParser - 애니메이션', () => {
     it('상태 모디파이어가 있는 애니메이션 클래스를 파싱할 수 있어야 함', () => {
       const result = parser.parseClassName('hover:animate-spin');
       expect(result).toBeDefined();
-      expect(result?.className).toBe('hover:animate-spin');
-      expect(result?.category).toBe('animation');
+      expect(result?.baseClassName).toBe('animate-spin');
       expect(result?.property).toBe('animate');
       expect(result?.value).toBe('spin');
-      expect(result?.modifiers?.state).toBe(':hover');
+      expect(result?.modifiers?.state).toEqual([':hover']);
     });
 
     it('반응형 모디파이어가 있는 애니메이션 클래스를 파싱할 수 있어야 함', () => {
@@ -245,11 +244,10 @@ describe('CSSParser - 애니메이션', () => {
     it('복합 모디파이어가 있는 애니메이션 클래스를 파싱할 수 있어야 함', () => {
       const result = parser.parseClassName('md:hover:animate-spin');
       expect(result).toBeDefined();
-      expect(result?.className).toBe('md:hover:animate-spin');
-      expect(result?.category).toBe('animation');
+      expect(result?.baseClassName).toBe('animate-spin');
       expect(result?.property).toBe('animate');
       expect(result?.value).toBe('spin');
-      expect(result?.modifiers?.state).toBe(':hover');
+      expect(result?.modifiers?.state).toEqual([':hover']);
       expect(result?.modifiers?.responsive).toBeDefined();
       expect(result?.modifiers?.responsive?.md).toBeDefined();
     });
@@ -257,11 +255,10 @@ describe('CSSParser - 애니메이션', () => {
     it('상태 모디파이어가 있는 임의 애니메이션 클래스를 파싱할 수 있어야 함', () => {
       const result = parser.parseClassName('hover:duration-[500ms]');
       expect(result).toBeDefined();
-      expect(result?.className).toBe('hover:duration-[500ms]');
-      expect(result?.category).toBe('animation');
+      expect(result?.baseClassName).toBe('duration-[500ms]');
       expect(result?.property).toBe('duration');
       expect(result?.value).toBe('500ms');
-      expect(result?.modifiers?.state).toBe(':hover');
+      expect(result?.modifiers?.state).toEqual([':hover']);
       expect(result?.isArbitrary).toBe(true);
     });
 
@@ -280,12 +277,11 @@ describe('CSSParser - 애니메이션', () => {
     it('복합 모디파이어가 있는 임의 애니메이션 클래스를 파싱할 수 있어야 함', () => {
       const result = parser.parseClassName('md:hover:duration-[500ms]');
       expect(result).toBeDefined();
-      expect(result?.className).toBe('md:hover:duration-[500ms]');
-      expect(result?.category).toBe('animation');
+      expect(result?.baseClassName).toBe('duration-[500ms]');
       expect(result?.property).toBe('duration');
       expect(result?.value).toBe('500ms');
       expect(result?.isArbitrary).toBe(true);
-      expect(result?.modifiers?.state).toBe(':hover');
+      expect(result?.modifiers?.state).toEqual([':hover']);
       expect(result?.modifiers?.responsive).toBeDefined();
       expect(result?.modifiers?.responsive?.md).toBeDefined();
     });

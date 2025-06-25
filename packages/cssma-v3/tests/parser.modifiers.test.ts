@@ -206,7 +206,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
       const styles = parser.parse(className);
 
       expect(styles.breakpoints?.['md']).toBeDefined();
-      expect(styles.breakpoints?.['md']?.colors?.background).toBeDefined();
+      expect(styles.breakpoints?.['md']?.backgrounds?.backgroundColor).toBeDefined();
     });
 
     it('should apply state styles correctly', () => {
@@ -214,7 +214,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
       const styles = parser.parse(className);
 
       expect(styles.states?.[':hover']).toBeDefined();
-      expect(styles.states?.[':hover']?.colors?.text).toBeDefined();
+      expect(styles.states?.[':hover']?.typography?.color).toBeDefined();
     });
 
     it('should apply complex modifier chains correctly', () => {
@@ -224,7 +224,7 @@ describe('Tailwind CSS Modifier System Tests', () => {
       expect(styles.breakpoints?.['md']).toBeDefined();
       // The hover state should be nested within the md breakpoint
       expect(styles.breakpoints?.['md']?.states?.[':hover']).toBeDefined();
-      expect(styles.breakpoints?.['md']?.states?.[':hover']?.colors?.background).toBeDefined();
+      expect(styles.breakpoints?.['md']?.states?.[':hover']?.backgrounds?.backgroundColor).toBeDefined();
     });
   });
 

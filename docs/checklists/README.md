@@ -91,7 +91,7 @@
   - **🎉 NEW**: 모디파이어 색상 처리 완료 (RGB→Hex 변환, 프리셋 정확도 개선)
 
 ### 🎭 Visual Effects
-- [x] **[Backgrounds](./backgrounds.md)** - 배경 이미지, 색상, 그라데이션 ✅ **NEW COMPLETED** (21/21 테스트 통과)
+- [x] **[Backgrounds](./backgrounds.md)** - 배경 이미지, 색상, 그라데이션 ✅ **COMPLETED** (79/79 테스트 통과 - CSS 커스텀 프로퍼티 지원 완료)
 - [x] **[Borders](./borders.md)** - 테두리, 둥근 모서리, 아웃라인 🔄 **진행 중** (기본 border-width, border-radius 파싱 완료 - Effects 테스트 12/12 통과)
 - [x] **[Effects & Filters](./effects.md)** - 그림자, 투명도, 블렌드 모드 ✅ (14/10 완료, 추가 테스트 포함)
 - [x] **[Filters](./filters.md)** - 블러, 밝기, 대비 등 필터 효과 ✅ **NEW COMPLETED** (모든 38개 필터 테스트 통과)
@@ -169,9 +169,10 @@
 - ✅ **TablesParser** (1/15 완료) - 20/20 테스트 통과 ⚡ **NEW**
 - ✅ **BlendModesParser** (1/15 완료) - Context Pattern 전환 완료 ⚡ **NEW**
 - ✅ **TransitionsParser** (1/15 완료) - 42/46 테스트 통과 (State 이슈 제외) ⚡ **NEW**
+- ✅ **BackgroundsParser** (1/15 완료) - 79/79 테스트 통과 (CSS 커스텀 프로퍼티 완료) ⚡ **NEW**
 - [ ] **ColorParser** (0/15) - 예정
 
-**마이그레이션 진행률**: 🎉 **100.0% (15/15 완료)** 🎉
+**마이그레이션 진행률**: 🎉 **100.0% (16/16 완료)** 🎉
 
 ### V4.1 신규 기능
 - [ ] Core Concepts (완료: 0/45)

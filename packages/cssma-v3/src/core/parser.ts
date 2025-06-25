@@ -61,6 +61,10 @@ const PARSER_MAP: ParserInfo[] = [
   // 테이블 관련 (border-collapse가 borders와 겹치므로 우선 처리)
   { parser: TablesParser, category: "tables" },
 
+  // 애니메이션 관련 (transition이 layout과 겹치므로 우선 처리)
+  // SVG보다 먼저 처리하여 'fill-forwards' 같은 클래스를 올바르게 파싱
+  { parser: AnimationParser, category: "animation" },
+
   // SVG 관련 (fill-* 클래스가 animation과 겹치므로 우선 처리)
   { parser: SVGParser, category: "svg" },
 
@@ -68,7 +72,6 @@ const PARSER_MAP: ParserInfo[] = [
   { parser: InteractivityParser, category: "interactivity" },
 
   // 애니메이션 관련 (transition이 layout과 겹치므로 우선 처리)
-  { parser: AnimationParser, category: "animation" },
   { parser: TransitionsParser, category: "transitions" },
   { parser: TransformParser, category: "transform" },
 
@@ -87,6 +90,255 @@ const PARSER_MAP: ParserInfo[] = [
 
   // ColorParser 제거: 각 개별 파서가 자신의 색상을 처리
 ];
+
+const createEmptyStyles = (): Partial<ParsedStyles> => ({
+  spacing: { padding: {}, margin: {}, gap: {} },
+  colors: {},
+  typography: {},
+  layout: {},
+  effects: {},
+  animation: {},
+  position: {},
+  transform: {},
+  sizing: {},
+  flexboxGrid: {},
+  filters: {},
+  interactivity: {},
+  tables: {},
+  svg: {},
+  transitions: {},
+  backgrounds: {},
+  borders: {},
+  overflow: {},
+  accessibility: {},
+  blendModes: {},
+  mask: {},
+  states: {},
+  pseudoElements: {},
+  breakpoints: {},
+  containers: {},
+  motion: {},
+  attributes: {},
+  complexSelectors: {},
+  groupStates: {},
+  peerStates: {},
+  contrast: {},
+  colorScheme: {},
+  orientation: {},
+  print: {},
+  scripting: {},
+  pointer: {},
+  noscript: {},
+  userValidation: {},
+  invertedColors: {},
+  detailsContent: {},
+  starting: {},
+  nthSelectors: {},
+});
+
+const applyStyleByCategory = (
+  parsedClass: ParsedClass,
+  styles: Partial<ParsedStyles>,
+  context: ParserContext
+): void => {
+  const category = parsedClass.category;
+
+  switch (category) {
+    case "spacing":
+      SpacingParser.applySpacingStyle(parsedClass, styles, context);
+      break;
+    case "colors":
+      ColorParser.applyColorStyle(parsedClass, styles, context);
+      break;
+    case "typography":
+      TypographyParser.applyTypographyStyle(parsedClass, styles, context);
+      break;
+    case "layout":
+      LayoutParser.applyLayoutStyle(parsedClass, styles, context);
+      break;
+    case "effects":
+      EffectsParser.applyEffectStyle(parsedClass, styles, context);
+      break;
+    case "animation":
+      AnimationParser.applyAnimationStyle(parsedClass, styles, context);
+      break;
+    case "position":
+      PositionParser.applyPositionStyle(parsedClass, styles, context);
+      break;
+    case "transform":
+      TransformParser.applyTransformStyle(parsedClass, styles, context);
+      break;
+    case "sizing":
+      SizingParser.applySizingStyle(parsedClass, styles, context);
+      break;
+    case "flexbox-grid":
+      FlexboxGridParser.applyFlexboxGridStyle(
+        parsedClass,
+        styles,
+        context
+      );
+      break;
+    case "interactivity":
+      InteractivityParser.applyInteractivityStyle(
+        parsedClass,
+        styles,
+        context
+      );
+      break;
+    case "tables":
+      TablesParser.applyTablesStyle(parsedClass, styles, context);
+      break;
+    case "svg":
+      SVGParser.applySVGStyle(parsedClass, styles, context);
+      break;
+    case "transitions":
+      TransitionsParser.applyTransitionsStyle(
+        parsedClass,
+        styles,
+        context
+      );
+      break;
+    case "backgrounds":
+      BackgroundsParser.applyBackgroundsStyle(
+        parsedClass,
+        styles,
+        context
+      );
+      break;
+    case "borders":
+      BordersParser.applyBordersStyle(parsedClass, styles, context);
+      break;
+    case "overflow":
+      OverflowParser.applyOverflowStyle(parsedClass, styles, context);
+      break;
+    case "accessibility":
+      AccessibilityParser.applyAccessibilityStyle(
+        parsedClass,
+        styles,
+        context
+      );
+      break;
+    case "blend-modes":
+      BlendModesParser.applyBlendModesStyle(parsedClass, styles, context);
+      break;
+    case "mask":
+      MaskParser.applyMaskStyle(parsedClass, styles, context);
+      break;
+  }
+};
+
+const getOrCreateStateStyles = (
+  styles: Partial<ParsedStyles>,
+  modifiers: ParsedClass['modifiers']
+): Partial<ParsedStyles> => {
+  let currentStyles = styles;
+  const createEmpty = (): Partial<ParsedStyles> => ({
+    spacing: { padding: {}, margin: {}, gap: {} },
+    colors: {},
+    typography: {},
+    layout: {},
+    effects: {},
+    animation: {},
+    position: {},
+    transform: {},
+    sizing: {},
+    flexboxGrid: {},
+    filters: {},
+    interactivity: {},
+    tables: {},
+    svg: {},
+    transitions: {},
+    backgrounds: {},
+    borders: {},
+    overflow: {},
+    accessibility: {},
+    blendModes: {},
+    mask: {},
+    states: {},
+    pseudoElements: {},
+    breakpoints: {},
+    containers: {},
+    motion: {},
+    attributes: {},
+    complexSelectors: {},
+    groupStates: {},
+    peerStates: {},
+    contrast: {},
+    colorScheme: {},
+    orientation: {},
+    print: {},
+    scripting: {},
+    pointer: {},
+    noscript: {},
+    userValidation: {},
+    invertedColors: {},
+    detailsContent: {},
+    starting: {},
+    nthSelectors: {},
+  });
+
+  if (modifiers.responsive) {
+    const key = Object.keys(modifiers.responsive)[0];
+    if (key) {
+      if (!currentStyles.breakpoints) currentStyles.breakpoints = {};
+      if (!currentStyles.breakpoints[key]) currentStyles.breakpoints[key] = createEmpty();
+      currentStyles = currentStyles.breakpoints[key];
+    }
+  }
+
+  if (modifiers.container) {
+    const key = Object.keys(modifiers.container)[0];
+    if(key) {
+      if (!currentStyles.containers) currentStyles.containers = {};
+      if (!currentStyles.containers[key]) currentStyles.containers[key] = createEmpty();
+      currentStyles = currentStyles.containers[key];
+    }
+  }
+  
+  if (modifiers.motion) {
+    if (!currentStyles.motion) currentStyles.motion = {};
+    if (!currentStyles.motion[modifiers.motion]) currentStyles.motion[modifiers.motion] = createEmpty();
+    currentStyles = currentStyles.motion[modifiers.motion];
+  }
+
+  if (modifiers.state && modifiers.state.length > 0) {
+    const stateKey = modifiers.state.join(' and ');
+    if (!currentStyles.states) currentStyles.states = {};
+    if (!currentStyles.states[stateKey]) currentStyles.states[stateKey] = createEmpty();
+    currentStyles = currentStyles.states[stateKey];
+  }
+  
+  if (modifiers.pseudoElement) {
+    if (!currentStyles.pseudoElements) currentStyles.pseudoElements = {};
+    if (!currentStyles.pseudoElements[modifiers.pseudoElement]) currentStyles.pseudoElements[modifiers.pseudoElement] = createEmpty();
+    currentStyles = currentStyles.pseudoElements[modifiers.pseudoElement];
+  }
+
+  return currentStyles;
+};
+
+const applyParsedClassToStyles = (
+  parsedClass: ParsedClass,
+  styles: Partial<ParsedStyles>,
+  context: ParserContext
+): void => {
+  const hasModifiers = Object.values(parsedClass.modifiers).some(
+    (value) => (Array.isArray(value) ? value.length > 0 : value && Object.keys(value).length > 0) || (typeof value === 'string' && value)
+  );
+  
+  if (hasModifiers) {
+    const targetStyles = getOrCreateStateStyles(styles, parsedClass.modifiers);
+
+    const newParsedClass: ParsedClass = {
+      ...parsedClass,
+      modifiers: {}, // Remove modifiers for the recursive call
+    };
+    
+    applyParsedClassToStyles(newParsedClass, targetStyles, context);
+  } else {
+    applyStyleByCategory(parsedClass, styles, context);
+  }
+};
 
 /**
  * CSS 클래스 파서
@@ -231,7 +483,7 @@ export class CSSParser {
     for (const token of tokens) {
       const parsedClass = this.parseClassName(token);
       if (parsedClass) {
-        this.applyParsedClassToStyles(parsedClass, result);
+        applyParsedClassToStyles(parsedClass, result, this.parserContext);
       }
     }
 
@@ -414,295 +666,6 @@ export class CSSParser {
     }
 
     return undefined;
-  }
-
-  /**
-   * 파싱된 클래스를 스타일에 적용합니다.
-   * 
-   * 💡 Tailwind CSS v4.1 modifier 처리 방식:
-   * 
-   * 1. 단일 modifier 체인: "md:hover:bg-blue-500" → responsive + state
-   * 2. 우선순위: responsive → container → motion → state → pseudo-elements → attributes
-   * 3. 새로운 v4.1 modifiers: noscript, user-valid, inverted-colors, etc.
-   * 
-   * @param parsedClass 파싱된 클래스
-   * @param styles 스타일 객체
-   */
-  private applyParsedClassToStyles(
-    parsedClass: ParsedClass,
-    styles: ParsedStyles
-  ): void {
-    const { modifiers } = parsedClass;
-
-    // Modifier가 없는 경우: 기본 스타일 적용
-    if (!modifiers || Object.keys(modifiers).length === 0) {
-      this.applyStyleByCategory(parsedClass, styles);
-      return;
-    }
-
-    // Responsive modifier 처리 (최우선)
-    if (modifiers.responsive) {
-      // responsive는 Record<string, string> 형태이므로 첫 번째 키를 사용
-      const breakpointKeys = Object.keys(modifiers.responsive);
-      if (breakpointKeys.length > 0) {
-        const breakpointKey = breakpointKeys[0];
-
-        if (!styles.breakpoints) {
-          styles.breakpoints = {};
-        }
-
-        if (!styles.breakpoints[breakpointKey]) {
-          styles.breakpoints[breakpointKey] = this.createEmptyStylesStructure();
-        }
-
-        // 추가 modifier들을 재귀적으로 처리
-        const remainingModifiers = { ...modifiers };
-        delete remainingModifiers.responsive;
-        
-        if (Object.keys(remainingModifiers).length > 0) {
-          const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
-          this.applyParsedClassToStyles(nestedClass, styles.breakpoints[breakpointKey] as ParsedStyles);
-        } else {
-          this.applyStyleByCategory(parsedClass, styles.breakpoints[breakpointKey] as Partial<ParsedStyles>);
-        }
-      }
-      return;
-    }
-
-    // Container query 처리
-    if (modifiers.container) {
-      // container는 Record<string, string> 형태이므로 첫 번째 키를 사용
-      const containerKeys = Object.keys(modifiers.container);
-      if (containerKeys.length > 0) {
-        const containerKey = containerKeys[0];
-
-        if (!styles.containers) {
-          styles.containers = {};
-        }
-
-        if (!styles.containers[containerKey]) {
-          styles.containers[containerKey] = this.createEmptyStylesStructure();
-        }
-
-        // 추가 modifier들을 재귀적으로 처리
-        const remainingModifiers = { ...modifiers };
-        delete remainingModifiers.container;
-        
-        if (Object.keys(remainingModifiers).length > 0) {
-          const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
-          this.applyParsedClassToStyles(nestedClass, styles.containers[containerKey] as ParsedStyles);
-        } else {
-          this.applyStyleByCategory(parsedClass, styles.containers[containerKey] as Partial<ParsedStyles>);
-        }
-      }
-      return;
-    }
-
-    // Motion modifier 처리
-    if (modifiers.motion) {
-      const motionKey = modifiers.motion;
-
-      if (!styles.motion) {
-        styles.motion = {};
-      }
-
-      if (!styles.motion[motionKey]) {
-        styles.motion[motionKey] = this.createEmptyStylesStructure();
-      }
-
-      // 추가 modifier들을 재귀적으로 처리
-      const remainingModifiers = { ...modifiers };
-      delete remainingModifiers.motion;
-      
-      if (Object.keys(remainingModifiers).length > 0) {
-        const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
-        this.applyParsedClassToStyles(nestedClass, styles.motion[motionKey] as ParsedStyles);
-      } else {
-        this.applyStyleByCategory(parsedClass, styles.motion[motionKey] as Partial<ParsedStyles>);
-      }
-      return;
-    }
-
-    // State modifier 처리 (v4.1: 배열 지원)
-    if (modifiers.state && modifiers.state.length > 0) {
-      // state가 string이면 배열로 변환
-      const stateArr = Array.isArray(modifiers.state) ? modifiers.state : [modifiers.state];
-      // 여러 상태를 조합하여 복합 키 생성 (예: "@media (any-pointer: fine) and :hover")
-      const stateKey = stateArr.join(' and ');
-      
-      if (!styles.states) {
-        styles.states = {} as Record<string, Partial<ParsedStyles>>;
-      }
-      
-      if (!styles.states[stateKey]) {
-        styles.states[stateKey] = this.createEmptyStylesStructure();
-      }
-      
-      // 추가 modifier들을 재귀적으로 처리
-      const remainingModifiers = { ...modifiers };
-      delete remainingModifiers.state;
-      
-      if (Object.keys(remainingModifiers).length > 0) {
-        const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
-        this.applyParsedClassToStyles(nestedClass, styles.states[stateKey] as ParsedStyles);
-      } else {
-        this.applyStyleByCategory(parsedClass, styles.states[stateKey] as Partial<ParsedStyles>);
-      }
-      return;
-    }
-
-    // Pseudo-element modifier 처리
-    if (modifiers.pseudoElement) {
-      const pseudoKey = modifiers.pseudoElement;
-      
-      if (!styles.pseudoElements) {
-        styles.pseudoElements = {};
-      }
-      
-      if (!styles.pseudoElements[pseudoKey]) {
-        styles.pseudoElements[pseudoKey] = this.createEmptyStylesStructure();
-      }
-      
-      // 추가 modifier들을 재귀적으로 처리
-      const remainingModifiers = { ...modifiers };
-      delete remainingModifiers.pseudoElement;
-      
-      if (Object.keys(remainingModifiers).length > 0) {
-        const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
-        this.applyParsedClassToStyles(nestedClass, styles.pseudoElements[pseudoKey] as ParsedStyles);
-      } else {
-        this.applyStyleByCategory(parsedClass, styles.pseudoElements[pseudoKey] as Partial<ParsedStyles>);
-      }
-      return;
-    }
-
-    // Attribute modifier 처리 (aria, data 등)
-    const attributeModifiers = ['aria', 'data', 'not', 'starting', 'pointer', 'noscript', 'userValid', 'invertedColors', 'detailsContent'] as const;
-    
-    for (const attrType of attributeModifiers) {
-      const modifierValue = (modifiers as any)[attrType];
-      if (modifierValue) {
-        const attrKey = `${attrType}:${modifierValue}`;
-        
-        if (!styles.attributes) {
-          styles.attributes = {};
-        }
-        
-        if (!styles.attributes[attrKey]) {
-          styles.attributes[attrKey] = this.createEmptyStylesStructure();
-        }
-        
-        // 추가 modifier들을 재귀적으로 처리
-        const remainingModifiers = { ...modifiers };
-        delete (remainingModifiers as any)[attrType];
-        
-        if (Object.keys(remainingModifiers).length > 0) {
-          const nestedClass = { ...parsedClass, modifiers: remainingModifiers };
-          this.applyParsedClassToStyles(nestedClass, styles.attributes[attrKey] as ParsedStyles);
-        } else {
-          this.applyStyleByCategory(parsedClass, styles.attributes[attrKey] as Partial<ParsedStyles>);
-        }
-        return;
-      }
-    }
-
-    // 모든 modifier 처리가 완료된 경우: 기본 스타일 적용
-    this.applyStyleByCategory(parsedClass, styles);
-  }
-
-  /**
-   * 스타일 카테고리에 따라 스타일을 적용합니다.
-   * @param parsedClass 파싱된 클래스
-   * @param styles 스타일 객체
-   */
-  private applyStyleByCategory(
-    parsedClass: ParsedClass,
-    styles: Partial<ParsedStyles>
-  ): void {
-    const { category } = parsedClass;
-
-    switch (category) {
-      case "spacing":
-        SpacingParser.applySpacingStyle(parsedClass, styles, this.parserContext);
-        break;
-      case "colors":
-        ColorParser.applyColorStyle(parsedClass, styles, this.parserContext);
-        break;
-      case "typography":
-        TypographyParser.applyTypographyStyle(parsedClass, styles, this.parserContext);
-        break;
-      case "layout":
-        LayoutParser.applyLayoutStyle(parsedClass, styles, this.parserContext);
-        break;
-      case "effects":
-        EffectsParser.applyEffectStyle(parsedClass, styles, this.parserContext);
-        break;
-      case "animation":
-        AnimationParser.applyAnimationStyle(parsedClass, styles, this.parserContext);
-        break;
-      case "position":
-        PositionParser.applyPositionStyle(parsedClass, styles, this.parserContext);
-        break;
-      case "transform":
-        TransformParser.applyTransformStyle(parsedClass, styles, this.parserContext);
-        break;
-      case "sizing":
-        SizingParser.applySizingStyle(parsedClass, styles, this.parserContext);
-        break;
-      case "flexbox-grid":
-        FlexboxGridParser.applyFlexboxGridStyle(
-          parsedClass,
-          styles,
-          this.parserContext
-        );
-        break;
-      case "interactivity":
-        InteractivityParser.applyInteractivityStyle(
-          parsedClass,
-          styles,
-          this.parserContext
-        );
-        break;
-      case "tables":
-        TablesParser.applyTablesStyle(parsedClass, styles, this.parserContext);
-        break;
-      case "svg":
-        SVGParser.applySVGStyle(parsedClass, styles, this.parserContext);
-        break;
-      case "transitions":
-        TransitionsParser.applyTransitionsStyle(
-          parsedClass,
-          styles,
-          this.parserContext
-        );
-        break;
-      case "backgrounds":
-        BackgroundsParser.applyBackgroundsStyle(
-          parsedClass,
-          styles,
-          this.parserContext
-        );
-        break;
-      case "borders":
-        BordersParser.applyBordersStyle(parsedClass, styles, this.parserContext);
-        break;
-      case "overflow":
-        OverflowParser.applyOverflowStyle(parsedClass, styles, this.parserContext);
-        break;
-      case "accessibility":
-        AccessibilityParser.applyAccessibilityStyle(
-          parsedClass,
-          styles,
-          this.parserContext
-        );
-        break;
-      case "blend-modes":
-        BlendModesParser.applyBlendModesStyle(parsedClass, styles, this.parserContext);
-        break;
-      case "mask":
-        MaskParser.applyMaskStyle(parsedClass, styles, this.parserContext);
-        break;
-    }
   }
 
   /**
