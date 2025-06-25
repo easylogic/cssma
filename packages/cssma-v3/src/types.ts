@@ -145,7 +145,7 @@ export interface ColorPalette {
   fuchsia: Record<string, Color | RGBColor>;
   pink: Record<string, Color | RGBColor>;
   rose: Record<string, Color | RGBColor>;
-  [key: string]: Record<string, Color | RGBColor> | undefined;
+  [key: string]: string | Color | RGBColor | Record<string, Color | RGBColor> | undefined;
 }
 
 /**
@@ -1186,44 +1186,12 @@ export interface ParserContext {
   preset: DesignPreset;
   utils: {
     color: (name: string) => string;
+    isValidColor: (name: string) => boolean;
+    isColorName: (name: string) => boolean;
     unit: (name: string) => string;
     spacing: (name: string) => string;
     typography: (name: string) => string;
   };
-}
-
-/**
- * 유틸리티 클래스들의 인터페이스 정의
- */
-export interface ColorUtils {
-  getColorValue(colorName: string, preset: DesignPreset, config: Config): string;
-  oklchToRgb(l: number, c: number, h: number): { r: number; g: number; b: number };
-  oklchToHex(l: number, c: number, h: number): string;
-  hexToOklch(hex: string): OKLCHColor;
-  parseColorValue(value: string): string;
-  generateCSSVariables(colors: ColorPalette): Record<string, string>;
-}
-
-export interface UnitUtils {
-  pxToRem(px: number): string;
-  remToPx(rem: string): number;
-  parseSpacing(value: string, preset: DesignPreset): string;
-  parseFontSize(value: string | number, preset: DesignPreset): string;
-  parseLineHeight(value: string | number): string | number;
-  convertArbitraryValue(value: string, unit?: 'px' | 'rem' | 'em'): string;
-}
-
-export interface SpacingUtils {
-  getSpacingValue(key: string, preset: DesignPreset): string;
-  parseSpacingDirection(property: string, value: string): Record<string, string>;
-  convertSpacingToCSS(spacing: any): Record<string, string>;
-}
-
-export interface TypographyUtils {
-  getFontSize(size: string, preset: DesignPreset): { fontSize: string; lineHeight?: number };
-  getFontFamily(family: string, preset: DesignPreset): string;
-  parseTextTransform(value: string): string;
-  parseTextAlign(value: string): string;
 }
 
 /**
