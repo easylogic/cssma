@@ -879,7 +879,7 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
   });
 
   describe('12. 엣지 케이스 및 오류 처리', () => {
-    it.only('잘못된 배경 클래스를 거부해야 함', () => {
+    it('잘못된 배경 클래스를 거부해야 함', () => {
       const invalidClasses = [
         'bg-invalid-color',
         'bg-red-1000',
