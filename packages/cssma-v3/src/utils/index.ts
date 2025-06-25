@@ -30,25 +30,7 @@ export class ColorUtils {
     if (colorName === 'black') return '#000000';
     if (colorName === 'white') return '#ffffff';
 
-    // Tailwind 색상 패턴 파싱 (e.g., blue-500, red-200)
-    const colorMatch = colorName.match(/^(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(\\d{2,3})$/);
-    
-    if (colorMatch && preset?.colors) {
-      const [, colorFamily, shade] = colorMatch;
-      const colorData = preset.colors[colorFamily]?.[shade];
-      
-      if (colorData) {
-        if (typeof colorData === 'string') {
-          return colorData;
-        }
-        // OKLCH 색상 데이터인 경우 변환
-        if (typeof colorData === 'object' && 'l' in colorData) {
-          return this.oklchToHex(colorData.l, colorData.c, colorData.h);
-        }
-      }
-    }
-
-    // 단일 색상명 (blue, red 등)
+    // 단일 색상명 먼저 확인 (하이픈 없는 경우 우선 처리)
     if (preset?.colors?.[colorName]) {
       const colorData = preset.colors[colorName];
       if (typeof colorData === 'string') {
@@ -62,6 +44,29 @@ export class ColorUtils {
         }
         if (typeof defaultShade === 'object' && 'l' in defaultShade) {
           return this.oklchToHex(defaultShade.l, defaultShade.c, defaultShade.h);
+        }
+      }
+    }
+
+    // 하이픈이 포함된 색상명 처리 (preset.colors 키 기반으로 스마트 파싱)
+    if (colorName.includes('-') && preset?.colors) {
+      // preset.colors의 모든 키를 길이순으로 정렬 (긴 것부터)
+      const colorKeys = Object.keys(preset.colors).sort((a, b) => b.length - a.length);
+      
+      for (const colorFamily of colorKeys) {
+        if (colorName.startsWith(colorFamily + '-')) {
+          const shadeValue = colorName.slice(colorFamily.length + 1);
+          const colorData = preset.colors[colorFamily]?.[shadeValue];
+          
+          if (colorData) {
+            if (typeof colorData === 'string') {
+              return colorData;
+            }
+            // OKLCH 색상 데이터인 경우 변환
+            if (typeof colorData === 'object' && 'l' in colorData) {
+              return this.oklchToHex(colorData.l, colorData.c, colorData.h);
+            }
+          }
         }
       }
     }
@@ -475,7 +480,46 @@ export function createParserContext(config: Config, preset: DesignPreset) {
     config,
     preset,
     utils: {
-      color: ColorUtils,
+      /** HEX 또는 CSS 변수 반환 */
+      color: (name: string) => ColorUtils.getColorValue(name, preset, config),
+      /** OKLCH CSS 반환 */
+      oklch: (name: string) => {
+        // blue-500 등에서 OKLCH CSS 반환
+        // 내부적으로 색상 데이터 추출 후 oklchToCSS 사용
+        const colorMatch = name.match(/^(\w+)-(\d{2,3})$/);
+        if (colorMatch && preset.colors) {
+          const [, colorFamily, shade] = colorMatch;
+          const colorData = preset.colors[colorFamily]?.[shade];
+          if (colorData && typeof colorData === 'object' && 'l' in colorData) {
+            return `oklch(${(colorData.l*100).toFixed(1)}% ${(colorData.c).toFixed(3)} ${colorData.h.toFixed(1)})`;
+          }
+        }
+        return name;
+      },
+      /** rgb() CSS 반환 */
+      rgb: (name: string) => {
+        // blue-500 등에서 rgb() CSS 반환
+        const colorMatch = name.match(/^(\w+)-(\d{2,3})$/);
+        if (colorMatch && preset.colors) {
+          const [, colorFamily, shade] = colorMatch;
+          const colorData = preset.colors[colorFamily]?.[shade];
+          if (colorData && typeof colorData === 'object' && 'l' in colorData) {
+            const { r, g, b } = ColorUtils.oklchToRgb(colorData.l, colorData.c, colorData.h);
+            return `rgb(${r}, ${g}, ${b})`;
+          }
+        }
+        return name;
+      },
+      /** 임의값 파싱 (예: [12px]) */
+      parseArbitrary: (input: string) => {
+        // 대괄호 제거 및 단위 반환
+        if (/^\[.*\]$/.test(input)) {
+          return input.slice(1, -1);
+        }
+        return input;
+      },
+      // 기존 유틸리티도 그대로 제공
+      colorUtils: ColorUtils,
       unit: UnitUtils,
       spacing: SpacingUtils,
       typography: TypographyUtils

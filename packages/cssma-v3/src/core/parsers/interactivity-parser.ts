@@ -47,6 +47,7 @@ export class InteractivityParser {
       /^pointer-events-/, // pointer-events-none, pointer-events-auto
       /^resize/, // resize, resize-x, resize-y, resize-none
       /^scroll-/, // scroll-smooth, scroll-auto, scroll-m-4, scroll-p-8
+      /^snap-/, // snap-normal, snap-always, snap-start, snap-end, snap-center, snap-align-none
       /^select-/, // select-none, select-text, select-all, select-auto
       /^touch-/, // touch-auto, touch-none, touch-pan-x, touch-pan-y
       /^user-select-/, // user-select-none, user-select-text, user-select-all
@@ -68,28 +69,83 @@ export class InteractivityParser {
       return null;
     }
 
-    // Simple prefix patterns
+    // Accent color patterns
+    if (className.startsWith('accent-')) {
+      const valueStr = className.substring(7); // Remove 'accent-'
+      
+      // Arbitrary value [...]
+      if (valueStr.startsWith('[') && valueStr.endsWith(']')) {
+        const value = valueStr.slice(1, -1);
+        return {
+          property: 'accent',
+          value,
+          isArbitrary: true
+        };
+      }
+      
+      return {
+        property: 'accent',
+        value: valueStr,
+        isArbitrary: false
+      };
+    }
+
+    // Caret color patterns
+    if (className.startsWith('caret-')) {
+      const valueStr = className.substring(6); // Remove 'caret-'
+      
+      // Arbitrary value [...]
+      if (valueStr.startsWith('[') && valueStr.endsWith(']')) {
+        const value = valueStr.slice(1, -1);
+        return {
+          property: 'caret',
+          value,
+          isArbitrary: true
+        };
+      }
+      
+      return {
+        property: 'caret',
+        value: valueStr,
+        isArbitrary: false
+      };
+    }
+
+    // Pointer events patterns
+    if (className.startsWith('pointer-events-')) {
+      const valueStr = className.substring(15); // Remove 'pointer-events-'
+      return {
+        property: 'pointer-events',
+        value: valueStr,
+        isArbitrary: false
+      };
+    }
+
+    // Simple prefix patterns (remaining ones)
     const simplePatterns = [
-      'accent', 'appearance', 'cursor', 'caret', 'pointer-events',
-      'select', 'user-select', 'will-change'
+      { prefix: 'appearance', property: 'appearance' },
+      { prefix: 'cursor', property: 'cursor' },
+      { prefix: 'select', property: 'select' },
+      { prefix: 'user-select', property: 'user-select' },
+      { prefix: 'will-change', property: 'will-change' }
     ];
     
-    for (const pattern of simplePatterns) {
-      if (className.startsWith(`${pattern}-`)) {
-        const valueStr = className.substring(pattern.length + 1);
+    for (const { prefix, property } of simplePatterns) {
+      if (className.startsWith(`${prefix}-`)) {
+        const valueStr = className.substring(prefix.length + 1);
         
         // Arbitrary value [...]
         if (valueStr.startsWith('[') && valueStr.endsWith(']')) {
           const value = valueStr.slice(1, -1);
           return {
-            property: pattern,
+            property,
             value,
             isArbitrary: true
           };
         }
         
         return {
-          property: pattern,
+          property,
           value: valueStr,
           isArbitrary: false
         };
@@ -107,9 +163,14 @@ export class InteractivityParser {
       }
       
       const valueStr = className.substring(7); // Remove 'resize-'
+      // Convert x/y to horizontal/vertical
+      let finalValue = valueStr;
+      if (valueStr === 'x') finalValue = 'horizontal';
+      if (valueStr === 'y') finalValue = 'vertical';
+      
       return {
         property: 'resize',
-        value: valueStr,
+        value: finalValue,
         isArbitrary: false
       };
     }
@@ -131,11 +192,19 @@ export class InteractivityParser {
         }
         
         // Scroll margin/padding (scroll-m-4, scroll-p-8)
-        if (scrollType === 'm' || scrollType === 'p') {
+        if (scrollType === 'm') {
           return {
-            property: `scroll-${scrollType}`,
+            property: 'scroll-m',
             value: value || 'default',
-            isArbitrary: false
+            isArbitrary: value?.startsWith('[') && value?.endsWith(']')
+          };
+        }
+        
+        if (scrollType === 'p') {
+          return {
+            property: 'scroll-p',
+            value: value || 'default',
+            isArbitrary: value?.startsWith('[') && value?.endsWith(']')
           };
         }
         
@@ -143,6 +212,38 @@ export class InteractivityParser {
         return {
           property: `scroll-${scrollType}`,
           value: value || 'default',
+          isArbitrary: false
+        };
+      }
+    }
+
+    // Snap patterns (snap-start, snap-end, snap-center, snap-normal, snap-always)
+    if (className.startsWith('snap-')) {
+      const valueStr = className.substring(5); // Remove 'snap-'
+      
+      // Scroll snap align
+      if (['start', 'end', 'center'].includes(valueStr) || valueStr === 'align-none') {
+        return {
+          property: 'scrollSnapAlign',
+          value: valueStr === 'align-none' ? 'none' : valueStr,
+          isArbitrary: false
+        };
+      }
+      
+      // Scroll snap stop
+      if (['normal', 'always'].includes(valueStr)) {
+        return {
+          property: 'scrollSnapStop',
+          value: valueStr,
+          isArbitrary: false
+        };
+      }
+      
+      // Scroll snap type
+      if (['none', 'x', 'y', 'both', 'mandatory', 'proximity'].includes(valueStr)) {
+        return {
+          property: 'scrollSnapType',
+          value: valueStr,
           isArbitrary: false
         };
       }
@@ -268,14 +369,12 @@ export class InteractivityParser {
     if (!className.startsWith('accent-')) return null;
 
     const value = className.slice(7);
+    const color = context.utils.color(value);
 
-    const colorMap = context.preset.colors;
-    
-
-    if (value in colorMap) {
+    if (color) {
       return {
         property: 'accentColor',
-        value: colorMap[value] as unknown as string,
+        value: color,
         variant: 'preset'
       };
     }
@@ -372,14 +471,12 @@ export class InteractivityParser {
     if (!className.startsWith('caret-')) return null;
 
     const value = className.slice(6);
-    const colorMap = context.preset.colors;
+    const color = context.utils.color(value);
 
-    console.log({colorMap});
-
-    if (value in colorMap) {
+    if (color) {
       return {
         property: 'caretColor',
-        value: colorMap[value] as unknown as string,
+        value: color,
         variant: 'preset'
       };
     }
@@ -752,7 +849,7 @@ export class InteractivityParser {
 
     if (className in touchActionMap) {
       return {
-        property: 'touchAction',
+        property: 'touch-action',
         value: touchActionMap[className],
         variant: 'preset'
       };
@@ -772,7 +869,7 @@ export class InteractivityParser {
 
     if (className in userSelectMap) {
       return {
-        property: 'userSelect',
+        property: 'user-select',
         value: userSelectMap[className],
         variant: 'preset'
       };
@@ -792,7 +889,7 @@ export class InteractivityParser {
 
     if (className in willChangeMap) {
       return {
-        property: 'willChange',
+        property: 'will-change',
         value: willChangeMap[className],
         variant: 'preset'
       };

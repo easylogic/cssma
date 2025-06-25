@@ -2,6 +2,8 @@
  * Core type definitions for CSSMA-V3
  */
 
+import { ColorUtils, SpacingUtils, TypographyUtils, UnitUtils } from "./utils";
+
 /**
  * Individual parsed style result (used by individual parsers)
  */
@@ -1183,10 +1185,10 @@ export interface ParserContext {
   config: Config;
   preset: DesignPreset;
   utils: {
-    color: ColorUtils;
-    unit: UnitUtils;
-    spacing: SpacingUtils;
-    typography: TypographyUtils;
+    color: (name: string) => string;
+    unit: (name: string) => string;
+    spacing: (name: string) => string;
+    typography: (name: string) => string;
   };
 }
 

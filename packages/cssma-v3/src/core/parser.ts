@@ -61,6 +61,12 @@ const PARSER_MAP: ParserInfo[] = [
   // 테이블 관련 (border-collapse가 borders와 겹치므로 우선 처리)
   { parser: TablesParser, category: "tables" },
 
+  // SVG 관련 (fill-* 클래스가 animation과 겹치므로 우선 처리)
+  { parser: SVGParser, category: "svg" },
+
+  // 상호작용 관련 (snap-* 클래스가 layout과 겹치므로 우선 처리)
+  { parser: InteractivityParser, category: "interactivity" },
+
   // 애니메이션 관련 (transition이 layout과 겹치므로 우선 처리)
   { parser: AnimationParser, category: "animation" },
   { parser: TransitionsParser, category: "transitions" },
@@ -79,11 +85,6 @@ const PARSER_MAP: ParserInfo[] = [
   { parser: BlendModesParser, category: "blend-modes" },
   { parser: MaskParser, category: "mask" },
 
-  // 상호작용 관련
-  { parser: InteractivityParser, category: "interactivity" },
-
-  // 기타
-  { parser: SVGParser, category: "svg" },
   // ColorParser 제거: 각 개별 파서가 자신의 색상을 처리
 ];
 
@@ -291,12 +292,36 @@ export class CSSParser {
           : null;
 
         if (parseResult) {
+          // 🎨 색상 클래스에 대한 특별 처리
+          let finalValue = parseResult.value;
+          
+          // Accent color 변환
+          if (parseResult.property === 'accent' && !parseResult.isArbitrary) {
+            const colorValue = this.parserContext.utils.color(parseResult.value);
+            if (colorValue) {
+              finalValue = colorValue;
+            }
+          }
+          
+          // Caret color 변환
+          if (parseResult.property === 'caret' && !parseResult.isArbitrary) {
+            const colorValue = this.parserContext.utils.color(parseResult.value);
+            if (colorValue) {
+              finalValue = colorValue;
+            }
+          }
+          
+          // 📏 크기/간격 값 변환 (scroll-m-4, scroll-p-4 등)
+          if ((parseResult.property === 'scroll-m' || parseResult.property === 'scroll-p') && !parseResult.isArbitrary) {
+            finalValue = this.convertSpacingValue(parseResult.value);
+          }
+          
           return {
             original: className,
             className: processedClassName,
             baseClassName: baseClassName,
             property: parseResult.property || baseClassName,
-            value: parseResult.value || "",
+            value: finalValue,
             category: category,
             isArbitrary: (modifierResult ? modifierResult.isArbitrary : false) || parseResult.isArbitrary || false,
             
@@ -625,24 +650,66 @@ export class CSSParser {
    * @returns 변환된 크기 값
    */
   private convertSizeValue(value: string): string {
-    // 분수 값 처리 (예: w-1/2 => 50%)
-    if (value.includes("/")) {
-      const [numerator, denominator] = value.split("/").map(Number);
-      return `${(numerator / denominator) * 100}%`;
+    // 임의 값 처리
+    if (value.startsWith('[') && value.endsWith(']')) {
+      return value.slice(1, -1);
     }
 
-    // 프리셋 값 처리
-    if (value in this.preset.spacing) {
-      return `${this.preset.spacing[value]}px`;
+    // 기본 값 처리
+    if (value === '0') return '0px';
+    if (value === 'px') return '1px';
+    if (value === 'auto') return 'auto';
+    if (value === 'full') return '100%';
+
+    // 분수 처리
+    if (value.includes('/')) {
+      const [numerator, denominator] = value.split('/');
+      const percentage = (parseFloat(numerator) / parseFloat(denominator)) * 100;
+      return `${percentage}%`;
     }
 
-    // 특수 값 처리
-    if (value === "auto") return "auto";
-    if (value === "full") return "100%";
-    if (value === "screen") return "100vw";
-    if (value === "min") return "min-content";
-    if (value === "max") return "max-content";
-    if (value === "fit") return "fit-content";
+    // 소수점 처리
+    if (value.includes('.')) {
+      const numValue = parseFloat(value);
+      return `${numValue * 0.25}rem`;
+    }
+
+    // 정수 처리
+    const numValue = parseInt(value, 10);
+    if (!isNaN(numValue)) {
+      return `${numValue * 0.25}rem`;
+    }
+
+    return value;
+  }
+
+  /**
+   * 간격 값을 변환합니다.
+   * @param value 간격 값
+   * @returns 변환된 간격 값
+   */
+  private convertSpacingValue(value: string): string {
+    // 임의 값 처리
+    if (value.startsWith('[') && value.endsWith(']')) {
+      return value.slice(1, -1);
+    }
+
+    // 기본 값 처리
+    if (value === '0') return '0px';
+    if (value === 'px') return '1px';
+    if (value === 'auto') return 'auto';
+
+    // 소수점 처리 (0.5, 1.5, 2.5 등)
+    if (value.includes('.')) {
+      const numValue = parseFloat(value);
+      return `${numValue * 0.25}rem`;
+    }
+
+    // 정수 처리 (1, 2, 3, 4 등)
+    const numValue = parseInt(value, 10);
+    if (!isNaN(numValue)) {
+      return `${numValue * 0.25}rem`;
+    }
 
     return value;
   }
