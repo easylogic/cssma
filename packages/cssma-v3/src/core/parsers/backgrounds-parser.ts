@@ -108,7 +108,7 @@ export class BackgroundsParser {
   static isValidClass(className: string, context: ParserContext): boolean {
     // Background patterns (색상 포함)
     const patterns = [
-      /^bg-/, // bg-red-500, bg-transparent, bg-gradient-to-r, bg-linear-to-r, bg-radial, bg-conic-45, bg-fixed, etc.
+      /^(-)?bg-/, // bg-red-500, bg-transparent, bg-gradient-to-r, bg-linear-to-r, bg-radial, bg-conic-45, bg-fixed, etc.
       /^from-/, // from-red-500, from-10% (gradient start)
       /^via-/, // via-blue-500, via-30% (gradient middle)
       /^to-/, // to-green-500, to-90% (gradient end)
