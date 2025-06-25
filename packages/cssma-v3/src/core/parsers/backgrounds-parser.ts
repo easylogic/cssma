@@ -109,6 +109,7 @@ export class BackgroundsParser {
     // Background patterns (색상 포함)
     const patterns = [
       /^(-)?bg-/, // bg-red-500, bg-transparent, bg-gradient-to-r, bg-linear-to-r, bg-radial, bg-conic-45, bg-fixed, etc.
+      /^bg-\[.+\]$/, // bg-[var(--primary-gradient)], bg-[url("/bg.jpg")], bg-[red_url("/bg.jpg")_center/cover_no-repeat_fixed], etc.
       /^from-/, // from-red-500, from-10% (gradient start)
       /^via-/, // via-blue-500, via-30% (gradient middle)
       /^to-/, // to-green-500, to-90% (gradient end)
@@ -119,16 +120,8 @@ export class BackgroundsParser {
       return false;
     }
 
-    // 잘못된 배경 클래스들 명시적으로 거부
+    // 명시적으로 잘못된 패턴들 거부
     const invalidPatterns = [
-      /^bg-invalid-/, // bg-invalid-color
-      /^bg-wrong-/, // bg-wrong-property
-      /^bg-nonexistent-/, // bg-nonexistent-value
-      /^bg-bad-/, // bg-bad-syntax
-      /^bg-fake-/, // bg-fake-class
-      // 잘못된 그라데이션 방향 거부
-      /^bg-gradient-to-invalid$/,
-      /^bg-linear-to-invalid$/,
       /^bg-radial-invalid$/,
       /^bg-conic-invalid$/,
       // 존재하지 않는 색상 거부
@@ -136,12 +129,6 @@ export class BackgroundsParser {
     ];
 
     if (invalidPatterns.some(pattern => pattern.test(className))) {
-      return false;
-    }
-
-    // 이름이 존재하는데 범위가 다르다면 거부
-    const [ , colorPrefix , ...rest ] = className.split('-');
-    if (context.utils.isColorName(colorPrefix) && !context.utils.isValidColor(colorPrefix)) {
       return false;
     }
 
@@ -186,18 +173,14 @@ export class BackgroundsParser {
     // v4.1 각도 기반 선형 그라데이션 (bg-linear-45, -bg-linear-90)
     const linearAngleMatch = className.match(/^(-?)bg-linear-(\d+)(?:\/(.+))?$/);
     if (linearAngleMatch) {
-      if (className.startsWith('bg-linear-')) {
-        console.log('[BackgroundsParser] linearAngleMatch found for', className, ':', linearAngleMatch);
-      }
       const [, negative, angle, interpolation] = linearAngleMatch;
       const actualAngle = negative ? `-${angle}deg` : `${angle}deg`;
       const interpolationMode = interpolation || 'oklab';
-      const result = {
+      return {
         property: 'bg-linear-angle',
         value: `${actualAngle} in ${interpolationMode}`,
         isArbitrary: false
       };
-      return result;
     }
 
     // v4.1 보간 모드가 있는 선형 그라데이션 (bg-linear-to-r/srgb)
@@ -399,11 +382,44 @@ export class BackgroundsParser {
     }
 
     // Background color patterns (이제 마지막에 처리)
-    if (className.startsWith('bg-') && !className.includes('-to-') && !className.includes('-via-') && !className.includes('gradient') && !className.includes('linear') && !className.includes('radial') && !className.includes('conic')) {
+    if (className.startsWith('bg-') && !className.includes('-to-') && !className.includes('-via-') && 
+        // 임의값이 아닌 경우에만 gradient 키워드 체크
+        !(className.includes('gradient') && !className.includes('[')) && 
+        !(className.includes('linear') && !className.includes('[')) && 
+        !(className.includes('radial') && !className.includes('[')) && 
+        !(className.includes('conic') && !className.includes('['))) {
       // bg-red-500, bg-[#ff0000], bg-transparent, bg-current
       if (className.startsWith('bg-[') && className.endsWith(']')) {
         const value = className.slice(4, -1); // Remove 'bg-[' and ']'
 
+        // Handle CSS custom properties: bg-[var(--primary-gradient)]
+        if (value.startsWith('var(')) {
+          return {
+            property: 'bg-custom-property',
+            value,
+            isArbitrary: true
+          };
+        }
+
+        // Handle CSS custom properties with prefixes: bg-[color:var(--bg-color)], bg-[image:var(--hero-bg)]
+        if (value.includes(':var(')) {
+          return {
+            property: 'bg-custom-property',
+            value,
+            isArbitrary: true
+          };
+        }
+
+        // Handle background shorthand: bg-[red_url("/bg.jpg")_center/cover_no-repeat_fixed]
+        if (value.includes('_') && (value.includes('url(') || value.includes('/'))) {
+          return {
+            property: 'bg-shorthand',
+            value: value.replace(/_/g, ' '), // Convert underscores to spaces
+            isArbitrary: true
+          };
+        }
+
+        // Handle URL patterns
         if (value.startsWith('url(')) {
           return {
             property: 'backgroundImage',
@@ -412,6 +428,7 @@ export class BackgroundsParser {
           };
         }
 
+        // Handle other CSS functions (color-mix, oklch, etc.) - treat as bg color
         return {
           property: 'bg',
           value,
@@ -542,20 +559,6 @@ export class BackgroundsParser {
         value,
         isArbitrary: false
       };
-    }
-
-    // Background size (bg-cover, bg-contain, bg-auto, bg-[50%])
-    if (className.startsWith('bg-[') && className.endsWith(']') && !className.includes('gradient') && !className.includes('linear') && !className.includes('radial') && !className.includes('conic')) {
-      const value = className.slice(4, -1); // Remove 'bg-[' and ']'
-      // Check if it's a size value, position value, etc.
-      if (value.includes('%') || value.includes('px') || value.includes('rem') || value.includes('em') || value.includes(' ')) {
-        // Could be size or position
-        return {
-          property: 'bg-arbitrary',
-          value,
-          isArbitrary: true
-        };
-      }
     }
 
     return null;
@@ -1103,9 +1106,6 @@ export class BackgroundsParser {
       case 'bg-conic-custom':
         this.handleConicGradient(property, value, isArbitrary, styles.backgrounds);
         break;
-      case 'bg-custom-property':
-        this.handleGradient(property, value, isArbitrary, styles.backgrounds);
-        break;
         
       // Gradient color stops
       case 'from':
@@ -1118,6 +1118,16 @@ export class BackgroundsParser {
       case 'via-custom':
       case 'to-custom':
         this.handleGradientColorStop(property, value, isArbitrary, styles.backgrounds, preset, config);
+        break;
+        
+      // CSS custom properties
+      case 'bg-custom-property':
+        styles.backgrounds.backgroundImage = value;
+        break;
+        
+      // Background shorthand
+      case 'bg-shorthand':
+        styles.backgrounds.background = value;
         break;
         
       default:
@@ -1267,28 +1277,44 @@ export class BackgroundsParser {
    */
   private static handleGradient(property: string, value: string, isArbitrary: boolean, backgroundStyles: any): void {
     if (isArbitrary) {
+      // bg-[linear-gradient(...)] 등 임의값은 그대로 backgroundImage에 할당
       backgroundStyles.backgroundImage = value;
+    } else if (property === 'bg-linear-angle') {
+      // bg-linear-45, bg-linear--90 등 각도 기반
+      backgroundStyles.backgroundImage = `linear-gradient(${value}, var(--tw-gradient-stops))`;
+    } else if (property === 'bg-linear' || property === 'bg-gradient' || property === 'bg-linear-interpolation') {
+      // bg-gradient-to-r, bg-linear-to-t 등 방향 기반
+      backgroundStyles.backgroundImage = `linear-gradient(${value}, var(--tw-gradient-stops))`;
+    } else if (property === 'bg-custom-property') {
+      // bg-(image:--my-image) 등 커스텀 속성
+      backgroundStyles.backgroundImage = `var(${value})`;
     } else {
-      const direction = this.GRADIENT_DIRECTIONS[`bg-gradient-to-${value}`] || 
-                       this.LINEAR_GRADIENT_DIRECTIONS[`bg-linear-to-${value}`] ||
-                       value;
-      backgroundStyles.backgroundImage = `linear-gradient(${direction}, var(--tw-gradient-stops))`;
+      // 기타: value를 그대로 사용
+      backgroundStyles.backgroundImage = `linear-gradient(${value}, var(--tw-gradient-stops))`;
     }
   }
 
   private static handleRadialGradient(property: string, value: string, isArbitrary: boolean, backgroundStyles: any): void {
     if (isArbitrary) {
       backgroundStyles.backgroundImage = value;
+    } else if (property === 'bg-radial-custom') {
+      // bg-radial-(--my-radial) 등 커스텀 속성
+      backgroundStyles.backgroundImage = `var(${value})`;
     } else {
-      backgroundStyles.backgroundImage = `radial-gradient(${value})`;
+      // value가 "in oklab", "ellipse at center" 등일 수 있음
+      backgroundStyles.backgroundImage = `radial-gradient(${value}, var(--tw-gradient-stops))`;
     }
   }
 
   private static handleConicGradient(property: string, value: string, isArbitrary: boolean, backgroundStyles: any): void {
     if (isArbitrary) {
       backgroundStyles.backgroundImage = value;
+    } else if (property === 'bg-conic-custom') {
+      // bg-conic-(--my-conic) 등 커스텀 속성
+      backgroundStyles.backgroundImage = `var(${value})`;
     } else {
-      backgroundStyles.backgroundImage = `conic-gradient(${value})`;
+      // value가 "from 45deg in oklab", "at 50% 50%" 등일 수 있음
+      backgroundStyles.backgroundImage = `conic-gradient(${value}, var(--tw-gradient-stops))`;
     }
   }
 

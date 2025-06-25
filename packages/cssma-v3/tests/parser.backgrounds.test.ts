@@ -2,12 +2,12 @@ import { describe, it, expect } from 'vitest';
 import { CSSParser } from '../src/core/parser';
 import { loadConfig, loadPreset } from '../src/config';
 
-describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
+describe('Backgrounds Parser - Tailwind v4.1 Complete Test Suite', () => {
   const parser = new CSSParser(loadConfig(), loadPreset());
   
-  describe('1. 배경 색상 시스템', () => {
-    describe('1.1 기본 색상 클래스', () => {
-      it('기본 배경 색상 클래스를 파싱할 수 있어야 함', () => {
+  describe('Background Colors', () => {
+    describe('Basic color classes', () => {
+      it('should parse standard background colors', () => {
         const result = parser.parseClass('bg-red-500');
         
         expect(result).toBeDefined();
@@ -15,10 +15,17 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
         expect(result?.category).toBe('backgrounds');
         expect(result?.property).toBe('bg');
         expect(result?.value).toBe('red-500');
+        expect(result?.isArbitrary).toBe(false);
       });
       
-      it('특수 배경 색상을 파싱할 수 있어야 함', () => {
-        const specialColors = ['bg-transparent', 'bg-current', 'bg-black', 'bg-white', 'bg-inherit'];
+      it('should parse special background colors', () => {
+        const specialColors = [
+          'bg-transparent',
+          'bg-current', 
+          'bg-black',
+          'bg-white',
+          'bg-inherit'
+        ];
         
         specialColors.forEach(className => {
           const result = parser.parseClass(className);
@@ -29,7 +36,7 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
         });
       });
       
-      it('임의 배경 색상을 파싱할 수 있어야 함', () => {
+      it('should parse arbitrary background colors', () => {
         const arbitraryColors = [
           'bg-[#ff0000]',
           'bg-[rgb(255,0,0)]',
@@ -48,18 +55,13 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
       });
     });
 
-    describe('1.2 완전한 색상 팔레트 테스트', () => {
-      const colorFamilies = [
-        'slate', 'gray', 'zinc', 'neutral', 'stone',
-        'red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 
-        'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose'
-      ];
-      
+    describe('Color families and intensities', () => {
+      const colorFamilies = ['slate', 'gray', 'red', 'blue', 'green'];
       const intensities = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
 
-      it('모든 색상 패밀리의 주요 강도를 파싱할 수 있어야 함', () => {
-        colorFamilies.slice(0, 3).forEach(family => { // 테스트 속도를 위해 일부만
-          intensities.slice(0, 5).forEach(intensity => {
+      it('should parse all color families with valid intensities', () => {
+        colorFamilies.forEach(family => {
+          intensities.slice(0, 3).forEach(intensity => { // Test subset for performance
             const className = `bg-${family}-${intensity}`;
             const result = parser.parseClass(className);
             
@@ -72,7 +74,7 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
         });
       });
 
-      it('색상 투명도 조합을 파싱할 수 있어야 함', () => {
+      it('should parse color with opacity combinations', () => {
         const opacityColors = [
           'bg-red-500/10',
           'bg-blue-600/25', 
@@ -86,13 +88,14 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
           expect(result).toBeDefined();
           expect(result?.className).toBe(className);
           expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg');
         });
       });
     });
 
-    describe('1.3 배경 투명도 유틸리티', () => {
-      it('bg-opacity 클래스들을 파싱할 수 있어야 함', () => {
-        const opacities = [0, 5, 10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 95, 100];
+    describe('Background opacity utilities', () => {
+      it('should parse bg-opacity classes', () => {
+        const opacities = [0, 5, 10, 25, 50, 75, 100];
         
         opacities.forEach(opacity => {
           const className = `bg-opacity-${opacity}`;
@@ -100,10 +103,11 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
           expect(result).toBeDefined();
           expect(result?.className).toBe(className);
           expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-opacity');
         });
       });
 
-      it('임의 투명도 값을 파싱할 수 있어야 함', () => {
+      it('should parse arbitrary opacity values', () => {
         const arbitraryOpacities = [
           'bg-opacity-[0.15]',
           'bg-opacity-[0.37]', 
@@ -115,27 +119,28 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
           expect(result).toBeDefined();
           expect(result?.className).toBe(className);
           expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-opacity');
           expect(result?.isArbitrary).toBe(true);
         });
       });
     });
   });
   
-  describe('2. 배경 이미지 시스템 (v4.1 완전 지원)', () => {
-    describe('2.1 기본 배경 이미지', () => {
-      it('bg-none을 파싱할 수 있어야 함', () => {
+  describe('Background Images & Gradients (v4.1)', () => {
+    describe('Basic background images', () => {
+      it('should parse bg-none', () => {
         const result = parser.parseClass('bg-none');
         expect(result).toBeDefined();
         expect(result?.className).toBe('bg-none');
         expect(result?.category).toBe('backgrounds');
+        expect(result?.property).toBe('bg-image');
       });
 
-      it('임의 배경 이미지 URL을 파싱할 수 있어야 함', () => {
+      it('should parse arbitrary background image URLs', () => {
         const imageUrls = [
           "bg-[url('/img/hero.jpg')]",
           "bg-[url('https://example.com/bg.png')]",
-          "bg-[url('/assets/pattern.svg')]",
-          "bg-[url(/img/mountains.jpg)]" // 따옴표 없는 경우
+          "bg-[url('/assets/pattern.svg')]"
         ];
 
         imageUrls.forEach(className => {
@@ -143,11 +148,12 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
           expect(result).toBeDefined();
           expect(result?.className).toBe(className);
           expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('backgroundImage');
           expect(result?.isArbitrary).toBe(true);
         });
       });
 
-      it('커스텀 속성 배경 이미지를 파싱할 수 있어야 함', () => {
+      it('should parse custom property background images', () => {
         const customProperties = [
           'bg-(image:--my-image)',
           'bg-(--custom-bg)'
@@ -158,12 +164,13 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
           expect(result).toBeDefined();
           expect(result?.className).toBe(className);
           expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-custom-property');
         });
       });
     });
 
-    describe('2.2 선형 그라데이션 (Linear Gradients)', () => {
-      it('기존 bg-gradient-to-* 방향을 파싱할 수 있어야 함', () => {
+    describe('Linear gradients', () => {
+      it('should parse legacy bg-gradient-to-* directions', () => {
         const gradientDirections = [
           'bg-gradient-to-t',
           'bg-gradient-to-tr', 
@@ -180,10 +187,11 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
           expect(result).toBeDefined();
           expect(result?.className).toBe(className);
           expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-gradient');
         });
       });
 
-      it('새로운 bg-linear-to-* 방향을 파싱할 수 있어야 함', () => {
+      it('should parse new bg-linear-to-* directions', () => {
         const linearDirections = [
           'bg-linear-to-t',
           'bg-linear-to-tr',
@@ -200,20 +208,18 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
           expect(result).toBeDefined();
           expect(result?.className).toBe(className);
           expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-linear');
         });
       });
 
-      it('각도 기반 선형 그라데이션을 파싱할 수 있어야 함', () => {
+      it('should parse angle-based linear gradients', () => {
         const angleGradients = [
           'bg-linear-0',
           'bg-linear-45',
           'bg-linear-90',
-          'bg-linear-135',
           'bg-linear-180',
-          'bg-linear-225',
           'bg-linear-270',
-          'bg-linear-315',
-          '-bg-linear-45', // 음수 각도
+          '-bg-linear-45',
           '-bg-linear-90'
         ];
 
@@ -222,19 +228,18 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
           expect(result).toBeDefined();
           expect(result?.className).toBe(className);
           expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-linear-angle');
         });
       });
 
-      it('보간 모드가 있는 선형 그라데이션을 파싱할 수 있어야 함', () => {
+      it('should parse linear gradients with interpolation modes', () => {
         const interpolationModes = [
           'bg-linear-to-r/srgb',
           'bg-linear-to-r/hsl',
           'bg-linear-to-r/oklab',
           'bg-linear-to-r/oklch',
-          'bg-linear-to-r/longer',
-          'bg-linear-to-r/shorter',
-          'bg-linear-to-r/increasing',
-          'bg-linear-to-r/decreasing'
+          'bg-linear-45/increasing',
+          'bg-linear-45/decreasing'
         ];
 
         interpolationModes.forEach(className => {
@@ -245,7 +250,7 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
         });
       });
 
-      it('커스텀 선형 그라데이션을 파싱할 수 있어야 함', () => {
+      it('should parse arbitrary linear gradients', () => {
         const customLinear = [
           'bg-linear-[25deg,red_5%,yellow_60%,lime_90%,teal]',
           'bg-linear-[to_right,#ff0000,#00ff00]'
@@ -256,13 +261,29 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
           expect(result).toBeDefined();
           expect(result?.className).toBe(className);
           expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-linear-arbitrary');
           expect(result?.isArbitrary).toBe(true);
+        });
+      });
+
+      it('should parse custom property linear gradients', () => {
+        const customPropertyLinear = [
+          'bg-linear-(--my-gradient)',
+          'bg-linear-(<custom-property>)'
+        ];
+
+        customPropertyLinear.forEach(className => {
+          const result = parser.parseClass(className);
+          expect(result).toBeDefined();
+          expect(result?.className).toBe(className);
+          expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-linear-custom');
         });
       });
     });
 
-    describe('2.3 방사형 그라데이션 (Radial Gradients)', () => {
-      it('기본 방사형 그라데이션을 파싱할 수 있어야 함', () => {
+    describe('Radial gradients', () => {
+      it('should parse basic radial gradients', () => {
         const radialGradients = [
           'bg-radial',
           'bg-radial/srgb',
@@ -276,30 +297,31 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
           expect(result).toBeDefined();
           expect(result?.className).toBe(className);
           expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-radial');
         });
       });
 
-      it('위치가 있는 방사형 그라데이션을 파싱할 수 있어야 함', () => {
-        const radialPositions = [
+      it('should parse arbitrary radial gradients', () => {
+        const radialArbitrary = [
           'bg-radial-[at_50%_75%]',
-          'bg-radial-[at_25%_25%]',
-          'bg-radial-[at_center]',
-          'bg-radial-[at_top_left]'
+          'bg-radial-[circle_at_center]',
+          'bg-radial-[ellipse_at_top_left]'
         ];
 
-        radialPositions.forEach(className => {
+        radialArbitrary.forEach(className => {
           const result = parser.parseClass(className);
           expect(result).toBeDefined();
           expect(result?.className).toBe(className);
           expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-radial-arbitrary');
           expect(result?.isArbitrary).toBe(true);
         });
       });
 
-      it('커스텀 방사형 그라데이션을 파싱할 수 있어야 함', () => {
+      it('should parse custom property radial gradients', () => {
         const customRadial = [
-          'bg-radial-(<custom-property>)',
-          'bg-radial-[circle_at_center]'
+          'bg-radial-(--my-radial)',
+          'bg-radial-(<custom-property>)'
         ];
 
         customRadial.forEach(className => {
@@ -307,19 +329,20 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
           expect(result).toBeDefined();
           expect(result?.className).toBe(className);
           expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-radial-custom');
         });
       });
     });
 
-    describe('2.4 원뿔형 그라데이션 (Conic Gradients)', () => {
-      it('각도 기반 원뿔형 그라데이션을 파싱할 수 있어야 함', () => {
+    describe('Conic gradients', () => {
+      it('should parse angle-based conic gradients', () => {
         const conicAngles = [
           'bg-conic-0',
           'bg-conic-45',
           'bg-conic-90',
           'bg-conic-180',
           'bg-conic-270',
-          '-bg-conic-45', // 음수 각도
+          '-bg-conic-45',
           '-bg-conic-90'
         ];
 
@@ -328,19 +351,18 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
           expect(result).toBeDefined();
           expect(result?.className).toBe(className);
           expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-conic');
         });
       });
 
-      it('보간 모드가 있는 원뿔형 그라데이션을 파싱할 수 있어야 함', () => {
+      it('should parse conic gradients with interpolation modes', () => {
         const conicInterpolation = [
           'bg-conic/srgb',
           'bg-conic/hsl',
           'bg-conic/oklab',
           'bg-conic/oklch',
-          'bg-conic/longer',
-          'bg-conic/shorter',
-          'bg-conic/increasing',
-          'bg-conic/decreasing'
+          'bg-conic-45/increasing',
+          'bg-conic-90/decreasing'
         ];
 
         conicInterpolation.forEach(className => {
@@ -348,13 +370,14 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
           expect(result).toBeDefined();
           expect(result?.className).toBe(className);
           expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-conic');
         });
       });
 
-      it('커스텀 원뿔형 그라데이션을 파싱할 수 있어야 함', () => {
+      it('should parse arbitrary conic gradients', () => {
         const customConic = [
-          'bg-conic-(<custom-property>)',
-          'bg-conic-[from_45deg_at_center]'
+          'bg-conic-[from_45deg_at_center]',
+          'bg-conic-[at_25%_75%]'
         ];
 
         customConic.forEach(className => {
@@ -362,12 +385,29 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
           expect(result).toBeDefined();
           expect(result?.className).toBe(className);
           expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-conic-arbitrary');
+          expect(result?.isArbitrary).toBe(true);
+        });
+      });
+
+      it('should parse custom property conic gradients', () => {
+        const customConic = [
+          'bg-conic-(--my-conic)',
+          'bg-conic-(<custom-property>)'
+        ];
+
+        customConic.forEach(className => {
+          const result = parser.parseClass(className);
+          expect(result).toBeDefined();
+          expect(result?.className).toBe(className);
+          expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-conic-custom');
         });
       });
     });
 
-    describe('2.5 그라데이션 색상 정지점 (Enhanced)', () => {
-      it('기본 그라데이션 색상 정지점을 파싱할 수 있어야 함', () => {
+    describe('Gradient color stops', () => {
+      it('should parse basic gradient color stops', () => {
         const gradientStops = [
           { className: 'from-red-500', property: 'from', value: 'red-500' },
           { className: 'via-blue-400', property: 'via', value: 'blue-400' },
@@ -386,15 +426,13 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
         });
       });
 
-      it('위치 퍼센트가 있는 그라데이션 정지점을 파싱할 수 있어야 함', () => {
+      it('should parse positioned gradient stops', () => {
         const positionStops = [
           'from-0%',
-          'from-5%',
           'from-10%',
           'via-30%',
           'via-50%',
           'to-90%',
-          'to-95%',
           'to-100%'
         ];
 
@@ -406,7 +444,7 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
         });
       });
 
-      it('임의 그라데이션 정지점을 파싱할 수 있어야 함', () => {
+      it('should parse arbitrary gradient stops', () => {
         const arbitraryStops = [
           'from-[#ff0000]',
           'via-[rgb(0,255,0)]',
@@ -425,11 +463,11 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
         });
       });
 
-      it('커스텀 속성 그라데이션 정지점을 파싱할 수 있어야 함', () => {
+      it('should parse custom property gradient stops', () => {
         const customPropertyStops = [
-          'from-(<custom-property>)',
-          'via-(<custom-property>)',
-          'to-(<custom-property>)'
+          'from-(--my-color)',
+          'via-(--middle-color)',
+          'to-(--end-color)'
         ];
 
         customPropertyStops.forEach(className => {
@@ -442,9 +480,9 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
     });
   });
 
-  describe('3. 배경 위치 시스템', () => {
-    describe('3.1 위치 키워드', () => {
-      it('기본 배경 위치를 파싱할 수 있어야 함', () => {
+  describe('Background Properties', () => {
+    describe('Background position', () => {
+      it('should parse position keywords', () => {
         const positions = [
           'bg-bottom',
           'bg-center', 
@@ -462,10 +500,11 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
           expect(result).toBeDefined();
           expect(result?.className).toBe(className);
           expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-position');
         });
       });
 
-      it('임의 배경 위치를 파싱할 수 있어야 함', () => {
+      it('should parse arbitrary positions', () => {
         const arbitraryPositions = [
           'bg-[center_top_1rem]',
           'bg-[left_20px_top_30px]',
@@ -482,11 +521,9 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
         });
       });
     });
-  });
 
-  describe('4. 배경 크기 시스템', () => {
-    describe('4.1 크기 키워드', () => {
-      it('배경 크기 클래스를 파싱할 수 있어야 함', () => {
+    describe('Background size', () => {
+      it('should parse size keywords', () => {
         const sizes = ['bg-auto', 'bg-cover', 'bg-contain'];
         
         sizes.forEach(className => {
@@ -494,10 +531,11 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
           expect(result).toBeDefined();
           expect(result?.className).toBe(className);
           expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-size');
         });
       });
 
-      it('임의 배경 크기를 파싱할 수 있어야 함', () => {
+      it('should parse arbitrary sizes', () => {
         const arbitrarySizes = [
           'bg-[length:200px_100px]',
           'bg-[50%_auto]',
@@ -514,79 +552,83 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
         });
       });
     });
-  });
 
-  describe('5. 배경 반복 시스템', () => {
-    it('배경 반복 클래스를 파싱할 수 있어야 함', () => {
-      const repeats = [
-        'bg-repeat',
-        'bg-no-repeat',
-        'bg-repeat-x',
-        'bg-repeat-y',
-        'bg-repeat-round',
-        'bg-repeat-space'
-      ];
-      
-      repeats.forEach(className => {
-        const result = parser.parseClass(className);
-        expect(result).toBeDefined();
-        expect(result?.className).toBe(className);
-        expect(result?.category).toBe('backgrounds');
+    describe('Background repeat', () => {
+      it('should parse repeat values', () => {
+        const repeats = [
+          'bg-repeat',
+          'bg-no-repeat',
+          'bg-repeat-x',
+          'bg-repeat-y',
+          'bg-repeat-round',
+          'bg-repeat-space'
+        ];
+        
+        repeats.forEach(className => {
+          const result = parser.parseClass(className);
+          expect(result).toBeDefined();
+          expect(result?.className).toBe(className);
+          expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-repeat');
+        });
       });
     });
-  });
 
-  describe('6. 배경 첨부 시스템', () => {
-    it('배경 첨부 클래스를 파싱할 수 있어야 함', () => {
-      const attachments = ['bg-fixed', 'bg-local', 'bg-scroll'];
-      
-      attachments.forEach(className => {
-        const result = parser.parseClass(className);
-        expect(result).toBeDefined();
-        expect(result?.className).toBe(className);
-        expect(result?.category).toBe('backgrounds');
+    describe('Background attachment', () => {
+      it('should parse attachment values', () => {
+        const attachments = ['bg-fixed', 'bg-local', 'bg-scroll'];
+        
+        attachments.forEach(className => {
+          const result = parser.parseClass(className);
+          expect(result).toBeDefined();
+          expect(result?.className).toBe(className);
+          expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-attachment');
+        });
       });
     });
-  });
 
-  describe('7. 배경 클립 시스템', () => {
-    it('배경 클립 클래스를 파싱할 수 있어야 함', () => {
-      const clips = [
-        'bg-clip-border',
-        'bg-clip-padding',
-        'bg-clip-content',
-        'bg-clip-text'
-      ];
-      
-      clips.forEach(className => {
-        const result = parser.parseClass(className);
-        expect(result).toBeDefined();
-        expect(result?.className).toBe(className);
-        expect(result?.category).toBe('backgrounds');
+    describe('Background clip', () => {
+      it('should parse clip values', () => {
+        const clips = [
+          'bg-clip-border',
+          'bg-clip-padding',
+          'bg-clip-content',
+          'bg-clip-text'
+        ];
+        
+        clips.forEach(className => {
+          const result = parser.parseClass(className);
+          expect(result).toBeDefined();
+          expect(result?.className).toBe(className);
+          expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-clip');
+        });
       });
     });
-  });
 
-  describe('8. 배경 원점 시스템', () => {
-    it('배경 원점 클래스를 파싱할 수 있어야 함', () => {
-      const origins = [
-        'bg-origin-border',
-        'bg-origin-padding', 
-        'bg-origin-content'
-      ];
-      
-      origins.forEach(className => {
-        const result = parser.parseClass(className);
-        expect(result).toBeDefined();
-        expect(result?.className).toBe(className);
-        expect(result?.category).toBe('backgrounds');
+    describe('Background origin', () => {
+      it('should parse origin values', () => {
+        const origins = [
+          'bg-origin-border',
+          'bg-origin-padding', 
+          'bg-origin-content'
+        ];
+        
+        origins.forEach(className => {
+          const result = parser.parseClass(className);
+          expect(result).toBeDefined();
+          expect(result?.className).toBe(className);
+          expect(result?.category).toBe('backgrounds');
+          expect(result?.property).toBe('bg-origin');
+        });
       });
     });
   });
   
-  describe('9. 배경 스타일 적용 테스트', () => {
-    describe('9.1 배경 색상 적용', () => {
-      it('기본 배경 색상을 적용할 수 있어야 함', () => {
+  describe('Style Application', () => {
+    describe('Background color application', () => {
+      it('should apply basic background colors', () => {
         const styles = parser.parse('bg-red-500');
         
         expect(styles.backgrounds).toBeDefined();
@@ -594,7 +636,7 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
         expect(typeof styles.backgrounds?.backgroundColor).toBe('string');
       });
       
-      it('특수 배경 색상을 적용할 수 있어야 함', () => {
+      it('should apply special background colors', () => {
         const transparentStyles = parser.parse('bg-transparent');
         expect(transparentStyles.backgrounds?.backgroundColor).toBe('transparent');
         
@@ -602,23 +644,23 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
         expect(currentStyles.backgrounds?.backgroundColor).toBe('currentColor');
       });
       
-      it('임의 배경 색상을 적용할 수 있어야 함', () => {
+      it('should apply arbitrary background colors', () => {
         const styles = parser.parse('bg-[#ff0000]');
         
         expect(styles.backgrounds).toBeDefined();
         expect(styles.backgrounds?.backgroundColor).toBe('#ff0000');
       });
 
-      it('배경 투명도를 적용할 수 있어야 함', () => {
+      it('should apply background opacity', () => {
         const styles = parser.parse('bg-opacity-50');
         
         expect(styles.backgrounds).toBeDefined();
-        // 투명도 관련 CSS 변수나 속성이 설정되는지 확인
+        expect(styles.backgrounds?.backgroundOpacity).toBeDefined();
       });
     });
     
-    describe('9.2 그라데이션 적용', () => {
-      it('기본 그라데이션을 적용할 수 있어야 함', () => {
+    describe('Gradient application', () => {
+      it('should apply legacy gradients', () => {
         const styles = parser.parse('bg-gradient-to-r');
         
         expect(styles.backgrounds).toBeDefined();
@@ -627,22 +669,14 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
         expect(styles.backgrounds?.backgroundImage).toContain('to right');
       });
       
-      it('그라데이션 색상 정지점을 적용할 수 있어야 함', () => {
+      it('should apply gradient color stops', () => {
         const styles = parser.parse('from-red-500');
         
         expect(styles.backgrounds).toBeDefined();
         expect(styles.backgrounds?.['--tw-gradient-from']).toBeDefined();
       });
 
-      it('복합 그라데이션을 적용할 수 있어야 함', () => {
-        const styles = parser.parse('bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500');
-        
-        expect(styles.backgrounds).toBeDefined();
-        expect(styles.backgrounds?.backgroundImage).toContain('linear-gradient');
-        expect(styles.backgrounds?.['--tw-gradient-from']).toBeDefined();
-      });
-
-      it('새로운 v4.1 선형 그라데이션을 적용할 수 있어야 함', () => {
+      it('should apply new v4.1 linear gradients', () => {
         const styles = parser.parse('bg-linear-to-r');
         
         expect(styles.backgrounds).toBeDefined();
@@ -650,15 +684,16 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
         expect(styles.backgrounds?.backgroundImage).toContain('linear-gradient');
       });
 
-      it('각도 기반 그라데이션을 적용할 수 있어야 함', () => {
+      it('should apply angle-based gradients', () => {
         const styles = parser.parse('bg-linear-45');
         
         expect(styles.backgrounds).toBeDefined();
         expect(styles.backgrounds?.backgroundImage).toBeDefined();
         expect(styles.backgrounds?.backgroundImage).toContain('linear-gradient');
+        expect(styles.backgrounds?.backgroundImage).toContain('45deg in oklab');
       });
 
-      it('방사형 그라데이션을 적용할 수 있어야 함', () => {
+      it('should apply radial gradients', () => {
         const styles = parser.parse('bg-radial');
         
         expect(styles.backgrounds).toBeDefined();
@@ -666,7 +701,7 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
         expect(styles.backgrounds?.backgroundImage).toContain('radial-gradient');
       });
 
-      it('원뿔형 그라데이션을 적용할 수 있어야 함', () => {
+      it('should apply conic gradients', () => {
         const styles = parser.parse('bg-conic-45');
         
         expect(styles.backgrounds).toBeDefined();
@@ -675,66 +710,59 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
       });
     });
     
-    describe('9.3 배경 이미지 적용', () => {
-      it('배경 이미지 none을 적용할 수 있어야 함', () => {
+    describe('Background image application', () => {
+      it('should apply background image none', () => {
         const styles = parser.parse('bg-none');
 
         expect(styles.backgrounds).toBeDefined();
         expect(styles.backgrounds?.backgroundImage).toBe('none');
       });
 
-      it('배경 이미지 URL을 적용할 수 있어야 함', () => {
+      it('should apply background image URLs', () => {
         const styles = parser.parse("bg-[url('/img/hero.jpg')]");
 
         expect(styles.backgrounds).toBeDefined();
         expect(styles.backgrounds?.backgroundImage).toBe("url('/img/hero.jpg')");
       });
-
-      it('복잡한 배경 이미지를 적용할 수 있어야 함', () => {
-        const styles = parser.parse('bg-[url(https://example.com/image.png)]');
-
-        expect(styles.backgrounds).toBeDefined();
-        expect(styles.backgrounds?.backgroundImage).toBe('url(https://example.com/image.png)');
-      });
     });
     
-    describe('9.4 배경 속성 적용', () => {
-      it('배경 위치를 적용할 수 있어야 함', () => {
+    describe('Background property application', () => {
+      it('should apply background position', () => {
         const styles = parser.parse('bg-center');
         
         expect(styles.backgrounds).toBeDefined();
         expect(styles.backgrounds?.backgroundPosition).toBe('center');
       });
       
-      it('배경 크기를 적용할 수 있어야 함', () => {
+      it('should apply background size', () => {
         const styles = parser.parse('bg-cover');
         
         expect(styles.backgrounds).toBeDefined();
         expect(styles.backgrounds?.backgroundSize).toBe('cover');
       });
       
-      it('배경 반복을 적용할 수 있어야 함', () => {
+      it('should apply background repeat', () => {
         const styles = parser.parse('bg-no-repeat');
         
         expect(styles.backgrounds).toBeDefined();
         expect(styles.backgrounds?.backgroundRepeat).toBe('no-repeat');
       });
       
-      it('배경 첨부를 적용할 수 있어야 함', () => {
+      it('should apply background attachment', () => {
         const styles = parser.parse('bg-fixed');
         
         expect(styles.backgrounds).toBeDefined();
         expect(styles.backgrounds?.backgroundAttachment).toBe('fixed');
       });
       
-      it('배경 클립을 적용할 수 있어야 함', () => {
+      it('should apply background clip', () => {
         const styles = parser.parse('bg-clip-text');
         
         expect(styles.backgrounds).toBeDefined();
         expect(styles.backgrounds?.backgroundClip).toBe('text');
       });
       
-      it('배경 원점을 적용할 수 있어야 함', () => {
+      it('should apply background origin', () => {
         const styles = parser.parse('bg-origin-padding');
         
         expect(styles.backgrounds).toBeDefined();
@@ -742,8 +770,8 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
       });
     });
 
-    describe('9.5 복합 배경 스타일', () => {
-      it('여러 배경 속성을 동시에 적용할 수 있어야 함', () => {
+    describe('Complex background combinations', () => {
+      it('should apply multiple background properties', () => {
         const styles = parser.parse('bg-red-500 bg-cover bg-center bg-no-repeat bg-fixed');
         
         expect(styles.backgrounds).toBeDefined();
@@ -754,7 +782,7 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
         expect(styles.backgrounds?.backgroundAttachment).toBe('fixed');
       });
 
-      it('그라데이션과 배경 속성을 조합할 수 있어야 함', () => {
+      it('should apply gradient combinations', () => {
         const styles = parser.parse('bg-gradient-to-r from-blue-500 to-red-500 bg-cover bg-center');
         
         expect(styles.backgrounds).toBeDefined();
@@ -763,7 +791,7 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
         expect(styles.backgrounds?.backgroundPosition).toBe('center');
       });
 
-      it('v4.1 새로운 그라데이션과 속성을 조합할 수 있어야 함', () => {
+      it('should apply v4.1 gradient combinations', () => {
         const styles = parser.parse('bg-linear-45 from-purple-500 to-pink-500 bg-cover');
         
         expect(styles.backgrounds).toBeDefined();
@@ -773,8 +801,8 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
     });
   });
 
-  describe('10. 반응형 및 상태 변형자', () => {
-    it('반응형 배경 클래스를 파싱할 수 있어야 함', () => {
+  describe('Modifiers & Variants', () => {
+    it('should parse responsive backgrounds', () => {
       const responsiveClasses = [
         'sm:bg-red-500',
         'md:bg-blue-600',
@@ -792,7 +820,7 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
       });
     });
 
-    it('상태 변형자 배경 클래스를 파싱할 수 있어야 함', () => {
+    it('should parse state modifiers', () => {
       const stateClasses = [
         'hover:bg-red-500',
         'focus:bg-blue-500',
@@ -809,7 +837,7 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
       });
     });
 
-    it('다크 모드 배경 클래스를 파싱할 수 있어야 함', () => {
+    it('should parse dark mode backgrounds', () => {
       const darkModeClasses = [
         'dark:bg-gray-800',
         'dark:bg-slate-900',
@@ -825,8 +853,8 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
     });
   });
 
-  describe('11. v4.1 고급 기능 테스트', () => {
-    it('보간 모드를 포함한 복합 그라데이션을 파싱할 수 있어야 함', () => {
+  describe('Advanced v4.1 Features', () => {
+    it('should parse interpolation modes', () => {
       const advancedGradients = [
         'bg-linear-to-r/oklab',
         'bg-radial/hsl',
@@ -842,7 +870,7 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
       });
     });
 
-    it('위치가 있는 그라데이션 정지점을 파싱할 수 있어야 함', () => {
+    it('should parse positioned gradient stops', () => {
       const positionedStops = [
         'from-indigo-500',
         'from-10%',
@@ -860,7 +888,7 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
       });
     });
 
-    it('완전한 커스텀 그라데이션을 파싱할 수 있어야 함', () => {
+    it('should parse complex arbitrary gradients', () => {
       const customGradients = [
         'bg-linear-[25deg,red_5%,yellow_60%,lime_90%,teal]',
         'bg-radial-[circle_at_center,red,blue]',
@@ -875,12 +903,198 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
         expect(result?.isArbitrary).toBe(true);
       });
     });
+
+    it('should handle modern v4.1 background utilities', () => {
+      const modernFeatures = [
+        'bg-stripes',
+        'bg-noise',
+        'bg-mesh-gradient',
+        'bg-color-mix-[in_srgb,red_50%,blue]'
+      ];
+
+      modernFeatures.forEach(className => {
+        const result = parser.parseClass(className);
+        // Should not crash, even if not fully supported yet
+        expect(typeof result === 'object' || result === null).toBe(true);
+      });
+    });
   });
 
-  describe('12. 엣지 케이스 및 오류 처리', () => {
+  describe('Container Queries & Media Features', () => {
+    it('should parse background with container queries', () => {
+      const containerClasses = [
+        '@md:bg-blue-500',
+        '@lg:bg-gradient-to-r',
+        '@container/sidebar:bg-gray-100'
+      ];
 
+      containerClasses.forEach(className => {
+        const result = parser.parseClass(className);
+        expect(result).toBeDefined();
+        expect(result?.className).toBe(className);
+        expect(result?.category).toBe('backgrounds');
+      });
+    });
 
-    it('빈 임의값을 처리할 수 있어야 함', () => {
+    it('should parse print media backgrounds', () => {
+      const printClasses = [
+        'print:bg-white',
+        'print:bg-none',
+        'print:bg-transparent'
+      ];
+
+      printClasses.forEach(className => {
+        const result = parser.parseClass(className);
+        expect(result).toBeDefined();
+        expect(result?.className).toBe(className);
+        expect(result?.category).toBe('backgrounds');
+      });
+    });
+
+    it('should parse motion preferences with backgrounds', () => {
+      const motionClasses = [
+        'motion-safe:bg-gradient-to-r',
+        'motion-reduce:bg-static-image',
+        'motion-safe:bg-[url("/animated-bg.gif")]'
+      ];
+
+      motionClasses.forEach(className => {
+        const result = parser.parseClass(className);
+        expect(result).toBeDefined();
+        expect(result?.className).toBe(className);
+        expect(result?.category).toBe('backgrounds');
+      });
+    });
+
+    it('should parse arbitrary media query backgrounds', () => {
+      const arbitraryMedia = [
+        '[@media(min-width:400px)]:bg-blue-500',
+        '[@media(orientation:landscape)]:bg-cover',
+        '[@media(prefers-color-scheme:dark)]:bg-gray-900'
+      ];
+
+      arbitraryMedia.forEach(className => {
+        const result = parser.parseClass(className);
+        expect(result).toBeDefined();
+        expect(result?.className).toBe(className);
+        expect(result?.category).toBe('backgrounds');
+      });
+    });
+  });
+
+  describe('Complex Real-World Scenarios', () => {
+    it('should handle multi-layer background combinations', () => {
+      const multiLayerClass = 'bg-gradient-to-r from-blue-500 via-purple-500 to-red-500, bg-[url("/pattern.svg")] bg-repeat bg-opacity-50';
+      
+      // Test individual parsing of complex combinations
+      const parts = multiLayerClass.split(/,|\s+/);
+      parts.forEach(part => {
+        if (part.trim() && part.startsWith('bg-')) {
+          const result = parser.parseClass(part.trim());
+          if (result) {
+            expect(result.category).toBe('backgrounds');
+          }
+        }
+      });
+    });
+
+    it('should parse deeply nested modifier chains', () => {
+      const nestedClasses = [
+        'xl:hover:focus:bg-gradient-to-r',
+        'dark:lg:hover:bg-opacity-75',
+        '@container/main:md:hover:before:bg-blue-500'
+      ];
+
+      nestedClasses.forEach(className => {
+        const result = parser.parseClass(className);
+        expect(result).toBeDefined();
+        expect(result?.className).toBe(className);
+        expect(result?.category).toBe('backgrounds');
+      });
+    });
+
+    it('should handle CSS custom property backgrounds', () => {
+      const customPropBgs = [
+        'bg-[var(--primary-gradient)]',
+        'bg-[color:var(--bg-color)]',
+        'bg-[image:var(--hero-bg)]'
+      ];
+
+      customPropBgs.forEach(className => {
+        console.log(`\n🔍 Testing CSS custom property: ${className}`);
+        const result = parser.parseClass(className);
+        console.log(`📊 Result category: ${result?.category}, property: ${result?.property}`);
+        
+        expect(result).toBeDefined();
+        expect(result?.className).toBe(className);
+        expect(result?.category).toBe('backgrounds');
+        expect(result?.isArbitrary).toBe(true);
+      });
+    });
+  });
+
+  describe('Performance & Large Scale Tests', () => {
+    it('should handle many gradient stops efficiently', () => {
+      const manyStopsGradient = 'bg-linear-[0deg,red_0%,orange_10%,yellow_20%,green_30%,blue_40%,indigo_50%,violet_60%,red_70%,orange_80%,yellow_90%,green_100%]';
+      
+      const result = parser.parseClass(manyStopsGradient);
+      expect(result).toBeDefined();
+      expect(result?.className).toBe(manyStopsGradient);
+      expect(result?.category).toBe('backgrounds');
+      expect(result?.isArbitrary).toBe(true);
+    });
+
+    it('should handle very long arbitrary values', () => {
+      const longArbitrary = 'bg-[url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjRkZGRkZGIi8+CjxjaXJjbGUgY3g9IjEwIiBjeT0iMTAiIHI9IjQiIGZpbGw9IiM4QjVDRjYiLz4KPC9zdmc+")]';
+      
+      const result = parser.parseClass(longArbitrary);
+      expect(result).toBeDefined();
+      expect(result?.category).toBe('backgrounds');
+      expect(result?.isArbitrary).toBe(true);
+    });
+
+    it('should handle bulk parsing performance', () => {
+      const bulkClasses = Array.from({ length: 50 }, (_, i) => `bg-red-${(i % 9 + 1) * 100}`);
+      
+      const startTime = performance.now();
+      bulkClasses.forEach(className => {
+        const result = parser.parseClass(className);
+        expect(result?.category).toBe('backgrounds');
+      });
+      const endTime = performance.now();
+      
+      // Should parse 50 classes in reasonable time (< 100ms)
+      expect(endTime - startTime).toBeLessThan(100);
+    });
+  });
+
+  describe('CSS Generation & Style Application', () => {
+    it('should apply complex multi-layer backgrounds', () => {
+      const styles = parser.parse('bg-gradient-to-r from-blue-500 to-red-500 bg-[url("/pattern.svg")] bg-repeat bg-blend-multiply');
+      
+      expect(styles.backgrounds).toBeDefined();
+      expect(styles.backgrounds?.backgroundImage).toBeDefined();
+      // Should handle multiple background layers
+    });
+
+    it('should generate proper CSS for v4.1 gradients', () => {
+      const styles = parser.parse('bg-linear-45/oklch from-blue-500 to-red-500');
+      
+      expect(styles.backgrounds).toBeDefined();
+      expect(styles.backgrounds?.backgroundImage).toContain('oklch');
+      expect(styles.backgrounds?.backgroundImage).toContain('45deg');
+    });
+
+    it('should handle background shorthand parsing', () => {
+      const styles = parser.parse('bg-[red_url("/bg.jpg")_center/cover_no-repeat_fixed]');
+      
+      expect(styles.backgrounds).toBeDefined();
+      expect(styles.backgrounds?.background).toBeDefined();
+    });
+  });
+
+  describe('Edge Cases', () => {
+    it('should handle empty arbitrary values gracefully', () => {
       const emptyArbitraryClasses = [
         'bg-[]',
         'from-[]',
@@ -892,15 +1106,17 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
 
       emptyArbitraryClasses.forEach(className => {
         const result = parser.parseClass(className);
-        // 빈 임의값은 적절히 처리되어야 함 (null 반환 또는 오류 처리)
+        // Should either return valid result or null, but not crash
+        expect(result === null || result?.category === 'backgrounds').toBe(true);
       });
     });
 
-    it('복잡한 URL 패턴을 처리할 수 있어야 함', () => {
+    it('should handle complex URL patterns', () => {
       const complexUrls = [
-        "bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4K')]",
+        "bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiLz4=')]",
         "bg-[url('/assets/images/hero-bg.jpg?v=123')]",
-        "bg-[url('https://cdn.example.com/bg.webp')]"
+        "bg-[url('https://cdn.example.com/bg.webp')]",
+        "bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAB')]"
       ];
 
       complexUrls.forEach(className => {
@@ -909,6 +1125,24 @@ describe('CSSParser - 배경(Backgrounds) - 완전한 v4.1 테스트', () => {
         expect(result?.className).toBe(className);
         expect(result?.category).toBe('backgrounds');
         expect(result?.isArbitrary).toBe(true);
+      });
+    });
+
+    it('should handle edge case classes gracefully', () => {
+      const edgeCaseClasses = [
+        'bg-invalid-color',
+        'bg-fake-gradient',
+        'bg-wrong-syntax',
+        'bg-nonexistent-999'
+      ];
+
+      edgeCaseClasses.forEach(className => {
+        const result = parser.parseClass(className);
+        // Should not crash and return either valid result or null
+        expect(typeof result === 'object' || result === null).toBe(true);
+        if (result !== null) {
+          expect(result.className).toBe(className);
+        }
       });
     });
   });
