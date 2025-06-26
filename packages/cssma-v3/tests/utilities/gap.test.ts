@@ -11,7 +11,7 @@ describe('parseGapUtility', () => {
       arbitrary: false,
     });
   });
-  it('parses gap-x-<number>', () => {
+  it('parses gap-x-2', () => {
     expect(parseGapUtility('gap-x-2')).toEqual({
       type: 'gap',
       value: 2,
@@ -20,51 +20,102 @@ describe('parseGapUtility', () => {
       arbitrary: false,
     });
   });
-  it('parses gap-y-<number>', () => {
-    expect(parseGapUtility('gap-y-3')).toEqual({
+  it('parses gap-y-1', () => {
+    expect(parseGapUtility('gap-y-1')).toEqual({
       type: 'gap',
-      value: 3,
+      value: 1,
       axis: 'y',
-      raw: 'gap-y-3',
+      raw: 'gap-y-1',
       arbitrary: false,
     });
   });
-  it('parses gap-[arbitrary]', () => {
-    expect(parseGapUtility('gap-[10px]')).toEqual({
+  it('parses gap-px', () => {
+    expect(parseGapUtility('gap-px')).toEqual({
       type: 'gap',
-      value: '10px',
+      preset: 'px',
       axis: 'both',
-      raw: 'gap-[10px]',
-      arbitrary: true,
+      raw: 'gap-px',
+      arbitrary: false,
     });
   });
-  it('parses gap-x-[arbitrary]', () => {
-    expect(parseGapUtility('gap-x-[1.5rem]')).toEqual({
+  it('parses gap-x-px', () => {
+    expect(parseGapUtility('gap-x-px')).toEqual({
       type: 'gap',
-      value: '1.5rem',
+      preset: 'px',
       axis: 'x',
-      raw: 'gap-x-[1.5rem]',
+      raw: 'gap-x-px',
+      arbitrary: false,
+    });
+  });
+  it('parses gap-y-px', () => {
+    expect(parseGapUtility('gap-y-px')).toEqual({
+      type: 'gap',
+      preset: 'px',
+      axis: 'y',
+      raw: 'gap-y-px',
+      arbitrary: false,
+    });
+  });
+  it('parses gap-(<custom-property>)', () => {
+    expect(parseGapUtility('gap-(--my-gap)')).toEqual({
+      type: 'gap',
+      value: 'var(--my-gap)',
+      axis: 'both',
+      raw: 'gap-(--my-gap)',
+      arbitrary: false,
+    });
+  });
+  it('parses gap-x-(--foo)', () => {
+    expect(parseGapUtility('gap-x-(--foo)')).toEqual({
+      type: 'gap',
+      value: 'var(--foo)',
+      axis: 'x',
+      raw: 'gap-x-(--foo)',
+      arbitrary: false,
+    });
+  });
+  it('parses gap-y-(--bar)', () => {
+    expect(parseGapUtility('gap-y-(--bar)')).toEqual({
+      type: 'gap',
+      value: 'var(--bar)',
+      axis: 'y',
+      raw: 'gap-y-(--bar)',
+      arbitrary: false,
+    });
+  });
+  it('parses gap-[<value>]', () => {
+    expect(parseGapUtility('gap-[5px]')).toEqual({
+      type: 'gap',
+      value: '5px',
+      axis: 'both',
+      raw: 'gap-[5px]',
       arbitrary: true,
     });
   });
-  it('parses gap-y-[arbitrary]', () => {
-    expect(parseGapUtility('gap-y-[2em]')).toEqual({
+  it('parses gap-x-[2em]', () => {
+    expect(parseGapUtility('gap-x-[2em]')).toEqual({
       type: 'gap',
       value: '2em',
+      axis: 'x',
+      raw: 'gap-x-[2em]',
+      arbitrary: true,
+    });
+  });
+  it('parses gap-y-[1rem]', () => {
+    expect(parseGapUtility('gap-y-[1rem]')).toEqual({
+      type: 'gap',
+      value: '1rem',
       axis: 'y',
-      raw: 'gap-y-[2em]',
+      raw: 'gap-y-[1rem]',
       arbitrary: true,
     });
   });
   it('returns null for invalid input', () => {
-    expect(parseGapUtility('gap')).toBeNull();
-    expect(parseGapUtility('gap-x')).toBeNull();
-    expect(parseGapUtility('gap-y')).toBeNull();
     expect(parseGapUtility('gap-')).toBeNull();
     expect(parseGapUtility('gap-x-')).toBeNull();
-    expect(parseGapUtility('gap-y-')).toBeNull();
-    expect(parseGapUtility('gap-arbitrary')).toBeNull();
-    expect(parseGapUtility('gap-x-arbitrary')).toBeNull();
-    expect(parseGapUtility('gap-y-arbitrary')).toBeNull();
+    expect(parseGapUtility('gap-y-foo')).toBeNull();
+    expect(parseGapUtility('gap-[]')).toBeNull();
+    expect(parseGapUtility('gap-z-2')).toBeNull();
+    expect(parseGapUtility('gap-foo')).toBeNull();
   });
 }); 

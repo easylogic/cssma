@@ -15,7 +15,7 @@ const directions = {
 
 export function parsePaddingUtility(token: string): any | null {
   // p-*, px-*, py-*, ps-*, pe-*, pt-*, pr-*, pb-*, pl-*
-  const match = token.match(/^p([xysetrl]?)\-(.+)$/);
+  const match = token.match(/^p([xysetrbl]?)\-(.+)$/);
   if (!match) return null;
   const [, dir, valRaw] = match;
   const val = valRaw.trim();
