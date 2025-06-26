@@ -1,7 +1,7 @@
 // Tailwind align-items utility parser
 // https://tailwindcss.com/docs/align-items
 
-export function parseAlignItemsUtility(token: string): any | null {
+export function parseAlignItems(token: string): any | null {
   if (token === 'items-start') return { type: 'align-items', preset: 'start', raw: token, arbitrary: false };
   if (token === 'items-end') return { type: 'align-items', preset: 'end', raw: token, arbitrary: false };
   if (token === 'items-center') return { type: 'align-items', preset: 'center', raw: token, arbitrary: false };
