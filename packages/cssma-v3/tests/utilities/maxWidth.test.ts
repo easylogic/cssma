@@ -1,43 +1,41 @@
 import { describe, it, expect } from 'vitest';
-import maxWidthParser from '../../src/parser/utilities/maxWidth';
+import { parseMaxWidth } from '../../src/parser/utilities/maxWidth';
 
-const meta = { test: true };
-
-describe('maxWidthParser', () => {
+describe('parseMaxWidth', () => {
   it('parses numeric and px values', () => {
-    expect(maxWidthParser('max-w-0', meta)).toEqual({ property: 'max-width', value: '0rem', raw: 'max-w-0', meta });
-    expect(maxWidthParser('max-w-px', meta)).toEqual({ property: 'max-width', value: '1px', raw: 'max-w-px', meta });
+    expect(parseMaxWidth('max-w-0')).toEqual({ type: 'max-width', value: '0rem', raw: 'max-w-0', arbitrary: false });
+    expect(parseMaxWidth('max-w-px')).toEqual({ type: 'max-width', value: '1px', raw: 'max-w-px', arbitrary: false });
   });
 
   it('parses full, min, max, fit', () => {
-    expect(maxWidthParser('max-w-full', meta)).toEqual({ property: 'max-width', value: '100%', raw: 'max-w-full', meta });
-    expect(maxWidthParser('max-w-min', meta)).toEqual({ property: 'max-width', value: 'min-content', raw: 'max-w-min', meta });
-    expect(maxWidthParser('max-w-max', meta)).toEqual({ property: 'max-width', value: 'max-content', raw: 'max-w-max', meta });
-    expect(maxWidthParser('max-w-fit', meta)).toEqual({ property: 'max-width', value: 'fit-content', raw: 'max-w-fit', meta });
+    expect(parseMaxWidth('max-w-full')).toEqual({ type: 'max-width', value: '100%', raw: 'max-w-full', arbitrary: false });
+    expect(parseMaxWidth('max-w-min')).toEqual({ type: 'max-width', value: 'min-content', raw: 'max-w-min', arbitrary: false });
+    expect(parseMaxWidth('max-w-max')).toEqual({ type: 'max-width', value: 'max-content', raw: 'max-w-max', arbitrary: false });
+    expect(parseMaxWidth('max-w-fit')).toEqual({ type: 'max-width', value: 'fit-content', raw: 'max-w-fit', arbitrary: false });
   });
 
   it('parses screen breakpoints', () => {
-    expect(maxWidthParser('max-w-screen-sm', meta)).toEqual({ property: 'max-width', value: '640px', raw: 'max-w-screen-sm', meta });
-    expect(maxWidthParser('max-w-screen-md', meta)).toEqual({ property: 'max-width', value: '768px', raw: 'max-w-screen-md', meta });
-    expect(maxWidthParser('max-w-screen-lg', meta)).toEqual({ property: 'max-width', value: '1024px', raw: 'max-w-screen-lg', meta });
-    expect(maxWidthParser('max-w-screen-xl', meta)).toEqual({ property: 'max-width', value: '1280px', raw: 'max-w-screen-xl', meta });
-    expect(maxWidthParser('max-w-screen-2xl', meta)).toEqual({ property: 'max-width', value: '1536px', raw: 'max-w-screen-2xl', meta });
+    expect(parseMaxWidth('max-w-screen-sm')).toEqual({ type: 'max-width', value: '640px', raw: 'max-w-screen-sm', arbitrary: false });
+    expect(parseMaxWidth('max-w-screen-md')).toEqual({ type: 'max-width', value: '768px', raw: 'max-w-screen-md', arbitrary: false });
+    expect(parseMaxWidth('max-w-screen-lg')).toEqual({ type: 'max-width', value: '1024px', raw: 'max-w-screen-lg', arbitrary: false });
+    expect(parseMaxWidth('max-w-screen-xl')).toEqual({ type: 'max-width', value: '1280px', raw: 'max-w-screen-xl', arbitrary: false });
+    expect(parseMaxWidth('max-w-screen-2xl')).toEqual({ type: 'max-width', value: '1536px', raw: 'max-w-screen-2xl', arbitrary: false });
   });
 
   it('parses custom property', () => {
-    expect(maxWidthParser('max-w-[var(--foo)]', meta)).toEqual({ property: 'max-width', value: 'var(--foo)', raw: 'max-w-[var(--foo)]', meta, arbitrary: true });
-    expect(maxWidthParser('max-w-[var(--bar-baz)]', meta)).toEqual({ property: 'max-width', value: 'var(--bar-baz)', raw: 'max-w-[var(--bar-baz)]', meta, arbitrary: true });
+    expect(parseMaxWidth('max-w-(--foo)')).toEqual({ type: 'max-width', value: 'var(--foo)', raw: 'max-w-(--foo)', arbitrary: true });
+    expect(parseMaxWidth('max-w-(--bar-baz)')).toEqual({ type: 'max-width', value: 'var(--bar-baz)', raw: 'max-w-(--bar-baz)', arbitrary: true });
   });
 
   it('parses arbitrary values', () => {
-    expect(maxWidthParser('max-w-[32rem]', meta)).toEqual({ property: 'max-width', value: '32rem', raw: 'max-w-[32rem]', meta, arbitrary: true });
-    expect(maxWidthParser('max-w-[calc(100%-1rem)]', meta)).toEqual({ property: 'max-width', value: 'calc(100%-1rem)', raw: 'max-w-[calc(100%-1rem)]', meta, arbitrary: true });
+    expect(parseMaxWidth('max-w-[32rem]')).toEqual({ type: 'max-width', value: '32rem', raw: 'max-w-[32rem]', arbitrary: true });
+    expect(parseMaxWidth('max-w-[calc(100%-1rem)]')).toEqual({ type: 'max-width', value: 'calc(100%-1rem)', raw: 'max-w-[calc(100%-1rem)]', arbitrary: true });
   });
 
   it('returns null for invalid input', () => {
-    expect(maxWidthParser('max-w-', meta)).toBeNull();
-    expect(maxWidthParser('max-w', meta)).toBeNull();
-    expect(maxWidthParser('w-full', meta)).toBeNull();
-    expect(maxWidthParser('min-w-0', meta)).toBeNull();
+    expect(parseMaxWidth('max-w-')).toBeNull();
+    expect(parseMaxWidth('max-w')).toBeNull();
+    expect(parseMaxWidth('w-full')).toBeNull();
+    expect(parseMaxWidth('min-w-0')).toBeNull();
   });
 }); 

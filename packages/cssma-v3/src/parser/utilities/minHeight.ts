@@ -1,9 +1,7 @@
-import { UtilityParserResult, UtilityParser } from '../core';
+// Tailwind v4.1 min-height utility parser
+// https://tailwindcss.com/docs/min-height
 
-// Tailwind v4.1 min-height utilities:
-// min-h-0, min-h-px, min-h-full, min-h-screen, min-h-min, min-h-max, min-h-fit, min-h-[value], min-h-[var(--custom)]
-
-const presetMap: Record<string, string> = {
+const PRESETS: Record<string, string> = {
   '0': '0rem',
   'px': '1px',
   'full': '100%',
@@ -13,46 +11,44 @@ const presetMap: Record<string, string> = {
   'fit': 'fit-content',
 };
 
-const minHeightParser: UtilityParser = (input, meta) => {
-  const match = input.match(/^min-h-(.+)$/);
+export function parseMinHeight(token: string) {
+  const match = /^min-h-(.+)$/.exec(token);
   if (!match) return null;
   const value = match[1];
 
   // Preset
-  if (presetMap[value]) {
+  if (PRESETS[value]) {
     return {
-      property: 'min-height',
-      value: presetMap[value],
-      raw: input,
-      meta,
+      type: 'min-height',
+      value: PRESETS[value],
+      raw: token,
+      arbitrary: false,
     };
   }
 
-  // Custom property (e.g., min-h-[var(--foo)])
-  const customProp = value.match(/^\[(var\(--[\w-]+\))\]$/);
+  // Custom property (e.g., min-h-(--foo))
+  const customProp = /^\(\-\-([\w-]+)\)$/.exec(value);
   if (customProp) {
     return {
-      property: 'min-height',
-      value: customProp[1],
-      raw: input,
-      meta,
+      type: 'min-height',
+      value: `var(--${customProp[1]})`,
+      raw: token,
       arbitrary: true,
     };
   }
 
   // Arbitrary value (e.g., min-h-[32rem])
-  const arbitrary = value.match(/^\[(.+)\]$/);
+  const arbitrary = /^\[(.+)\]$/.exec(value);
   if (arbitrary) {
+    const v = arbitrary[1].trim();
+    if (!v) return null;
     return {
-      property: 'min-height',
-      value: arbitrary[1],
-      raw: input,
-      meta,
+      type: 'min-height',
+      value: v,
+      raw: token,
       arbitrary: true,
     };
   }
 
   return null;
-};
-
-export default minHeightParser; 
+} 

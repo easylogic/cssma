@@ -13,7 +13,7 @@ export function parseClassName(input: string) {
     if (token.type === 'modifier') {
       const parsed = parseModifier(token.value);
       if (parsed && parsed.type !== 'unknown') {
-        modifiersImpl.addModifier({ ...parsed, raw: token.value, priority: 0 });
+        modifiersImpl.addModifier(parsed);
       }
     } else if (token.type === 'utility') {
       utility = token.value;

@@ -1,9 +1,7 @@
-import { UtilityParserResult, UtilityParser } from '../core';
+// Tailwind v4.1 height utility parser
+// https://tailwindcss.com/docs/height
 
-// Tailwind v4.1 height utilities:
-// h-0, h-px, h-full, h-screen, h-min, h-max, h-fit, h-[value], h-[var(--custom)]
-
-const presetMap: Record<string, string> = {
+const PRESETS: Record<string, string> = {
   '0': '0rem',
   'px': '1px',
   'full': '100%',
@@ -13,46 +11,44 @@ const presetMap: Record<string, string> = {
   'fit': 'fit-content',
 };
 
-const heightParser: UtilityParser = (input, meta) => {
-  const match = input.match(/^h-(.+)$/);
+export function parseHeight(token: string) {
+  const match = /^h-(.+)$/.exec(token);
   if (!match) return null;
   const value = match[1];
 
   // Preset
-  if (presetMap[value]) {
+  if (PRESETS[value]) {
     return {
-      property: 'height',
-      value: presetMap[value],
-      raw: input,
-      meta,
+      type: 'height',
+      value: PRESETS[value],
+      raw: token,
+      arbitrary: false,
     };
   }
 
-  // Custom property (e.g., h-[var(--foo)])
-  const customProp = value.match(/^\[(var\(--[\w-]+\))\]$/);
+  // Custom property (e.g., h-(--foo))
+  const customProp = /^\(\-\-([\w-]+)\)$/.exec(value);
   if (customProp) {
     return {
-      property: 'height',
-      value: customProp[1],
-      raw: input,
-      meta,
+      type: 'height',
+      value: `var(--${customProp[1]})`,
+      raw: token,
       arbitrary: true,
     };
   }
 
   // Arbitrary value (e.g., h-[32rem])
-  const arbitrary = value.match(/^\[(.+)\]$/);
+  const arbitrary = /^\[(.+)\]$/.exec(value);
   if (arbitrary) {
+    const v = arbitrary[1].trim();
+    if (!v) return null;
     return {
-      property: 'height',
-      value: arbitrary[1],
-      raw: input,
-      meta,
+      type: 'height',
+      value: v,
+      raw: token,
       arbitrary: true,
     };
   }
 
   return null;
-};
-
-export default heightParser; 
+} 
