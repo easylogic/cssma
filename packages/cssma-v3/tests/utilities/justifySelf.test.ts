@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { parseJustifySelfUtility } from '../../src/parser/utilities/justifySelf';
+import { parseJustifySelf } from '../../src/parser/utilities/justifySelf';
 
 describe('parseJustifySelfUtility', () => {
   it('parses justify-self-auto', () => {
-    expect(parseJustifySelfUtility('justify-self-auto')).toEqual({
+    expect(parseJustifySelf('justify-self-auto')).toEqual({
       type: 'justify-self',
       preset: 'auto',
       raw: 'justify-self-auto',
@@ -11,7 +11,7 @@ describe('parseJustifySelfUtility', () => {
     });
   });
   it('parses justify-self-start', () => {
-    expect(parseJustifySelfUtility('justify-self-start')).toEqual({
+    expect(parseJustifySelf('justify-self-start')).toEqual({
       type: 'justify-self',
       preset: 'start',
       raw: 'justify-self-start',
@@ -19,7 +19,7 @@ describe('parseJustifySelfUtility', () => {
     });
   });
   it('parses justify-self-end', () => {
-    expect(parseJustifySelfUtility('justify-self-end')).toEqual({
+    expect(parseJustifySelf('justify-self-end')).toEqual({
       type: 'justify-self',
       preset: 'end',
       raw: 'justify-self-end',
@@ -27,7 +27,7 @@ describe('parseJustifySelfUtility', () => {
     });
   });
   it('parses justify-self-center', () => {
-    expect(parseJustifySelfUtility('justify-self-center')).toEqual({
+    expect(parseJustifySelf('justify-self-center')).toEqual({
       type: 'justify-self',
       preset: 'center',
       raw: 'justify-self-center',
@@ -35,7 +35,7 @@ describe('parseJustifySelfUtility', () => {
     });
   });
   it('parses justify-self-stretch', () => {
-    expect(parseJustifySelfUtility('justify-self-stretch')).toEqual({
+    expect(parseJustifySelf('justify-self-stretch')).toEqual({
       type: 'justify-self',
       preset: 'stretch',
       raw: 'justify-self-stretch',
@@ -43,7 +43,7 @@ describe('parseJustifySelfUtility', () => {
     });
   });
   it('parses justify-self-[arbitrary]', () => {
-    expect(parseJustifySelfUtility('justify-self-[foobar]')).toEqual({
+    expect(parseJustifySelf('justify-self-[foobar]')).toEqual({
       type: 'justify-self',
       value: 'foobar',
       raw: 'justify-self-[foobar]',
@@ -51,9 +51,9 @@ describe('parseJustifySelfUtility', () => {
     });
   });
   it('returns null for invalid input', () => {
-    expect(parseJustifySelfUtility('justify-self')).toBeNull();
-    expect(parseJustifySelfUtility('justify-self-')).toBeNull();
-    expect(parseJustifySelfUtility('justify-self-arbitrary')).toBeNull();
-    expect(parseJustifySelfUtility('justify-items-center')).toBeNull();
+    expect(parseJustifySelf('justify-self')).toBeNull();
+    expect(parseJustifySelf('justify-self-')).toBeNull();
+    expect(parseJustifySelf('justify-self-arbitrary')).toBeNull();
+    expect(parseJustifySelf('justify-items-center')).toBeNull();
   });
 }); 

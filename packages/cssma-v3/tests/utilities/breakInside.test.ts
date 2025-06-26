@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseBreakInsideUtility } from '../../src/parser/utilities/breakInside';
+import { parseBreakInside } from '../../src/parser/utilities/breakInside';
 
 describe('parseBreakInsideUtility', () => {
   const cases: Array<[string, any]> = [
@@ -11,7 +11,7 @@ describe('parseBreakInsideUtility', () => {
     ['break-inside-[var(--break)]', { type: 'break-inside', value: 'var(--break)', raw: 'break-inside-[var(--break)]', arbitrary: true }],
   ];
 
-  it.each(cases)('parseBreakInsideUtility(%s)', (input, expected) => {
-    expect(parseBreakInsideUtility(input)).toEqual(expected);
+  it.each(cases)('parseBreakInside(%s)', (input, expected) => {
+    expect(parseBreakInside(input)).toEqual(expected);
   });
 }); 

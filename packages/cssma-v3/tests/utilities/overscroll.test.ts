@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseOverscrollUtility } from '../../src/parser/utilities/overscroll';
+import { parseOverscroll } from '../../src/parser/utilities/overscroll';
 
 describe('parseOverscrollUtility', () => {
   const cases: Array<[string, any]> = [
@@ -14,7 +14,7 @@ describe('parseOverscrollUtility', () => {
     ['overscroll-y-none', { type: 'overscroll', axis: 'y', preset: 'none', raw: 'overscroll-y-none', arbitrary: false }],
   ];
 
-  it.each(cases)('parseOverscrollUtility(%s)', (input, expected) => {
-    expect(parseOverscrollUtility(input)).toEqual(expected);
+  it.each(cases)('parseOverscroll(%s)', (input, expected) => {
+    expect(parseOverscroll(input)).toEqual(expected);
   });
 }); 

@@ -48,16 +48,63 @@ import { parseLineHeight } from './utilities/lineHeight';
 import { parseBreakBefore } from './utilities/breakBefore';
 import { parseBreakAfter } from './utilities/breakAfter';
 import { parseBreakInside } from './utilities/breakInside';
+import { parseDisplay } from './utilities/display';
+import { parseFloat } from './utilities/float';
+import { parseClear } from './utilities/clear';
+import { parseBox } from './utilities/box';
+import { parseZIndex } from './utilities/zIndex';
+import { parseVisibility } from './utilities/visibility';
+import { parseFlex } from './utilities/flex';
+import { parseFlexBasis } from './utilities/flexBasis';
+import { parseGap } from './utilities/gap';
+import { parseGridColumn } from './utilities/gridColumn';
+import { parseGridAutoFlow } from './utilities/gridAutoFlow';
+import { parseColSpan } from './utilities/colSpan';
+import { parseColStart } from './utilities/colStart';
+import { parseRowSpan } from './utilities/rowSpan';
+import { parseRowStart } from './utilities/rowStart';
+import { parseObjectFit } from './utilities/objectFit';
+import { parseObjectPosition } from './utilities/objectPosition';
+import { parsePosition } from './utilities/position';
+import { parseInset } from './utilities/inset';
+import { parseWidth } from './utilities/width';
+import { parseMinWidth } from './utilities/minWidth';
+import { parseMaxWidth } from './utilities/maxWidth';
+import { parseHeight } from './utilities/height';
+import { parseMinHeight } from './utilities/minHeight';
+import { parseMaxHeight } from './utilities/maxHeight';
+import { parseListStyleType } from './utilities/listStyleType';
+import { parseListStylePosition } from './utilities/listStylePosition';
+import { parseListStyleImage } from './utilities/listStyleImage';
+import { parseLetterSpacing } from './utilities/letterSpacing';
+import { parseFontWeight } from './utilities/fontWeight';
+import { parseFontStyle } from './utilities/fontStyle';
+import { parseFontSmoothing } from './utilities/fontSmoothing';
+import { parseFontStretch } from './utilities/fontStretch';
+import { parseFontSize } from './utilities/fontSize';
+import { parseFontVariantNumeric } from './utilities/fontVariantNumeric';
+import { parseIsolation } from './utilities/isolation';
+import { parseBoxDecorationBreak } from './utilities/boxDecorationBreak';
+import { parseTextColor } from './utilities/color';
 // ... (spacing, flex/grid 등 추가 가능)
 
 const utilityParsers = [
-  // Spacing
-  parsePadding,
-  parseMargin,
+  // Layout & Display
+  parseDisplay,
+  parseFloat,
+  parseClear,
+  parseBox,
+  parseZIndex,
+  parseVisibility,
+  parsePosition,
+  parseInset,
   // Flex/Grid
+  parseFlex,
   parseFlexGrow,
   parseFlexShrink,
+  parseFlexBasis,
   parseOrder,
+  parseGap,
   parseAlignItems,
   parseAlignSelf,
   parseJustifySelf,
@@ -67,12 +114,43 @@ const utilityParsers = [
   parseGridAutoColumns,
   parseGridAutoRows,
   parseGridRow,
+  parseGridColumn,
+  parseGridAutoFlow,
+  parseColSpan,
+  parseColStart,
+  parseColEnd,
+  parseRowSpan,
+  parseRowStart,
   parseRowEnd,
   parseColEnd,
+  // Sizing
+  parseWidth,
+  parseMinWidth,
+  parseMaxWidth,
+  parseHeight,
+  parseMinHeight,
+  parseMaxHeight,
+  // Spacing
+  parsePadding,
+  parseMargin,
+  // Object
+  parseObjectFit,
+  parseObjectPosition,
   // Typography
   parseFontFamily,
+  parseFontWeight,
+  parseFontStyle,
+  parseFontSmoothing,
+  parseFontStretch,
+  parseFontSize,
   parseLineClamp,
   parseLineHeight,
+  parseLetterSpacing,
+  parseFontVariantNumeric,
+  // List
+  parseListStyleType,
+  parseListStylePosition,
+  parseListStyleImage,
   // Break utilities
   parseBreakBefore,
   parseBreakAfter,
@@ -90,6 +168,12 @@ const utilityParsers = [
   parseContent,
   // Gradient stops
   parseGradientStop,
+  // Color
+  parseTextColor,
+  // Box Decoration
+  parseBoxDecorationBreak,
+  // Isolation
+  parseIsolation,
   // Typography
   parseTextAlign,
   parseTextDecorationLine,

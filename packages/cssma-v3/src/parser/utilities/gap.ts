@@ -1,7 +1,7 @@
 // Tailwind gap utility parser
 // https://tailwindcss.com/docs/gap
 
-export function parseGapUtility(token: string): any | null {
+export function parseGap(token: string): any | null {
   // gap-*, gap-x-*, gap-y-*
   let match = token.match(/^gap(?:-([xy]))?-(.+)$/);
   if (!match) return null;

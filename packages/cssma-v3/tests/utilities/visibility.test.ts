@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseVisibilityUtility } from '../../src/parser/utilities/visibility';
+import { parseVisibility } from '../../src/parser/utilities/visibility';
 
 describe('parseVisibilityUtility', () => {
   const cases: Array<[string, any]> = [
@@ -8,7 +8,7 @@ describe('parseVisibilityUtility', () => {
     ['collapse', { type: 'visibility', preset: 'collapse', raw: 'collapse', arbitrary: false }],
   ];
 
-  it.each(cases)('parseVisibilityUtility(%s)', (input, expected) => {
-    expect(parseVisibilityUtility(input)).toEqual(expected);
+  it.each(cases)('parseVisibility(%s)', (input, expected) => {
+    expect(parseVisibility(input)).toEqual(expected);
   });
 }); 

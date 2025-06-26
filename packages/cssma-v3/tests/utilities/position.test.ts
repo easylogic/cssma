@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parsePositionUtility } from '../../src/parser/utilities/position';
+import { parsePosition } from '../../src/parser/utilities/position';
 
 describe('parsePositionUtility', () => {
   const cases: Array<[string, any]> = [
@@ -10,7 +10,7 @@ describe('parsePositionUtility', () => {
     ['sticky', { type: 'position', preset: 'sticky', raw: 'sticky', arbitrary: false }],
   ];
 
-  it.each(cases)('parsePositionUtility(%s)', (input, expected) => {
-    expect(parsePositionUtility(input)).toEqual(expected);
+  it.each(cases)('parsePosition(%s)', (input, expected) => {
+    expect(parsePosition(input)).toEqual(expected);
   });
 }); 

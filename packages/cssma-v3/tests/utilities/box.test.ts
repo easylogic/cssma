@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseBoxUtility } from '../../src/parser/utilities/box';
+import { parseBox } from '../../src/parser/utilities/box';
 
 describe('parseBoxUtility', () => {
   const cases: Array<[string, any]> = [
@@ -7,7 +7,7 @@ describe('parseBoxUtility', () => {
     ['box-content', { type: 'box', preset: 'content', raw: 'box-content', arbitrary: false }],
   ];
 
-  it.each(cases)('parseBoxUtility(%s)', (input, expected) => {
-    expect(parseBoxUtility(input)).toEqual(expected);
+  it.each(cases)('parseBox(%s)', (input, expected) => {
+    expect(parseBox(input)).toEqual(expected);
   });
 }); 

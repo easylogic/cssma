@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseZIndexUtility } from '../../src/parser/utilities/zIndex';
+import { parseZIndex } from '../../src/parser/utilities/zIndex';
 
 describe('parseZIndexUtility', () => {
   const cases: Array<[string, any]> = [
@@ -15,7 +15,7 @@ describe('parseZIndexUtility', () => {
     ['z-[var(--z)]', { type: 'z-index', value: 'var(--z)', raw: 'z-[var(--z)]', arbitrary: true }],
   ];
 
-  it.each(cases)('parseZIndexUtility(%s)', (input, expected) => {
-    expect(parseZIndexUtility(input)).toEqual(expected);
+  it.each(cases)('parseZIndex(%s)', (input, expected) => {
+    expect(parseZIndex(input)).toEqual(expected);
   });
 }); 

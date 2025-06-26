@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { parseAlignSelfUtility } from '../../src/parser/utilities/alignSelf';
+import { parseAlignSelf } from '../../src/parser/utilities/alignSelf';
 
 describe('parseAlignSelfUtility', () => {
   it('parses self-auto', () => {
-    expect(parseAlignSelfUtility('self-auto')).toEqual({
+    expect(parseAlignSelf('self-auto')).toEqual({
       type: 'align-self',
       preset: 'auto',
       raw: 'self-auto',
@@ -11,7 +11,7 @@ describe('parseAlignSelfUtility', () => {
     });
   });
   it('parses self-start', () => {
-    expect(parseAlignSelfUtility('self-start')).toEqual({
+    expect(parseAlignSelf('self-start')).toEqual({
       type: 'align-self',
       preset: 'start',
       raw: 'self-start',
@@ -19,7 +19,7 @@ describe('parseAlignSelfUtility', () => {
     });
   });
   it('parses self-end', () => {
-    expect(parseAlignSelfUtility('self-end')).toEqual({
+    expect(parseAlignSelf('self-end')).toEqual({
       type: 'align-self',
       preset: 'end',
       raw: 'self-end',
@@ -27,7 +27,7 @@ describe('parseAlignSelfUtility', () => {
     });
   });
   it('parses self-center', () => {
-    expect(parseAlignSelfUtility('self-center')).toEqual({
+    expect(parseAlignSelf('self-center')).toEqual({
       type: 'align-self',
       preset: 'center',
       raw: 'self-center',
@@ -35,7 +35,7 @@ describe('parseAlignSelfUtility', () => {
     });
   });
   it('parses self-stretch', () => {
-    expect(parseAlignSelfUtility('self-stretch')).toEqual({
+    expect(parseAlignSelf('self-stretch')).toEqual({
       type: 'align-self',
       preset: 'stretch',
       raw: 'self-stretch',
@@ -43,7 +43,7 @@ describe('parseAlignSelfUtility', () => {
     });
   });
   it('parses self-baseline', () => {
-    expect(parseAlignSelfUtility('self-baseline')).toEqual({
+    expect(parseAlignSelf('self-baseline')).toEqual({
       type: 'align-self',
       preset: 'baseline',
       raw: 'self-baseline',
@@ -51,7 +51,7 @@ describe('parseAlignSelfUtility', () => {
     });
   });
   it('parses self-[arbitrary]', () => {
-    expect(parseAlignSelfUtility('self-[foobar]')).toEqual({
+    expect(parseAlignSelf('self-[foobar]')).toEqual({
       type: 'align-self',
       value: 'foobar',
       raw: 'self-[foobar]',
@@ -59,9 +59,9 @@ describe('parseAlignSelfUtility', () => {
     });
   });
   it('returns null for invalid input', () => {
-    expect(parseAlignSelfUtility('self')).toBeNull();
-    expect(parseAlignSelfUtility('self-')).toBeNull();
-    expect(parseAlignSelfUtility('self-arbitrary')).toBeNull();
-    expect(parseAlignSelfUtility('items-center')).toBeNull();
+    expect(parseAlignSelf('self')).toBeNull();
+    expect(parseAlignSelf('self-')).toBeNull();
+    expect(parseAlignSelf('self-arbitrary')).toBeNull();
+    expect(parseAlignSelf('items-center')).toBeNull();
   });
 }); 

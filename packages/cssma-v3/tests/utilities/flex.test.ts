@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { parseFlexUtility } from '../../src/parser/utilities/flex';
+import { parseFlex } from '../../src/parser/utilities/flex';
 
 describe('parseFlexUtility', () => {
   it('parses flex-row', () => {
-    expect(parseFlexUtility('flex-row')).toEqual({
+    expect(parseFlex('flex-row')).toEqual({
       type: 'flex-direction',
       preset: 'row',
       raw: 'flex-row',
@@ -11,7 +11,7 @@ describe('parseFlexUtility', () => {
     });
   });
   it('parses flex-row-reverse', () => {
-    expect(parseFlexUtility('flex-row-reverse')).toEqual({
+    expect(parseFlex('flex-row-reverse')).toEqual({
       type: 'flex-direction',
       preset: 'row-reverse',
       raw: 'flex-row-reverse',
@@ -19,7 +19,7 @@ describe('parseFlexUtility', () => {
     });
   });
   it('parses flex-col', () => {
-    expect(parseFlexUtility('flex-col')).toEqual({
+    expect(parseFlex('flex-col')).toEqual({
       type: 'flex-direction',
       preset: 'col',
       raw: 'flex-col',
@@ -27,7 +27,7 @@ describe('parseFlexUtility', () => {
     });
   });
   it('parses flex-col-reverse', () => {
-    expect(parseFlexUtility('flex-col-reverse')).toEqual({
+    expect(parseFlex('flex-col-reverse')).toEqual({
       type: 'flex-direction',
       preset: 'col-reverse',
       raw: 'flex-col-reverse',
@@ -35,7 +35,7 @@ describe('parseFlexUtility', () => {
     });
   });
   it('parses flex-wrap', () => {
-    expect(parseFlexUtility('flex-wrap')).toEqual({
+    expect(parseFlex('flex-wrap')).toEqual({
       type: 'flex-wrap',
       preset: 'wrap',
       raw: 'flex-wrap',
@@ -43,7 +43,7 @@ describe('parseFlexUtility', () => {
     });
   });
   it('parses flex-wrap-reverse', () => {
-    expect(parseFlexUtility('flex-wrap-reverse')).toEqual({
+    expect(parseFlex('flex-wrap-reverse')).toEqual({
       type: 'flex-wrap',
       preset: 'wrap-reverse',
       raw: 'flex-wrap-reverse',
@@ -51,7 +51,7 @@ describe('parseFlexUtility', () => {
     });
   });
   it('parses flex-nowrap', () => {
-    expect(parseFlexUtility('flex-nowrap')).toEqual({
+    expect(parseFlex('flex-nowrap')).toEqual({
       type: 'flex-wrap',
       preset: 'nowrap',
       raw: 'flex-nowrap',
@@ -59,7 +59,7 @@ describe('parseFlexUtility', () => {
     });
   });
   it('parses flex-1', () => {
-    expect(parseFlexUtility('flex-1')).toEqual({
+    expect(parseFlex('flex-1')).toEqual({
       type: 'flex',
       preset: '1',
       raw: 'flex-1',
@@ -67,7 +67,7 @@ describe('parseFlexUtility', () => {
     });
   });
   it('parses flex-auto', () => {
-    expect(parseFlexUtility('flex-auto')).toEqual({
+    expect(parseFlex('flex-auto')).toEqual({
       type: 'flex',
       preset: 'auto',
       raw: 'flex-auto',
@@ -75,7 +75,7 @@ describe('parseFlexUtility', () => {
     });
   });
   it('parses flex-initial', () => {
-    expect(parseFlexUtility('flex-initial')).toEqual({
+    expect(parseFlex('flex-initial')).toEqual({
       type: 'flex',
       preset: 'initial',
       raw: 'flex-initial',
@@ -83,7 +83,7 @@ describe('parseFlexUtility', () => {
     });
   });
   it('parses flex-none', () => {
-    expect(parseFlexUtility('flex-none')).toEqual({
+    expect(parseFlex('flex-none')).toEqual({
       type: 'flex',
       preset: 'none',
       raw: 'flex-none',
@@ -91,7 +91,7 @@ describe('parseFlexUtility', () => {
     });
   });
   it('parses flex-[arbitrary]', () => {
-    expect(parseFlexUtility('flex-[2_2_0%]')).toEqual({
+    expect(parseFlex('flex-[2_2_0%]')).toEqual({
       type: 'flex',
       value: '2_2_0%',
       raw: 'flex-[2_2_0%]',
@@ -99,9 +99,9 @@ describe('parseFlexUtility', () => {
     });
   });
   it('returns null for invalid input', () => {
-    expect(parseFlexUtility('flex')).toBeNull();
-    expect(parseFlexUtility('flex-')).toBeNull();
-    expect(parseFlexUtility('flex-arbitrary')).toBeNull();
-    expect(parseFlexUtility('flex-row-col')).toBeNull();
+    expect(parseFlex('flex')).toBeNull();
+    expect(parseFlex('flex-')).toBeNull();
+    expect(parseFlex('flex-arbitrary')).toBeNull();
+    expect(parseFlex('flex-row-col')).toBeNull();
   });
 }); 

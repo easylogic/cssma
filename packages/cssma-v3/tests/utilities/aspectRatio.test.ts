@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseAspectRatioUtility } from '../../src/parser/utilities/aspectRatio';
+import { parseAspectRatio } from '../../src/parser/utilities/aspectRatio';
 
 describe('parseAspectRatioUtility', () => {
   const cases: Array<[string, any]> = [
@@ -14,7 +14,7 @@ describe('parseAspectRatioUtility', () => {
     ['aspect-[var(--my-aspect-ratio)]', { type: 'aspect-ratio', value: 'var(--my-aspect-ratio)', raw: 'aspect-[var(--my-aspect-ratio)]', arbitrary: true }],
   ];
 
-  it.each(cases)('parseAspectRatioUtility(%s)', (input, expected) => {
-    expect(parseAspectRatioUtility(input)).toEqual(expected);
+  it.each(cases)('parseAspectRatio(%s)', (input, expected) => {
+    expect(parseAspectRatio(input)).toEqual(expected);
   });
 }); 

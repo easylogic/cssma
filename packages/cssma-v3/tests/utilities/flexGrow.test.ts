@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { parseFlexGrowUtility } from '../../src/parser/utilities/flexGrow';
+import { parseFlexGrow } from '../../src/parser/utilities/flexGrow';
 
 describe('parseFlexGrowUtility', () => {
   it('parses grow', () => {
-    expect(parseFlexGrowUtility('grow')).toEqual({
+    expect(parseFlexGrow('grow')).toEqual({
       type: 'flex-grow',
       preset: '1',
       raw: 'grow',
@@ -11,7 +11,7 @@ describe('parseFlexGrowUtility', () => {
     });
   });
   it('parses grow-0', () => {
-    expect(parseFlexGrowUtility('grow-0')).toEqual({
+    expect(parseFlexGrow('grow-0')).toEqual({
       type: 'flex-grow',
       preset: '0',
       raw: 'grow-0',
@@ -19,13 +19,13 @@ describe('parseFlexGrowUtility', () => {
     });
   });
   it('parses grow-[arbitrary]', () => {
-    expect(parseFlexGrowUtility('grow-[2]')).toEqual({
+    expect(parseFlexGrow('grow-[2]')).toEqual({
       type: 'flex-grow',
       value: '2',
       raw: 'grow-[2]',
       arbitrary: true,
     });
-    expect(parseFlexGrowUtility('grow-[var(--grow)]')).toEqual({
+    expect(parseFlexGrow('grow-[var(--grow)]')).toEqual({
       type: 'flex-grow',
       value: 'var(--grow)',
       raw: 'grow-[var(--grow)]',
@@ -33,8 +33,8 @@ describe('parseFlexGrowUtility', () => {
     });
   });
   it('returns null for invalid input', () => {
-    expect(parseFlexGrowUtility('grow-')).toBeNull();
-    expect(parseFlexGrowUtility('grow-arbitrary')).toBeNull();
-    expect(parseFlexGrowUtility('flex-grow')).toBeNull();
+    expect(parseFlexGrow('grow-')).toBeNull();
+    expect(parseFlexGrow('grow-arbitrary')).toBeNull();
+    expect(parseFlexGrow('flex-grow')).toBeNull();
   });
 }); 

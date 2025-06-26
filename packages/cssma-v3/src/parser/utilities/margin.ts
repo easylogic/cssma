@@ -13,7 +13,7 @@ const directions = {
   'l': 'left',
 };
 
-export function parseMarginUtility(token: string): any | null {
+export function parseMargin(token: string): any | null {
   // Handle negative margin
   const negative = token.startsWith('-');
   const t = negative ? token.slice(1) : token;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseFloatUtility } from '../../src/parser/utilities/float';
+import { parseFloat } from '../../src/parser/utilities/float';
 
 describe('parseFloatUtility', () => {
   const cases: Array<[string, any]> = [
@@ -10,7 +10,7 @@ describe('parseFloatUtility', () => {
     ['float-end', { type: 'float', preset: 'end', raw: 'float-end', arbitrary: false }],
   ];
 
-  it.each(cases)('parseFloatUtility(%s)', (input, expected) => {
-    expect(parseFloatUtility(input)).toEqual(expected);
+  it.each(cases)('parseFloat(%s)', (input, expected) => {
+    expect(parseFloat(input)).toEqual(expected);
   });
 }); 

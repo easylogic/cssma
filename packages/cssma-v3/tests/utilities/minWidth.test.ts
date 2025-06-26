@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { parseMinWidthUtility } from '../../src/parser/utilities/minWidth';
+import { parseMinWidth } from '../../src/parser/utilities/minWidth';
 
 describe('parseMinWidthUtility', () => {
   it('parses min-w-0', () => {
-    expect(parseMinWidthUtility('min-w-0')).toEqual({
+    expect(parseMinWidth('min-w-0')).toEqual({
       type: 'min-width',
       preset: '0',
       raw: 'min-w-0',
@@ -11,7 +11,7 @@ describe('parseMinWidthUtility', () => {
     });
   });
   it('parses min-w-full', () => {
-    expect(parseMinWidthUtility('min-w-full')).toEqual({
+    expect(parseMinWidth('min-w-full')).toEqual({
       type: 'min-width',
       preset: 'full',
       raw: 'min-w-full',
@@ -19,7 +19,7 @@ describe('parseMinWidthUtility', () => {
     });
   });
   it('parses min-w-min', () => {
-    expect(parseMinWidthUtility('min-w-min')).toEqual({
+    expect(parseMinWidth('min-w-min')).toEqual({
       type: 'min-width',
       preset: 'min',
       raw: 'min-w-min',
@@ -27,7 +27,7 @@ describe('parseMinWidthUtility', () => {
     });
   });
   it('parses min-w-max', () => {
-    expect(parseMinWidthUtility('min-w-max')).toEqual({
+    expect(parseMinWidth('min-w-max')).toEqual({
       type: 'min-width',
       preset: 'max',
       raw: 'min-w-max',
@@ -35,7 +35,7 @@ describe('parseMinWidthUtility', () => {
     });
   });
   it('parses min-w-fit', () => {
-    expect(parseMinWidthUtility('min-w-fit')).toEqual({
+    expect(parseMinWidth('min-w-fit')).toEqual({
       type: 'min-width',
       preset: 'fit',
       raw: 'min-w-fit',
@@ -43,7 +43,7 @@ describe('parseMinWidthUtility', () => {
     });
   });
   it('parses min-w-px', () => {
-    expect(parseMinWidthUtility('min-w-px')).toEqual({
+    expect(parseMinWidth('min-w-px')).toEqual({
       type: 'min-width',
       preset: 'px',
       raw: 'min-w-px',
@@ -51,7 +51,7 @@ describe('parseMinWidthUtility', () => {
     });
   });
   it('parses min-w-screen', () => {
-    expect(parseMinWidthUtility('min-w-screen')).toEqual({
+    expect(parseMinWidth('min-w-screen')).toEqual({
       type: 'min-width',
       preset: 'screen',
       raw: 'min-w-screen',
@@ -59,7 +59,7 @@ describe('parseMinWidthUtility', () => {
     });
   });
   it('parses min-w-dvw', () => {
-    expect(parseMinWidthUtility('min-w-dvw')).toEqual({
+    expect(parseMinWidth('min-w-dvw')).toEqual({
       type: 'min-width',
       preset: 'dvw',
       raw: 'min-w-dvw',
@@ -67,7 +67,7 @@ describe('parseMinWidthUtility', () => {
     });
   });
   it('parses min-w-dvh', () => {
-    expect(parseMinWidthUtility('min-w-dvh')).toEqual({
+    expect(parseMinWidth('min-w-dvh')).toEqual({
       type: 'min-width',
       preset: 'dvh',
       raw: 'min-w-dvh',
@@ -75,7 +75,7 @@ describe('parseMinWidthUtility', () => {
     });
   });
   it('parses min-w-lvw', () => {
-    expect(parseMinWidthUtility('min-w-lvw')).toEqual({
+    expect(parseMinWidth('min-w-lvw')).toEqual({
       type: 'min-width',
       preset: 'lvw',
       raw: 'min-w-lvw',
@@ -83,7 +83,7 @@ describe('parseMinWidthUtility', () => {
     });
   });
   it('parses min-w-lvh', () => {
-    expect(parseMinWidthUtility('min-w-lvh')).toEqual({
+    expect(parseMinWidth('min-w-lvh')).toEqual({
       type: 'min-width',
       preset: 'lvh',
       raw: 'min-w-lvh',
@@ -91,7 +91,7 @@ describe('parseMinWidthUtility', () => {
     });
   });
   it('parses min-w-svw', () => {
-    expect(parseMinWidthUtility('min-w-svw')).toEqual({
+    expect(parseMinWidth('min-w-svw')).toEqual({
       type: 'min-width',
       preset: 'svw',
       raw: 'min-w-svw',
@@ -99,7 +99,7 @@ describe('parseMinWidthUtility', () => {
     });
   });
   it('parses min-w-svh', () => {
-    expect(parseMinWidthUtility('min-w-svh')).toEqual({
+    expect(parseMinWidth('min-w-svh')).toEqual({
       type: 'min-width',
       preset: 'svh',
       raw: 'min-w-svh',
@@ -107,7 +107,7 @@ describe('parseMinWidthUtility', () => {
     });
   });
   it('parses min-w-(<custom-property>)', () => {
-    expect(parseMinWidthUtility('min-w-(--my-min-width)')).toEqual({
+    expect(parseMinWidth('min-w-(--my-min-width)')).toEqual({
       type: 'min-width',
       value: 'var(--my-min-width)',
       raw: 'min-w-(--my-min-width)',
@@ -115,7 +115,7 @@ describe('parseMinWidthUtility', () => {
     });
   });
   it('parses min-w-[<value>]', () => {
-    expect(parseMinWidthUtility('min-w-[5px]')).toEqual({
+    expect(parseMinWidth('min-w-[5px]')).toEqual({
       type: 'min-width',
       value: '5px',
       raw: 'min-w-[5px]',
@@ -123,9 +123,9 @@ describe('parseMinWidthUtility', () => {
     });
   });
   it('returns null for invalid input', () => {
-    expect(parseMinWidthUtility('min-w-')).toBeNull();
-    expect(parseMinWidthUtility('min-w-foo')).toBeNull();
-    expect(parseMinWidthUtility('min-w-[]')).toBeNull();
-    expect(parseMinWidthUtility('min-width-4')).toBeNull();
+    expect(parseMinWidth('min-w-')).toBeNull();
+    expect(parseMinWidth('min-w-foo')).toBeNull();
+    expect(parseMinWidth('min-w-[]')).toBeNull();
+    expect(parseMinWidth('min-width-4')).toBeNull();
   });
 }); 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseBreakBeforeUtility } from '../../src/parser/utilities/breakBefore';
+import { parseBreakBefore } from '../../src/parser/utilities/breakBefore';
 
 describe('parseBreakBeforeUtility', () => {
   const cases: Array<[string, any]> = [
@@ -15,7 +15,7 @@ describe('parseBreakBeforeUtility', () => {
     ['break-before-[var(--break)]', { type: 'break-before', value: 'var(--break)', raw: 'break-before-[var(--break)]', arbitrary: true }],
   ];
 
-  it.each(cases)('parseBreakBeforeUtility(%s)', (input, expected) => {
-    expect(parseBreakBeforeUtility(input)).toEqual(expected);
+  it.each(cases)('parseBreakBefore(%s)', (input, expected) => {
+    expect(parseBreakBefore(input)).toEqual(expected);
   });
 }); 

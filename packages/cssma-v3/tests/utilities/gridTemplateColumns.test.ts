@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseGridTemplateColumnsUtility } from '../../src/parser/utilities/gridTemplateColumns';
+import { parseGridTemplateColumns } from '../../src/parser/utilities/gridTemplateColumns';
 
 describe('parseGridTemplateColumnsUtility', () => {
   const cases: Array<[string, any]> = [
@@ -10,7 +10,7 @@ describe('parseGridTemplateColumnsUtility', () => {
     ['grid-cols-[var(--cols)]', { type: 'grid-template-columns', value: 'var(--cols)', raw: 'grid-cols-[var(--cols)]', arbitrary: true }],
   ];
 
-  it.each(cases)('parseGridTemplateColumnsUtility(%s)', (input, expected) => {
-    expect(parseGridTemplateColumnsUtility(input)).toEqual(expected);
+  it.each(cases)('parseGridTemplateColumns(%s)', (input, expected) => {
+    expect(parseGridTemplateColumns(input)).toEqual(expected);
   });
 }); 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseOverflowUtility } from '../../src/parser/utilities/overflow';
+import { parseOverflow } from '../../src/parser/utilities/overflow';
 
 describe('parseOverflowUtility', () => {
   const cases: Array<[string, any]> = [
@@ -20,7 +20,7 @@ describe('parseOverflowUtility', () => {
     ['overflow-y-scroll', { type: 'overflow', axis: 'y', preset: 'scroll', raw: 'overflow-y-scroll', arbitrary: false }],
   ];
 
-  it.each(cases)('parseOverflowUtility(%s)', (input, expected) => {
-    expect(parseOverflowUtility(input)).toEqual(expected);
+  it.each(cases)('parseOverflow(%s)', (input, expected) => {
+    expect(parseOverflow(input)).toEqual(expected);
   });
 }); 

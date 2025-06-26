@@ -5,7 +5,7 @@ const presetMap = [
   '0','full','min','max','fit','px','screen','dvw','dvh','lvw','lvh','svw','svh'
 ];
 
-export function parseMinWidthUtility(token: string): any | null {
+export function parseMinWidth(token: string): any | null {
   // min-w-<preset>, min-w-(<custom-property>), min-w-[<value>]
   const match = token.match(/^min-w\-(.+)$/);
   if (!match) return null;

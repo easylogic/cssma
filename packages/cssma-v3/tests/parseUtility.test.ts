@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseUtility } from '../../src/parser/utilities/parseUtility';
+import { parseUtility } from '../src/parser/parseUtility';
 
 describe('parseUtility', () => {
   it('parses bg-cover', () => {

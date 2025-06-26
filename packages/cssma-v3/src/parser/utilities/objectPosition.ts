@@ -6,7 +6,7 @@ const presets = [
   'right', 'right-bottom', 'right-top', 'top'
 ];
 
-export function parseObjectPositionUtility(token: string): any | null {
+export function parseObjectPosition(token: string): any | null {
   for (const preset of presets) {
     if (token === `object-${preset}`) return { type: 'object-position', preset, raw: token, arbitrary: false };
   }

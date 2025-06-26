@@ -13,7 +13,7 @@ const directions = {
   'l': 'left',
 };
 
-export function parsePaddingUtility(token: string): any | null {
+export function parsePadding(token: string): any | null {
   // p-*, px-*, py-*, ps-*, pe-*, pt-*, pr-*, pb-*, pl-*
   const match = token.match(/^p([xysetrbl]?)\-(.+)$/);
   if (!match) return null;

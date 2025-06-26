@@ -9,7 +9,7 @@ const presets = [
   '1', 'auto', 'initial', 'none'
 ];
 
-export function parseFlexUtility(token: string): any | null {
+export function parseFlex(token: string): any | null {
   // Direction
   if (token === 'flex-row') return { type: 'flex-direction', preset: 'row', raw: token, arbitrary: false };
   if (token === 'flex-row-reverse') return { type: 'flex-direction', preset: 'row-reverse', raw: token, arbitrary: false };

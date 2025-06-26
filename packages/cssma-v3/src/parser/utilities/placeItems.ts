@@ -1,7 +1,7 @@
 // Tailwind place-items utility parser
 // https://tailwindcss.com/docs/place-items
 
-export function parsePlaceItemsUtility(token: string): any | null {
+export function parsePlaceItems(token: string): any | null {
   if (token === 'place-items-start') return { type: 'place-items', preset: 'start', raw: token, arbitrary: false };
   if (token === 'place-items-end') return { type: 'place-items', preset: 'end', raw: token, arbitrary: false };
   if (token === 'place-items-center') return { type: 'place-items', preset: 'center', raw: token, arbitrary: false };

@@ -6,7 +6,7 @@ const presetMap = [
   'auto','px','full','screen','dvw','dvh','lvw','lvh','svw','svh','min','max','fit'
 ];
 
-export function parseWidthUtility(token: string): any | null {
+export function parseWidth(token: string): any | null {
   // w-<number>, w-<fraction>, w-<preset>, w-(<custom-property>), w-[<value>]
   const match = token.match(/^w\-(.+)$/);
   if (!match) return null;

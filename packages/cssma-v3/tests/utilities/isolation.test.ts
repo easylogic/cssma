@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseIsolationUtility } from '../../src/parser/utilities/isolation';
+import { parseIsolation } from '../../src/parser/utilities/isolation';
 
 describe('parseIsolationUtility', () => {
   const cases: Array<[string, any]> = [
@@ -7,7 +7,7 @@ describe('parseIsolationUtility', () => {
     ['isolation-isolate', { type: 'isolation', preset: 'isolate' }],
   ];
 
-  it.each(cases)('parseIsolationUtility(%s)', (input, expected) => {
-    expect(parseIsolationUtility(input)).toEqual(expected);
+  it.each(cases)('parseIsolation(%s)', (input, expected) => {
+    expect(parseIsolation(input)).toEqual(expected);
   });
 }); 

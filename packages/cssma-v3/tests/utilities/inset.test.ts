@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseInsetUtility } from '../../src/parser/utilities/inset';
+import { parseInset } from '../../src/parser/utilities/inset';
 
 describe('parseInsetUtility', () => {
   const cases: Array<[string, any]> = [
@@ -26,7 +26,7 @@ describe('parseInsetUtility', () => {
     ['left-[calc(100%-4rem)]', { type: 'inset', direction: 'left', value: 'calc(100%-4rem)', raw: 'left-[calc(100%-4rem)]', arbitrary: true }],
   ];
 
-  it.each(cases)('parseInsetUtility(%s)', (input, expected) => {
-    expect(parseInsetUtility(input)).toEqual(expected);
+  it.each(cases)('parseInset(%s)', (input, expected) => {
+    expect(parseInset(input)).toEqual(expected);
   });
 }); 

@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { parseFlexShrinkUtility } from '../../src/parser/utilities/flexShrink';
+import { parseFlexShrink } from '../../src/parser/utilities/flexShrink';
 
 describe('parseFlexShrinkUtility', () => {
   it('parses shrink', () => {
-    expect(parseFlexShrinkUtility('shrink')).toEqual({
+    expect(parseFlexShrink('shrink')).toEqual({
       type: 'flex-shrink',
       preset: '1',
       raw: 'shrink',
@@ -11,7 +11,7 @@ describe('parseFlexShrinkUtility', () => {
     });
   });
   it('parses shrink-0', () => {
-    expect(parseFlexShrinkUtility('shrink-0')).toEqual({
+    expect(parseFlexShrink('shrink-0')).toEqual({
       type: 'flex-shrink',
       preset: '0',
       raw: 'shrink-0',
@@ -19,13 +19,13 @@ describe('parseFlexShrinkUtility', () => {
     });
   });
   it('parses shrink-[arbitrary]', () => {
-    expect(parseFlexShrinkUtility('shrink-[2]')).toEqual({
+    expect(parseFlexShrink('shrink-[2]')).toEqual({
       type: 'flex-shrink',
       value: '2',
       raw: 'shrink-[2]',
       arbitrary: true,
     });
-    expect(parseFlexShrinkUtility('shrink-[var(--shrink)]')).toEqual({
+    expect(parseFlexShrink('shrink-[var(--shrink)]')).toEqual({
       type: 'flex-shrink',
       value: 'var(--shrink)',
       raw: 'shrink-[var(--shrink)]',
@@ -33,8 +33,8 @@ describe('parseFlexShrinkUtility', () => {
     });
   });
   it('returns null for invalid input', () => {
-    expect(parseFlexShrinkUtility('shrink-')).toBeNull();
-    expect(parseFlexShrinkUtility('shrink-arbitrary')).toBeNull();
-    expect(parseFlexShrinkUtility('flex-shrink')).toBeNull();
+    expect(parseFlexShrink('shrink-')).toBeNull();
+    expect(parseFlexShrink('shrink-arbitrary')).toBeNull();
+    expect(parseFlexShrink('flex-shrink')).toBeNull();
   });
 }); 

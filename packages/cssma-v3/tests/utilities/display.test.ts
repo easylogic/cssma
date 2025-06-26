@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseDisplayUtility } from '../../src/parser/utilities/display';
+import { parseDisplay } from '../../src/parser/utilities/display';
 
 describe('parseDisplayUtility', () => {
   const cases: Array<[string, any]> = [
@@ -25,7 +25,7 @@ describe('parseDisplayUtility', () => {
     ['hidden', { type: 'display', preset: 'hidden', raw: 'hidden', arbitrary: false }],
   ];
 
-  it.each(cases)('parseDisplayUtility(%s)', (input, expected) => {
-    expect(parseDisplayUtility(input)).toEqual(expected);
+  it.each(cases)('parseDisplay(%s)', (input, expected) => {
+    expect(parseDisplay(input)).toEqual(expected);
   });
 }); 

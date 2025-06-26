@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { parseWidthUtility } from '../../src/parser/utilities/width';
+import { parseWidth } from '../../src/parser/utilities/width';
 
 describe('parseWidthUtility', () => {
   it('parses w-<number>', () => {
-    expect(parseWidthUtility('w-4')).toEqual({
+    expect(parseWidth('w-4')).toEqual({
       type: 'width',
       value: 4,
       raw: 'w-4',
@@ -11,7 +11,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-1/2 (fraction)', () => {
-    expect(parseWidthUtility('w-1/2')).toEqual({
+    expect(parseWidth('w-1/2')).toEqual({
       type: 'width',
       value: '1/2',
       raw: 'w-1/2',
@@ -19,7 +19,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-3xs', () => {
-    expect(parseWidthUtility('w-3xs')).toEqual({
+    expect(parseWidth('w-3xs')).toEqual({
       type: 'width',
       preset: '3xs',
       raw: 'w-3xs',
@@ -27,7 +27,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-2xs', () => {
-    expect(parseWidthUtility('w-2xs')).toEqual({
+    expect(parseWidth('w-2xs')).toEqual({
       type: 'width',
       preset: '2xs',
       raw: 'w-2xs',
@@ -35,7 +35,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-xs', () => {
-    expect(parseWidthUtility('w-xs')).toEqual({
+    expect(parseWidth('w-xs')).toEqual({
       type: 'width',
       preset: 'xs',
       raw: 'w-xs',
@@ -43,7 +43,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-sm', () => {
-    expect(parseWidthUtility('w-sm')).toEqual({
+    expect(parseWidth('w-sm')).toEqual({
       type: 'width',
       preset: 'sm',
       raw: 'w-sm',
@@ -51,7 +51,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-md', () => {
-    expect(parseWidthUtility('w-md')).toEqual({
+    expect(parseWidth('w-md')).toEqual({
       type: 'width',
       preset: 'md',
       raw: 'w-md',
@@ -59,7 +59,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-lg', () => {
-    expect(parseWidthUtility('w-lg')).toEqual({
+    expect(parseWidth('w-lg')).toEqual({
       type: 'width',
       preset: 'lg',
       raw: 'w-lg',
@@ -67,7 +67,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-xl', () => {
-    expect(parseWidthUtility('w-xl')).toEqual({
+    expect(parseWidth('w-xl')).toEqual({
       type: 'width',
       preset: 'xl',
       raw: 'w-xl',
@@ -75,7 +75,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-2xl', () => {
-    expect(parseWidthUtility('w-2xl')).toEqual({
+    expect(parseWidth('w-2xl')).toEqual({
       type: 'width',
       preset: '2xl',
       raw: 'w-2xl',
@@ -83,7 +83,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-3xl', () => {
-    expect(parseWidthUtility('w-3xl')).toEqual({
+    expect(parseWidth('w-3xl')).toEqual({
       type: 'width',
       preset: '3xl',
       raw: 'w-3xl',
@@ -91,7 +91,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-4xl', () => {
-    expect(parseWidthUtility('w-4xl')).toEqual({
+    expect(parseWidth('w-4xl')).toEqual({
       type: 'width',
       preset: '4xl',
       raw: 'w-4xl',
@@ -99,7 +99,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-5xl', () => {
-    expect(parseWidthUtility('w-5xl')).toEqual({
+    expect(parseWidth('w-5xl')).toEqual({
       type: 'width',
       preset: '5xl',
       raw: 'w-5xl',
@@ -107,7 +107,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-6xl', () => {
-    expect(parseWidthUtility('w-6xl')).toEqual({
+    expect(parseWidth('w-6xl')).toEqual({
       type: 'width',
       preset: '6xl',
       raw: 'w-6xl',
@@ -115,7 +115,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-7xl', () => {
-    expect(parseWidthUtility('w-7xl')).toEqual({
+    expect(parseWidth('w-7xl')).toEqual({
       type: 'width',
       preset: '7xl',
       raw: 'w-7xl',
@@ -123,7 +123,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-auto', () => {
-    expect(parseWidthUtility('w-auto')).toEqual({
+    expect(parseWidth('w-auto')).toEqual({
       type: 'width',
       preset: 'auto',
       raw: 'w-auto',
@@ -131,7 +131,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-px', () => {
-    expect(parseWidthUtility('w-px')).toEqual({
+    expect(parseWidth('w-px')).toEqual({
       type: 'width',
       preset: 'px',
       raw: 'w-px',
@@ -139,7 +139,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-full', () => {
-    expect(parseWidthUtility('w-full')).toEqual({
+    expect(parseWidth('w-full')).toEqual({
       type: 'width',
       preset: 'full',
       raw: 'w-full',
@@ -147,7 +147,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-screen', () => {
-    expect(parseWidthUtility('w-screen')).toEqual({
+    expect(parseWidth('w-screen')).toEqual({
       type: 'width',
       preset: 'screen',
       raw: 'w-screen',
@@ -155,7 +155,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-dvw', () => {
-    expect(parseWidthUtility('w-dvw')).toEqual({
+    expect(parseWidth('w-dvw')).toEqual({
       type: 'width',
       preset: 'dvw',
       raw: 'w-dvw',
@@ -163,7 +163,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-dvh', () => {
-    expect(parseWidthUtility('w-dvh')).toEqual({
+    expect(parseWidth('w-dvh')).toEqual({
       type: 'width',
       preset: 'dvh',
       raw: 'w-dvh',
@@ -171,7 +171,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-lvw', () => {
-    expect(parseWidthUtility('w-lvw')).toEqual({
+    expect(parseWidth('w-lvw')).toEqual({
       type: 'width',
       preset: 'lvw',
       raw: 'w-lvw',
@@ -179,7 +179,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-lvh', () => {
-    expect(parseWidthUtility('w-lvh')).toEqual({
+    expect(parseWidth('w-lvh')).toEqual({
       type: 'width',
       preset: 'lvh',
       raw: 'w-lvh',
@@ -187,7 +187,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-svw', () => {
-    expect(parseWidthUtility('w-svw')).toEqual({
+    expect(parseWidth('w-svw')).toEqual({
       type: 'width',
       preset: 'svw',
       raw: 'w-svw',
@@ -195,7 +195,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-svh', () => {
-    expect(parseWidthUtility('w-svh')).toEqual({
+    expect(parseWidth('w-svh')).toEqual({
       type: 'width',
       preset: 'svh',
       raw: 'w-svh',
@@ -203,7 +203,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-min', () => {
-    expect(parseWidthUtility('w-min')).toEqual({
+    expect(parseWidth('w-min')).toEqual({
       type: 'width',
       preset: 'min',
       raw: 'w-min',
@@ -211,7 +211,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-max', () => {
-    expect(parseWidthUtility('w-max')).toEqual({
+    expect(parseWidth('w-max')).toEqual({
       type: 'width',
       preset: 'max',
       raw: 'w-max',
@@ -219,7 +219,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-fit', () => {
-    expect(parseWidthUtility('w-fit')).toEqual({
+    expect(parseWidth('w-fit')).toEqual({
       type: 'width',
       preset: 'fit',
       raw: 'w-fit',
@@ -227,7 +227,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-(<custom-property>)', () => {
-    expect(parseWidthUtility('w-(--my-width)')).toEqual({
+    expect(parseWidth('w-(--my-width)')).toEqual({
       type: 'width',
       value: 'var(--my-width)',
       raw: 'w-(--my-width)',
@@ -235,7 +235,7 @@ describe('parseWidthUtility', () => {
     });
   });
   it('parses w-[<value>]', () => {
-    expect(parseWidthUtility('w-[5px]')).toEqual({
+    expect(parseWidth('w-[5px]')).toEqual({
       type: 'width',
       value: '5px',
       raw: 'w-[5px]',
@@ -243,10 +243,10 @@ describe('parseWidthUtility', () => {
     });
   });
   it('returns null for invalid input', () => {
-    expect(parseWidthUtility('w-')).toBeNull();
-    expect(parseWidthUtility('w-foo')).toBeNull();
-    expect(parseWidthUtility('w-[]')).toBeNull();
-    expect(parseWidthUtility('w-1//2')).toBeNull();
-    expect(parseWidthUtility('width-4')).toBeNull();
+    expect(parseWidth('w-')).toBeNull();
+    expect(parseWidth('w-foo')).toBeNull();
+    expect(parseWidth('w-[]')).toBeNull();
+    expect(parseWidth('w-1//2')).toBeNull();
+    expect(parseWidth('width-4')).toBeNull();
   });
 }); 

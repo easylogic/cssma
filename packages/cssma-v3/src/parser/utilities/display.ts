@@ -8,7 +8,7 @@ const presets = [
   'list-item', 'hidden'
 ];
 
-export function parseDisplayUtility(token: string): any | null {
+export function parseDisplay(token: string): any | null {
   for (const preset of presets) {
     if (token === preset) return { type: 'display', preset, raw: token, arbitrary: false };
   }

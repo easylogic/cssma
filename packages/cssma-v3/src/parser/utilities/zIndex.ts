@@ -3,7 +3,7 @@
 
 const presets = ['auto', '0', '10', '20', '30', '40', '50'];
 
-export function parseZIndexUtility(token: string): any | null {
+export function parseZIndex(token: string): any | null {
   for (const preset of presets) {
     if (token === `z-${preset}`) {
       if (preset === 'auto') return { type: 'z-index', preset: 'auto', raw: token, arbitrary: false };

@@ -5,7 +5,7 @@ const presets = [
   'contain', 'cover', 'fill', 'none', 'scale-down'
 ];
 
-export function parseObjectFitUtility(token: string): any | null {
+export function parseObjectFit(token: string): any | null {
   for (const preset of presets) {
     if (token === `object-${preset}`) return { type: 'object-fit', preset, raw: token, arbitrary: false };
   }

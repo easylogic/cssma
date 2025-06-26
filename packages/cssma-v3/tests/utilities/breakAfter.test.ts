@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseBreakAfterUtility } from '../../src/parser/utilities/breakAfter';
+import { parseBreakAfter } from '../../src/parser/utilities/breakAfter';
 
 describe('parseBreakAfterUtility', () => {
   const cases: Array<[string, any]> = [
@@ -15,7 +15,7 @@ describe('parseBreakAfterUtility', () => {
     ['break-after-[var(--break)]', { type: 'break-after', value: 'var(--break)', raw: 'break-after-[var(--break)]', arbitrary: true }],
   ];
 
-  it.each(cases)('parseBreakAfterUtility(%s)', (input, expected) => {
-    expect(parseBreakAfterUtility(input)).toEqual(expected);
+  it.each(cases)('parseBreakAfter(%s)', (input, expected) => {
+    expect(parseBreakAfter(input)).toEqual(expected);
   });
 }); 

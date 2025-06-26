@@ -5,7 +5,7 @@ const directions = [
   '', 'x', 'y', 'top', 'right', 'bottom', 'left'
 ];
 
-export function parseInsetUtility(token: string): any | null {
+export function parseInset(token: string): any | null {
   // 1. inset-[arbitrary]
   let m = token.match(/^inset-\[(.+)\]$/);
   if (m) return { type: 'inset', value: m[1], raw: token, arbitrary: true };

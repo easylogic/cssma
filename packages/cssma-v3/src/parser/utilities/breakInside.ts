@@ -5,7 +5,7 @@ const presets = [
   'auto', 'avoid', 'avoid-page', 'avoid-column'
 ];
 
-export function parseBreakInsideUtility(token: string): any | null {
+export function parseBreakInside(token: string): any | null {
   for (const preset of presets) {
     if (token === `break-inside-${preset}`) return { type: 'break-inside', preset, raw: token, arbitrary: false };
   }

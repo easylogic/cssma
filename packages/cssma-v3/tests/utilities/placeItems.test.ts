@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { parsePlaceItemsUtility } from '../../src/parser/utilities/placeItems';
+import { parsePlaceItems } from '../../src/parser/utilities/placeItems';
 
 describe('parsePlaceItemsUtility', () => {
   it('parses place-items-start', () => {
-    expect(parsePlaceItemsUtility('place-items-start')).toEqual({
+    expect(parsePlaceItems('place-items-start')).toEqual({
       type: 'place-items',
       preset: 'start',
       raw: 'place-items-start',
@@ -11,7 +11,7 @@ describe('parsePlaceItemsUtility', () => {
     });
   });
   it('parses place-items-end', () => {
-    expect(parsePlaceItemsUtility('place-items-end')).toEqual({
+    expect(parsePlaceItems('place-items-end')).toEqual({
       type: 'place-items',
       preset: 'end',
       raw: 'place-items-end',
@@ -19,7 +19,7 @@ describe('parsePlaceItemsUtility', () => {
     });
   });
   it('parses place-items-center', () => {
-    expect(parsePlaceItemsUtility('place-items-center')).toEqual({
+    expect(parsePlaceItems('place-items-center')).toEqual({
       type: 'place-items',
       preset: 'center',
       raw: 'place-items-center',
@@ -27,7 +27,7 @@ describe('parsePlaceItemsUtility', () => {
     });
   });
   it('parses place-items-stretch', () => {
-    expect(parsePlaceItemsUtility('place-items-stretch')).toEqual({
+    expect(parsePlaceItems('place-items-stretch')).toEqual({
       type: 'place-items',
       preset: 'stretch',
       raw: 'place-items-stretch',
@@ -35,7 +35,7 @@ describe('parsePlaceItemsUtility', () => {
     });
   });
   it('parses place-items-[arbitrary]', () => {
-    expect(parsePlaceItemsUtility('place-items-[foobar]')).toEqual({
+    expect(parsePlaceItems('place-items-[foobar]')).toEqual({
       type: 'place-items',
       value: 'foobar',
       raw: 'place-items-[foobar]',
@@ -43,9 +43,9 @@ describe('parsePlaceItemsUtility', () => {
     });
   });
   it('returns null for invalid input', () => {
-    expect(parsePlaceItemsUtility('place-items')).toBeNull();
-    expect(parsePlaceItemsUtility('place-items-')).toBeNull();
-    expect(parsePlaceItemsUtility('place-items-arbitrary')).toBeNull();
-    expect(parsePlaceItemsUtility('place-self-center')).toBeNull();
+    expect(parsePlaceItems('place-items')).toBeNull();
+    expect(parsePlaceItems('place-items-')).toBeNull();
+    expect(parsePlaceItems('place-items-arbitrary')).toBeNull();
+    expect(parsePlaceItems('place-self-center')).toBeNull();
   });
 }); 

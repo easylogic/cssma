@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseObjectPositionUtility } from '../../src/parser/utilities/objectPosition';
+import { parseObjectPosition } from '../../src/parser/utilities/objectPosition';
 
 describe('parseObjectPositionUtility', () => {
   const cases: Array<[string, any]> = [
@@ -16,7 +16,7 @@ describe('parseObjectPositionUtility', () => {
     ['object-[center_bottom]', { type: 'object-position', value: 'center_bottom', raw: 'object-[center_bottom]', arbitrary: true }],
   ];
 
-  it.each(cases)('parseObjectPositionUtility(%s)', (input, expected) => {
-    expect(parseObjectPositionUtility(input)).toEqual(expected);
+  it.each(cases)('parseObjectPosition(%s)', (input, expected) => {
+    expect(parseObjectPosition(input)).toEqual(expected);
   });
 }); 

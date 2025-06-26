@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { parseAlignItemsUtility } from '../../src/parser/utilities/alignItems';
+import { parseAlignItems } from '../../src/parser/utilities/alignItems';
 
 describe('parseAlignItemsUtility', () => {
   it('parses items-start', () => {
-    expect(parseAlignItemsUtility('items-start')).toEqual({
+    expect(parseAlignItems('items-start')).toEqual({
       type: 'align-items',
       preset: 'start',
       raw: 'items-start',
@@ -11,7 +11,7 @@ describe('parseAlignItemsUtility', () => {
     });
   });
   it('parses items-end', () => {
-    expect(parseAlignItemsUtility('items-end')).toEqual({
+    expect(parseAlignItems('items-end')).toEqual({
       type: 'align-items',
       preset: 'end',
       raw: 'items-end',
@@ -19,7 +19,7 @@ describe('parseAlignItemsUtility', () => {
     });
   });
   it('parses items-center', () => {
-    expect(parseAlignItemsUtility('items-center')).toEqual({
+    expect(parseAlignItems('items-center')).toEqual({
       type: 'align-items',
       preset: 'center',
       raw: 'items-center',
@@ -27,7 +27,7 @@ describe('parseAlignItemsUtility', () => {
     });
   });
   it('parses items-baseline', () => {
-    expect(parseAlignItemsUtility('items-baseline')).toEqual({
+    expect(parseAlignItems('items-baseline')).toEqual({
       type: 'align-items',
       preset: 'baseline',
       raw: 'items-baseline',
@@ -35,7 +35,7 @@ describe('parseAlignItemsUtility', () => {
     });
   });
   it('parses items-stretch', () => {
-    expect(parseAlignItemsUtility('items-stretch')).toEqual({
+    expect(parseAlignItems('items-stretch')).toEqual({
       type: 'align-items',
       preset: 'stretch',
       raw: 'items-stretch',
@@ -43,7 +43,7 @@ describe('parseAlignItemsUtility', () => {
     });
   });
   it('parses items-[arbitrary]', () => {
-    expect(parseAlignItemsUtility('items-[foobar]')).toEqual({
+    expect(parseAlignItems('items-[foobar]')).toEqual({
       type: 'align-items',
       value: 'foobar',
       raw: 'items-[foobar]',
@@ -51,9 +51,9 @@ describe('parseAlignItemsUtility', () => {
     });
   });
   it('returns null for invalid input', () => {
-    expect(parseAlignItemsUtility('items')).toBeNull();
-    expect(parseAlignItemsUtility('items-')).toBeNull();
-    expect(parseAlignItemsUtility('items-arbitrary')).toBeNull();
-    expect(parseAlignItemsUtility('justify-items-center')).toBeNull();
+    expect(parseAlignItems('items')).toBeNull();
+    expect(parseAlignItems('items-')).toBeNull();
+    expect(parseAlignItems('items-arbitrary')).toBeNull();
+    expect(parseAlignItems('justify-items-center')).toBeNull();
   });
 }); 

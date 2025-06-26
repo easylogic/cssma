@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseColumnsUtility } from '../../src/parser/utilities/columns';
+import { parseColumns } from '../../src/parser/utilities/columns';
 
 describe('parseColumnsUtility', () => {
   const cases: Array<[string, any]> = [
@@ -13,7 +13,7 @@ describe('parseColumnsUtility', () => {
     ['columns-[var(--my-columns)]', { type: 'columns', value: 'var(--my-columns)', raw: 'columns-[var(--my-columns)]', arbitrary: true }],
   ];
 
-  it.each(cases)('parseColumnsUtility(%s)', (input, expected) => {
-    expect(parseColumnsUtility(input)).toEqual(expected);
+  it.each(cases)('parseColumns(%s)', (input, expected) => {
+    expect(parseColumns(input)).toEqual(expected);
   });
 }); 

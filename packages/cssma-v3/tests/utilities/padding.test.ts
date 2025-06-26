@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { parsePaddingUtility } from '../../src/parser/utilities/padding';
+import { parsePadding } from '../../src/parser/utilities/padding';
 
 describe('parsePaddingUtility', () => {
   it('parses p-<number>', () => {
-    expect(parsePaddingUtility('p-4')).toEqual({
+    expect(parsePadding('p-4')).toEqual({
       type: 'padding',
       value: 4,
       direction: 'all',
@@ -12,7 +12,7 @@ describe('parsePaddingUtility', () => {
     });
   });
   it('parses p-px', () => {
-    expect(parsePaddingUtility('p-px')).toEqual({
+    expect(parsePadding('p-px')).toEqual({
       type: 'padding',
       preset: 'px',
       direction: 'all',
@@ -21,7 +21,7 @@ describe('parsePaddingUtility', () => {
     });
   });
   it('parses p-(<custom-property>)', () => {
-    expect(parsePaddingUtility('p-(--my-padding)')).toEqual({
+    expect(parsePadding('p-(--my-padding)')).toEqual({
       type: 'padding',
       value: 'var(--my-padding)',
       direction: 'all',
@@ -30,7 +30,7 @@ describe('parsePaddingUtility', () => {
     });
   });
   it('parses p-[<value>]', () => {
-    expect(parsePaddingUtility('p-[5px]')).toEqual({
+    expect(parsePadding('p-[5px]')).toEqual({
       type: 'padding',
       value: '5px',
       direction: 'all',
@@ -39,7 +39,7 @@ describe('parsePaddingUtility', () => {
     });
   });
   it('parses px-<number>', () => {
-    expect(parsePaddingUtility('px-2')).toEqual({
+    expect(parsePadding('px-2')).toEqual({
       type: 'padding',
       value: 2,
       direction: 'inline',
@@ -48,7 +48,7 @@ describe('parsePaddingUtility', () => {
     });
   });
   it('parses py-px', () => {
-    expect(parsePaddingUtility('py-px')).toEqual({
+    expect(parsePadding('py-px')).toEqual({
       type: 'padding',
       preset: 'px',
       direction: 'block',
@@ -57,7 +57,7 @@ describe('parsePaddingUtility', () => {
     });
   });
   it('parses ps-(<custom-property>)', () => {
-    expect(parsePaddingUtility('ps-(--pad)')).toEqual({
+    expect(parsePadding('ps-(--pad)')).toEqual({
       type: 'padding',
       value: 'var(--pad)',
       direction: 'inline-start',
@@ -66,7 +66,7 @@ describe('parsePaddingUtility', () => {
     });
   });
   it('parses pe-[<value>]', () => {
-    expect(parsePaddingUtility('pe-[2em]')).toEqual({
+    expect(parsePadding('pe-[2em]')).toEqual({
       type: 'padding',
       value: '2em',
       direction: 'inline-end',
@@ -75,7 +75,7 @@ describe('parsePaddingUtility', () => {
     });
   });
   it('parses pt-<number>', () => {
-    expect(parsePaddingUtility('pt-6')).toEqual({
+    expect(parsePadding('pt-6')).toEqual({
       type: 'padding',
       value: 6,
       direction: 'top',
@@ -84,7 +84,7 @@ describe('parsePaddingUtility', () => {
     });
   });
   it('parses pr-px', () => {
-    expect(parsePaddingUtility('pr-px')).toEqual({
+    expect(parsePadding('pr-px')).toEqual({
       type: 'padding',
       preset: 'px',
       direction: 'right',
@@ -94,8 +94,8 @@ describe('parsePaddingUtility', () => {
   });
   it('parses pb-(<custom-property>)', () => {
     // eslint-disable-next-line no-console
-    console.log('TEST pb-(--foo):', parsePaddingUtility('pb-(--foo)'));
-    expect(parsePaddingUtility('pb-(--foo)')).toEqual({
+    console.log('TEST pb-(--foo):', parsePadding('pb-(--foo)'));
+    expect(parsePadding('pb-(--foo)')).toEqual({
       type: 'padding',
       value: 'var(--foo)',
       direction: 'bottom',
@@ -104,7 +104,7 @@ describe('parsePaddingUtility', () => {
     });
   });
   it('parses pb-( --foo ) with whitespace', () => {
-    expect(parsePaddingUtility('pb-( --foo )')).toEqual({
+    expect(parsePadding('pb-( --foo )')).toEqual({
       type: 'padding',
       value: 'var(--foo)',
       direction: 'bottom',
@@ -113,7 +113,7 @@ describe('parsePaddingUtility', () => {
     });
   });
   it('parses pl-[<value>]', () => {
-    expect(parsePaddingUtility('pl-[1rem]')).toEqual({
+    expect(parsePadding('pl-[1rem]')).toEqual({
       type: 'padding',
       value: '1rem',
       direction: 'left',
@@ -122,11 +122,11 @@ describe('parsePaddingUtility', () => {
     });
   });
   it('returns null for invalid input', () => {
-    expect(parsePaddingUtility('padding-4')).toBeNull();
-    expect(parsePaddingUtility('p-')).toBeNull();
-    expect(parsePaddingUtility('px-')).toBeNull();
-    expect(parsePaddingUtility('py-foo')).toBeNull();
-    expect(parsePaddingUtility('p-foo')).toBeNull();
-    expect(parsePaddingUtility('p-[]')).toBeNull();
+    expect(parsePadding('padding-4')).toBeNull();
+    expect(parsePadding('p-')).toBeNull();
+    expect(parsePadding('px-')).toBeNull();
+    expect(parsePadding('py-foo')).toBeNull();
+    expect(parsePadding('p-foo')).toBeNull();
+    expect(parsePadding('p-[]')).toBeNull();
   });
 }); 

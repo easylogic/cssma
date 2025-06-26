@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseObjectFitUtility } from '../../src/parser/utilities/objectFit';
+import { parseObjectFit } from '../../src/parser/utilities/objectFit';
 
 describe('parseObjectFitUtility', () => {
   const cases: Array<[string, any]> = [
@@ -10,7 +10,7 @@ describe('parseObjectFitUtility', () => {
     ['object-scale-down', { type: 'object-fit', preset: 'scale-down', raw: 'object-scale-down', arbitrary: false }],
   ];
 
-  it.each(cases)('parseObjectFitUtility(%s)', (input, expected) => {
-    expect(parseObjectFitUtility(input)).toEqual(expected);
+  it.each(cases)('parseObjectFit(%s)', (input, expected) => {
+    expect(parseObjectFit(input)).toEqual(expected);
   });
 }); 

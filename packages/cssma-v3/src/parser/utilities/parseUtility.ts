@@ -61,7 +61,7 @@ const utilityParsers = [
   // ... (spacing, flex/grid 등 확장 가능)
 ];
 
-export function parseUtility(token: string): any {
+export function parse(token: string): any {
   for (const parser of utilityParsers) {
     const result = parser(token);
     if (result) return result;

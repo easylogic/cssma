@@ -1,7 +1,7 @@
 // Tailwind justify-self utility parser
 // https://tailwindcss.com/docs/justify-self
 
-export function parseJustifySelfUtility(token: string): any | null {
+export function parseJustifySelf(token: string): any | null {
   if (token === 'justify-self-auto') return { type: 'justify-self', preset: 'auto', raw: token, arbitrary: false };
   if (token === 'justify-self-start') return { type: 'justify-self', preset: 'start', raw: token, arbitrary: false };
   if (token === 'justify-self-end') return { type: 'justify-self', preset: 'end', raw: token, arbitrary: false };

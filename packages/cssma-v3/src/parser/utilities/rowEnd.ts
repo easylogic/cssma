@@ -1,7 +1,7 @@
 // Tailwind row-end utility parser
 // https://tailwindcss.com/docs/row-end
 
-export function parseRowEndUtility(token: string): any | null {
+export function parseRowEnd(token: string): any | null {
   if (token === 'row-end-auto') return { type: 'row-end', preset: 'auto', raw: token, arbitrary: false };
   const num = token.match(/^row-end-(\d+)$/);
   if (num) return { type: 'row-end', value: parseInt(num[1], 10), raw: token, arbitrary: false };
