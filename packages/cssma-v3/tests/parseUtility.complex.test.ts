@@ -579,4 +579,97 @@ describe('parseUtility (복합 조합)', () => {
       expect(parseUtility(input as string)).toMatchObject(expected);
     }
   });
+
+  it('parses transition-property utilities', () => {
+    const cases = [
+      ['transition', { type: 'transition-property', preset: 'transition', raw: 'transition' }],
+      ['transition-all', { type: 'transition-property', preset: 'transition-all', raw: 'transition-all' }],
+      ['transition-colors', { type: 'transition-property', preset: 'transition-colors', raw: 'transition-colors' }],
+      ['transition-opacity', { type: 'transition-property', preset: 'transition-opacity', raw: 'transition-opacity' }],
+      ['transition-shadow', { type: 'transition-property', preset: 'transition-shadow', raw: 'transition-shadow' }],
+      ['transition-transform', { type: 'transition-property', preset: 'transition-transform', raw: 'transition-transform' }],
+      ['transition-none', { type: 'transition-property', preset: 'transition-none', raw: 'transition-none' }],
+      ['transition-[height]', { type: 'transition-property', value: 'height', raw: 'transition-[height]', arbitrary: true }],
+      ['transition-(--my-prop)', { type: 'transition-property', value: 'var(--my-prop)', raw: 'transition-(--my-prop)', arbitrary: false, customProperty: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input as string)).toMatchObject(expected);
+    }
+  });
+
+  it('parses transition-behavior utilities', () => {
+    const cases = [
+      ['transition-normal', { type: 'transition-behavior', value: 'normal', raw: 'transition-normal', preset: 'transition-normal' }],
+      ['transition-discrete', { type: 'transition-behavior', value: 'allow-discrete', raw: 'transition-discrete', preset: 'transition-discrete' }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input as string)).toMatchObject(expected);
+    }
+  });
+
+  it('parses transition-duration utilities', () => {
+    const cases = [
+      ['duration-150', { type: 'transition-duration', value: '150ms', raw: 'duration-150', preset: true }],
+      ['duration-700', { type: 'transition-duration', value: '700ms', raw: 'duration-700', preset: true }],
+      ['duration-initial', { type: 'transition-duration', value: 'initial', raw: 'duration-initial', preset: true }],
+      ['duration-(--my-duration)', { type: 'transition-duration', value: 'var(--my-duration)', raw: 'duration-(--my-duration)', customProperty: true, arbitrary: false }],
+      ['duration-[1s,15s]', { type: 'transition-duration', value: '1s,15s', raw: 'duration-[1s,15s]', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input as string)).toMatchObject(expected);
+    }
+  });
+
+  it('parses transition-delay utilities', () => {
+    const cases = [
+      ['delay-150', { type: 'transition-delay', value: '150ms', raw: 'delay-150', preset: true }],
+      ['delay-700', { type: 'transition-delay', value: '700ms', raw: 'delay-700', preset: true }],
+      ['delay-(--my-delay)', { type: 'transition-delay', value: 'var(--my-delay)', raw: 'delay-(--my-delay)', customProperty: true, arbitrary: false }],
+      ['delay-[1s,250ms]', { type: 'transition-delay', value: '1s,250ms', raw: 'delay-[1s,250ms]', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input as string)).toMatchObject(expected);
+    }
+  });
+
+  it('parses animation utilities', () => {
+    const cases = [
+      ['animate-spin', { type: 'animation', value: 'var(--animate-spin)', raw: 'animate-spin', preset: 'animate-spin' }],
+      ['animate-ping', { type: 'animation', value: 'var(--animate-ping)', raw: 'animate-ping', preset: 'animate-ping' }],
+      ['animate-pulse', { type: 'animation', value: 'var(--animate-pulse)', raw: 'animate-pulse', preset: 'animate-pulse' }],
+      ['animate-bounce', { type: 'animation', value: 'var(--animate-bounce)', raw: 'animate-bounce', preset: 'animate-bounce' }],
+      ['animate-none', { type: 'animation', value: 'none', raw: 'animate-none', preset: 'animate-none' }],
+      ['animate-(--my-animation)', { type: 'animation', value: 'var(--my-animation)', raw: 'animate-(--my-animation)', customProperty: true, arbitrary: false }],
+      ['animate-[wiggle_1s_ease-in-out_infinite]', { type: 'animation', value: 'wiggle_1s_ease-in-out_infinite', raw: 'animate-[wiggle_1s_ease-in-out_infinite]', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input as string)).toMatchObject(expected);
+    }
+  });
+
+  it('parses backface-visibility utilities', () => {
+    const cases = [
+      ['backface-hidden', { type: 'backface-visibility', value: 'hidden', raw: 'backface-hidden', preset: 'backface-hidden' }],
+      ['backface-visible', { type: 'backface-visibility', value: 'visible', raw: 'backface-visible', preset: 'backface-visible' }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input as string)).toMatchObject(expected);
+    }
+  });
+
+  it('parses perspective utilities', () => {
+    const cases = [
+      ['perspective-dramatic', { type: 'perspective', value: 'var(--perspective-dramatic)', raw: 'perspective-dramatic', preset: 'perspective-dramatic' }],
+      ['perspective-near', { type: 'perspective', value: 'var(--perspective-near)', raw: 'perspective-near', preset: 'perspective-near' }],
+      ['perspective-normal', { type: 'perspective', value: 'var(--perspective-normal)', raw: 'perspective-normal', preset: 'perspective-normal' }],
+      ['perspective-midrange', { type: 'perspective', value: 'var(--perspective-midrange)', raw: 'perspective-midrange', preset: 'perspective-midrange' }],
+      ['perspective-distant', { type: 'perspective', value: 'var(--perspective-distant)', raw: 'perspective-distant', preset: 'perspective-distant' }],
+      ['perspective-none', { type: 'perspective', value: 'none', raw: 'perspective-none', preset: 'perspective-none' }],
+      ['perspective-(--my-perspective)', { type: 'perspective', value: 'var(--my-perspective)', raw: 'perspective-(--my-perspective)', customProperty: true, arbitrary: false }],
+      ['perspective-[750px]', { type: 'perspective', value: '750px', raw: 'perspective-[750px]', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input as string)).toMatchObject(expected);
+    }
+  });
 }); 

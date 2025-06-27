@@ -131,6 +131,14 @@ import { parseBorderCollapse } from './utilities/borderCollapse';
 import { parseBorderSpacing } from './utilities/borderSpacing';
 import { parseTableLayout } from './utilities/tableLayout';
 import { parseCaptionSide } from './utilities/captionSide';
+import { parseTransitionProperty } from './utilities/transitionProperty';
+import { parseTransitionBehavior } from './utilities/transitionBehavior';
+import { parseTransitionDuration } from './utilities/transitionDuration';
+import { parseTransitionTimingFunction } from './utilities/transitionTimingFunction';
+import { parseTransitionDelay } from './utilities/transitionDelay';
+import { parseAnimation } from './utilities/animation';
+import { parseBackfaceVisibility } from './utilities/backfaceVisibility';
+import { parsePerspective } from './utilities/perspective';
 // ... (spacing, flex/grid 등 추가 가능)
 
 const utilityParsers = [
@@ -282,6 +290,16 @@ const utilityParsers = [
   parseBorderSpacing,
   parseTableLayout,
   parseCaptionSide,
+  // Transition & animation utilities
+  parseTransitionProperty,
+  parseTransitionBehavior,
+  parseTransitionDuration,
+  parseTransitionTimingFunction,
+  parseTransitionDelay,
+  parseAnimation,
+  // Transform utilities
+  parseBackfaceVisibility,
+  parsePerspective,
   // ... (spacing, flex/grid 등 확장 가능)
 ];
 
