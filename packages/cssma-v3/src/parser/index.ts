@@ -3,18 +3,18 @@
 import { tokenize } from './tokenizer';
 import { parseModifier } from './parseModifier';
 import { parseUtility } from './parseUtility';
-import { ParsedModifiersImpl } from '../types';
+import type { ParsedModifier, ParsedUtility } from '../types';
 
-export function parseClassName(input: string) {
+export function parseClassName(input: string): { original: string; modifiers: ParsedModifier[]; utility: ParsedUtility | null } {
   const tokens = tokenize(input);
-  const modifiersImpl = new ParsedModifiersImpl();
-  let utility: any = null;
+  const modifiers: ParsedModifier[] = [];
+  let utility: ParsedUtility | null = null;
 
   tokens.forEach((token) => {
     if (token.type === 'modifier') {
       const parsed = parseModifier(token.value);
       if (parsed && parsed.type !== 'unknown') {
-        modifiersImpl.addModifier(parsed);
+        modifiers.push(parsed);
       }
     } else if (token.type === 'utility') {
       utility = parseUtility(token.value);
@@ -23,7 +23,15 @@ export function parseClassName(input: string) {
 
   return {
     original: input,
-    modifiers: modifiersImpl,
+    modifiers,
     utility,
   };
+}
+
+export function parseClassList(input: string): ReturnType<typeof parseClassName>[] {
+  return input
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(parseClassName);
 } 

@@ -168,6 +168,7 @@ import { parseFill } from './utilities/fill';
 import { parseStroke } from './utilities/stroke';
 import { parseStrokeWidth } from './utilities/strokeWidth';
 import { parseForcedColorAdjust } from './utilities/forcedColorAdjust';
+import type { ParsedUtility } from '../types';
 // ... (spacing, flex/grid 등 추가 가능)
 
 const utilityParsers = [
@@ -362,20 +363,20 @@ const utilityParsers = [
   parseStrokeWidth,
 ];
 
-export function parseUtility(token: string): any {
+export function parseUtility(token: string): ParsedUtility {
   let important = false;
   if (token.endsWith('!')) {
     important = true;
     token = token.slice(0, -1);
   }
   for (const parser of utilityParsers) {
-    const result = parser(token);
+    const result = parser(token) as ParsedUtility | null;
     if (result) {
       if (important) result.important = true;
       return result;
     }
   }
-  const unknown = { type: 'unknown', raw: token };
+  const unknown: ParsedUtility = { type: 'unknown', raw: token };
   if (important) unknown.important = true;
   return unknown;
 } 
