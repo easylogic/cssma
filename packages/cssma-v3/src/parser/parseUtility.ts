@@ -127,6 +127,10 @@ import { parseBackdropInvert } from './utilities/backdropInvert';
 import { parseBackdropOpacity } from './utilities/backdropOpacity';
 import { parseBackdropSaturate } from './utilities/backdropSaturate';
 import { parseBackdropSepia } from './utilities/backdropSepia';
+import { parseBorderCollapse } from './utilities/borderCollapse';
+import { parseBorderSpacing } from './utilities/borderSpacing';
+import { parseTableLayout } from './utilities/tableLayout';
+import { parseCaptionSide } from './utilities/captionSide';
 // ... (spacing, flex/grid 등 추가 가능)
 
 const utilityParsers = [
@@ -273,6 +277,11 @@ const utilityParsers = [
   parseBackdropOpacity,
   parseBackdropSaturate,
   parseBackdropSepia,
+  // Table utilities
+  parseBorderCollapse,
+  parseBorderSpacing,
+  parseTableLayout,
+  parseCaptionSide,
   // ... (spacing, flex/grid 등 확장 가능)
 ];
 

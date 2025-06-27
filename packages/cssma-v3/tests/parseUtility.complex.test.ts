@@ -55,7 +55,7 @@ describe('parseUtility (복합 조합)', () => {
       ['justify-[foobar]', { type: 'justify-content', value: 'foobar', raw: 'justify-[foobar]', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toMatchObject(expected);
+      expect(parseUtility(input as string)).toMatchObject(expected);
     }
   });
 
@@ -67,7 +67,7 @@ describe('parseUtility (복합 조합)', () => {
       ['rounded-(--my-radius)', { type: 'border-radius', value: 'var(--my-radius)', raw: 'rounded-(--my-radius)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toMatchObject(expected);
+      expect(parseUtility(input as string)).toMatchObject(expected);
     }
   });
 
@@ -80,7 +80,7 @@ describe('parseUtility (복합 조합)', () => {
       ['border-(length:--my-border-width)', { type: 'border-width', side: 'all', value: 'var(--my-border-width)', raw: 'border-(length:--my-border-width)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toMatchObject(expected);
+      expect(parseUtility(input as string)).toMatchObject(expected);
     }
   });
 
@@ -93,7 +93,7 @@ describe('parseUtility (복합 조합)', () => {
       ['border-(--my-border)', { type: 'border-color', side: 'all', value: 'var(--my-border)', raw: 'border-(--my-border)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toMatchObject(expected);
+      expect(parseUtility(input as string)).toMatchObject(expected);
     }
   });
 
@@ -113,7 +113,7 @@ describe('parseUtility (복합 조합)', () => {
       ['divide-none', { type: 'divide-style', preset: 'none', raw: 'divide-none', arbitrary: false }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toMatchObject(expected);
+      expect(parseUtility(input as string)).toMatchObject(expected);
     }
   });
 
@@ -127,7 +127,7 @@ describe('parseUtility (복합 조합)', () => {
       ['outline-[length:var(--foo)]', { type: 'unknown', raw: 'outline-[length:var(--foo)]' }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -176,7 +176,7 @@ describe('parseUtility (복합 조합)', () => {
       ['mask-exclude', { type: 'mask-composite', value: 'exclude', raw: 'mask-exclude', arbitrary: false }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -202,7 +202,7 @@ describe('parseUtility (복합 조합)', () => {
       ['mask-linear-(--my-mask)', { type: 'mask-image', preset: 'linear', value: 'var(--my-mask)', raw: 'mask-linear-(--my-mask)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -213,7 +213,7 @@ describe('parseUtility (복합 조합)', () => {
       ['mask-match', { type: 'mask-mode', value: 'match-source', raw: 'mask-match', arbitrary: false }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -227,7 +227,7 @@ describe('parseUtility (복합 조합)', () => {
       ['mask-origin-view', { type: 'mask-origin', value: 'view-box', raw: 'mask-origin-view', arbitrary: false }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -246,7 +246,7 @@ describe('parseUtility (복합 조합)', () => {
       ['mask-position-(--my-mask-position)', { type: 'mask-position', value: 'var(--my-mask-position)', raw: 'mask-position-(--my-mask-position)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -260,7 +260,7 @@ describe('parseUtility (복합 조합)', () => {
       ['mask-repeat-round', { type: 'mask-repeat', value: 'round', raw: 'mask-repeat-round', arbitrary: false }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -273,7 +273,7 @@ describe('parseUtility (복합 조합)', () => {
       ['mask-size-(--my-mask-size)', { type: 'mask-size', value: 'var(--my-mask-size)', raw: 'mask-size-(--my-mask-size)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -283,7 +283,7 @@ describe('parseUtility (복합 조합)', () => {
       ['mask-type-luminance', { type: 'mask-type', value: 'luminance', raw: 'mask-type-luminance', arbitrary: false }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -294,7 +294,7 @@ describe('parseUtility (복합 조합)', () => {
       ['filter-(--my-filter)', { type: 'filter', value: 'var(--my-filter)', raw: 'filter-(--my-filter)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -307,7 +307,7 @@ describe('parseUtility (복합 조합)', () => {
       ['brightness-(--my-brightness)', { type: 'brightness', value: 'var(--my-brightness)', raw: 'brightness-(--my-brightness)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -320,7 +320,7 @@ describe('parseUtility (복합 조합)', () => {
       ['contrast-(--my-contrast)', { type: 'contrast', value: 'var(--my-contrast)', raw: 'contrast-(--my-contrast)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -335,7 +335,7 @@ describe('parseUtility (복합 조합)', () => {
       ['drop-shadow-indigo-500/50', { type: 'drop-shadow-color', preset: 'indigo-500/50', raw: 'drop-shadow-indigo-500/50', arbitrary: false }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -348,7 +348,7 @@ describe('parseUtility (복합 조합)', () => {
       ['grayscale-(--my-grayscale)', { type: 'grayscale', value: 'var(--my-grayscale)', raw: 'grayscale-(--my-grayscale)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -373,7 +373,7 @@ describe('parseUtility (복합 조합)', () => {
       ['invert-(--my-inversion)', { type: 'invert', value: 'var(--my-inversion)', raw: 'invert-(--my-inversion)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -386,7 +386,7 @@ describe('parseUtility (복합 조합)', () => {
       ['saturate-(--my-saturation)', { type: 'saturate', value: 'var(--my-saturation)', raw: 'saturate-(--my-saturation)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -399,7 +399,7 @@ describe('parseUtility (복합 조합)', () => {
       ['sepia-(--my-sepia)', { type: 'sepia', value: 'var(--my-sepia)', raw: 'sepia-(--my-sepia)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -410,7 +410,7 @@ describe('parseUtility (복합 조합)', () => {
       ['backdrop-filter-(--my-backdrop-filter)', { type: 'backdrop-filter', value: 'var(--my-backdrop-filter)', raw: 'backdrop-filter-(--my-backdrop-filter)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -428,7 +428,7 @@ describe('parseUtility (복합 조합)', () => {
       ['backdrop-blur-(--my-blur)', { type: 'backdrop-blur', value: 'var(--my-blur)', raw: 'backdrop-blur-(--my-blur)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toEqual(expected);
+      expect(parseUtility(input as string)).toEqual(expected);
     }
   });
 
@@ -440,7 +440,7 @@ describe('parseUtility (복합 조합)', () => {
       ['backdrop-brightness-(--my-brightness)', { type: 'backdrop-brightness', value: 'var(--my-brightness)', raw: 'backdrop-brightness-(--my-brightness)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toMatchObject(expected);
+      expect(parseUtility(input as string)).toMatchObject(expected);
     }
   });
 
@@ -452,7 +452,7 @@ describe('parseUtility (복합 조합)', () => {
       ['backdrop-contrast-(--my-contrast)', { type: 'backdrop-contrast', value: 'var(--my-contrast)', raw: 'backdrop-contrast-(--my-contrast)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toMatchObject(expected);
+      expect(parseUtility(input as string)).toMatchObject(expected);
     }
   });
 
@@ -465,7 +465,7 @@ describe('parseUtility (복합 조합)', () => {
       ['backdrop-grayscale-(--my-grayscale)', { type: 'backdrop-grayscale', value: 'var(--my-grayscale)', raw: 'backdrop-grayscale-(--my-grayscale)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toMatchObject(expected);
+      expect(parseUtility(input as string)).toMatchObject(expected);
     }
   });
 
@@ -479,7 +479,7 @@ describe('parseUtility (복합 조합)', () => {
       ['backdrop-hue-rotate-(--my-hue)', { type: 'backdrop-hue-rotate', value: 'var(--my-hue)', raw: 'backdrop-hue-rotate-(--my-hue)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toMatchObject(expected);
+      expect(parseUtility(input as string)).toMatchObject(expected);
     }
   });
 
@@ -492,7 +492,7 @@ describe('parseUtility (복합 조합)', () => {
       ['backdrop-invert-(--my-invert)', { type: 'backdrop-invert', value: 'var(--my-invert)', raw: 'backdrop-invert-(--my-invert)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toMatchObject(expected);
+      expect(parseUtility(input as string)).toMatchObject(expected);
     }
   });
 
@@ -504,7 +504,7 @@ describe('parseUtility (복합 조합)', () => {
       ['backdrop-opacity-(--my-opacity)', { type: 'backdrop-opacity', value: 'var(--my-opacity)', raw: 'backdrop-opacity-(--my-opacity)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toMatchObject(expected);
+      expect(parseUtility(input as string)).toMatchObject(expected);
     }
   });
 
@@ -516,7 +516,7 @@ describe('parseUtility (복합 조합)', () => {
       ['backdrop-saturate-(--my-saturate)', { type: 'backdrop-saturate', value: 'var(--my-saturate)', raw: 'backdrop-saturate-(--my-saturate)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toMatchObject(expected);
+      expect(parseUtility(input as string)).toMatchObject(expected);
     }
   });
 
@@ -529,7 +529,54 @@ describe('parseUtility (복합 조합)', () => {
       ['backdrop-sepia-(--my-sepia)', { type: 'backdrop-sepia', value: 'var(--my-sepia)', raw: 'backdrop-sepia-(--my-sepia)', arbitrary: true }],
     ];
     for (const [input, expected] of cases) {
-      expect(parseUtility(input)).toMatchObject(expected);
+      expect(parseUtility(input as string)).toMatchObject(expected);
+    }
+  });
+
+  it('parses border-collapse utilities', () => {
+    const cases = [
+      ['border-collapse', { type: 'border-collapse', value: 'collapse', raw: 'border-collapse' }],
+      ['border-separate', { type: 'border-collapse', value: 'separate', raw: 'border-separate' }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input as string)).toMatchObject(expected);
+    }
+  });
+
+  it('parses border-spacing utilities', () => {
+    const cases = [
+      ['border-spacing-2', { type: 'border-spacing', axis: 'both', value: '2', raw: 'border-spacing-2', arbitrary: false }],
+      ['border-spacing-[7px]', { type: 'border-spacing', axis: 'both', value: '7px', raw: 'border-spacing-[7px]', arbitrary: true }],
+      ['border-spacing-(--my-spacing)', { type: 'border-spacing', axis: 'both', value: 'var(--my-spacing)', raw: 'border-spacing-(--my-spacing)', arbitrary: true }],
+      ['border-spacing-x-3', { type: 'border-spacing', axis: 'x', value: '3', raw: 'border-spacing-x-3', arbitrary: false }],
+      ['border-spacing-x-[2em]', { type: 'border-spacing', axis: 'x', value: '2em', raw: 'border-spacing-x-[2em]', arbitrary: true }],
+      ['border-spacing-x-(--foo)', { type: 'border-spacing', axis: 'x', value: 'var(--foo)', raw: 'border-spacing-x-(--foo)', arbitrary: true }],
+      ['border-spacing-y-4', { type: 'border-spacing', axis: 'y', value: '4', raw: 'border-spacing-y-4', arbitrary: false }],
+      ['border-spacing-y-[1.5rem]', { type: 'border-spacing', axis: 'y', value: '1.5rem', raw: 'border-spacing-y-[1.5rem]', arbitrary: true }],
+      ['border-spacing-y-(--bar)', { type: 'border-spacing', axis: 'y', value: 'var(--bar)', raw: 'border-spacing-y-(--bar)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input as string)).toMatchObject(expected);
+    }
+  });
+
+  it('parses table-layout utilities', () => {
+    const cases = [
+      ['table-auto', { type: 'table-layout', value: 'auto', raw: 'table-auto' }],
+      ['table-fixed', { type: 'table-layout', value: 'fixed', raw: 'table-fixed' }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input as string)).toMatchObject(expected);
+    }
+  });
+
+  it('parses caption-side utilities', () => {
+    const cases = [
+      ['caption-top', { type: 'caption-side', value: 'top', raw: 'caption-top' }],
+      ['caption-bottom', { type: 'caption-side', value: 'bottom', raw: 'caption-bottom' }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input as string)).toMatchObject(expected);
     }
   });
 }); 
