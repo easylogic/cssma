@@ -158,6 +158,11 @@ import { parseFieldSizing } from './utilities/fieldSizing';
 import { parsePointerEvents } from './utilities/pointerEvents';
 import { parseResize } from './utilities/resize';
 import { parseScrollBehavior } from './utilities/scrollBehavior';
+import { parseScrollSnapAlign } from './utilities/scrollSnapAlign';
+import { parseScrollSnapStop } from './utilities/scrollSnapStop';
+import { parseScrollSnapType } from './utilities/scrollSnapType';
+import { parseTouchAction } from './utilities/touchAction';
+import { parseUserSelect } from './utilities/userSelect';
 // ... (spacing, flex/grid 등 추가 가능)
 
 const utilityParsers = [
@@ -213,8 +218,13 @@ const utilityParsers = [
   // Spacing
   parsePadding,
   parseScrollPadding,
-  parseMargin,
   parseScrollMargin,
+  parseScrollSnapAlign,
+  parseScrollSnapStop,
+  parseScrollSnapType,
+  parseTouchAction,
+  parseUserSelect,
+  parseMargin,
   // Object
   parseObjectFit,
   parseObjectPosition,

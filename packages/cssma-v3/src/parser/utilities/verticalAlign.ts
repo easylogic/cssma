@@ -34,5 +34,6 @@ export function parseVerticalAlign(token: string) {
   if (arb) {
     return { type: 'vertical-align', value: arb, raw: token, arbitrary: true };
   }
+  // For all other/invalid input, return null
   return null;
 } 

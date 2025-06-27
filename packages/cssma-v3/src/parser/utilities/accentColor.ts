@@ -1,5 +1,6 @@
 // Tailwind accent-color utility parser
 // https://tailwindcss.com/docs/accent-color
+import { isColorValue } from '../utils';
 
 const inheritRe = /^accent-inherit$/;
 const currentRe = /^accent-current$/;
@@ -50,6 +51,7 @@ export function parseAccentColor(token: string): any | null {
     };
   }
   if ((m = customPropWithOpacityRe.exec(token))) {
+    if (!m[1] || !m[1].startsWith('--')) return null;
     return {
       type: 'accent-color',
       value: `var(${m[1]})`,
@@ -59,6 +61,7 @@ export function parseAccentColor(token: string): any | null {
     };
   }
   if ((m = customPropRe.exec(token))) {
+    if (!m[1] || !m[1].startsWith('--')) return null;
     return {
       type: 'accent-color',
       value: `var(${m[1]})`,
@@ -67,6 +70,7 @@ export function parseAccentColor(token: string): any | null {
     };
   }
   if ((m = arbitraryWithOpacityRe.exec(token))) {
+    if (!m[1] || m[1].trim() === '' || !isColorValue(m[1])) return null;
     return {
       type: 'accent-color',
       value: m[1],
@@ -76,6 +80,7 @@ export function parseAccentColor(token: string): any | null {
     };
   }
   if ((m = arbitraryRe.exec(token))) {
+    if (!m[1] || m[1].trim() === '' || !isColorValue(m[1])) return null;
     return {
       type: 'accent-color',
       value: m[1],

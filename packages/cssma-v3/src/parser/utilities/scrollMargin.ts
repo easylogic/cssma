@@ -13,7 +13,7 @@ const propMap = {
   'e': 'scroll-margin-inline-end',
 };
 
-export function parseScrollMargin(token) {
+export function parseScrollMargin(token: string): any | null {
   // scroll-m-4, -scroll-m-4, scroll-mx-2, -scroll-mt-6, etc.
   let m = token.match(/^(-?)scroll-m([a-z]*)-(\d+)$/);
   if (m && m[2] in propMap) {
@@ -28,7 +28,9 @@ export function parseScrollMargin(token) {
     const negative = m[1] === '-';
     const dir = m[2];
     const value = negative ? `calc(var(--spacing) * -1 * var(${m[3]}))` : `var(${m[3]})`;
-    return { type: 'scroll-margin', property: propMap[dir], value, raw: token, customProperty: true, negative };
+    const result: any = { type: 'scroll-margin', property: propMap[dir], value, raw: token, customProperty: true };
+    if (negative) result.negative = true;
+    return result;
   }
   // scroll-mt-[value], -scroll-mt-[value]
   m = token.match(/^(-?)scroll-m([a-z]*)-\[(.+)\]$/);
@@ -36,7 +38,9 @@ export function parseScrollMargin(token) {
     const negative = m[1] === '-';
     const dir = m[2];
     const value = negative ? `calc(-1 * ${m[3]})` : m[3];
-    return { type: 'scroll-margin', property: propMap[dir], value, raw: token, arbitrary: true, negative };
+    const result: any = { type: 'scroll-margin', property: propMap[dir], value, raw: token, arbitrary: true };
+    if (negative) result.negative = true;
+    return result;
   }
   return null;
 } 

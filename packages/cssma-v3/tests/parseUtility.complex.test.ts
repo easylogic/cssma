@@ -853,4 +853,64 @@ describe('parseUtility (복합 조합)', () => {
     expect(parseUtility('scroll-pb-[24rem]')).toMatchObject({ type: 'scroll-padding', property: 'scroll-padding-bottom', value: '24rem', arbitrary: true });
     expect(parseUtility('scroll-pl-[var(--my-scroll-padding)]')).toMatchObject({ type: 'scroll-padding', property: 'scroll-padding-left', value: 'var(--my-scroll-padding)', arbitrary: true });
   });
+
+  it('parses scroll-snap-align utilities (integration)', () => {
+    expect(parseUtility('snap-start')).toMatchObject({ type: 'scroll-snap-align', value: 'start' });
+    expect(parseUtility('snap-end')).toMatchObject({ type: 'scroll-snap-align', value: 'end' });
+    expect(parseUtility('snap-center')).toMatchObject({ type: 'scroll-snap-align', value: 'center' });
+    expect(parseUtility('snap-align-none')).toMatchObject({ type: 'scroll-snap-align', value: 'none' });
+    expect(parseUtility('snap')).toEqual({ type: 'unknown', raw: 'snap' });
+    expect(parseUtility('snap-foo')).toEqual({ type: 'unknown', raw: 'snap-foo' });
+    expect(parseUtility('snap-align')).toEqual({ type: 'unknown', raw: 'snap-align' });
+    expect(parseUtility('snap-center-foo')).toEqual({ type: 'unknown', raw: 'snap-center-foo' });
+  });
+
+  it('parses scroll-snap-stop utilities (integration)', () => {
+    expect(parseUtility('snap-normal')).toMatchObject({ type: 'scroll-snap-stop', value: 'normal' });
+    expect(parseUtility('snap-always')).toMatchObject({ type: 'scroll-snap-stop', value: 'always' });
+    expect(parseUtility('snap')).toEqual({ type: 'unknown', raw: 'snap' });
+    expect(parseUtility('snap-foo')).toEqual({ type: 'unknown', raw: 'snap-foo' });
+    expect(parseUtility('snap-stop')).toEqual({ type: 'unknown', raw: 'snap-stop' });
+    expect(parseUtility('snap-always-foo')).toEqual({ type: 'unknown', raw: 'snap-always-foo' });
+  });
+
+  it('parses scroll-snap-type utilities (integration)', () => {
+    expect(parseUtility('snap-none')).toMatchObject({ type: 'scroll-snap-type', value: 'none' });
+    expect(parseUtility('snap-x')).toMatchObject({ type: 'scroll-snap-type', value: 'x', strictness: expect.any(String) });
+    expect(parseUtility('snap-y')).toMatchObject({ type: 'scroll-snap-type', value: 'y', strictness: expect.any(String) });
+    expect(parseUtility('snap-both')).toMatchObject({ type: 'scroll-snap-type', value: 'both', strictness: expect.any(String) });
+    expect(parseUtility('snap-mandatory')).toMatchObject({ type: 'scroll-snap-type-strictness', value: 'mandatory', property: '--tw-scroll-snap-strictness' });
+    expect(parseUtility('snap-proximity')).toMatchObject({ type: 'scroll-snap-type-strictness', value: 'proximity', property: '--tw-scroll-snap-strictness' });
+    expect(parseUtility('snap')).toEqual({ type: 'unknown', raw: 'snap' });
+    expect(parseUtility('snap-foo')).toEqual({ type: 'unknown', raw: 'snap-foo' });
+    expect(parseUtility('snap-type')).toEqual({ type: 'unknown', raw: 'snap-type' });
+  });
+
+  it('parses touch-action utilities (integration)', () => {
+    expect(parseUtility('touch-auto')).toMatchObject({ type: 'touch-action', value: 'auto' });
+    expect(parseUtility('touch-none')).toMatchObject({ type: 'touch-action', value: 'none' });
+    expect(parseUtility('touch-pan-x')).toMatchObject({ type: 'touch-action', value: 'pan-x' });
+    expect(parseUtility('touch-pan-left')).toMatchObject({ type: 'touch-action', value: 'pan-left' });
+    expect(parseUtility('touch-pan-right')).toMatchObject({ type: 'touch-action', value: 'pan-right' });
+    expect(parseUtility('touch-pan-y')).toMatchObject({ type: 'touch-action', value: 'pan-y' });
+    expect(parseUtility('touch-pan-up')).toMatchObject({ type: 'touch-action', value: 'pan-up' });
+    expect(parseUtility('touch-pan-down')).toMatchObject({ type: 'touch-action', value: 'pan-down' });
+    expect(parseUtility('touch-pinch-zoom')).toMatchObject({ type: 'touch-action', value: 'pinch-zoom' });
+    expect(parseUtility('touch-manipulation')).toMatchObject({ type: 'touch-action', value: 'manipulation' });
+    expect(parseUtility('touch')).toEqual({ type: 'unknown', raw: 'touch' });
+    expect(parseUtility('touch-foo')).toEqual({ type: 'unknown', raw: 'touch-foo' });
+    expect(parseUtility('touch-pan')).toEqual({ type: 'unknown', raw: 'touch-pan' });
+    expect(parseUtility('touch-auto-x')).toEqual({ type: 'unknown', raw: 'touch-auto-x' });
+  });
+
+  it('parses user-select utilities (integration)', () => {
+    expect(parseUtility('select-none')).toMatchObject({ type: 'user-select', value: 'none' });
+    expect(parseUtility('select-text')).toMatchObject({ type: 'user-select', value: 'text' });
+    expect(parseUtility('select-all')).toMatchObject({ type: 'user-select', value: 'all' });
+    expect(parseUtility('select-auto')).toMatchObject({ type: 'user-select', value: 'auto' });
+    expect(parseUtility('select')).toEqual({ type: 'unknown', raw: 'select' });
+    expect(parseUtility('select-foo')).toEqual({ type: 'unknown', raw: 'select-foo' });
+    expect(parseUtility('select-none-all')).toEqual({ type: 'unknown', raw: 'select-none-all' });
+    expect(parseUtility('select-auto-text')).toEqual({ type: 'unknown', raw: 'select-auto-text' });
+  });
 }); 

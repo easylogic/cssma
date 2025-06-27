@@ -1,5 +1,6 @@
 // Tailwind background-size utility parser
 // https://tailwindcss.com/docs/background-size
+import { isLengthValue } from '../utils';
 
 export function parseBackgroundSize(token: string): any | null {
   if (token === 'bg-auto') {
@@ -14,12 +15,16 @@ export function parseBackgroundSize(token: string): any | null {
   // bg-size-(<custom-property>)
   const customProp = token.match(/^bg-size-\((--[a-zA-Z0-9-_]+)\)$/);
   if (customProp) {
-    return { type: 'background-size', value: `var(${customProp[1]})`, raw: token, arbitrary: true };
+    return { type: 'background-size', preset: `var(${customProp[1]})`, raw: token, arbitrary: true };
   }
   // bg-size-[<value>]
   const arbitrary = token.match(/^bg-size-\[(.+)]$/);
   if (arbitrary) {
-    return { type: 'background-size', value: arbitrary[1], raw: token, arbitrary: true };
+    const val = arbitrary[1].trim();
+    if (isLengthValue(val) || val.startsWith('calc(') || val.startsWith('var(') || /^[a-zA-Z0-9_]+$/.test(val)) {
+      return { type: 'background-size', preset: val, raw: token, arbitrary: true };
+    }
+    return null;
   }
   return null;
 } 

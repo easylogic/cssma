@@ -1,5 +1,6 @@
 // Tailwind caret-color utility parser
 // https://tailwindcss.com/docs/caret-color
+import { isColorValue } from '../utils';
 
 const inheritRe = /^caret-inherit$/;
 const currentRe = /^caret-current$/;
@@ -45,12 +46,16 @@ export function parseCaretColor(token: string): any | null {
     };
   }
   if ((m = arbitraryRe.exec(token))) {
-    return {
-      type: 'caret-color',
-      value: m[1],
-      raw: token,
-      arbitrary: true
-    };
+    const val = m[1].trim();
+    if (isColorValue(val)) {
+      return {
+        type: 'caret-color',
+        value: val,
+        raw: token,
+        arbitrary: true
+      };
+    }
+    return null;
   }
   return null;
 } 
