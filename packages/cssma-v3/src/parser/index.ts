@@ -2,12 +2,13 @@
 
 import { tokenize } from './tokenizer';
 import { parseModifier } from './parseModifier';
+import { parseUtility } from './parseUtility';
 import { ParsedModifiersImpl } from '../types';
 
 export function parseClassName(input: string) {
   const tokens = tokenize(input);
   const modifiersImpl = new ParsedModifiersImpl();
-  let utility: string | null = null;
+  let utility: any = null;
 
   tokens.forEach((token) => {
     if (token.type === 'modifier') {
@@ -16,7 +17,7 @@ export function parseClassName(input: string) {
         modifiersImpl.addModifier(parsed);
       }
     } else if (token.type === 'utility') {
-      utility = token.value;
+      utility = parseUtility(token.value);
     }
   });
 

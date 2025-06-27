@@ -363,9 +363,19 @@ const utilityParsers = [
 ];
 
 export function parseUtility(token: string): any {
+  let important = false;
+  if (token.endsWith('!')) {
+    important = true;
+    token = token.slice(0, -1);
+  }
   for (const parser of utilityParsers) {
     const result = parser(token);
-    if (result) return result;
+    if (result) {
+      if (important) result.important = true;
+      return result;
+    }
   }
-  return { type: 'unknown', raw: token };
+  const unknown = { type: 'unknown', raw: token };
+  if (important) unknown.important = true;
+  return unknown;
 } 

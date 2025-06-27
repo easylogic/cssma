@@ -65,4 +65,19 @@ describe('parseUtility', () => {
   it('returns unknown for invalid utility', () => {
     expect(parseUtility('not-a-real-utility')).toMatchObject({ type: 'unknown' });
   });
+});
+
+describe('parseUtility important flag', () => {
+  it('parses important flag for background color', () => {
+    expect(parseUtility('bg-red-500!')).toMatchObject({ type: 'background-color', important: true });
+  });
+  it('parses important flag for padding', () => {
+    expect(parseUtility('p-4!')).toMatchObject({ type: 'padding', important: true });
+  });
+  it('parses important flag for unknown utility', () => {
+    expect(parseUtility('foo-bar!')).toMatchObject({ type: 'unknown', important: true });
+  });
+  it('does not set important for normal utility', () => {
+    expect(parseUtility('bg-red-500')).not.toHaveProperty('important');
+  });
 }); 

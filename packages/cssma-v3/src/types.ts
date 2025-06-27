@@ -703,6 +703,10 @@ export class ParsedModifiersImpl implements ParsedModifiers {
   clear(): void {
     this.modifiers = [];
   }
+
+  toJSON(): any {
+    return this.modifiers;
+  }
 }
 
 /**
@@ -1512,4 +1516,21 @@ export interface ParseResult {
   value: any;
   isArbitrary?: boolean;
   modifier?: string;
+}
+
+/**
+ * Tailwind/CSSMA 유틸리티 파서의 표준 파싱 결과 타입
+ */
+export interface ParsedUtility {
+  type: string; // 유틸리티 종류 (예: 'margin', 'brightness', ...)
+  raw: string;  // 원본 클래스명
+  value?: string | number; // 값(숫자/문자열)
+  preset?: string;         // 프리셋명(있는 경우)
+  direction?: string;      // 방향성(있는 경우)
+  axis?: string;           // 축(있는 경우)
+  negative?: boolean;      // 음수 여부(있는 경우)
+  arbitrary?: boolean;     // 임의 값 여부
+  customProperty?: boolean;// 커스텀 프로퍼티 여부
+  important?: boolean;     // !important 플래그
+  [key: string]: any;      // 유틸리티별 확장 필드 허용
 } 
