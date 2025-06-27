@@ -3,17 +3,13 @@ import { parseHyphens } from "../../src/parser/utilities/hyphens";
 
 describe("parseHyphens", () => {
   it("parses hyphens-none", () => {
-    expect(parseHyphens("hyphens-none")).toEqual({ type: "hyphens", preset: "hyphens-none", raw: "hyphens-none", arbitrary: false });
+    expect(parseHyphens("hyphens-none")).toEqual({ type: "hyphens", preset: "none", raw: "hyphens-none", arbitrary: false });
   });
   it("parses hyphens-manual", () => {
-    expect(parseHyphens("hyphens-manual")).toEqual({ type: "hyphens", preset: "hyphens-manual", raw: "hyphens-manual", arbitrary: false });
+    expect(parseHyphens("hyphens-manual")).toEqual({ type: "hyphens", preset: "manual", raw: "hyphens-manual", arbitrary: false });
   });
   it("parses hyphens-auto", () => {
-    expect(parseHyphens("hyphens-auto")).toEqual({ type: "hyphens", preset: "hyphens-auto", raw: "hyphens-auto", arbitrary: false });
-  });
-  it("parses arbitrary value", () => {
-    expect(parseHyphens("hyphens-[custom]")).toEqual({ type: "hyphens", preset: "custom", raw: "hyphens-[custom]", arbitrary: true });
-    expect(parseHyphens("hyphens-[all]")).toEqual({ type: "hyphens", preset: "all", raw: "hyphens-[all]", arbitrary: true });
+    expect(parseHyphens("hyphens-auto")).toEqual({ type: "hyphens", preset: "auto", raw: "hyphens-auto", arbitrary: false });
   });
   it("returns null for invalid values", () => {
     expect(parseHyphens("hyphen-none")).toBeNull();

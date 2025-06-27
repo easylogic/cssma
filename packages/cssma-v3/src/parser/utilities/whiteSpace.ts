@@ -2,24 +2,18 @@
 // https://tailwindcss.com/docs/white-space
 
 const presets = [
-  'whitespace-normal',
-  'whitespace-nowrap',
-  'whitespace-pre',
-  'whitespace-pre-line',
-  'whitespace-pre-wrap',
-  'whitespace-break-spaces',
+  'normal', 'nowrap', 'pre', 'pre-line', 'pre-wrap', 'break-spaces'
 ];
 
 export function parseWhiteSpace(token: string): any | null {
-  for (const preset of presets) {
-    if (token === preset) {
-      return { type: 'white-space', preset, raw: token, arbitrary: false };
-    }
+  let preset = null;
+  if (token.startsWith('whitespace-')) {
+    preset = token.slice(11);
+  } else if (token.startsWith('white-space-')) {
+    preset = token.slice(12);
   }
-  // 임의값: whitespace-[value]
-  const arbitrary = token.match(/^whitespace-\[(.+)]$/);
-  if (arbitrary) {
-    return { type: 'white-space', preset: arbitrary[1], raw: token, arbitrary: true };
+  if (preset && presets.includes(preset)) {
+    return { type: 'white-space', preset, raw: token, arbitrary: false };
   }
   return null;
 } 

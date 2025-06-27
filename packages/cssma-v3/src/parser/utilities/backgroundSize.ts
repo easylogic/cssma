@@ -14,12 +14,12 @@ export function parseBackgroundSize(token: string): any | null {
   // bg-size-(<custom-property>)
   const customProp = token.match(/^bg-size-\((--[a-zA-Z0-9-_]+)\)$/);
   if (customProp) {
-    return { type: 'background-size', preset: `var(${customProp[1]})`, raw: token, arbitrary: true };
+    return { type: 'background-size', value: `var(${customProp[1]})`, raw: token, arbitrary: true };
   }
   // bg-size-[<value>]
   const arbitrary = token.match(/^bg-size-\[(.+)]$/);
   if (arbitrary) {
-    return { type: 'background-size', preset: arbitrary[1], raw: token, arbitrary: true };
+    return { type: 'background-size', value: arbitrary[1], raw: token, arbitrary: true };
   }
   return null;
 } 

@@ -2,21 +2,15 @@
 // https://tailwindcss.com/docs/overflow-wrap
 
 const presets = [
-  'wrap-break-word',
-  'wrap-anywhere',
-  'wrap-normal',
+  'break-word', 'anywhere', 'normal',
 ];
 
 export function parseOverflowWrap(token: string): any | null {
-  for (const preset of presets) {
-    if (token === preset) {
+  if (token.startsWith('overflow-wrap-')) {
+    const preset = token.slice(14);
+    if (presets.includes(preset)) {
       return { type: 'overflow-wrap', preset, raw: token, arbitrary: false };
     }
-  }
-  // 임의값: wrap-[value]
-  const arbitrary = token.match(/^wrap-\[(.+)]$/);
-  if (arbitrary) {
-    return { type: 'overflow-wrap', preset: arbitrary[1], raw: token, arbitrary: true };
   }
   return null;
 } 

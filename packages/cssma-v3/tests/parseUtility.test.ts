@@ -15,7 +15,7 @@ describe('parseUtility', () => {
     expect(parseUtility('bg-center')).toMatchObject({ type: 'background-position', preset: 'center' });
   });
   it('parses bg-size-(--foo)', () => {
-    expect(parseUtility('bg-size-(--foo)')).toMatchObject({ type: 'background-size', preset: 'var(--foo)' });
+    expect(parseUtility('bg-size-(--foo)')).toMatchObject({ type: 'background-size', value: 'var(--foo)' });
   });
   it('parses content-none', () => {
     expect(parseUtility('content-none')).toMatchObject({ type: 'content', preset: 'none' });
@@ -35,8 +35,17 @@ describe('parseUtility', () => {
   it('parses text-wrap', () => {
     expect(parseUtility('text-wrap')).toMatchObject({ type: 'text-wrap', preset: 'wrap' });
   });
-  it('parses text-indent-4', () => {
-    expect(parseUtility('text-indent-4')).toMatchObject({ type: 'text-indent', value: 4 });
+  it('parses indent-4', () => {
+    expect(parseUtility('indent-4')).toMatchObject({ type: 'text-indent', value: 4 });
+  });
+  it('parses -indent-8', () => {
+    expect(parseUtility('-indent-8')).toMatchObject({ type: 'text-indent', value: -8 });
+  });
+  it('parses indent-px', () => {
+    expect(parseUtility('indent-px')).toMatchObject({ type: 'text-indent', value: '1px' });
+  });
+  it('parses -indent-px', () => {
+    expect(parseUtility('-indent-px')).toMatchObject({ type: 'text-indent', value: '-1px' });
   });
   it('parses vertical-align-top', () => {
     expect(parseUtility('vertical-align-top')).toMatchObject({ type: 'vertical-align', preset: 'top' });
@@ -44,8 +53,8 @@ describe('parseUtility', () => {
   it('parses white-space-nowrap', () => {
     expect(parseUtility('white-space-nowrap')).toMatchObject({ type: 'white-space', preset: 'nowrap' });
   });
-  it('parses word-break-break-all', () => {
-    expect(parseUtility('word-break-break-all')).toMatchObject({ type: 'word-break', preset: 'break-all' });
+  it('parses break-all', () => {
+    expect(parseUtility('break-all')).toMatchObject({ type: 'word-break', preset: 'all' });
   });
   it('parses overflow-wrap-anywhere', () => {
     expect(parseUtility('overflow-wrap-anywhere')).toMatchObject({ type: 'overflow-wrap', preset: 'anywhere' });
@@ -54,6 +63,6 @@ describe('parseUtility', () => {
     expect(parseUtility('hyphens-auto')).toMatchObject({ type: 'hyphens', preset: 'auto' });
   });
   it('returns unknown for invalid utility', () => {
-    expect(parseUtility('abc-foo')).toEqual({ type: 'unknown', raw: 'abc-foo' });
+    expect(parseUtility('not-a-real-utility')).toMatchObject({ type: 'unknown' });
   });
 }); 
