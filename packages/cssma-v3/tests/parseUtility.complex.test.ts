@@ -124,14 +124,10 @@ describe('parseUtility (복합 조합)', () => {
       ['outline-4', { type: 'outline-width', value: '4px', raw: 'outline-4', arbitrary: false }],
       ['outline-(length:--my-outline-width)', { type: 'outline-width', value: 'var(--my-outline-width)', raw: 'outline-(length:--my-outline-width)', arbitrary: true }],
       ['outline-[2vw]', { type: 'outline-width', value: '2vw', raw: 'outline-[2vw]', arbitrary: true }],
-      ['outline-[length:var(--foo)]', null],
+      ['outline-[length:var(--foo)]', { type: 'unknown', raw: 'outline-[length:var(--foo)]' }],
     ];
     for (const [input, expected] of cases) {
-      if (expected) {
-        expect(parseUtility(input)).toMatchObject(expected);
-      } else {
-        expect(parseUtility(input)).toBeNull();
-      }
+      expect(parseUtility(input)).toEqual(expected);
     }
   });
 
