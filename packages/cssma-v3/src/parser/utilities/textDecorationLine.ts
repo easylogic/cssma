@@ -8,16 +8,11 @@ const presets = [
   'no-underline',
 ];
 
-export function parseTextDecorationLine(token: string): any | null {
-  for (const preset of presets) {
-    if (token === preset) {
-      return { type: 'text-decoration-line', preset, raw: token, arbitrary: false };
-    }
-  }
-  // 임의값: text-decoration-line-[value]
-  const arbitrary = token.match(/^text-decoration-line-\[(.+)]$/);
-  if (arbitrary) {
-    return { type: 'text-decoration-line', preset: arbitrary[1], raw: token, arbitrary: true };
+export function parseTextDecorationLine(token: string) {
+  if (presets.includes(token)) {
+    let preset = token;
+    if (token === 'no-underline') preset = 'none';
+    return { type: 'text-decoration-line', preset, raw: token, arbitrary: false };
   }
   return null;
 } 

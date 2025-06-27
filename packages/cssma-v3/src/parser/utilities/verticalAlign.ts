@@ -1,32 +1,35 @@
 // Tailwind vertical-align utility parser
 // https://tailwindcss.com/docs/vertical-align
 
+import { extractArbitraryValue } from '../utils';
+
 const presets = [
-  'align-baseline',
-  'align-top',
-  'align-middle',
-  'align-bottom',
-  'align-text-top',
-  'align-text-bottom',
-  'align-sub',
-  'align-super',
+  'baseline',
+  'top',
+  'middle',
+  'bottom',
+  'text-top',
+  'text-bottom',
+  'sub',
+  'super',
 ];
 
-export function parseVerticalAlign(token: string): any | null {
-  for (const preset of presets) {
-    if (token === preset) {
+export function parseVerticalAlign(token: string) {
+  if (token.startsWith('align-')) {
+    const preset = token.slice(6);
+    if (presets.includes(preset)) {
       return { type: 'vertical-align', preset, raw: token, arbitrary: false };
     }
-  }
-  // align-(<custom-property>)
-  const customProp = token.match(/^align-\((--[a-zA-Z0-9-_]+)\)$/);
-  if (customProp) {
-    return { type: 'vertical-align', preset: customProp[1], raw: token, arbitrary: true };
-  }
-  // align-[value]
-  const arbitrary = token.match(/^align-\[(.+)]$/);
-  if (arbitrary) {
-    return { type: 'vertical-align', preset: arbitrary[1], raw: token, arbitrary: true };
+    // align-(<custom-property>)
+    const custom = token.match(/^align-\((--[a-zA-Z0-9-_]+)\)$/);
+    if (custom) {
+      return { type: 'vertical-align', value: `var(${custom[1]})`, raw: token, arbitrary: true };
+    }
+    // align-[<value>]
+    const arb = extractArbitraryValue(token, 'align');
+    if (arb) {
+      return { type: 'vertical-align', value: arb, raw: token, arbitrary: true };
+    }
   }
   return null;
 } 

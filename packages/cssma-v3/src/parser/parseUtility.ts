@@ -87,6 +87,14 @@ import { parseIsolation } from './utilities/isolation';
 import { parseBoxDecorationBreak } from './utilities/boxDecorationBreak';
 import { parseTextColor } from './utilities/color';
 import { parseJustifyContent } from './utilities/justifyContent';
+import { parseBorderRadius } from './utilities/borderRadius';
+import { parseBorderWidth } from './utilities/borderWidth';
+import { parseBorderColor } from './utilities/borderColor';
+import { parseBorderStyle } from './utilities/borderStyle';
+import { parseOutlineWidth } from './utilities/outlineWidth';
+import { parseOutlineColor } from './utilities/outlineColor';
+import { parseOutlineStyle } from './utilities/outlineStyle';
+import { parseOutlineOffset } from './utilities/outlineOffset';
 // ... (spacing, flex/grid 등 추가 가능)
 
 const utilityParsers = [
@@ -95,6 +103,14 @@ const utilityParsers = [
   parseFloat,
   parseClear,
   parseBox,
+  parseBorderRadius,
+  parseBorderWidth,
+  parseBorderColor,
+  parseBorderStyle,
+  parseOutlineStyle,
+  parseOutlineWidth,
+  parseOutlineColor,
+  parseOutlineOffset,
   parseZIndex,
   parseVisibility,
   parsePosition,
@@ -152,6 +168,10 @@ const utilityParsers = [
   parseLineHeight,
   parseLetterSpacing,
   parseFontVariantNumeric,
+  parseTextDecorationLine,
+  parseTextDecorationColor,
+  parseTextDecorationStyle,
+  parseTextDecorationThickness,
   // List
   parseListStyleType,
   parseListStylePosition,

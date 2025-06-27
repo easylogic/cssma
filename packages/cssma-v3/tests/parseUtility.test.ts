@@ -26,11 +26,11 @@ describe('parseUtility', () => {
   it('parses text-center', () => {
     expect(parseUtility('text-center')).toMatchObject({ type: 'text-align', preset: 'center' });
   });
-  it('parses text-underline', () => {
-    expect(parseUtility('text-underline')).toMatchObject({ type: 'text-decoration-line', preset: 'underline' });
+  it('parses underline', () => {
+    expect(parseUtility('underline')).toMatchObject({ type: 'text-decoration-line', preset: 'underline' });
   });
-  it('parses text-decoration-blue-500', () => {
-    expect(parseUtility('text-decoration-blue-500')).toMatchObject({ type: 'text-decoration-color', preset: 'blue-500' });
+  it('parses decoration-blue-500', () => {
+    expect(parseUtility('decoration-blue-500')).toMatchObject({ type: 'text-decoration-color', preset: 'blue-500' });
   });
   it('parses text-wrap', () => {
     expect(parseUtility('text-wrap')).toMatchObject({ type: 'text-wrap', preset: 'wrap' });

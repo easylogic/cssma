@@ -1,3 +1,5 @@
+import { extractArbitraryValue } from '../utils';
+
 export function parseTextAlign(token: string) {
   // Tailwind v4.1 text-align utilities
   // https://tailwindcss.com/docs/text-align
@@ -14,7 +16,13 @@ export function parseTextAlign(token: string) {
       return { type: "text-align", preset: "start", raw: token, arbitrary: false };
     case "text-end":
       return { type: "text-align", preset: "end", raw: token, arbitrary: false };
-    default:
+    default: {
+      // text-[center], text-[justify-all] 등
+      const arb = extractArbitraryValue(token, 'text');
+      if (arb) {
+        return { type: 'text-align', preset: arb, raw: token, arbitrary: true };
+      }
       return null;
+    }
   }
 } 

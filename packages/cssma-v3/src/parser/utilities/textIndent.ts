@@ -1,34 +1,31 @@
 // Tailwind text-indent utility parser
 // https://tailwindcss.com/docs/text-indent
 
-export function parseTextIndent(token: string): any | null {
+import { extractArbitraryValue } from '../utils';
+
+export function parseTextIndent(token: string) {
   // indent-<number>
-  const pos = token.match(/^indent-(\d+)$/);
-  if (pos) {
-    return { type: 'text-indent', preset: pos[1], raw: token, arbitrary: false };
+  let m = token.match(/^(-?)indent-(\d+)$/);
+  if (m) {
+    const negative = m[1] === '-';
+    const value = parseInt(m[2], 10);
+    return { type: 'text-indent', value: negative ? -value : value, raw: token, arbitrary: false };
   }
-  // -indent-<number>
-  const neg = token.match(/^\-indent-(\d+)$/);
-  if (neg) {
-    return { type: 'text-indent', preset: `-${neg[1]}`, raw: token, arbitrary: false };
-  }
-  // indent-px
-  if (token === 'indent-px') {
-    return { type: 'text-indent', preset: 'px', raw: token, arbitrary: false };
-  }
-  // -indent-px
-  if (token === '-indent-px') {
-    return { type: 'text-indent', preset: '-px', raw: token, arbitrary: false };
+  // indent-px, -indent-px
+  m = token.match(/^(-?)indent-px$/);
+  if (m) {
+    const negative = m[1] === '-';
+    return { type: 'text-indent', value: negative ? '-1px' : '1px', raw: token, arbitrary: false };
   }
   // indent-(<custom-property>)
-  const customProp = token.match(/^indent-\((--[a-zA-Z0-9-_]+)\)$/);
-  if (customProp) {
-    return { type: 'text-indent', preset: customProp[1], raw: token, arbitrary: true };
+  m = token.match(/^indent-\((--[a-zA-Z0-9-_]+)\)$/);
+  if (m) {
+    return { type: 'text-indent', value: `var(${m[1]})`, raw: token, arbitrary: true };
   }
-  // indent-[value]
-  const arbitrary = token.match(/^indent-\[(.+)]$/);
-  if (arbitrary) {
-    return { type: 'text-indent', preset: arbitrary[1], raw: token, arbitrary: true };
+  // indent-[<value>]
+  const arb = extractArbitraryValue(token, 'indent');
+  if (arb) {
+    return { type: 'text-indent', value: arb, raw: token, arbitrary: true };
   }
   return null;
 } 
