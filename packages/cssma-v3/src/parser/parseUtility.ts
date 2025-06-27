@@ -86,6 +86,7 @@ import { parseFontVariantNumeric } from './utilities/fontVariantNumeric';
 import { parseIsolation } from './utilities/isolation';
 import { parseBoxDecorationBreak } from './utilities/boxDecorationBreak';
 import { parseTextColor } from './utilities/color';
+import { parseJustifyContent } from './utilities/justifyContent';
 // ... (spacing, flex/grid 등 추가 가능)
 
 const utilityParsers = [
@@ -137,6 +138,10 @@ const utilityParsers = [
   parseObjectFit,
   parseObjectPosition,
   // Typography
+  parseTextColor,
+  parseTextAlign,
+  parseAlignItems,
+  parseJustifyContent,
   parseFontFamily,
   parseFontWeight,
   parseFontStyle,
@@ -168,18 +173,11 @@ const utilityParsers = [
   parseContent,
   // Gradient stops
   parseGradientStop,
-  // Color
-  parseTextColor,
   // Box Decoration
   parseBoxDecorationBreak,
   // Isolation
   parseIsolation,
   // Typography
-  parseTextAlign,
-  parseTextDecorationLine,
-  parseTextDecorationColor,
-  parseTextDecorationStyle,
-  parseTextDecorationThickness,
   parseTextUnderlineOffset,
   parseTextTransform,
   parseTextOverflow,
