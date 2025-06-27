@@ -402,4 +402,33 @@ describe('parseUtility (복합 조합)', () => {
       expect(parseUtility(input)).toEqual(expected);
     }
   });
+
+  it('parses backdrop-filter utilities', () => {
+    const cases = [
+      ['backdrop-filter-none', { type: 'backdrop-filter', value: 'none', raw: 'backdrop-filter-none', arbitrary: false }],
+      ["backdrop-filter-[url('filters.svg#filter-id')]", { type: 'backdrop-filter', value: "url('filters.svg#filter-id')", raw: "backdrop-filter-[url('filters.svg#filter-id')]", arbitrary: true }],
+      ['backdrop-filter-(--my-backdrop-filter)', { type: 'backdrop-filter', value: 'var(--my-backdrop-filter)', raw: 'backdrop-filter-(--my-backdrop-filter)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
+
+  it('parses backdrop-blur utilities', () => {
+    const cases = [
+      ['backdrop-blur-none', { type: 'backdrop-blur', preset: 'none', raw: 'backdrop-blur-none', arbitrary: false }],
+      ['backdrop-blur-xs', { type: 'backdrop-blur', preset: 'xs', raw: 'backdrop-blur-xs', arbitrary: false }],
+      ['backdrop-blur-sm', { type: 'backdrop-blur', preset: 'sm', raw: 'backdrop-blur-sm', arbitrary: false }],
+      ['backdrop-blur-md', { type: 'backdrop-blur', preset: 'md', raw: 'backdrop-blur-md', arbitrary: false }],
+      ['backdrop-blur-lg', { type: 'backdrop-blur', preset: 'lg', raw: 'backdrop-blur-lg', arbitrary: false }],
+      ['backdrop-blur-xl', { type: 'backdrop-blur', preset: 'xl', raw: 'backdrop-blur-xl', arbitrary: false }],
+      ['backdrop-blur-2xl', { type: 'backdrop-blur', preset: '2xl', raw: 'backdrop-blur-2xl', arbitrary: false }],
+      ['backdrop-blur-3xl', { type: 'backdrop-blur', preset: '3xl', raw: 'backdrop-blur-3xl', arbitrary: false }],
+      ['backdrop-blur-[2px]', { type: 'backdrop-blur', value: '2px', raw: 'backdrop-blur-[2px]', arbitrary: true }],
+      ['backdrop-blur-(--my-blur)', { type: 'backdrop-blur', value: 'var(--my-blur)', raw: 'backdrop-blur-(--my-blur)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
 }); 

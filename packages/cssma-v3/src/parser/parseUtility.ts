@@ -117,6 +117,8 @@ import { parseHueRotate } from './utilities/hueRotate';
 import { parseInvert } from './utilities/invert';
 import { parseSaturate } from './utilities/saturate';
 import { parseSepia } from './utilities/sepia';
+import { parseBackdropFilter } from './utilities/backdropFilter';
+import { parseBackdropBlur } from './utilities/backdropBlur';
 // ... (spacing, flex/grid 등 추가 가능)
 
 const utilityParsers = [
@@ -253,6 +255,8 @@ const utilityParsers = [
   parseInvert,
   parseSaturate,
   parseSepia,
+  parseBackdropFilter,
+  parseBackdropBlur,
   // ... (spacing, flex/grid 등 확장 가능)
 ];
 
