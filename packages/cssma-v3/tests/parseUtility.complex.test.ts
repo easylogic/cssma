@@ -167,4 +167,123 @@ describe('parseUtility (복합 조합)', () => {
     expect(parseUtility('outline-offset-[2vw]')).toEqual({ type: 'outline-offset', value: '2vw', raw: 'outline-offset-[2vw]', arbitrary: true });
     expect(parseUtility('outline-offset-[10px]')).toEqual({ type: 'outline-offset', value: '10px', raw: 'outline-offset-[10px]', arbitrary: true });
   });
+
+  it('parses mask-composite utilities', () => {
+    const cases = [
+      ['mask-add', { type: 'mask-composite', value: 'add', raw: 'mask-add', arbitrary: false }],
+      ['mask-subtract', { type: 'mask-composite', value: 'subtract', raw: 'mask-subtract', arbitrary: false }],
+      ['mask-intersect', { type: 'mask-composite', value: 'intersect', raw: 'mask-intersect', arbitrary: false }],
+      ['mask-exclude', { type: 'mask-composite', value: 'exclude', raw: 'mask-exclude', arbitrary: false }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
+
+  it('parses mask-image utilities', () => {
+    const cases = [
+      ['mask-none', { type: 'mask-image', value: 'none', raw: 'mask-none', arbitrary: false }],
+      ['mask-[url(/img/foo.png)]', { type: 'mask-image', value: 'url(/img/foo.png)', raw: 'mask-[url(/img/foo.png)]', arbitrary: true }],
+      ['mask-(--my-mask)', { type: 'mask-image', value: 'var(--my-mask)', raw: 'mask-(--my-mask)', arbitrary: true }],
+      ['mask-linear-50', { type: 'mask-image', preset: 'linear', angle: 50, raw: 'mask-linear-50', arbitrary: false }],
+      ['-mask-linear-50', { type: 'mask-image', preset: 'linear', angle: -50, raw: '-mask-linear-50', arbitrary: false }],
+      ['mask-linear-from-60%', { type: 'mask-image', preset: 'linear-from', value: '60%', raw: 'mask-linear-from-60%', arbitrary: false }],
+      ['mask-linear-to-80%', { type: 'mask-image', preset: 'linear-to', value: '80%', raw: 'mask-linear-to-80%', arbitrary: false }],
+      ['mask-x-from-70%', { type: 'mask-image', preset: 'x-from', value: '70%', raw: 'mask-x-from-70%', arbitrary: false }],
+      ['mask-y-to-90%', { type: 'mask-image', preset: 'y-to', value: '90%', raw: 'mask-y-to-90%', arbitrary: false }],
+      ['mask-radial-from-75%', { type: 'mask-image', preset: 'radial-from', value: '75%', raw: 'mask-radial-from-75%', arbitrary: false }],
+      ['mask-radial-to-85%', { type: 'mask-image', preset: 'radial-to', value: '85%', raw: 'mask-radial-to-85%', arbitrary: false }],
+      ['mask-radial-at-top-left', { type: 'mask-image', preset: 'radial-at', value: 'top-left', raw: 'mask-radial-at-top-left', arbitrary: false }],
+      ['mask-radial-closest-side', { type: 'mask-image', preset: 'closest-side', raw: 'mask-radial-closest-side', arbitrary: false }],
+      ['mask-conic-from-75%', { type: 'mask-image', preset: 'conic-from', value: '75%', raw: 'mask-conic-from-75%', arbitrary: false }],
+      ['mask-conic-to-75%', { type: 'mask-image', preset: 'conic-to', value: '75%', raw: 'mask-conic-to-75%', arbitrary: false }],
+      ['mask-conic-120', { type: 'mask-image', preset: 'conic', angle: 120, raw: 'mask-conic-120', arbitrary: false }],
+      ['mask-linear-[70deg,transparent_10%,black,transparent_80%]', { type: 'mask-image', preset: 'linear', value: '70deg,transparent_10%,black,transparent_80%', raw: 'mask-linear-[70deg,transparent_10%,black,transparent_80%]', arbitrary: true }],
+      ['mask-linear-(--my-mask)', { type: 'mask-image', preset: 'linear', value: 'var(--my-mask)', raw: 'mask-linear-(--my-mask)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
+
+  it('parses mask-mode utilities', () => {
+    const cases = [
+      ['mask-alpha', { type: 'mask-mode', value: 'alpha', raw: 'mask-alpha', arbitrary: false }],
+      ['mask-luminance', { type: 'mask-mode', value: 'luminance', raw: 'mask-luminance', arbitrary: false }],
+      ['mask-match', { type: 'mask-mode', value: 'match-source', raw: 'mask-match', arbitrary: false }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
+
+  it('parses mask-origin utilities', () => {
+    const cases = [
+      ['mask-origin-border', { type: 'mask-origin', value: 'border-box', raw: 'mask-origin-border', arbitrary: false }],
+      ['mask-origin-padding', { type: 'mask-origin', value: 'padding-box', raw: 'mask-origin-padding', arbitrary: false }],
+      ['mask-origin-content', { type: 'mask-origin', value: 'content-box', raw: 'mask-origin-content', arbitrary: false }],
+      ['mask-origin-fill', { type: 'mask-origin', value: 'fill-box', raw: 'mask-origin-fill', arbitrary: false }],
+      ['mask-origin-stroke', { type: 'mask-origin', value: 'stroke-box', raw: 'mask-origin-stroke', arbitrary: false }],
+      ['mask-origin-view', { type: 'mask-origin', value: 'view-box', raw: 'mask-origin-view', arbitrary: false }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
+
+  it('parses mask-position utilities', () => {
+    const cases = [
+      ['mask-top-left', { type: 'mask-position', value: 'top left', raw: 'mask-top-left', arbitrary: false }],
+      ['mask-top', { type: 'mask-position', value: 'top', raw: 'mask-top', arbitrary: false }],
+      ['mask-top-right', { type: 'mask-position', value: 'top right', raw: 'mask-top-right', arbitrary: false }],
+      ['mask-left', { type: 'mask-position', value: 'left', raw: 'mask-left', arbitrary: false }],
+      ['mask-center', { type: 'mask-position', value: 'center', raw: 'mask-center', arbitrary: false }],
+      ['mask-right', { type: 'mask-position', value: 'right', raw: 'mask-right', arbitrary: false }],
+      ['mask-bottom-left', { type: 'mask-position', value: 'bottom left', raw: 'mask-bottom-left', arbitrary: false }],
+      ['mask-bottom', { type: 'mask-position', value: 'bottom', raw: 'mask-bottom', arbitrary: false }],
+      ['mask-bottom-right', { type: 'mask-position', value: 'bottom right', raw: 'mask-bottom-right', arbitrary: false }],
+      ['mask-position-[center_top_1rem]', { type: 'mask-position', value: 'center_top_1rem', raw: 'mask-position-[center_top_1rem]', arbitrary: true }],
+      ['mask-position-(--my-mask-position)', { type: 'mask-position', value: 'var(--my-mask-position)', raw: 'mask-position-(--my-mask-position)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
+
+  it('parses mask-repeat utilities', () => {
+    const cases = [
+      ['mask-repeat', { type: 'mask-repeat', value: 'repeat', raw: 'mask-repeat', arbitrary: false }],
+      ['mask-no-repeat', { type: 'mask-repeat', value: 'no-repeat', raw: 'mask-no-repeat', arbitrary: false }],
+      ['mask-repeat-x', { type: 'mask-repeat', value: 'repeat-x', raw: 'mask-repeat-x', arbitrary: false }],
+      ['mask-repeat-y', { type: 'mask-repeat', value: 'repeat-y', raw: 'mask-repeat-y', arbitrary: false }],
+      ['mask-repeat-space', { type: 'mask-repeat', value: 'space', raw: 'mask-repeat-space', arbitrary: false }],
+      ['mask-repeat-round', { type: 'mask-repeat', value: 'round', raw: 'mask-repeat-round', arbitrary: false }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
+
+  it('parses mask-size utilities', () => {
+    const cases = [
+      ['mask-auto', { type: 'mask-size', value: 'auto', raw: 'mask-auto', arbitrary: false }],
+      ['mask-cover', { type: 'mask-size', value: 'cover', raw: 'mask-cover', arbitrary: false }],
+      ['mask-contain', { type: 'mask-size', value: 'contain', raw: 'mask-contain', arbitrary: false }],
+      ['mask-size-[auto_100px]', { type: 'mask-size', value: 'auto_100px', raw: 'mask-size-[auto_100px]', arbitrary: true }],
+      ['mask-size-(--my-mask-size)', { type: 'mask-size', value: 'var(--my-mask-size)', raw: 'mask-size-(--my-mask-size)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
+
+  it('parses mask-type utilities', () => {
+    const cases = [
+      ['mask-type-alpha', { type: 'mask-type', value: 'alpha', raw: 'mask-type-alpha', arbitrary: false }],
+      ['mask-type-luminance', { type: 'mask-type', value: 'luminance', raw: 'mask-type-luminance', arbitrary: false }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
 }); 

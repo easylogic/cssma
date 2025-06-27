@@ -95,6 +95,18 @@ import { parseOutlineWidth } from './utilities/outlineWidth';
 import { parseOutlineColor } from './utilities/outlineColor';
 import { parseOutlineStyle } from './utilities/outlineStyle';
 import { parseOutlineOffset } from './utilities/outlineOffset';
+import { parseOpacity } from './utilities/opacity';
+import { parseMixBlendMode } from './utilities/mixBlendMode';
+import { parseBackgroundBlendMode } from './utilities/backgroundBlendMode';
+import { parseMaskClip } from './utilities/maskClip';
+import { parseMaskComposite } from './utilities/maskComposite';
+import { parseMaskImage } from './utilities/maskImage';
+import { parseMaskMode } from './utilities/maskMode';
+import { parseMaskOrigin } from './utilities/maskOrigin';
+import { parseMaskPosition } from './utilities/maskPosition';
+import { parseMaskRepeat } from './utilities/maskRepeat';
+import { parseMaskSize } from './utilities/maskSize';
+import { parseMaskType } from './utilities/maskType';
 // ... (spacing, flex/grid 등 추가 가능)
 
 const utilityParsers = [
@@ -208,6 +220,19 @@ const utilityParsers = [
   parseWordBreak,
   parseOverflowWrap,
   parseHyphens,
+  // Effects
+  parseOpacity,
+  parseMixBlendMode,
+  parseBackgroundBlendMode,
+  parseMaskClip,
+  parseMaskComposite,
+  parseMaskImage,
+  parseMaskMode,
+  parseMaskOrigin,
+  parseMaskPosition,
+  parseMaskRepeat,
+  parseMaskSize,
+  parseMaskType,
   // ... (spacing, flex/grid 등 확장 가능)
 ];
 
