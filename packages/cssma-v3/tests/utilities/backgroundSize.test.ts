@@ -19,7 +19,7 @@ describe('parseBackgroundSize', () => {
   });
   it('parses bg-size-(--foo)', () => {
     expect(parseBackgroundSize('bg-size-(--foo)')).toEqual({
-      type: 'background-size', preset: 'var(--foo)', raw: 'bg-size-(--foo)', arbitrary: true,
+      type: 'background-size', value: 'var(--foo)', raw: 'bg-size-(--foo)', arbitrary: true
     });
   });
   it('parses bg-size-[auto_100px]', () => {

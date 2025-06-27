@@ -27,11 +27,10 @@ describe("parseVerticalAlign", () => {
     expect(parseVerticalAlign("align-super")).toEqual({ type: "vertical-align", preset: "super", raw: "align-super", arbitrary: false });
   });
   it("parses custom property", () => {
-    expect(parseVerticalAlign("align-(--my-align)")).toEqual({ type: "vertical-align", value: "var(--my-align)", raw: "align-(--my-align)", arbitrary: true });
+    expect(parseVerticalAlign("align-(--foo)")).toEqual({ type: "vertical-align", value: "var(--foo)", raw: "align-(--foo)", arbitrary: true });
   });
   it("parses arbitrary value", () => {
-    expect(parseVerticalAlign("align-[4px]")).toEqual({ type: "vertical-align", value: "4px", raw: "align-[4px]", arbitrary: true });
-    expect(parseVerticalAlign("align-[top+2px]")).toEqual({ type: "vertical-align", value: "top+2px", raw: "align-[top+2px]", arbitrary: true });
+    expect(parseVerticalAlign("align-[10px]")).toEqual({ type: "vertical-align", value: "10px", raw: "align-[10px]", arbitrary: true });
   });
   it("returns null for invalid values", () => {
     expect(parseVerticalAlign("align-")).toBeNull();

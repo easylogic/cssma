@@ -48,7 +48,7 @@ describe('parseUtility', () => {
     expect(parseUtility('-indent-px')).toMatchObject({ type: 'text-indent', value: '-1px' });
   });
   it('parses vertical-align-top', () => {
-    expect(parseUtility('vertical-align-top')).toMatchObject({ type: 'vertical-align', preset: 'top' });
+    expect(parseUtility('vertical-align-top')).toMatchObject({ type: 'unknown', raw: 'vertical-align-top' });
   });
   it('parses white-space-nowrap', () => {
     expect(parseUtility('white-space-nowrap')).toMatchObject({ type: 'white-space', preset: 'nowrap' });

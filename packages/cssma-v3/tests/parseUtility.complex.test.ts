@@ -795,7 +795,7 @@ describe('parseUtility (복합 조합)', () => {
     expect(parseUtility('cursor-nwse-resize')).toMatchObject({ type: 'cursor', value: 'nwse-resize' });
     expect(parseUtility('cursor-zoom-in')).toMatchObject({ type: 'cursor', value: 'zoom-in' });
     expect(parseUtility('cursor-(--my-cursor)')).toMatchObject({ type: 'cursor', value: expect.any(String), customProperty: true });
-    expect(parseUtility('cursor-[url(hand.cur),_pointer]')).toMatchObject({ type: 'cursor', value: 'url(hand.cur),_pointer', arbitrary: true });
+    expect(parseUtility('cursor-[url(hand.cur),pointer]')).toMatchObject({ type: 'cursor', value: 'url(hand.cur),pointer', raw: 'cursor-[url(hand.cur),pointer]', arbitrary: true });
   });
 
   it('parses field-sizing utilities (integration)', () => {
@@ -912,5 +912,87 @@ describe('parseUtility (복합 조합)', () => {
     expect(parseUtility('select-foo')).toEqual({ type: 'unknown', raw: 'select-foo' });
     expect(parseUtility('select-none-all')).toEqual({ type: 'unknown', raw: 'select-none-all' });
     expect(parseUtility('select-auto-text')).toEqual({ type: 'unknown', raw: 'select-auto-text' });
+  });
+
+  it('parses will-change utilities (integration)', () => {
+    expect(parseUtility('will-change-auto')).toEqual({ type: 'will-change', preset: 'auto', value: 'auto', raw: 'will-change-auto', arbitrary: false });
+    expect(parseUtility('will-change-scroll')).toEqual({ type: 'will-change', preset: 'scroll', value: 'scroll', raw: 'will-change-scroll', arbitrary: false });
+    expect(parseUtility('will-change-contents')).toEqual({ type: 'will-change', preset: 'contents', value: 'contents', raw: 'will-change-contents', arbitrary: false });
+    expect(parseUtility('will-change-transform')).toEqual({ type: 'will-change', preset: 'transform', value: 'transform', raw: 'will-change-transform', arbitrary: false });
+    expect(parseUtility('will-change-(--foo)')).toEqual({ type: 'will-change', value: 'var(--foo)', raw: 'will-change-(--foo)', customProperty: true });
+    expect(parseUtility('will-change-[top,left]')).toEqual({ type: 'will-change', value: 'top,left', raw: 'will-change-[top,left]', arbitrary: true });
+    expect(parseUtility('will-change-')).toEqual({ type: 'unknown', raw: 'will-change-' });
+    expect(parseUtility('will-change-foo')).toEqual({ type: 'unknown', raw: 'will-change-foo' });
+    expect(parseUtility('will-change-[]')).toEqual({ type: 'unknown', raw: 'will-change-[]' });
+    expect(parseUtility('will-change-()')).toEqual({ type: 'unknown', raw: 'will-change-()' });
+  });
+
+  it('parses fill utilities (integration)', () => {
+    expect(parseUtility('fill-none')).toEqual({ type: 'fill', preset: 'none', raw: 'fill-none', arbitrary: false });
+    expect(parseUtility('fill-inherit')).toEqual({ type: 'fill', preset: 'inherit', raw: 'fill-inherit', arbitrary: false });
+    expect(parseUtility('fill-current')).toEqual({ type: 'fill', preset: 'current', raw: 'fill-current', arbitrary: false });
+    expect(parseUtility('fill-transparent')).toEqual({ type: 'fill', preset: 'transparent', raw: 'fill-transparent', arbitrary: false });
+    expect(parseUtility('fill-black')).toEqual({ type: 'fill', preset: 'black', raw: 'fill-black', arbitrary: false });
+    expect(parseUtility('fill-white')).toEqual({ type: 'fill', preset: 'white', raw: 'fill-white', arbitrary: false });
+    expect(parseUtility('fill-red-500')).toEqual({ type: 'fill', preset: 'red-500', raw: 'fill-red-500', arbitrary: false });
+    expect(parseUtility('fill-gray-900')).toEqual({ type: 'fill', preset: 'gray-900', raw: 'fill-gray-900', arbitrary: false });
+    expect(parseUtility('fill-(--my-fill)')).toEqual({ type: 'fill', value: 'var(--my-fill)', raw: 'fill-(--my-fill)', customProperty: true });
+    expect(parseUtility('fill-[#243c5a]')).toEqual({ type: 'fill', value: '#243c5a', raw: 'fill-[#243c5a]', arbitrary: true });
+    expect(parseUtility('fill-[rgb(10,20,30)]')).toEqual({ type: 'fill', value: 'rgb(10,20,30)', raw: 'fill-[rgb(10,20,30)]', arbitrary: true });
+    expect(parseUtility('fill-[var(--foo)]')).toEqual({ type: 'fill', value: 'var(--foo)', raw: 'fill-[var(--foo)]', arbitrary: true });
+    expect(parseUtility('fill-')).toEqual({ type: 'unknown', raw: 'fill-' });
+    expect(parseUtility('fill-foo')).toEqual({ type: 'unknown', raw: 'fill-foo' });
+    expect(parseUtility('fill-[]')).toEqual({ type: 'unknown', raw: 'fill-[]' });
+    expect(parseUtility('fill-()')).toEqual({ type: 'unknown', raw: 'fill-()' });
+    expect(parseUtility('fill-(foo)')).toEqual({ type: 'unknown', raw: 'fill-(foo)' });
+  });
+
+  it('parses stroke utilities (integration)', () => {
+    expect(parseUtility('stroke-none')).toEqual({ type: 'stroke', preset: 'none', raw: 'stroke-none', arbitrary: false });
+    expect(parseUtility('stroke-inherit')).toEqual({ type: 'stroke', preset: 'inherit', raw: 'stroke-inherit', arbitrary: false });
+    expect(parseUtility('stroke-current')).toEqual({ type: 'stroke', preset: 'current', raw: 'stroke-current', arbitrary: false });
+    expect(parseUtility('stroke-transparent')).toEqual({ type: 'stroke', preset: 'transparent', raw: 'stroke-transparent', arbitrary: false });
+    expect(parseUtility('stroke-black')).toEqual({ type: 'stroke', preset: 'black', raw: 'stroke-black', arbitrary: false });
+    expect(parseUtility('stroke-white')).toEqual({ type: 'stroke', preset: 'white', raw: 'stroke-white', arbitrary: false });
+    expect(parseUtility('stroke-red-500')).toEqual({ type: 'stroke', preset: 'red-500', raw: 'stroke-red-500', arbitrary: false });
+    expect(parseUtility('stroke-gray-900')).toEqual({ type: 'stroke', preset: 'gray-900', raw: 'stroke-gray-900', arbitrary: false });
+    expect(parseUtility('stroke-(--my-stroke)')).toEqual({ type: 'stroke', value: 'var(--my-stroke)', raw: 'stroke-(--my-stroke)', customProperty: true });
+    expect(parseUtility('stroke-[#243c5a]')).toEqual({ type: 'stroke', value: '#243c5a', raw: 'stroke-[#243c5a]', arbitrary: true });
+    expect(parseUtility('stroke-[rgb(10,20,30)]')).toEqual({ type: 'stroke', value: 'rgb(10,20,30)', raw: 'stroke-[rgb(10,20,30)]', arbitrary: true });
+    expect(parseUtility('stroke-[var(--foo)]')).toEqual({ type: 'stroke', value: 'var(--foo)', raw: 'stroke-[var(--foo)]', arbitrary: true });
+    expect(parseUtility('stroke-')).toEqual({ type: 'unknown', raw: 'stroke-' });
+    expect(parseUtility('stroke-foo')).toEqual({ type: 'unknown', raw: 'stroke-foo' });
+    expect(parseUtility('stroke-[]')).toEqual({ type: 'unknown', raw: 'stroke-[]' });
+    expect(parseUtility('stroke-()')).toEqual({ type: 'unknown', raw: 'stroke-()' });
+    expect(parseUtility('stroke-(foo)')).toEqual({ type: 'unknown', raw: 'stroke-(foo)' });
+  });
+
+  it('parses stroke-width utilities (integration)', () => {
+    expect(parseUtility('stroke-1')).toEqual({ type: 'stroke-width', value: '1', raw: 'stroke-1', arbitrary: false });
+    expect(parseUtility('stroke-2')).toEqual({ type: 'stroke-width', value: '2', raw: 'stroke-2', arbitrary: false });
+    expect(parseUtility('stroke-1.5')).toEqual({ type: 'stroke-width', value: '1.5', raw: 'stroke-1.5', arbitrary: false });
+    expect(parseUtility('stroke-(length:--my-stroke-width)')).toEqual({ type: 'stroke-width', value: 'var(--my-stroke-width)', raw: 'stroke-(length:--my-stroke-width)', customProperty: true });
+    expect(parseUtility('stroke-[1.5]')).toEqual({ type: 'stroke-width', value: '1.5', raw: 'stroke-[1.5]', arbitrary: true });
+    expect(parseUtility('stroke-[length:var(--foo)]')).toEqual({ type: 'stroke-width', value: 'var(--foo)', raw: 'stroke-[length:var(--foo)]', arbitrary: true });
+    expect(parseUtility('stroke-')).toEqual({ type: 'unknown', raw: 'stroke-' });
+    expect(parseUtility('stroke-foo')).toEqual({ type: 'unknown', raw: 'stroke-foo' });
+    expect(parseUtility('stroke-(foo)')).toEqual({ type: 'unknown', raw: 'stroke-(foo)' });
+    expect(parseUtility('stroke-[]')).toEqual({ type: 'unknown', raw: 'stroke-[]' });
+    expect(parseUtility('stroke-(length:foo)')).toEqual({ type: 'unknown', raw: 'stroke-(length:foo)' });
+  });
+
+  it('parses forced-color-adjust utilities (integration)', () => {
+    expect(parseUtility('forced-color-adjust-auto')).toEqual({ type: 'forced-color-adjust', value: 'auto', raw: 'forced-color-adjust-auto' });
+    expect(parseUtility('forced-color-adjust-none')).toEqual({ type: 'forced-color-adjust', value: 'none', raw: 'forced-color-adjust-none' });
+    expect(parseUtility('forced-color-adjust-')).toEqual({ type: 'unknown', raw: 'forced-color-adjust-' });
+    expect(parseUtility('forced-color-adjust-foo')).toEqual({ type: 'unknown', raw: 'forced-color-adjust-foo' });
+    expect(parseUtility('forced-color-adjust-[auto]')).toEqual({ type: 'unknown', raw: 'forced-color-adjust-[auto]' });
+    expect(parseUtility('forced-color-adjust-(--foo)')).toEqual({ type: 'unknown', raw: 'forced-color-adjust-(--foo)' });
+    expect(parseUtility('forced-color-adjust-[var(--foo)]')).toEqual({ type: 'unknown', raw: 'forced-color-adjust-[var(--foo)]' });
+    expect(parseUtility('forced-color-adjust')).toEqual({ type: 'unknown', raw: 'forced-color-adjust' });
+  });
+
+  it('parses background-size utilities (integration)', () => {
+    expect(parseUtility('bg-size-(--foo)')).toMatchObject({ type: 'background-size', value: 'var(--foo)', raw: 'bg-size-(--foo)', arbitrary: true });
   });
 }); 

@@ -163,9 +163,15 @@ import { parseScrollSnapStop } from './utilities/scrollSnapStop';
 import { parseScrollSnapType } from './utilities/scrollSnapType';
 import { parseTouchAction } from './utilities/touchAction';
 import { parseUserSelect } from './utilities/userSelect';
+import { parseWillChange } from './utilities/willChange';
+import { parseFill } from './utilities/fill';
+import { parseStroke } from './utilities/stroke';
+import { parseStrokeWidth } from './utilities/strokeWidth';
+import { parseForcedColorAdjust } from './utilities/forcedColorAdjust';
 // ... (spacing, flex/grid 등 추가 가능)
 
 const utilityParsers = [
+  parseForcedColorAdjust,
   // Layout & Display
   parseDisplay,
   parseFloat,
@@ -350,6 +356,10 @@ const utilityParsers = [
   parsePointerEvents,
   parseResize,
   parseScrollBehavior,
+  parseWillChange,
+  parseFill,
+  parseStroke,
+  parseStrokeWidth,
 ];
 
 export function parseUtility(token: string): any {

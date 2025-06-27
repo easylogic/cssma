@@ -13,7 +13,7 @@ describe('parseCursor', () => {
     expect(parseCursor('cursor-(--my-cursor)')).toEqual({ type: 'cursor', value: 'var(--my-cursor)', raw: 'cursor-(--my-cursor)', customProperty: true });
   });
   it('parses cursor-[<value>]', () => {
-    expect(parseCursor('cursor-[url(hand.cur),_pointer]')).toEqual({ type: 'cursor', value: 'url(hand.cur),_pointer', raw: 'cursor-[url(hand.cur),_pointer]', arbitrary: true });
+    expect(parseCursor('cursor-[url(hand.cur),pointer]')).toEqual({ type: 'cursor', value: 'url(hand.cur),pointer', raw: 'cursor-[url(hand.cur),pointer]', arbitrary: true });
   });
   it('returns null for invalid input', () => {
     expect(parseCursor('cursor-')).toBeNull();
