@@ -3,9 +3,9 @@
 import { tokenize } from './tokenizer';
 import { parseModifier } from './parseModifier';
 import { parseUtility } from './parseUtility';
-import type { ParsedModifier, ParsedUtility } from '../types';
+import type { ParsedModifier, ParsedUtility, ParsedClass } from '../types';
 
-export function parseClassName(input: string): { original: string; modifiers: ParsedModifier[]; utility: ParsedUtility | null } {
+export function parseClassName(input: string): ParsedClass {
   const tokens = tokenize(input);
   const modifiers: ParsedModifier[] = [];
   let utility: ParsedUtility | null = null;
@@ -28,7 +28,7 @@ export function parseClassName(input: string): { original: string; modifiers: Pa
   };
 }
 
-export function parseClassList(input: string): ReturnType<typeof parseClassName>[] {
+export function parseClassList(input: string): ParsedClass[] {
   return input
     .trim()
     .split(/\s+/)

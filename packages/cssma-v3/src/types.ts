@@ -695,3 +695,9 @@ export interface ParsedUtility {
   important?: boolean;     // !important 플래그
   [key: string]: any;      // 유틸리티별 확장 필드 허용
 } 
+
+export interface ParsedClass {
+  original: string;
+  modifiers: ParsedModifier[];
+  utility: ParsedUtility | null;
+}
