@@ -119,6 +119,14 @@ import { parseSaturate } from './utilities/saturate';
 import { parseSepia } from './utilities/sepia';
 import { parseBackdropFilter } from './utilities/backdropFilter';
 import { parseBackdropBlur } from './utilities/backdropBlur';
+import { parseBackdropBrightness } from './utilities/backdropBrightness';
+import { parseBackdropContrast } from './utilities/backdropContrast';
+import { parseBackdropGrayscale } from './utilities/backdropGrayscale';
+import { parseBackdropHueRotate } from './utilities/backdropHueRotate';
+import { parseBackdropInvert } from './utilities/backdropInvert';
+import { parseBackdropOpacity } from './utilities/backdropOpacity';
+import { parseBackdropSaturate } from './utilities/backdropSaturate';
+import { parseBackdropSepia } from './utilities/backdropSepia';
 // ... (spacing, flex/grid 등 추가 가능)
 
 const utilityParsers = [
@@ -257,6 +265,14 @@ const utilityParsers = [
   parseSepia,
   parseBackdropFilter,
   parseBackdropBlur,
+  parseBackdropBrightness,
+  parseBackdropContrast,
+  parseBackdropGrayscale,
+  parseBackdropHueRotate,
+  parseBackdropInvert,
+  parseBackdropOpacity,
+  parseBackdropSaturate,
+  parseBackdropSepia,
   // ... (spacing, flex/grid 등 확장 가능)
 ];
 

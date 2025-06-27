@@ -431,4 +431,105 @@ describe('parseUtility (복합 조합)', () => {
       expect(parseUtility(input)).toEqual(expected);
     }
   });
+
+  it('parses backdrop-brightness utilities', () => {
+    const cases = [
+      ['backdrop-brightness-50', { type: 'backdrop-brightness', value: '50', raw: 'backdrop-brightness-50', arbitrary: false }],
+      ['backdrop-brightness-150', { type: 'backdrop-brightness', value: '150', raw: 'backdrop-brightness-150', arbitrary: false }],
+      ['backdrop-brightness-[1.75]', { type: 'backdrop-brightness', value: '1.75', raw: 'backdrop-brightness-[1.75]', arbitrary: true }],
+      ['backdrop-brightness-(--my-brightness)', { type: 'backdrop-brightness', value: 'var(--my-brightness)', raw: 'backdrop-brightness-(--my-brightness)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toMatchObject(expected);
+    }
+  });
+
+  it('parses backdrop-contrast utilities', () => {
+    const cases = [
+      ['backdrop-contrast-50', { type: 'backdrop-contrast', value: '50', raw: 'backdrop-contrast-50', arbitrary: false }],
+      ['backdrop-contrast-200', { type: 'backdrop-contrast', value: '200', raw: 'backdrop-contrast-200', arbitrary: false }],
+      ['backdrop-contrast-[.25]', { type: 'backdrop-contrast', value: '.25', raw: 'backdrop-contrast-[.25]', arbitrary: true }],
+      ['backdrop-contrast-(--my-contrast)', { type: 'backdrop-contrast', value: 'var(--my-contrast)', raw: 'backdrop-contrast-(--my-contrast)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toMatchObject(expected);
+    }
+  });
+
+  it('parses backdrop-grayscale utilities', () => {
+    const cases = [
+      ['backdrop-grayscale', { type: 'backdrop-grayscale', value: '100', raw: 'backdrop-grayscale', arbitrary: false, default: true }],
+      ['backdrop-grayscale-0', { type: 'backdrop-grayscale', value: '0', raw: 'backdrop-grayscale-0', arbitrary: false }],
+      ['backdrop-grayscale-50', { type: 'backdrop-grayscale', value: '50', raw: 'backdrop-grayscale-50', arbitrary: false }],
+      ['backdrop-grayscale-[0.5]', { type: 'backdrop-grayscale', value: '0.5', raw: 'backdrop-grayscale-[0.5]', arbitrary: true }],
+      ['backdrop-grayscale-(--my-grayscale)', { type: 'backdrop-grayscale', value: 'var(--my-grayscale)', raw: 'backdrop-grayscale-(--my-grayscale)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toMatchObject(expected);
+    }
+  });
+
+  it('parses backdrop-hue-rotate utilities', () => {
+    const cases = [
+      ['backdrop-hue-rotate-90', { type: 'backdrop-hue-rotate', value: '90', negative: false, raw: 'backdrop-hue-rotate-90', arbitrary: false }],
+      ['backdrop-hue-rotate-180', { type: 'backdrop-hue-rotate', value: '180', negative: false, raw: 'backdrop-hue-rotate-180', arbitrary: false }],
+      ['-backdrop-hue-rotate-90', { type: 'backdrop-hue-rotate', value: '90', negative: true, raw: '-backdrop-hue-rotate-90', arbitrary: false }],
+      ['-backdrop-hue-rotate-15', { type: 'backdrop-hue-rotate', value: '15', negative: true, raw: '-backdrop-hue-rotate-15', arbitrary: false }],
+      ['backdrop-hue-rotate-[3.142rad]', { type: 'backdrop-hue-rotate', value: '3.142rad', raw: 'backdrop-hue-rotate-[3.142rad]', arbitrary: true }],
+      ['backdrop-hue-rotate-(--my-hue)', { type: 'backdrop-hue-rotate', value: 'var(--my-hue)', raw: 'backdrop-hue-rotate-(--my-hue)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toMatchObject(expected);
+    }
+  });
+
+  it('parses backdrop-invert utilities', () => {
+    const cases = [
+      ['backdrop-invert', { type: 'backdrop-invert', value: '100', raw: 'backdrop-invert', arbitrary: false, default: true }],
+      ['backdrop-invert-0', { type: 'backdrop-invert', value: '0', raw: 'backdrop-invert-0', arbitrary: false }],
+      ['backdrop-invert-65', { type: 'backdrop-invert', value: '65', raw: 'backdrop-invert-65', arbitrary: false }],
+      ['backdrop-invert-[.25]', { type: 'backdrop-invert', value: '.25', raw: 'backdrop-invert-[.25]', arbitrary: true }],
+      ['backdrop-invert-(--my-invert)', { type: 'backdrop-invert', value: 'var(--my-invert)', raw: 'backdrop-invert-(--my-invert)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toMatchObject(expected);
+    }
+  });
+
+  it('parses backdrop-opacity utilities', () => {
+    const cases = [
+      ['backdrop-opacity-10', { type: 'backdrop-opacity', value: '10', raw: 'backdrop-opacity-10', arbitrary: false }],
+      ['backdrop-opacity-95', { type: 'backdrop-opacity', value: '95', raw: 'backdrop-opacity-95', arbitrary: false }],
+      ['backdrop-opacity-[.15]', { type: 'backdrop-opacity', value: '.15', raw: 'backdrop-opacity-[.15]', arbitrary: true }],
+      ['backdrop-opacity-(--my-opacity)', { type: 'backdrop-opacity', value: 'var(--my-opacity)', raw: 'backdrop-opacity-(--my-opacity)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toMatchObject(expected);
+    }
+  });
+
+  it('parses backdrop-saturate utilities', () => {
+    const cases = [
+      ['backdrop-saturate-50', { type: 'backdrop-saturate', value: '50', raw: 'backdrop-saturate-50', arbitrary: false }],
+      ['backdrop-saturate-200', { type: 'backdrop-saturate', value: '200', raw: 'backdrop-saturate-200', arbitrary: false }],
+      ['backdrop-saturate-[.25]', { type: 'backdrop-saturate', value: '.25', raw: 'backdrop-saturate-[.25]', arbitrary: true }],
+      ['backdrop-saturate-(--my-saturate)', { type: 'backdrop-saturate', value: 'var(--my-saturate)', raw: 'backdrop-saturate-(--my-saturate)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toMatchObject(expected);
+    }
+  });
+
+  it('parses backdrop-sepia utilities', () => {
+    const cases = [
+      ['backdrop-sepia', { type: 'backdrop-sepia', value: '100', raw: 'backdrop-sepia', arbitrary: false, default: true }],
+      ['backdrop-sepia-0', { type: 'backdrop-sepia', value: '0', raw: 'backdrop-sepia-0', arbitrary: false }],
+      ['backdrop-sepia-50', { type: 'backdrop-sepia', value: '50', raw: 'backdrop-sepia-50', arbitrary: false }],
+      ['backdrop-sepia-[.25]', { type: 'backdrop-sepia', value: '.25', raw: 'backdrop-sepia-[.25]', arbitrary: true }],
+      ['backdrop-sepia-(--my-sepia)', { type: 'backdrop-sepia', value: 'var(--my-sepia)', raw: 'backdrop-sepia-(--my-sepia)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toMatchObject(expected);
+    }
+  });
 }); 
