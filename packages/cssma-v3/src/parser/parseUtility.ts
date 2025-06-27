@@ -139,6 +139,14 @@ import { parseTransitionDelay } from './utilities/transitionDelay';
 import { parseAnimation } from './utilities/animation';
 import { parseBackfaceVisibility } from './utilities/backfaceVisibility';
 import { parsePerspective } from './utilities/perspective';
+import { parsePerspectiveOrigin } from './utilities/perspectiveOrigin';
+import { parseRotate } from './utilities/rotate';
+import { parseScale } from './utilities/scale';
+import { parseSkew } from './utilities/skew';
+import { parseTransform } from './utilities/transform';
+import { parseTransformOrigin } from './utilities/transformOrigin';
+import { parseTransformStyle } from './utilities/transformStyle';
+import { parseTranslate } from './utilities/translate';
 // ... (spacing, flex/grid 등 추가 가능)
 
 const utilityParsers = [
@@ -300,6 +308,15 @@ const utilityParsers = [
   // Transform utilities
   parseBackfaceVisibility,
   parsePerspective,
+  parsePerspectiveOrigin,
+  parseRotate,
+  parseScale,
+  parseSkew,
+  parseTransform,
+  parseTransformOrigin,
+  parseTransformStyle,
+  // translate
+  parseTranslate,
   // ... (spacing, flex/grid 등 확장 가능)
 ];
 

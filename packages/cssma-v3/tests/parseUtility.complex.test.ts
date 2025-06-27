@@ -672,4 +672,94 @@ describe('parseUtility (복합 조합)', () => {
       expect(parseUtility(input as string)).toMatchObject(expected);
     }
   });
+
+  it('parses perspective-origin utilities', () => {
+    expect(parseUtility('perspective-origin-center')).toMatchObject({ type: 'perspective-origin', value: 'center' });
+    expect(parseUtility('perspective-origin-top-right')).toMatchObject({ type: 'perspective-origin', value: 'top right' });
+    expect(parseUtility('perspective-origin-(--my-perspective-origin)')).toMatchObject({ type: 'perspective-origin', value: 'var(--my-perspective-origin)' });
+    expect(parseUtility('perspective-origin-[200%_150%]')).toMatchObject({ type: 'perspective-origin', value: '200%_150%' });
+  });
+
+  it('parses rotate utilities', () => {
+    expect(parseUtility('rotate-45')).toMatchObject({ type: 'rotate', value: '45deg' });
+    expect(parseUtility('-rotate-90')).toMatchObject({ type: 'rotate', value: 'calc(90deg * -1)' });
+    expect(parseUtility('rotate-x-30')).toMatchObject({ type: 'rotate-x', value: '30deg' });
+    expect(parseUtility('-rotate-x-15')).toMatchObject({ type: 'rotate-x', value: '-15deg' });
+    expect(parseUtility('rotate-y-60')).toMatchObject({ type: 'rotate-y', value: '60deg' });
+    expect(parseUtility('-rotate-y-10')).toMatchObject({ type: 'rotate-y', value: '-10deg' });
+    expect(parseUtility('rotate-z-120')).toMatchObject({ type: 'rotate-z', value: '120deg' });
+    expect(parseUtility('-rotate-z-45')).toMatchObject({ type: 'rotate-z', value: '-45deg' });
+    expect(parseUtility('rotate-(--my-rotation)')).toMatchObject({ type: 'rotate', value: 'var(--my-rotation)' });
+    expect(parseUtility('rotate-x-(--my-rotation-x)')).toMatchObject({ type: 'rotate-x', value: 'var(--my-rotation-x)' });
+    expect(parseUtility('rotate-y-(--my-rotation-y)')).toMatchObject({ type: 'rotate-y', value: 'var(--my-rotation-y)' });
+    expect(parseUtility('rotate-z-(--my-rotation-z)')).toMatchObject({ type: 'rotate-z', value: 'var(--my-rotation-z)' });
+    expect(parseUtility('rotate-[3.142rad]')).toMatchObject({ type: 'rotate', value: '3.142rad' });
+    expect(parseUtility('rotate-x-[1.5turn]')).toMatchObject({ type: 'rotate-x', value: '1.5turn' });
+    expect(parseUtility('rotate-y-[2rad]')).toMatchObject({ type: 'rotate-y', value: '2rad' });
+    expect(parseUtility('rotate-z-[.5turn]')).toMatchObject({ type: 'rotate-z', value: '.5turn' });
+  });
+
+  it('parses scale utilities', () => {
+    expect(parseUtility('scale-75')).toMatchObject({ type: 'scale', value: '75% 75%' });
+    expect(parseUtility('-scale-100')).toMatchObject({ type: 'scale', value: 'calc(100% * -1) calc(100% * -1)' });
+    expect(parseUtility('scale-x-80')).toMatchObject({ type: 'scale-x', value: '80% var(--tw-scale-y)' });
+    expect(parseUtility('-scale-x-120')).toMatchObject({ type: 'scale-x', value: 'calc(120% * -1) var(--tw-scale-y)' });
+    expect(parseUtility('scale-y-110')).toMatchObject({ type: 'scale-y', value: 'var(--tw-scale-x) 110%' });
+    expect(parseUtility('-scale-y-90')).toMatchObject({ type: 'scale-y', value: 'var(--tw-scale-x) calc(90% * -1)' });
+    expect(parseUtility('scale-z-105')).toMatchObject({ type: 'scale-z', value: 'var(--tw-scale-x) var(--tw-scale-y) 105%' });
+    expect(parseUtility('-scale-z-95')).toMatchObject({ type: 'scale-z', value: 'var(--tw-scale-x) var(--tw-scale-y) calc(95% * -1)' });
+    expect(parseUtility('scale-3d')).toMatchObject({ type: 'scale-3d', value: 'var(--tw-scale-x) var(--tw-scale-y) var(--tw-scale-z)' });
+    expect(parseUtility('scale-(--my-scale)')).toMatchObject({ type: 'scale', value: 'var(--my-scale) var(--my-scale)' });
+    expect(parseUtility('scale-x-(--my-scale-x)')).toMatchObject({ type: 'scale-x', value: 'var(--my-scale-x) var(--tw-scale-y)' });
+    expect(parseUtility('scale-y-(--my-scale-y)')).toMatchObject({ type: 'scale-y', value: 'var(--tw-scale-x) var(--my-scale-y)' });
+    expect(parseUtility('scale-z-(--my-scale-z)')).toMatchObject({ type: 'scale-z', value: 'var(--tw-scale-x) var(--tw-scale-y) var(--my-scale-z)' });
+    expect(parseUtility('scale-[1.7]')).toMatchObject({ type: 'scale', value: '1.7' });
+    expect(parseUtility('scale-x-[2.5]')).toMatchObject({ type: 'scale-x', value: '2.5 var(--tw-scale-y)' });
+    expect(parseUtility('scale-y-[0.8]')).toMatchObject({ type: 'scale-y', value: 'var(--tw-scale-x) 0.8' });
+    expect(parseUtility('scale-z-[1.2]')).toMatchObject({ type: 'scale-z', value: 'var(--tw-scale-x) var(--tw-scale-y) 1.2' });
+  });
+
+  it('parses skew utilities', () => {
+    expect(parseUtility('skew-10')).toMatchObject({ type: 'skew', value: 'skewX(10deg) skewY(10deg)' });
+    expect(parseUtility('-skew-8')).toMatchObject({ type: 'skew', value: 'skewX(-8deg) skewY(-8deg)' });
+    expect(parseUtility('skew-x-12')).toMatchObject({ type: 'skew-x', value: 'skewX(12deg)' });
+    expect(parseUtility('-skew-x-6')).toMatchObject({ type: 'skew-x', value: 'skewX(-6deg)' });
+    expect(parseUtility('skew-y-7')).toMatchObject({ type: 'skew-y', value: 'skewY(7deg)' });
+    expect(parseUtility('-skew-y-3')).toMatchObject({ type: 'skew-y', value: 'skewY(-3deg)' });
+    expect(parseUtility('skew-(--my-skew)')).toMatchObject({ type: 'skew', value: 'skewX(var(--my-skew)) skewY(var(--my-skew))' });
+    expect(parseUtility('skew-x-(--my-skew-x)')).toMatchObject({ type: 'skew-x', value: 'skewX(var(--my-skew-x))' });
+    expect(parseUtility('skew-y-(--my-skew-y)')).toMatchObject({ type: 'skew-y', value: 'skewY(var(--my-skew-y))' });
+    expect(parseUtility('skew-[3.142rad]')).toMatchObject({ type: 'skew', value: 'skewX(3.142rad) skewY(3.142rad)' });
+    expect(parseUtility('skew-x-[1.5turn]')).toMatchObject({ type: 'skew-x', value: 'skewX(1.5turn)' });
+    expect(parseUtility('skew-y-[2rad]')).toMatchObject({ type: 'skew-y', value: 'skewY(2rad)' });
+  });
+
+  it('parses transform utilities', () => {
+    expect(parseUtility('transform-none')).toMatchObject({ type: 'transform', value: 'none' });
+    expect(parseUtility('transform-gpu')).toMatchObject({ type: 'transform', value: 'translateZ(0) var(--tw-rotate-x) var(--tw-rotate-y) var(--tw-rotate-z) var(--tw-skew-x) var(--tw-skew-y)' });
+    expect(parseUtility('transform-cpu')).toMatchObject({ type: 'transform', value: 'var(--tw-rotate-x) var(--tw-rotate-y) var(--tw-rotate-z) var(--tw-skew-x) var(--tw-skew-y)' });
+    expect(parseUtility('transform-(--my-transform)')).toMatchObject({ type: 'transform', value: 'var(--my-transform)' });
+    expect(parseUtility('transform-[matrix(1,2,3,4,5,6)]')).toMatchObject({ type: 'transform', value: 'matrix(1,2,3,4,5,6)' });
+  });
+
+  it('parses transform-origin utilities', () => {
+    expect(parseUtility('origin-center')).toMatchObject({ type: 'transform-origin', value: 'center' });
+    expect(parseUtility('origin-top-right')).toMatchObject({ type: 'transform-origin', value: 'top right' });
+    expect(parseUtility('origin-(--my-transform-origin)')).toMatchObject({ type: 'transform-origin', value: 'var(--my-transform-origin)' });
+    expect(parseUtility('origin-[33%_75%]')).toMatchObject({ type: 'transform-origin', value: '33%_75%' });
+  });
+
+  it('parses transform-style utilities', () => {
+    expect(parseUtility('transform-3d')).toMatchObject({ type: 'transform-style', value: 'preserve-3d' });
+    expect(parseUtility('transform-flat')).toMatchObject({ type: 'transform-style', value: 'flat' });
+  });
+
+  it('parses translate utilities (integration)', () => {
+    expect(parseUtility('translate-2')).toMatchObject({ type: 'translate', value: expect.any(String) });
+    expect(parseUtility('-translate-4')).toMatchObject({ type: 'translate', value: expect.any(String) });
+    expect(parseUtility('translate-x-1/2')).toMatchObject({ type: 'translate-x', value: expect.any(String) });
+    expect(parseUtility('translate-y-full')).toMatchObject({ type: 'translate-y', value: expect.any(String) });
+    expect(parseUtility('translate-z-8')).toMatchObject({ type: 'translate-z', value: expect.any(String) });
+    expect(parseUtility('translate-none')).toMatchObject({ type: 'translate', value: 'none' });
+  });
 }); 
