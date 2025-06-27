@@ -27,7 +27,9 @@ import { parseWordBreak } from './utilities/wordBreak';
 import { parseOverflowWrap } from './utilities/overflowWrap';
 import { parseHyphens } from './utilities/hyphens';
 import { parsePadding } from './utilities/padding';
+import { parseScrollPadding } from './utilities/scrollPadding';
 import { parseMargin } from './utilities/margin';
+import { parseScrollMargin } from './utilities/scrollMargin';
 import { parseFlexGrow } from './utilities/flexGrow';
 import { parseFlexShrink } from './utilities/flexShrink';
 import { parseOrder } from './utilities/order';
@@ -147,6 +149,15 @@ import { parseTransform } from './utilities/transform';
 import { parseTransformOrigin } from './utilities/transformOrigin';
 import { parseTransformStyle } from './utilities/transformStyle';
 import { parseTranslate } from './utilities/translate';
+import { parseAccentColor } from './utilities/accentColor';
+import { parseAppearance } from './utilities/appearance';
+import { parseCaretColor } from './utilities/caretColor';
+import { parseColorScheme } from './utilities/colorScheme';
+import { parseCursor } from './utilities/cursor';
+import { parseFieldSizing } from './utilities/fieldSizing';
+import { parsePointerEvents } from './utilities/pointerEvents';
+import { parseResize } from './utilities/resize';
+import { parseScrollBehavior } from './utilities/scrollBehavior';
 // ... (spacing, flex/grid 등 추가 가능)
 
 const utilityParsers = [
@@ -201,7 +212,9 @@ const utilityParsers = [
   parseMaxHeight,
   // Spacing
   parsePadding,
+  parseScrollPadding,
   parseMargin,
+  parseScrollMargin,
   // Object
   parseObjectFit,
   parseObjectPosition,
@@ -317,7 +330,16 @@ const utilityParsers = [
   parseTransformStyle,
   // translate
   parseTranslate,
-  // ... (spacing, flex/grid 등 확장 가능)
+  // 신규 유틸리티 파서들
+  parseAccentColor,
+  parseAppearance,
+  parseCaretColor,
+  parseColorScheme,
+  parseCursor,
+  parseFieldSizing,
+  parsePointerEvents,
+  parseResize,
+  parseScrollBehavior,
 ];
 
 export function parseUtility(token: string): any {

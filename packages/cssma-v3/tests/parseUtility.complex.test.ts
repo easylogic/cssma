@@ -762,4 +762,95 @@ describe('parseUtility (복합 조합)', () => {
     expect(parseUtility('translate-z-8')).toMatchObject({ type: 'translate-z', value: expect.any(String) });
     expect(parseUtility('translate-none')).toMatchObject({ type: 'translate', value: 'none' });
   });
+
+  it('parses appearance utilities (integration)', () => {
+    expect(parseUtility('appearance-none')).toMatchObject({ type: 'appearance', value: 'none' });
+    expect(parseUtility('appearance-auto')).toMatchObject({ type: 'appearance', value: 'auto' });
+  });
+
+  it('parses caret-color utilities (integration)', () => {
+    expect(parseUtility('caret-inherit')).toMatchObject({ type: 'caret-color', value: 'inherit' });
+    expect(parseUtility('caret-current')).toMatchObject({ type: 'caret-color', value: 'currentColor' });
+    expect(parseUtility('caret-transparent')).toMatchObject({ type: 'caret-color', value: 'transparent' });
+    expect(parseUtility('caret-black')).toMatchObject({ type: 'caret-color', value: expect.any(String) });
+    expect(parseUtility('caret-white')).toMatchObject({ type: 'caret-color', value: expect.any(String) });
+    expect(parseUtility('caret-red-500')).toMatchObject({ type: 'caret-color', value: expect.any(String) });
+    expect(parseUtility('caret-(--my-caret-color)')).toMatchObject({ type: 'caret-color', value: expect.any(String), customProperty: true });
+    expect(parseUtility('caret-[#50d71e]')).toMatchObject({ type: 'caret-color', value: '#50d71e', arbitrary: true });
+  });
+
+  it('parses color-scheme utilities (integration)', () => {
+    expect(parseUtility('scheme-normal')).toMatchObject({ type: 'color-scheme', value: 'normal' });
+    expect(parseUtility('scheme-dark')).toMatchObject({ type: 'color-scheme', value: 'dark' });
+    expect(parseUtility('scheme-light')).toMatchObject({ type: 'color-scheme', value: 'light' });
+    expect(parseUtility('scheme-light-dark')).toMatchObject({ type: 'color-scheme', value: 'light dark' });
+    expect(parseUtility('scheme-only-dark')).toMatchObject({ type: 'color-scheme', value: 'only dark' });
+    expect(parseUtility('scheme-only-light')).toMatchObject({ type: 'color-scheme', value: 'only light' });
+  });
+
+  it('parses cursor utilities (integration)', () => {
+    expect(parseUtility('cursor-pointer')).toMatchObject({ type: 'cursor', value: 'pointer' });
+    expect(parseUtility('cursor-default')).toMatchObject({ type: 'cursor', value: 'default' });
+    expect(parseUtility('cursor-grab')).toMatchObject({ type: 'cursor', value: 'grab' });
+    expect(parseUtility('cursor-nwse-resize')).toMatchObject({ type: 'cursor', value: 'nwse-resize' });
+    expect(parseUtility('cursor-zoom-in')).toMatchObject({ type: 'cursor', value: 'zoom-in' });
+    expect(parseUtility('cursor-(--my-cursor)')).toMatchObject({ type: 'cursor', value: expect.any(String), customProperty: true });
+    expect(parseUtility('cursor-[url(hand.cur),_pointer]')).toMatchObject({ type: 'cursor', value: 'url(hand.cur),_pointer', arbitrary: true });
+  });
+
+  it('parses field-sizing utilities (integration)', () => {
+    expect(parseUtility('field-sizing-fixed')).toMatchObject({ type: 'field-sizing', value: 'fixed' });
+    expect(parseUtility('field-sizing-content')).toMatchObject({ type: 'field-sizing', value: 'content' });
+  });
+
+  it('parses pointer-events utilities (integration)', () => {
+    expect(parseUtility('pointer-events-auto')).toMatchObject({ type: 'pointer-events', value: 'auto' });
+    expect(parseUtility('pointer-events-none')).toMatchObject({ type: 'pointer-events', value: 'none' });
+  });
+
+  it('parses resize utilities (integration)', () => {
+    expect(parseUtility('resize')).toMatchObject({ type: 'resize', value: 'both' });
+    expect(parseUtility('resize-x')).toMatchObject({ type: 'resize', value: 'horizontal' });
+    expect(parseUtility('resize-y')).toMatchObject({ type: 'resize', value: 'vertical' });
+    expect(parseUtility('resize-none')).toMatchObject({ type: 'resize', value: 'none' });
+  });
+
+  it('parses scroll-behavior utilities (integration)', () => {
+    expect(parseUtility('scroll-auto')).toMatchObject({ type: 'scroll-behavior', value: 'auto' });
+    expect(parseUtility('scroll-smooth')).toMatchObject({ type: 'scroll-behavior', value: 'smooth' });
+  });
+
+  it('parses scroll-margin utilities (integration)', () => {
+    expect(parseUtility('scroll-m-4')).toMatchObject({ type: 'scroll-margin', property: 'scroll-margin', value: expect.any(String) });
+    expect(parseUtility('-scroll-m-4')).toMatchObject({ type: 'scroll-margin', property: 'scroll-margin', value: expect.any(String), negative: true });
+    expect(parseUtility('scroll-mx-2')).toMatchObject({ type: 'scroll-margin', property: 'scroll-margin-inline', value: expect.any(String) });
+    expect(parseUtility('scroll-my-3')).toMatchObject({ type: 'scroll-margin', property: 'scroll-margin-block', value: expect.any(String) });
+    expect(parseUtility('scroll-ms-1')).toMatchObject({ type: 'scroll-margin', property: 'scroll-margin-inline-start', value: expect.any(String) });
+    expect(parseUtility('scroll-me-5')).toMatchObject({ type: 'scroll-margin', property: 'scroll-margin-inline-end', value: expect.any(String) });
+    expect(parseUtility('scroll-mt-6')).toMatchObject({ type: 'scroll-margin', property: 'scroll-margin-top', value: expect.any(String) });
+    expect(parseUtility('scroll-mr-7')).toMatchObject({ type: 'scroll-margin', property: 'scroll-margin-right', value: expect.any(String) });
+    expect(parseUtility('scroll-mb-8')).toMatchObject({ type: 'scroll-margin', property: 'scroll-margin-bottom', value: expect.any(String) });
+    expect(parseUtility('scroll-ml-9')).toMatchObject({ type: 'scroll-margin', property: 'scroll-margin-left', value: expect.any(String) });
+    expect(parseUtility('scroll-mt-(--foo)')).toMatchObject({ type: 'scroll-margin', property: 'scroll-margin-top', value: 'var(--foo)', customProperty: true });
+    expect(parseUtility('scroll-mx-(--bar)')).toMatchObject({ type: 'scroll-margin', property: 'scroll-margin-inline', value: 'var(--bar)', customProperty: true });
+    expect(parseUtility('scroll-mb-[24rem]')).toMatchObject({ type: 'scroll-margin', property: 'scroll-margin-bottom', value: '24rem', arbitrary: true });
+    expect(parseUtility('scroll-ml-[var(--my-scroll-margin)]')).toMatchObject({ type: 'scroll-margin', property: 'scroll-margin-left', value: 'var(--my-scroll-margin)', arbitrary: true });
+  });
+
+  it('parses scroll-padding utilities (integration)', () => {
+    expect(parseUtility('scroll-p-4')).toMatchObject({ type: 'scroll-padding', property: 'scroll-padding', value: expect.any(String) });
+    expect(parseUtility('-scroll-p-4')).toMatchObject({ type: 'scroll-padding', property: 'scroll-padding', value: expect.any(String), negative: true });
+    expect(parseUtility('scroll-px-2')).toMatchObject({ type: 'scroll-padding', property: 'scroll-padding-inline', value: expect.any(String) });
+    expect(parseUtility('scroll-py-3')).toMatchObject({ type: 'scroll-padding', property: 'scroll-padding-block', value: expect.any(String) });
+    expect(parseUtility('scroll-ps-1')).toMatchObject({ type: 'scroll-padding', property: 'scroll-padding-inline-start', value: expect.any(String) });
+    expect(parseUtility('scroll-pe-5')).toMatchObject({ type: 'scroll-padding', property: 'scroll-padding-inline-end', value: expect.any(String) });
+    expect(parseUtility('scroll-pt-6')).toMatchObject({ type: 'scroll-padding', property: 'scroll-padding-top', value: expect.any(String) });
+    expect(parseUtility('scroll-pr-7')).toMatchObject({ type: 'scroll-padding', property: 'scroll-padding-right', value: expect.any(String) });
+    expect(parseUtility('scroll-pb-8')).toMatchObject({ type: 'scroll-padding', property: 'scroll-padding-bottom', value: expect.any(String) });
+    expect(parseUtility('scroll-pl-9')).toMatchObject({ type: 'scroll-padding', property: 'scroll-padding-left', value: expect.any(String) });
+    expect(parseUtility('scroll-pt-(--foo)')).toMatchObject({ type: 'scroll-padding', property: 'scroll-padding-top', value: 'var(--foo)', customProperty: true });
+    expect(parseUtility('scroll-px-(--bar)')).toMatchObject({ type: 'scroll-padding', property: 'scroll-padding-inline', value: 'var(--bar)', customProperty: true });
+    expect(parseUtility('scroll-pb-[24rem]')).toMatchObject({ type: 'scroll-padding', property: 'scroll-padding-bottom', value: '24rem', arbitrary: true });
+    expect(parseUtility('scroll-pl-[var(--my-scroll-padding)]')).toMatchObject({ type: 'scroll-padding', property: 'scroll-padding-left', value: 'var(--my-scroll-padding)', arbitrary: true });
+  });
 }); 
