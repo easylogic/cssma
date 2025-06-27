@@ -286,4 +286,120 @@ describe('parseUtility (복합 조합)', () => {
       expect(parseUtility(input)).toEqual(expected);
     }
   });
+
+  it('parses filter utilities', () => {
+    const cases = [
+      ['filter-none', { type: 'filter', value: 'none', raw: 'filter-none', arbitrary: false }],
+      ["filter-[url('filters.svg#filter-id')]", { type: 'filter', value: "url('filters.svg#filter-id')", raw: "filter-[url('filters.svg#filter-id')]", arbitrary: true }],
+      ['filter-(--my-filter)', { type: 'filter', value: 'var(--my-filter)', raw: 'filter-(--my-filter)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
+
+  it('parses brightness utilities', () => {
+    const cases = [
+      ['brightness-100', { type: 'brightness', value: '100', raw: 'brightness-100', arbitrary: false }],
+      ['brightness-50', { type: 'brightness', value: '50', raw: 'brightness-50', arbitrary: false }],
+      ['brightness-200', { type: 'brightness', value: '200', raw: 'brightness-200', arbitrary: false }],
+      ['brightness-[1.75]', { type: 'brightness', value: '1.75', raw: 'brightness-[1.75]', arbitrary: true }],
+      ['brightness-(--my-brightness)', { type: 'brightness', value: 'var(--my-brightness)', raw: 'brightness-(--my-brightness)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
+
+  it('parses contrast utilities', () => {
+    const cases = [
+      ['contrast-100', { type: 'contrast', value: '100', raw: 'contrast-100', arbitrary: false }],
+      ['contrast-0', { type: 'contrast', value: '0', raw: 'contrast-0', arbitrary: false }],
+      ['contrast-200', { type: 'contrast', value: '200', raw: 'contrast-200', arbitrary: false }],
+      ['contrast-[.25]', { type: 'contrast', value: '.25', raw: 'contrast-[.25]', arbitrary: true }],
+      ['contrast-(--my-contrast)', { type: 'contrast', value: 'var(--my-contrast)', raw: 'contrast-(--my-contrast)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
+
+  it('parses drop-shadow utilities', () => {
+    const cases = [
+      ['drop-shadow-md', { type: 'drop-shadow', preset: 'md', raw: 'drop-shadow-md', arbitrary: false }],
+      ['drop-shadow-none', { type: 'drop-shadow', preset: 'none', raw: 'drop-shadow-none', arbitrary: false }],
+      ['drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)]', { type: 'drop-shadow', value: '0_35px_35px_rgba(0,0,0,0.25)', raw: 'drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)]', arbitrary: true }],
+      ['drop-shadow-(--my-drop-shadow)', { type: 'drop-shadow', value: 'var(--my-drop-shadow)', raw: 'drop-shadow-(--my-drop-shadow)', arbitrary: true }],
+      ['drop-shadow-(color:--my-color)', { type: 'drop-shadow-color', value: 'var(--my-color)', raw: 'drop-shadow-(color:--my-color)', arbitrary: true }],
+      ['drop-shadow-black', { type: 'drop-shadow-color', preset: 'black', raw: 'drop-shadow-black', arbitrary: false }],
+      ['drop-shadow-indigo-500/50', { type: 'drop-shadow-color', preset: 'indigo-500/50', raw: 'drop-shadow-indigo-500/50', arbitrary: false }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
+
+  it('parses grayscale utilities', () => {
+    const cases = [
+      ['grayscale', { type: 'grayscale', value: '100', raw: 'grayscale', arbitrary: false }],
+      ['grayscale-0', { type: 'grayscale', value: '0', raw: 'grayscale-0', arbitrary: false }],
+      ['grayscale-50', { type: 'grayscale', value: '50', raw: 'grayscale-50', arbitrary: false }],
+      ['grayscale-[0.5]', { type: 'grayscale', value: '0.5', raw: 'grayscale-[0.5]', arbitrary: true }],
+      ['grayscale-(--my-grayscale)', { type: 'grayscale', value: 'var(--my-grayscale)', raw: 'grayscale-(--my-grayscale)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
+
+  it('parses hue-rotate utilities', () => {
+    const cases = [
+      ['hue-rotate-90', { type: 'hue-rotate', value: 90, negative: false, raw: 'hue-rotate-90', arbitrary: false }],
+      ['-hue-rotate-15', { type: 'hue-rotate', value: 15, negative: true, raw: '-hue-rotate-15', arbitrary: false }],
+      ['hue-rotate-[3.142rad]', { type: 'hue-rotate', value: '3.142rad', negative: false, raw: 'hue-rotate-[3.142rad]', arbitrary: true }],
+      ['hue-rotate-(--my-hue-rotate)', { type: 'hue-rotate', value: 'var(--my-hue-rotate)', negative: false, raw: 'hue-rotate-(--my-hue-rotate)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
+
+  it('parses invert utilities', () => {
+    const cases = [
+      ['invert', { type: 'invert', value: '100', raw: 'invert', arbitrary: false }],
+      ['invert-0', { type: 'invert', value: '0', raw: 'invert-0', arbitrary: false }],
+      ['invert-50', { type: 'invert', value: '50', raw: 'invert-50', arbitrary: false }],
+      ['invert-[.25]', { type: 'invert', value: '.25', raw: 'invert-[.25]', arbitrary: true }],
+      ['invert-(--my-inversion)', { type: 'invert', value: 'var(--my-inversion)', raw: 'invert-(--my-inversion)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
+
+  it('parses saturate utilities', () => {
+    const cases = [
+      ['saturate-100', { type: 'saturate', value: '100', raw: 'saturate-100', arbitrary: false }],
+      ['saturate-0', { type: 'saturate', value: '0', raw: 'saturate-0', arbitrary: false }],
+      ['saturate-200', { type: 'saturate', value: '200', raw: 'saturate-200', arbitrary: false }],
+      ['saturate-[.25]', { type: 'saturate', value: '.25', raw: 'saturate-[.25]', arbitrary: true }],
+      ['saturate-(--my-saturation)', { type: 'saturate', value: 'var(--my-saturation)', raw: 'saturate-(--my-saturation)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
+
+  it('parses sepia utilities', () => {
+    const cases = [
+      ['sepia', { type: 'sepia', value: '100', raw: 'sepia', arbitrary: false }],
+      ['sepia-0', { type: 'sepia', value: '0', raw: 'sepia-0', arbitrary: false }],
+      ['sepia-100', { type: 'sepia', value: '100', raw: 'sepia-100', arbitrary: false }],
+      ['sepia-[.25]', { type: 'sepia', value: '.25', raw: 'sepia-[.25]', arbitrary: true }],
+      ['sepia-(--my-sepia)', { type: 'sepia', value: 'var(--my-sepia)', raw: 'sepia-(--my-sepia)', arbitrary: true }],
+    ];
+    for (const [input, expected] of cases) {
+      expect(parseUtility(input)).toEqual(expected);
+    }
+  });
 }); 

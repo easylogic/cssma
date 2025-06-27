@@ -107,6 +107,16 @@ import { parseMaskPosition } from './utilities/maskPosition';
 import { parseMaskRepeat } from './utilities/maskRepeat';
 import { parseMaskSize } from './utilities/maskSize';
 import { parseMaskType } from './utilities/maskType';
+import { parseFilter } from './utilities/filter';
+import { parseBlur } from './utilities/blur';
+import { parseBrightness } from './utilities/brightness';
+import { parseContrast } from './utilities/contrast';
+import { parseDropShadow } from './utilities/dropShadow';
+import { parseGrayscale } from './utilities/grayscale';
+import { parseHueRotate } from './utilities/hueRotate';
+import { parseInvert } from './utilities/invert';
+import { parseSaturate } from './utilities/saturate';
+import { parseSepia } from './utilities/sepia';
 // ... (spacing, flex/grid 등 추가 가능)
 
 const utilityParsers = [
@@ -233,6 +243,16 @@ const utilityParsers = [
   parseMaskRepeat,
   parseMaskSize,
   parseMaskType,
+  parseFilter,
+  parseBlur,
+  parseBrightness,
+  parseContrast,
+  parseDropShadow,
+  parseGrayscale,
+  parseHueRotate,
+  parseInvert,
+  parseSaturate,
+  parseSepia,
   // ... (spacing, flex/grid 등 확장 가능)
 ];
 
