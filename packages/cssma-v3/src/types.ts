@@ -287,7 +287,7 @@ export interface BreakpointModifier { type: 'breakpoint'; name: string; }
 export interface ResponsiveModifier { type: 'responsive'; variant: string; value?: string; }
 export interface MediaModifier { type: 'media'; name: string; }
 export interface SupportsModifier { type: 'supports'; query?: string; state?: string; feature?: string; }
-export interface DarkModifier { type: 'dark'; }
+export interface DarkModeModifier { type: 'darkmode'; mode: string; }
 export interface ArbitraryModifier { type: 'arbitrary'; selector: string; }
 export interface UnknownModifier { type: 'unknown'; raw: string; }
 
@@ -312,7 +312,7 @@ export type ParsedModifier =
   | ResponsiveModifier
   | MediaModifier
   | SupportsModifier
-  | DarkModifier
+  | DarkModeModifier
   | ArbitraryModifier
   | UnknownModifier;
 
