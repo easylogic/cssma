@@ -1,8 +1,10 @@
 // Tailwind v4 구조를 참고한 cssma-v3의 theme/config 타입 정의
 
+import type { ColorPalette } from "./config/color-palette";
+
 export interface CssmaTheme {
   /** 색상 팔레트 (ex: red-500, blue-200 등) */
-  colors?: Record<string, string | Record<string, string>>;
+  colors?: ColorPalette;
   /** 폰트 패밀리 (ex: sans, serif, mono, ... ) */
   fontFamily?: Record<string, string>;
   /** 폰트 굵기 (ex: thin, bold, extrabold, ... ) */
@@ -70,18 +72,29 @@ export interface CssmaPreset {
   [key: string]: any;
 }
 
+export type CssmaPlugin = (api: CssmaPluginApi) => void;
+
+export interface CssmaPluginApi {
+  addUtilities: (utils: Record<string, any>) => void;
+  addComponents: (comps: Record<string, any>) => void;
+  addBase: (base: Record<string, any>) => void;
+  addVariant: (name: string, fn: Function) => void;
+  theme: (path: string, ...rest: (string|number)[]) => any;
+  config: (path: string, defaultValue?: any) => any;
+}
+
 export interface CssmaConfig {
   mode?: "jit" | "aot";
   prefix?: string;
   corePlugins?: string[];
   presets?: CssmaPreset[];
   theme?: CssmaTheme;
+  plugins?: CssmaPlugin[];
   [key: string]: any;
 }
 
 export interface CssmaContext {
-  config: CssmaConfig;
-  theme: CssmaTheme;
-  presets?: CssmaPreset[];
-  // 필요시 추가 필드
+  theme: (...path: (string|number)[]) => any;
+  config: (...path: (string|number)[]) => any;
+  plugins: CssmaPlugin[];
 } 

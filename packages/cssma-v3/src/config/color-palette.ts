@@ -1,6 +1,6 @@
 // 색상 팔레트 타입 분리
 
-export type ColorScale = Record<string, string>; // ex: { 50: '#...', 100: '#...' }
+export type ColorScale = Record<string | number, string>; // ex: { 50: '#...', 100: '#...' }
 export type ColorPalette = Record<string, string | ColorScale>; // ex: { red: { 100: '#...' }, white: '#fff' }
 
 // Tailwind v4 기준의 대표적인 기본 색상 팔레트 (최대한 상세하게)

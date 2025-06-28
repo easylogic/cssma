@@ -52,7 +52,7 @@ describe('parseClassName', () => {
   it('parses multiple modifiers of different types', () => {
     const result = parseClassName('dark:group-hover:sm:focus:bg-blue-500');
     expect(result.utility).toMatchObject({ type: 'background-color', preset: 'blue-500' });
-    expect(getModifierTypes(result.modifiers)).toEqual(expect.arrayContaining(['media', 'group', 'breakpoint', 'pseudo']));
+    expect(getModifierTypes(result.modifiers)).toEqual(expect.arrayContaining(['darkmode', 'group', 'breakpoint', 'pseudo']));
   });
 
   it('parses arbitrary + important + modifier', () => {

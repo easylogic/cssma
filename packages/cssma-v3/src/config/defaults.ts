@@ -1,5 +1,5 @@
 import { CssmaTheme, CssmaPreset, CssmaConfig } from '../theme-types';
-import { defaultColorPalette } from '../color-palette';
+import { defaultColorPalette } from './color-palette';
 
 // 1. Default Theme (색상 팔레트 분리 적용)
 export const defaultTheme: CssmaTheme = {
