@@ -1,4 +1,6 @@
-export function parseNthLastOfTypeModifier(mod: string): any | null {
+import type { NthModifier, NthOfTypeModifier, NthLastOfTypeModifier } from '../../types';
+
+export function parseNthLastOfTypeModifier(mod: string): NthLastOfTypeModifier | null {
   const prefix = 'nth-last-of-type-';
   if (mod.startsWith(prefix + '[') && mod.endsWith(']')) {
     const m = mod.match(/^nth-last-of-type-\[(.*)\]$/);
@@ -10,7 +12,7 @@ export function parseNthLastOfTypeModifier(mod: string): any | null {
   return null;
 }
 
-export function parseNthOfTypeModifier(mod: string): any | null {
+export function parseNthOfTypeModifier(mod: string): NthOfTypeModifier | null {
   const prefix = 'nth-of-type-';
   if (mod.startsWith(prefix + '[') && mod.endsWith(']')) {
     const m = mod.match(/^nth-of-type-\[(.*)\]$/);
@@ -22,7 +24,7 @@ export function parseNthOfTypeModifier(mod: string): any | null {
   return null;
 }
 
-export function parseNthModifier(mod: string): any | null {
+export function parseNthModifier(mod: string): NthModifier | null {
   const prefix = 'nth-';
   if (mod.startsWith(prefix + '[') && mod.endsWith(']')) {
     const m = mod.match(/^nth-\[(.*)\]$/);

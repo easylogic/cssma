@@ -1,6 +1,8 @@
 // state modifier 파서 (예: hover, focus, active 등)
 
-export function parseStateModifier(mod: string): any | null {
+import type { StateModifier } from '../../types';
+
+export function parseStateModifier(mod: string): StateModifier | null {
   // state-[foo=bar] 형태
   if (mod.startsWith('state-[') && mod.endsWith(']')) {
     const m = mod.match(/^state-\[(.+?)=(.+)\]$/);

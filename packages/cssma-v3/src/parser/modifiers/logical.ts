@@ -1,4 +1,6 @@
-export function parseLogicalModifier(mod: string): any | null {
+import type { LogicalModifier } from '../../types';
+
+export function parseLogicalModifier(mod: string): LogicalModifier | null {
   // has-[foo=bar] 형태
   if (mod.startsWith('has-[') && mod.endsWith(']')) {
     const m = mod.match(/^has-\[(.+?)=(.+)\]$/);

@@ -1,6 +1,7 @@
-// attribute modifier 파서 (예: [foo=bar], [data-state=open], [foo])
+import type { AttributeModifier } from '../../types';
 
-export function parseAttributeModifier(token: string) {
+// attribute modifier 파서 (예: [foo=bar], [data-state=open], [foo])
+export function parseAttributeModifier(token: string): AttributeModifier | null {
   // [foo=bar] 또는 [foo] 형태
   if (token.startsWith('[') && token.endsWith(']')) {
     const inner = token.slice(1, -1);
@@ -8,7 +9,7 @@ export function parseAttributeModifier(token: string) {
     const eqIdx = inner.indexOf('=');
     if (eqIdx === -1) {
       // [foo] 형태
-      return { type: 'attribute', attr: inner, value: undefined };
+      return { type: 'attribute', attr: inner };
     } else {
       // [foo=bar] 형태
       return {

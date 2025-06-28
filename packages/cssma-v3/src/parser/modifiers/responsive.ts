@@ -1,11 +1,13 @@
 // Tailwind 4.1+ responsive variant 파서
 // sm, md, lg, xl, 2xl, xs, 3xl, max-sm, min-[475px] 등 지원
 
+import type { ResponsiveModifier } from '../../types';
+
 const RESPONSIVE_PRESETS = [
   'sm', 'md', 'lg', 'xl', '2xl', 'xs', '3xl'
 ];
 
-export function parseResponsiveModifier(token: string) {
+export function parseResponsiveModifier(token: string): ResponsiveModifier | null {
   if (!token) return null;
 
   // min-[475px], max-[960px] 등 arbitrary value

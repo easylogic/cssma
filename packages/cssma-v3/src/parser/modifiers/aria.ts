@@ -1,4 +1,6 @@
-export function parseAriaModifier(mod: string): any | null {
+import type { AriaModifier } from '../../types';
+
+export function parseAriaModifier(mod: string): AriaModifier | null {
   // aria-[foo=bar] 형태
   if (mod.startsWith('aria-[') && mod.endsWith(']')) {
     // 예: aria-[sort=ascending]

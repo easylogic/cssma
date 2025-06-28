@@ -252,100 +252,6 @@ export type StyleCategory =
   | 'mask';
 
 /**
- * 상태 모디파이어 타입
- */
-export type StateModifier = 
-  // 기본 상호작용 상태
-  | 'hover' | 'focus' | 'active' | 'visited' | 'disabled'
-  // 포커스 관련 확장
-  | 'focus-within' | 'focus-visible'
-  // 그룹 상호작용
-  | 'group-hover' | 'group-focus' | 'group-active' | 'group-visited'
-  // 피어 상호작용
-  | 'peer-hover' | 'peer-focus' | 'peer-active' | 'peer-visited' | 'peer-disabled'
-  // 테마 관련
-  | 'dark' | 'light'
-  // 폼 요소 상태
-  | 'checked' | 'indeterminate' | 'default' | 'required' | 'valid' | 'invalid'
-  | 'user-valid' | 'user-invalid' | 'in-range' | 'out-of-range' | 'placeholder-shown'
-  | 'autofill' | 'read-only'
-  // 위치 관련
-  | 'first' | 'last' | 'only' | 'odd' | 'even'
-  | 'first-of-type' | 'last-of-type' | 'only-of-type'
-  | 'empty'
-  // 논리 선택자
-  | 'not' | 'has'
-  // 의사 요소
-  | 'before' | 'after' | 'placeholder' | 'selection' | 'marker'
-  | 'first-line' | 'first-letter' | 'backdrop' | 'file'
-  // Tailwind CSS v4.1 새로운 변형자들
-  | 'pointer-fine' | 'pointer-coarse' | 'any-pointer-fine' | 'any-pointer-coarse'
-  | 'noscript' | 'inverted-colors' | 'details-content' | 'inert'
-  | 'starting' | 'popover-open'
-  // nth-* 변형자들
-  | 'nth-child' | 'nth-last-child' | 'nth-of-type' | 'nth-last-of-type'
-  // 기타 v4.1 변형자들
-  | 'in' | 'descendant'
-  
-  // v4.1 새로운 상태들
-  // 미디어 쿼리들
-  | 'motion-safe' | 'motion-reduce'
-  | 'contrast-more' | 'contrast-less'
-  | 'portrait' | 'landscape'
-  | 'print' | 'scripting'
-  
-  // 그룹/피어 상태들
-  | `group-${string}` | `peer-${string}`
-  
-  // 복합 선택자들
-  | `has-[${string}]` | `not-[${string}]` | `supports-[${string}]`
-  
-  // ARIA/데이터 속성들
-  | `aria-${string}` | `data-${string}`;
-
-/**
- * 반응형 모디파이어 타입
- * 
- * 기본 브레이크포인트:
- * - sm: 40rem (640px)
- * - md: 48rem (768px)
- * - lg: 64rem (1024px)
- * - xl: 80rem (1280px)
- * - 2xl: 96rem (1536px)
- * 
- * 최대 너비 브레이크포인트:
- * - max-sm: @media (width < 40rem)
- * - max-md: @media (width < 48rem)
- * - max-lg: @media (width < 64rem)
- * - max-xl: @media (width < 80rem)
- * - max-2xl: @media (width < 96rem)
- */
-
-/**
- * 컨테이너 쿼리 모디파이어 타입
- * 
- * 기본 컨테이너 사이즈:
- * - @3xs: 16rem (256px)
- * - @2xs: 18rem (288px)
- * - @xs: 20rem (320px)
- * - @sm: 24rem (384px)
- * - @md: 28rem (448px)
- * - @lg: 32rem (512px)
- * - @xl: 36rem (576px)
- * - @2xl: 42rem (672px)
- * - @3xl: 48rem (768px)
- * - @4xl: 56rem (896px)
- * - @5xl: 64rem (1024px)
- * - @6xl: 72rem (1152px)
- * - @7xl: 80rem (1280px)
- */
-
-export interface BreakpointModifier {
-  type: 'min-width' | 'max-width';
-  value: string;
-}
-
-/**
  * 애니메이션 방향 타입
  */
 export type AnimationDirection = 'normal' | 'reverse' | 'alternate' | 'alternate-reverse';
@@ -360,274 +266,55 @@ export type AnimationFillMode = 'none' | 'forwards' | 'backwards' | 'both';
  */
 export type AnimationPlayState = 'running' | 'paused';
 
-/**
- * 🎯 Tailwind CSS v4.1 순서 보장 Modifier 시스템
- * 
- * Modifier는 다음 순서로 적용됩니다:
- * 1. At-rules (@media, @supports, @container)
- * 2. Arbitrary variants ([&...])
- * 3. Responsive breakpoints (sm:, md:, lg:, xl:, 2xl:)
- * 4. Dark mode (dark:, light:)
- * 5. Motion preferences (motion-reduce:, motion-safe:)
- * 6. Group/Peer modifiers (group-hover:, peer-focus:)
- * 7. State modifiers (hover:, focus:, active:, etc.)
- * 8. Pseudo-elements (before:, after:, etc.)
- */
 
-/**
- * 통합 Modifier 타입 - 모든 modifier의 기본 인터페이스
- */
-export interface BaseModifier {
-  type: ModifierType;
-  raw: string;           // 원본 modifier 문자열 (예: "md", "hover", "group-focus")
-  priority: number;      // 적용 우선순위 (낮을수록 높은 우선순위)
-  cssSelector?: string;  // 생성된 CSS 선택자
-}
+// Modifier interfaces matching src/parser/modifiers/*.ts
+export interface PseudoModifier { type: 'pseudo'; name: string; }
+export interface PseudoElementModifier { type: 'pseudo-element'; name: string; }
+export interface GroupModifier { type: 'group'; state: string; }
+export interface PeerModifier { type: 'peer'; state: string; }
+export interface AttributeModifier { type: 'attribute'; attr: string; value?: string; }
+export interface AriaModifier { type: 'aria'; attr: string; value?: string; }
+export interface DataModifier { type: 'data'; attr: string; value?: string; }
+export interface StateModifier { type: 'state'; attr?: string; value?: string; }
+export interface LogicalModifier { type: 'logical'; op: 'has' | 'not'; value: any; }
+export interface NthModifier { type: 'nth'; value: string; }
+export interface NthOfTypeModifier { type: 'nth-of-type'; value: string; }
+export interface NthLastOfTypeModifier { type: 'nth-last-of-type'; value: string; }
+export interface ContainerModifier { type: 'container'; variant?: string; name?: string; value?: string; }
+export interface MotionModifier { type: 'motion'; mode: string; }
+export interface DirectionModifier { type: 'direction'; value: string; }
+export interface BreakpointModifier { type: 'breakpoint'; name: string; }
+export interface ResponsiveModifier { type: 'responsive'; variant: string; value?: string; }
+export interface MediaModifier { type: 'media'; name: string; }
+export interface SupportsModifier { type: 'supports'; query?: string; state?: string; feature?: string; }
+export interface DarkModifier { type: 'dark'; }
+export interface ArbitraryModifier { type: 'arbitrary'; selector: string; }
+export interface UnknownModifier { type: 'unknown'; raw: string; }
 
-/**
- * Modifier 타입 열거형
- */
-export enum ModifierType {
-  // At-rules (최고 우선순위)
-  MEDIA_QUERY = 'media-query',
-  CONTAINER_QUERY = 'container-query', 
-  SUPPORTS_QUERY = 'supports-query',
-  
-  // Arbitrary variants
-  ARBITRARY_VARIANT = 'arbitrary-variant',
-  ARBITRARY_ATTRIBUTE = 'arbitrary-attribute',
-  
-  // Responsive breakpoints
-  RESPONSIVE = 'responsive',
-  
-  // Theme preferences
-  COLOR_SCHEME = 'color-scheme',      // dark, light
-  MOTION = 'motion',                  // motion-safe, motion-reduce
-  CONTRAST = 'contrast',              // contrast-more, contrast-less
-  
-  // Group/Peer modifiers
-  GROUP = 'group',
-  PEER = 'peer',
-  
-  // State modifiers
-  PSEUDO_CLASS = 'pseudo-class',      // hover, focus, active, etc.
-  
-  // Pseudo-elements
-  PSEUDO_ELEMENT = 'pseudo-element',  // before, after, placeholder, etc.
-  
-  // Attribute selectors
-  ARIA = 'aria',
-  DATA = 'data',
-  
-  // Complex selectors
-  NOT = 'not',
-  HAS = 'has',
-  NTH_CHILD = 'nth-child',
-  NTH_OF_TYPE = 'nth-of-type',
-  
-  // Special modifiers
-  STARTING = 'starting',
-  NOSCRIPT = 'noscript',
-  PRINT = 'print',
-  SCRIPTING = 'scripting'
-}
-
-/**
- * 반응형 Modifier
- */
-export interface ResponsiveModifier extends BaseModifier {
-  type: ModifierType.RESPONSIVE;
-  breakpoint: BreakpointModifier;
-}
-
-/**
- * 컨테이너 쿼리 Modifier
- */
-export interface ContainerQueryModifier extends BaseModifier {
-  type: ModifierType.CONTAINER_QUERY;
-  container: ContainerQueryConfig;
-}
-
-export interface ContainerQueryConfig {
-  type: 'min-width' | 'max-width' | 'named-container';
-  value: string;
-  containerName?: string;
-}
-
-/**
- * 미디어 쿼리 Modifier
- */
-export interface MediaQueryModifier extends BaseModifier {
-  type: ModifierType.MEDIA_QUERY;
-  mediaQuery: string;
-}
-
-/**
- * Supports 쿼리 Modifier
- */
-export interface SupportsQueryModifier extends BaseModifier {
-  type: ModifierType.SUPPORTS_QUERY;
-  supportsQuery: string;
-}
-
-/**
- * Arbitrary Variant Modifier
- */
-export interface ArbitraryVariantModifier extends BaseModifier {
-  type: ModifierType.ARBITRARY_VARIANT;
-  selector: string;
-}
-
-/**
- * Arbitrary Attribute Modifier
- */
-export interface ArbitraryAttributeModifier extends BaseModifier {
-  type: ModifierType.ARBITRARY_ATTRIBUTE;
-  attribute: string;
-  value?: string;
-}
-
-/**
- * 색상 스킴 Modifier
- */
-export interface ColorSchemeModifier extends BaseModifier {
-  type: ModifierType.COLOR_SCHEME;
-  scheme: 'dark' | 'light';
-}
-
-/**
- * 모션 Modifier
- */
-export interface MotionModifier extends BaseModifier {
-  type: ModifierType.MOTION;
-  preference: 'safe' | 'reduce';
-}
-
-/**
- * 대비 Modifier
- */
-export interface ContrastModifier extends BaseModifier {
-  type: ModifierType.CONTRAST;
-  level: 'more' | 'less';
-}
-
-/**
- * Group Modifier
- */
-export interface GroupModifier extends BaseModifier {
-  type: ModifierType.GROUP;
-  state?: string;
-}
-
-/**
- * Peer Modifier
- */
-export interface PeerModifier extends BaseModifier {
-  type: ModifierType.PEER;
-  state?: string;
-}
-
-/**
- * Pseudo-class Modifier
- */
-export interface PseudoClassModifier extends BaseModifier {
-  type: ModifierType.PSEUDO_CLASS;
-  pseudoClass: string;
-}
-
-/**
- * Pseudo-element Modifier
- */
-export interface PseudoElementModifier extends BaseModifier {
-  type: ModifierType.PSEUDO_ELEMENT;
-  pseudoElement: string;
-}
-
-/**
- * ARIA Modifier
- */
-export interface AriaModifier extends BaseModifier {
-  type: ModifierType.ARIA;
-  attribute: string;
-  value?: string;
-}
-
-/**
- * Data Modifier
- */
-export interface DataModifier extends BaseModifier {
-  type: ModifierType.DATA;
-  attribute: string;
-  value?: string;
-}
-
-/**
- * Not Modifier
- */
-export interface NotModifier extends BaseModifier {
-  type: ModifierType.NOT;
-  negatedSelector: string;
-}
-
-/**
- * Has Modifier
- */
-export interface HasModifier extends BaseModifier {
-  type: ModifierType.HAS;
-  selector: string;
-}
-
-/**
- * Nth-child Modifier
- */
-export interface NthChildModifier extends BaseModifier {
-  type: ModifierType.NTH_CHILD;
-  nthType: 'nth-child' | 'nth-last-child';
-  formula: string;
-}
-
-/**
- * Nth-of-type Modifier
- */
-export interface NthOfTypeModifier extends BaseModifier {
-  type: ModifierType.NTH_OF_TYPE;
-  nthType: 'nth-of-type' | 'nth-last-of-type';
-  formula: string;
-}
-
-/**
- * 특수 Modifier
- */
-export interface SpecialModifier extends BaseModifier {
-  type: ModifierType.STARTING | ModifierType.NOSCRIPT | ModifierType.PRINT | ModifierType.SCRIPTING;
-  condition?: string;
-}
-
-/**
- * 통합 Modifier Union Type
- */
-export type ParsedModifier = 
-  | ResponsiveModifier
-  | ContainerQueryModifier
-  | MediaQueryModifier
-  | SupportsQueryModifier
-  | ArbitraryVariantModifier
-  | ArbitraryAttributeModifier
-  | ColorSchemeModifier
-  | MotionModifier
-  | ContrastModifier
+// Union type
+export type ParsedModifier =
+  | PseudoModifier
+  | PseudoElementModifier
   | GroupModifier
   | PeerModifier
-  | PseudoClassModifier
-  | PseudoElementModifier
+  | AttributeModifier
   | AriaModifier
   | DataModifier
-  | NotModifier
-  | HasModifier
-  | NthChildModifier
+  | StateModifier
+  | LogicalModifier
+  | NthModifier
   | NthOfTypeModifier
-  | SpecialModifier;
-
+  | NthLastOfTypeModifier
+  | ContainerModifier
+  | MotionModifier
+  | DirectionModifier
+  | BreakpointModifier
+  | ResponsiveModifier
+  | MediaModifier
+  | SupportsModifier
+  | DarkModifier
+  | ArbitraryModifier
+  | UnknownModifier;
 
 /**
  * Figma 색상 타입

@@ -3,7 +3,7 @@ import { parseMediaModifier } from '../../src/parser/modifiers/media';
 
 describe('parseMediaModifier', () => {
   const cases: Array<[string, any]> = [
-    ['dark', { type: 'media', name: 'dark' }],
+    ['dark', null],
     ['motion-safe', { type: 'media', name: 'motion-safe' }],
     ['motion-reduce', { type: 'media', name: 'motion-reduce' }],
     ['print', { type: 'media', name: 'print' }],

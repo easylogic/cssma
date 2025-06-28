@@ -1,6 +1,8 @@
 // motion modifier 파서 (예: motion-safe, motion-reduce)
 
-export function parseMotionModifier(token: string) {
+import type { MotionModifier } from '../../../types';
+
+export function parseMotionModifier(token: string): MotionModifier | null {
   if (token === 'motion-safe') {
     return { type: 'motion', mode: 'safe' };
   }

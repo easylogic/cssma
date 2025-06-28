@@ -42,7 +42,7 @@ describe('parseModifier (단일 Tailwind modifier 파서)', () => {
     ['xl', { type: 'breakpoint', name: 'xl' }],
     ['2xl', { type: 'breakpoint', name: '2xl' }],
     // media/dark/motion
-    ['dark', { type: 'media', name: 'dark' }],
+    ['dark', { type: 'darkmode', mode: 'dark' }],
     ['motion-safe', { type: 'media', name: 'motion-safe' }],
     ['motion-reduce', { type: 'media', name: 'motion-reduce' }],
     // group/peer

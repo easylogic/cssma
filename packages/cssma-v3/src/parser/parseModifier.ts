@@ -1,3 +1,4 @@
+import type { ParsedModifier } from '../types';
 // 단일 Tailwind modifier를 구조화된 객체로 파싱
 import { parsePseudoModifier } from './modifiers/pseudo';
 import { parseDirectionModifier } from './modifiers/direction';
@@ -39,7 +40,7 @@ const modifierParsers = [
   parsePseudoElementModifier,
 ];
 
-export function parseModifier(mod: string): any {
+export function parseModifier(mod: string): ParsedModifier | { type: 'unknown'; raw: string } {
   for (const parser of modifierParsers) {
     const result = parser(mod);
     if (result) return result;

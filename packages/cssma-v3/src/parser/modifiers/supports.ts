@@ -1,4 +1,6 @@
-export function parseSupportsModifier(mod: string): any | null {
+import type { SupportsModifier } from '../../types';
+
+export function parseSupportsModifier(mod: string): SupportsModifier | null {
   // supports-[display:grid] 형태
   if (mod.startsWith('supports-[') && mod.endsWith(']')) {
     const m = mod.match(/^supports-\[(.*)\]$/);

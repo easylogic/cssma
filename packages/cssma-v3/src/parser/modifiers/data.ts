@@ -1,4 +1,6 @@
-export function parseDataModifier(mod: string): any | null {
+import type { DataModifier } from '../../types';
+
+export function parseDataModifier(mod: string): DataModifier | null {
   // data-[foo=bar] 형태
   if (mod.startsWith('data-[') && mod.endsWith(']')) {
     // 예: data-[foo=bar]
