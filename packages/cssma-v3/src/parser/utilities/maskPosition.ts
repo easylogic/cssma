@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind mask-position utility parser
 // https://tailwindcss.com/docs/mask-position
 
@@ -16,7 +17,7 @@ const presetMap: Record<string, string> = {
 const arbitraryRe = /^mask-position-\[(.+)\]$/;
 const customVarRe = /^mask-position-\((--[\w-]+)\)$/;
 
-export function parseMaskPosition(token: string): any | null {
+export function parseMaskPosition(token: string, context?: CssmaContext): any | null {
   if (token in presetMap) {
     return { type: 'mask-position', value: presetMap[token], raw: token, arbitrary: false };
   }

@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind text-underline-offset utility parser
 // https://tailwindcss.com/docs/text-underline-offset
 
-export function parseTextUnderlineOffset(token: string): any | null {
+export function parseTextUnderlineOffset(token: string, context?: CssmaContext): any | null {
   // underline-offset-<number>
   const pos = token.match(/^underline-offset-(\d+)$/);
   if (pos) {

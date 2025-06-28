@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind grayscale utility parser
 // https://tailwindcss.com/docs/filter-grayscale
 
@@ -6,7 +7,7 @@ const presetRe = /^grayscale-(\d{1,3})$/;
 const arbitraryRe = /^grayscale-\[(.+)\]$/;
 const customVarRe = /^grayscale-\((--[\w-]+)\)$/;
 
-export function parseGrayscale(token: string): any | null {
+export function parseGrayscale(token: string, context?: CssmaContext): any | null {
   let m;
   if (baseRe.test(token)) {
     return { type: 'grayscale', value: '100', raw: token, arbitrary: false };

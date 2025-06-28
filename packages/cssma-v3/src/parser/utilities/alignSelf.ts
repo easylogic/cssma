@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind align-self utility parser
 // https://tailwindcss.com/docs/align-self
 
-export function parseAlignSelf(token: string): any | null {
+export function parseAlignSelf(token: string, context?: CssmaContext): any | null {
   if (token === 'self-auto') return { type: 'align-self', preset: 'auto', raw: token, arbitrary: false };
   if (token === 'self-start') return { type: 'align-self', preset: 'start', raw: token, arbitrary: false };
   if (token === 'self-end') return { type: 'align-self', preset: 'end', raw: token, arbitrary: false };

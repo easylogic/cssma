@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind mask-image utility parser
 // https://tailwindcss.com/docs/mask-image
 
@@ -17,7 +18,7 @@ const customVarRe = /^mask-\((--[\w-]+)\)$/;
 const gradientArbitraryRe = /^mask-(linear|radial|conic)-\[(.+)\]$/;
 const gradientCustomVarRe = /^mask-(linear|radial|conic)-\((--[\w-]+)\)$/;
 
-export function parseMaskImage(token: string): any | null {
+export function parseMaskImage(token: string, context?: CssmaContext): any | null {
   if (token === 'mask-none') {
     return { type: 'mask-image', value: 'none', raw: token, arbitrary: false };
   }

@@ -1,3 +1,5 @@
+import type { CssmaContext } from '../../types';
+
 // Tailwind v4.1 font-size utilities:
 // text-xs, text-sm, text-base, text-lg, text-xl, text-2xl, ..., text-[<value>], text-(length:<custom-property>), text-xs/6, text-[14px]/[20px]
 
@@ -19,7 +21,7 @@ const presetMap = {
 
 const lineHeightVar = (lh: string) => `var(--text-${lh})`;
 
-export function parseFontSize(token: string): any | null {
+export function parseFontSize(token: string, context?: CssmaContext): any | null {
   // text-xs/6, text-lg/7, etc.
   const presetWithLine = token.match(/^text-([a-z0-9]+)\/(\d+)$/);
   if (presetWithLine && presetMap[presetWithLine[1]]) {

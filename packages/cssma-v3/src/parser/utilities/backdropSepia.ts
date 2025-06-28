@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind backdrop-sepia utility parser
 // https://tailwindcss.com/docs/backdrop-filter-sepia
 
@@ -6,7 +7,7 @@ const presetRe = /^backdrop-sepia-(\d{1,3})$/;
 const arbitraryRe = /^backdrop-sepia-\[(.+)\]$/;
 const customVarRe = /^backdrop-sepia-\((--[\w-]+)\)$/;
 
-export function parseBackdropSepia(token: string): any | null {
+export function parseBackdropSepia(token: string, context?: CssmaContext): any | null {
   let m;
   if (defaultRe.test(token)) {
     return { type: 'backdrop-sepia', value: '100', raw: token, arbitrary: false, default: true };

@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind justify-content utility parser
 // https://tailwindcss.com/docs/justify-content
 
-export function parseJustifyContent(token: string): any | null {
+export function parseJustifyContent(token: string, context?: CssmaContext): any | null {
   if (token === 'justify-start') return { type: 'justify-content', preset: 'start', raw: token, arbitrary: false };
   if (token === 'justify-end') return { type: 'justify-content', preset: 'end', raw: token, arbitrary: false };
   if (token === 'justify-center') return { type: 'justify-content', preset: 'center', raw: token, arbitrary: false };

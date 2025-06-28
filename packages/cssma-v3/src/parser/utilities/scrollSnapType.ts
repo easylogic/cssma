@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind scroll-snap-type utility parser
 // https://tailwindcss.com/docs/scroll-snap-type
 
@@ -5,7 +6,7 @@ const presets = [
   'none', 'x', 'y', 'both', 'mandatory', 'proximity'
 ];
 
-export function parseScrollSnapType(token: string): any | null {
+export function parseScrollSnapType(token: string, context?: CssmaContext): any | null {
   if (token === 'snap-none') return { type: 'scroll-snap-type', value: 'none', raw: token };
   if (token === 'snap-x') return { type: 'scroll-snap-type', value: 'x', strictness: 'var(--tw-scroll-snap-strictness)', raw: token };
   if (token === 'snap-y') return { type: 'scroll-snap-type', value: 'y', strictness: 'var(--tw-scroll-snap-strictness)', raw: token };

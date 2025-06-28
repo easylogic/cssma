@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind text-shadow utility parser
 // https://tailwindcss.com/docs/text-shadow
 
-export function parseTextShadow(token: string): any | null {
+export function parseTextShadow(token: string, context?: CssmaContext): any | null {
   let m;
   // 1. text-shadow arbitrary (text-shadow-[...])
   if ((m = token.match(/^text-shadow-\[(.+)\]$/))) {

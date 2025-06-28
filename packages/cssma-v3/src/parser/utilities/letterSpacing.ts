@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind v4.1 letter-spacing (tracking) parser
 // https://tailwindcss.com/docs/letter-spacing
 
@@ -10,7 +11,7 @@ const PRESETS: Record<string, string> = {
   'widest': 'var(--tracking-widest)',   // 0.1em
 };
 
-export function parseLetterSpacing(token: string) {
+export function parseLetterSpacing(token: string, context?: CssmaContext) {
   // Named preset: tracking-tight, tracking-wide, etc.
   const preset = /^tracking-([a-z]+)$/.exec(token);
   if (preset && PRESETS[preset[1]]) {

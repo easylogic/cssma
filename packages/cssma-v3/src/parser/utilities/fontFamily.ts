@@ -1,3 +1,5 @@
+import type { CssmaContext } from '../../types';
+
 // Tailwind v4.1 font-family utilities:
 // font-sans, font-serif, font-mono, font-[<value>], font-(family-name:<custom-property>)
 
@@ -7,7 +9,7 @@ const presetMap: Record<string, string> = {
   'mono': 'var(--font-mono)',
 };
 
-export function parseFontFamily(token: string): any | null {
+export function parseFontFamily(token: string, context?: CssmaContext): any | null {
   // Preset: font-sans, font-serif, font-mono
   const preset = token.match(/^font-(sans|serif|mono)$/);
   if (preset) {

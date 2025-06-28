@@ -1,13 +1,15 @@
 // Tailwind text-overflow utility parser
 // https://tailwindcss.com/docs/text-overflow
 
+import type { CssmaContext } from '../../types';
+
 const presets = [
   'truncate',
   'text-ellipsis',
   'text-clip',
 ];
 
-export function parseTextOverflow(token: string): any | null {
+export function parseTextOverflow(token: string, context?: CssmaContext): any | null {
   for (const preset of presets) {
     if (token === preset) {
       return { type: 'text-overflow', preset, raw: token, arbitrary: false };

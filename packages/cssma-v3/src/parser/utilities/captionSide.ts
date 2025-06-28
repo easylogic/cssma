@@ -1,10 +1,11 @@
+import type { CssmaContext } from '../../types';
 // Tailwind caption-side utility parser
 // https://tailwindcss.com/docs/caption-side
 
 const topRe = /^caption-top$/;
 const bottomRe = /^caption-bottom$/;
 
-export function parseCaptionSide(token: string): any | null {
+export function parseCaptionSide(token: string, context?: CssmaContext): any | null {
   if (topRe.test(token)) {
     return { type: 'caption-side', value: 'top', raw: token };
   }

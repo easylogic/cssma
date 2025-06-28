@@ -1,11 +1,13 @@
 // Tailwind white-space utility parser
 // https://tailwindcss.com/docs/white-space
 
+import type { CssmaContext } from '../../types';
+
 const presets = [
   'normal', 'nowrap', 'pre', 'pre-line', 'pre-wrap', 'break-spaces'
 ];
 
-export function parseWhiteSpace(token: string): any | null {
+export function parseWhitespace(token: string, context?: CssmaContext): any | null {
   let preset = null;
   if (token.startsWith('whitespace-')) {
     preset = token.slice(11);

@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind gradient stop utilities parser
 // https://tailwindcss.com/docs/background-image
 
-export function parseGradientStop(token: string): any | null {
+export function parseGradientStop(token: string, context?: CssmaContext): any | null {
   // from-<color> or from-<percentage>
   const from = token.match(/^from-([a-zA-Z0-9-]+|\d+%)$/);
   if (from) {

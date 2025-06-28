@@ -1,7 +1,9 @@
 // Tailwind opacity utility parser
 // https://tailwindcss.com/docs/opacity
 
-export function parseOpacity(token: string): any | null {
+import type { CssmaContext } from '../../types';
+
+export function parseOpacity(token: string, context?: CssmaContext): any | null {
   let m;
   // 1. opacity-(<custom-property>)
   if ((m = token.match(/^opacity-\((.+)\)$/))) {

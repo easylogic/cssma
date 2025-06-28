@@ -2,6 +2,7 @@
 // https://tailwindcss.com/docs/text-decoration-color
 
 import { extractArbitraryValue, isColorValue } from '../utils';
+import type { CssmaContext } from '../../types';
 
 const presetKeywords = [
   'inherit', 'current', 'transparent', 'black', 'white',
@@ -11,7 +12,7 @@ const presetKeywords = [
   'regal-blue'
 ];
 
-export function parseTextDecorationColor(token: string) {
+export function parseTextDecorationColor(token: string, context?: CssmaContext): any | null {
   // decoration-inherit, decoration-current, etc.
   if (token.startsWith('decoration-')) {
     const rest = token.slice('decoration-'.length);

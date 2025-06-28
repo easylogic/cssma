@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind transform-origin utility parser
 // https://tailwindcss.com/docs/transform-origin
 
@@ -17,7 +18,7 @@ const presetRe = /^(origin-center|origin-top|origin-top-right|origin-right|origi
 const customPropRe = /^origin-\((--[\w-]+)\)$/;
 const arbitraryRe = /^origin-\[(.+)\]$/;
 
-export function parseTransformOrigin(token: string): any | null {
+export function parseTransformOrigin(token: string, context?: CssmaContext): any | null {
   if (presetRe.test(token)) {
     return {
       type: 'transform-origin',

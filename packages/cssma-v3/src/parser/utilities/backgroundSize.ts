@@ -1,8 +1,9 @@
 // Tailwind background-size utility parser
 // https://tailwindcss.com/docs/background-size
 import { isLengthValue } from '../utils';
+import type { CssmaContext } from '../../types';
 
-export function parseBackgroundSize(token: string): any | null {
+export function parseBackgroundSize(token: string, context?: CssmaContext): any | null {
   if (token === 'bg-auto') {
     return { type: 'background-size', preset: 'auto', raw: token, arbitrary: false };
   }

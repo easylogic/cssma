@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind v4.1 font-variant-numeric utilities:
 // normal-nums, ordinal, slashed-zero, lining-nums, oldstyle-nums, proportional-nums, tabular-nums, diagonal-fractions, stacked-fractions
 
@@ -13,7 +14,7 @@ const presetMap = {
   'stacked-fractions': 'stacked-fractions',
 };
 
-export function parseFontVariantNumeric(token: string): any | null {
+export function parseFontVariantNumeric(token: string, context?: CssmaContext): any | null {
   if (presetMap[token]) {
     return { type: 'font-variant-numeric', value: presetMap[token], raw: token };
   }

@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind sepia utility parser
 // https://tailwindcss.com/docs/filter-sepia
 
@@ -6,7 +7,7 @@ const presetRe = /^sepia-(\d{1,3})$/;
 const arbitraryRe = /^sepia-\[(.+)\]$/;
 const customVarRe = /^sepia-\((--[\w-]+)\)$/;
 
-export function parseSepia(token: string): any | null {
+export function parseSepia(token: string, context?: CssmaContext): any | null {
   let m;
   if (baseRe.test(token)) {
     return { type: 'sepia', value: '100', raw: token, arbitrary: false };

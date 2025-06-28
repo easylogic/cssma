@@ -2,6 +2,7 @@
 // https://tailwindcss.com/docs/border-color
 
 import { extractArbitraryValue, isColorValue } from '../utils';
+import type { CssmaContext } from '../../types';
 
 const presets = [
   'inherit', 'current', 'transparent', 'black', 'white',
@@ -9,7 +10,7 @@ const presets = [
   'slate', 'gray', 'zinc', 'neutral', 'stone', 'red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose', 'lime', 'amber', 'emerald', 'teal', 'cyan', 'sky', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose', 'neutral', 'stone', 'regal-blue'
 ];
 
-export function parseBorderColor(token: string): any | null {
+export function parseBorderColor(token: string, context?: CssmaContext): any | null {
   // border-inherit, border-current, border-transparent, border-black, border-white
   if (token === 'border-inherit') return { type: 'border-color', side: 'all', preset: 'inherit', raw: token, arbitrary: false };
   if (token === 'border-current') return { type: 'border-color', side: 'all', preset: 'current', raw: token, arbitrary: false };

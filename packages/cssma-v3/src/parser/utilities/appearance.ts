@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind appearance utility parser
 // https://tailwindcss.com/docs/appearance
 
-export function parseAppearance(token: string): any | null {
+export function parseAppearance(token: string, context?: CssmaContext): any | null {
   if (token === 'appearance-none') {
     return { type: 'appearance', value: 'none', raw: token, preset: 'none' };
   }

@@ -1,7 +1,9 @@
 // Tailwind content utility parser
 // https://tailwindcss.com/docs/content
 
-export function parseContent(token: string): any | null {
+import type { CssmaContext } from '../../types';
+
+export function parseContent(token: string, context?: CssmaContext): any | null {
   // content-none
   if (token === 'content-none') {
     return { type: 'content', preset: 'none', raw: token, arbitrary: false };

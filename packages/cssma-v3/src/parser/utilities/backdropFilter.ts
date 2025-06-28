@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind backdrop-filter utility parser
 // https://tailwindcss.com/docs/backdrop-filter
 
@@ -5,7 +6,7 @@ const presetRe = /^backdrop-filter-none$/;
 const arbitraryRe = /^backdrop-filter-\[(.+)\]$/;
 const customVarRe = /^backdrop-filter-\((--[\w-]+)\)$/;
 
-export function parseBackdropFilter(token: string): any | null {
+export function parseBackdropFilter(token: string, context?: CssmaContext): any | null {
   let m;
   if (presetRe.test(token)) {
     return { type: 'backdrop-filter', value: 'none', raw: token, arbitrary: false };

@@ -2,8 +2,9 @@
 // https://tailwindcss.com/docs/border-width
 
 import { extractArbitraryValue, isLengthValue } from '../utils';
+import type { CssmaContext } from '../../types';
 
-export function parseBorderWidth(token: string): any | null {
+export function parseBorderWidth(token: string, context?: CssmaContext): any | null {
   // border (all sides, default 1px)
   if (token === 'border') return { type: 'border-width', side: 'all', value: '1px', raw: token, arbitrary: false };
   // border-{number}

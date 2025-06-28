@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind v4.1 line-clamp parser
 // https://tailwindcss.com/docs/line-clamp
 
-export function parseLineClamp(token: string) {
+export function parseLineClamp(token: string, context?: CssmaContext) {
   // line-clamp-none
   if (token === 'line-clamp-none') {
     return {

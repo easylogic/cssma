@@ -1,6 +1,8 @@
 // Tailwind rotate utility parser
 // https://tailwindcss.com/docs/rotate
 
+import type { CssmaContext } from '../../types';
+
 const rotateNoneRe = /^rotate-none$/;
 const rotateRe = /^(-?)rotate-(\d+)$/;
 const rotateCustomPropRe = /^rotate-\((--[\w-]+)\)$/;
@@ -18,7 +20,7 @@ const rotateZRe = /^(-?)rotate-z-(\d+)$/;
 const rotateZCustomPropRe = /^rotate-z-\((--[\w-]+)\)$/;
 const rotateZArbitraryRe = /^rotate-z-\[(.+)\]$/;
 
-export function parseRotate(token: string): any | null {
+export function parseRotate(token: string, context?: CssmaContext): any | null {
   if (rotateNoneRe.test(token)) {
     return { type: 'rotate', value: 'none', raw: token, preset: 'none', arbitrary: false };
   }

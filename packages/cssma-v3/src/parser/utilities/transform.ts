@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind transform utility parser
 // https://tailwindcss.com/docs/transform
 
@@ -7,7 +8,7 @@ const transformCpuRe = /^transform-cpu$/;
 const transformCustomPropRe = /^transform-\((--[\w-]+)\)$/;
 const transformArbitraryRe = /^transform-\[(.+)\]$/;
 
-export function parseTransform(token: string): any | null {
+export function parseTransform(token: string, context?: CssmaContext): any | null {
   if (transformNoneRe.test(token)) {
     return { type: 'transform', value: 'none', raw: token, preset: 'none', arbitrary: false };
   }

@@ -1,6 +1,6 @@
-import type { SupportsModifier } from '../../types';
+import type { SupportsModifier, CssmaContext } from '../../types';
 
-export function parseSupportsModifier(mod: string): SupportsModifier | null {
+export function parseSupportsModifier(mod: string, context?: CssmaContext): SupportsModifier | null {
   // supports-[display:grid] 형태
   if (mod.startsWith('supports-[') && mod.endsWith(']')) {
     const m = mod.match(/^supports-\[(.*)\]$/);

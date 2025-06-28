@@ -1,7 +1,7 @@
-import type { GroupModifier } from '../../types';
+import type { GroupModifier, CssmaContext } from '../../types';
 
 // group modifier 파서 (예: group-hover, group-focus 등)
-export function parseGroupModifier(mod: string): GroupModifier | null {
+export function parseGroupModifier(mod: string, context?: CssmaContext): GroupModifier | null {
   if (mod.startsWith('group-')) {
     const state = mod.slice(6);
     if (!state) return null;

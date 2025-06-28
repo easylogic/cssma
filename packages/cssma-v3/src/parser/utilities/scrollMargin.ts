@@ -1,6 +1,8 @@
 // Tailwind scroll-margin utility parser
 // https://tailwindcss.com/docs/scroll-margin
 
+import type { CssmaContext } from '../../types';
+
 const propMap = {
   '': 'scroll-margin',
   'x': 'scroll-margin-inline',
@@ -13,7 +15,7 @@ const propMap = {
   'e': 'scroll-margin-inline-end',
 };
 
-export function parseScrollMargin(token: string): any | null {
+export function parseScrollMargin(token: string, context?: CssmaContext): any | null {
   // scroll-m-4, -scroll-m-4, scroll-mx-2, -scroll-mt-6, etc.
   let m = token.match(/^(-?)scroll-m([a-z]*)-(\d+)$/);
   if (m && m[2] in propMap) {

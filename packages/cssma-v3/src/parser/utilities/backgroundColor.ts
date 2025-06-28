@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind background-color utility parser
 // https://tailwindcss.com/docs/background-color
 
-export function parseBackgroundColor(token: string): any | null {
+export function parseBackgroundColor(token: string, context?: CssmaContext): any | null {
   // bg-[<arbitrary-value>]
   const arbitrary = token.match(/^bg-\[(.+)]$/);
   if (arbitrary) {

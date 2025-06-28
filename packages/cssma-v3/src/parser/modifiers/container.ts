@@ -1,9 +1,9 @@
 // Tailwind 4.1+ container query variant 파서
 // @md, @max-md, @container/main, @min-[475px], @sm/main, @sm:@max-md, @min-[475px], @max-[960px] 등 지원
 
-import type { ContainerModifier } from '../../types';
+import type { ContainerModifier, CssmaContext } from '../../types';
 
-export function parseContainerModifier(token: string): ContainerModifier | null {
+export function parseContainerModifier(token: string, context?: CssmaContext): ContainerModifier | null {
   if (!token || !token.startsWith('@')) return null;
 
   // @min-[475px], @max-[960px] 등 arbitrary value

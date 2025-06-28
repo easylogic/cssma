@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind v4.1 line-height parser
 // https://tailwindcss.com/docs/line-height
 
-export function parseLineHeight(token: string) {
+export function parseLineHeight(token: string, context?: CssmaContext) {
   // leading-none
   if (token === 'leading-none') {
     return {

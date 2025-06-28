@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind transition-behavior utility parser
 // https://tailwindcss.com/docs/transition-behavior
 
@@ -8,7 +9,7 @@ const presetMap: Record<string, string> = {
 
 const presetRe = /^(transition-normal|transition-discrete)$/;
 
-export function parseTransitionBehavior(token: string): any | null {
+export function parseTransitionBehavior(token: string, context?: CssmaContext): any | null {
   if (presetRe.test(token)) {
     return {
       type: 'transition-behavior',

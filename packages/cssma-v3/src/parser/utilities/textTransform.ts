@@ -1,6 +1,8 @@
 // Tailwind text-transform utility parser
 // https://tailwindcss.com/docs/text-transform
 
+import type { CssmaContext } from '../../types';
+
 const presets = [
   'uppercase',
   'lowercase',
@@ -8,7 +10,7 @@ const presets = [
   'normal-case',
 ];
 
-export function parseTextTransform(token: string): any | null {
+export function parseTextTransform(token: string, context?: CssmaContext): any | null {
   for (const preset of presets) {
     if (token === preset) {
       return { type: 'text-transform', preset, raw: token, arbitrary: false };

@@ -1,6 +1,8 @@
 // Tailwind margin utility parser
 // https://tailwindcss.com/docs/margin
 
+import type { CssmaContext } from '../../types';
+
 const directions = {
   '': 'all',
   'x': 'inline',
@@ -13,7 +15,7 @@ const directions = {
   'l': 'left',
 };
 
-export function parseMargin(token: string): any | null {
+export function parseMargin(token: string, context?: CssmaContext): any | null {
   // Handle negative margin
   const negative = token.startsWith('-');
   const t = negative ? token.slice(1) : token;

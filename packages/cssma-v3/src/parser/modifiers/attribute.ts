@@ -1,7 +1,7 @@
-import type { AttributeModifier } from '../../types';
+import type { AttributeModifier, CssmaContext } from '../../types';
 
 // attribute modifier 파서 (예: [foo=bar], [data-state=open], [foo])
-export function parseAttributeModifier(token: string): AttributeModifier | null {
+export function parseAttributeModifier(token: string, context?: CssmaContext): AttributeModifier | null {
   // [foo=bar] 또는 [foo] 형태
   if (token.startsWith('[') && token.endsWith(']')) {
     const inner = token.slice(1, -1);

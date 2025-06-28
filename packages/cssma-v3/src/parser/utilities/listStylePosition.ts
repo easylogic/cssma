@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind v4.1 list-style-position parser
 // https://tailwindcss.com/docs/list-style-position
 
-export function parseListStylePosition(token: string) {
+export function parseListStylePosition(token: string, context?: CssmaContext) {
   if (token === 'list-inside') {
     return {
       type: 'list-style-position',

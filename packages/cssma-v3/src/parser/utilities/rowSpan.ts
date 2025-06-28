@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind row-span utility parser
 // https://tailwindcss.com/docs/row-span
 
-export function parseRowSpan(token: string): any | null {
+export function parseRowSpan(token: string, context?: CssmaContext): any | null {
   if (token === 'row-span-full') return { type: 'row-span', preset: 'full', raw: token, arbitrary: false };
   const num = token.match(/^row-span-(\d+)$/);
   if (num) return { type: 'row-span', value: parseInt(num[1], 10), raw: token, arbitrary: false };

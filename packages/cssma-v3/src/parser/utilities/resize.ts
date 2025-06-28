@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind resize utility parser
 // https://tailwindcss.com/docs/resize
 
-export function parseResize(token: string): any | null {
+export function parseResize(token: string, context?: CssmaContext): any | null {
   if (token === 'resize') {
     return { type: 'resize', value: 'both', raw: token, preset: 'both' };
   }

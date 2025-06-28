@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind v4.1 max-width utility parser
 // https://tailwindcss.com/docs/max-width
 
@@ -15,7 +16,7 @@ const PRESETS: Record<string, string> = {
   'screen-2xl': '1536px',
 };
 
-export function parseMaxWidth(token: string) {
+export function parseMaxWidth(token: string, context?: CssmaContext) {
   const match = /^max-w-(.+)$/.exec(token);
   if (!match) return null;
   const value = match[1];

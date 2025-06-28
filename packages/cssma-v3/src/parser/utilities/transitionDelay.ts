@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind transition-delay utility parser
 // https://tailwindcss.com/docs/transition-delay
 
@@ -5,7 +6,7 @@ const numberRe = /^delay-(\d+)$/;
 const customPropRe = /^delay-\((--[\w-]+)\)$/;
 const arbitraryRe = /^delay-\[(.+)\]$/;
 
-export function parseTransitionDelay(token: string): any | null {
+export function parseTransitionDelay(token: string, context?: CssmaContext): any | null {
   const m1 = token.match(numberRe);
   if (m1) {
     return {

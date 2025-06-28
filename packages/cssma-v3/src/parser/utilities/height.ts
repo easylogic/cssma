@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind v4.1 height utility parser
 // https://tailwindcss.com/docs/height
 
@@ -11,7 +12,7 @@ const PRESETS: Record<string, string> = {
   'fit': 'fit-content',
 };
 
-export function parseHeight(token: string) {
+export function parseHeight(token: string, context?: CssmaContext) {
   const match = /^h-(.+)$/.exec(token);
   if (!match) return null;
   const value = match[1];

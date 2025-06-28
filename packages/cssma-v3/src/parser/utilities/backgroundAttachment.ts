@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind background-attachment utility parser
 // https://tailwindcss.com/docs/background-attachment
 
-export function parseBackgroundAttachment(token: string): any | null {
+export function parseBackgroundAttachment(token: string, context?: CssmaContext): any | null {
   if (token === 'bg-fixed') {
     return { type: 'background-attachment', preset: 'fixed', raw: token, arbitrary: false };
   }

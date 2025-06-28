@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind transition-property utility parser
 // https://tailwindcss.com/docs/transition-property
 
@@ -15,7 +16,7 @@ const presetRe = /^(transition|transition-all|transition-colors|transition-opaci
 const arbitraryRe = /^transition-\[(.+)\]$/;
 const customPropRe = /^transition-\((--[\w-]+)\)$/;
 
-export function parseTransitionProperty(token: string): any | null {
+export function parseTransitionProperty(token: string, context?: CssmaContext): any | null {
   if (presetRe.test(token)) {
     return {
       type: 'transition-property',

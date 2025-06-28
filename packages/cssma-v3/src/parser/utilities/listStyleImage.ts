@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind v4.1 list-style-image parser
 // https://tailwindcss.com/docs/list-style-image
 
-export function parseListStyleImage(token: string) {
+export function parseListStyleImage(token: string, context?: CssmaContext) {
   // list-image-none
   if (token === 'list-image-none') {
     return {

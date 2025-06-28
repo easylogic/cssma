@@ -1,12 +1,14 @@
 // Tailwind object-position utility parser
 // https://tailwindcss.com/docs/object-position
 
+import type { CssmaContext } from '../../types';
+
 const presets = [
   'bottom', 'center', 'left', 'left-bottom', 'left-top',
   'right', 'right-bottom', 'right-top', 'top'
 ];
 
-export function parseObjectPosition(token: string): any | null {
+export function parseObjectPosition(token: string, context?: CssmaContext): any | null {
   for (const preset of presets) {
     if (token === `object-${preset}`) return { type: 'object-position', preset, raw: token, arbitrary: false };
   }

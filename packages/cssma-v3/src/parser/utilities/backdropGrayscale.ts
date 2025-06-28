@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind backdrop-grayscale utility parser
 // https://tailwindcss.com/docs/backdrop-filter-grayscale
 
@@ -6,7 +7,7 @@ const presetRe = /^backdrop-grayscale-(\d{1,3})$/;
 const arbitraryRe = /^backdrop-grayscale-\[(.+)\]$/;
 const customVarRe = /^backdrop-grayscale-\((--[\w-]+)\)$/;
 
-export function parseBackdropGrayscale(token: string): any | null {
+export function parseBackdropGrayscale(token: string, context?: CssmaContext): any | null {
   let m;
   if (defaultRe.test(token)) {
     return { type: 'backdrop-grayscale', value: '100', raw: token, arbitrary: false, default: true };

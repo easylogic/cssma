@@ -2,8 +2,9 @@
 // https://tailwindcss.com/docs/text-indent
 
 import { extractArbitraryValue } from '../utils';
+import type { CssmaContext } from '../../types';
 
-export function parseTextIndent(token: string) {
+export function parseTextIndent(token: string, context?: CssmaContext) {
   // indent-<number>
   let m = token.match(/^(-?)indent-(\d+)$/);
   if (m) {

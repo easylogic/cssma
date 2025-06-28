@@ -1,8 +1,8 @@
 // state modifier 파서 (예: hover, focus, active 등)
 
-import type { StateModifier } from '../../types';
+import type { StateModifier, CssmaContext } from '../../types';
 
-export function parseStateModifier(mod: string): StateModifier | null {
+export function parseStateModifier(mod: string, context?: CssmaContext): StateModifier | null {
   // state-[foo=bar] 형태
   if (mod.startsWith('state-[') && mod.endsWith(']')) {
     const m = mod.match(/^state-\[(.+?)=(.+)\]$/);

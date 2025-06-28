@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind text-decoration-thickness utility parser
 // https://tailwindcss.com/docs/text-decoration-thickness
 
-export function parseTextDecorationThickness(token: string): any | null {
+export function parseTextDecorationThickness(token: string, context?: CssmaContext): any | null {
   // decoration-<number>
   const num = token.match(/^decoration-(\d+)$/);
   if (num) {

@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind v4.1 max-height utility parser
 // https://tailwindcss.com/docs/max-height
 
@@ -11,7 +12,7 @@ const PRESETS: Record<string, string> = {
   'fit': 'fit-content',
 };
 
-export function parseMaxHeight(token: string) {
+export function parseMaxHeight(token: string, context?: CssmaContext) {
   const match = /^max-h-(.+)$/.exec(token);
   if (!match) return null;
   const value = match[1];

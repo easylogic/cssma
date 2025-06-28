@@ -1,6 +1,6 @@
-import type { NthModifier, NthOfTypeModifier, NthLastOfTypeModifier } from '../../types';
+import type { NthModifier, NthOfTypeModifier, NthLastOfTypeModifier, CssmaContext } from '../../types';
 
-export function parseNthLastOfTypeModifier(mod: string): NthLastOfTypeModifier | null {
+export function parseNthLastOfTypeModifier(mod: string, context?: CssmaContext): NthLastOfTypeModifier | null {
   const prefix = 'nth-last-of-type-';
   if (mod.startsWith(prefix + '[') && mod.endsWith(']')) {
     const m = mod.match(/^nth-last-of-type-\[(.*)\]$/);
@@ -12,7 +12,7 @@ export function parseNthLastOfTypeModifier(mod: string): NthLastOfTypeModifier |
   return null;
 }
 
-export function parseNthOfTypeModifier(mod: string): NthOfTypeModifier | null {
+export function parseNthOfTypeModifier(mod: string, context?: CssmaContext): NthOfTypeModifier | null {
   const prefix = 'nth-of-type-';
   if (mod.startsWith(prefix + '[') && mod.endsWith(']')) {
     const m = mod.match(/^nth-of-type-\[(.*)\]$/);
@@ -24,7 +24,7 @@ export function parseNthOfTypeModifier(mod: string): NthOfTypeModifier | null {
   return null;
 }
 
-export function parseNthModifier(mod: string): NthModifier | null {
+export function parseNthModifier(mod: string, context?: CssmaContext): NthModifier | null {
   const prefix = 'nth-';
   if (mod.startsWith(prefix + '[') && mod.endsWith(']')) {
     const m = mod.match(/^nth-\[(.*)\]$/);

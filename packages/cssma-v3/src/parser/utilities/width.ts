@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind width utility parser
 // https://tailwindcss.com/docs/width
 
@@ -6,7 +7,7 @@ const presetMap = [
   'auto','px','full','screen','dvw','dvh','lvw','lvh','svw','svh','min','max','fit'
 ];
 
-export function parseWidth(token: string): any | null {
+export function parseWidth(token: string, context?: CssmaContext): any | null {
   // w-<number>, w-<fraction>, w-<preset>, w-(<custom-property>), w-[<value>]
   const match = token.match(/^w\-(.+)$/);
   if (!match) return null;

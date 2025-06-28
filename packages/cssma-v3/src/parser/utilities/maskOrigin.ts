@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind mask-origin utility parser
 // https://tailwindcss.com/docs/mask-origin
 
@@ -10,7 +11,7 @@ const presetMap: Record<string, string> = {
   'mask-origin-view': 'view-box',
 };
 
-export function parseMaskOrigin(token: string): any | null {
+export function parseMaskOrigin(token: string, context?: CssmaContext): any | null {
   if (token in presetMap) {
     return { type: 'mask-origin', value: presetMap[token], raw: token, arbitrary: false };
   }

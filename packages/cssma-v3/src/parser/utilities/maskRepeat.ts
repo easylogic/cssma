@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind mask-repeat utility parser
 // https://tailwindcss.com/docs/mask-repeat
 
@@ -10,7 +11,7 @@ const presetMap: Record<string, string> = {
   'mask-repeat-round': 'round',
 };
 
-export function parseMaskRepeat(token: string): any | null {
+export function parseMaskRepeat(token: string, context?: CssmaContext): any | null {
   if (token in presetMap) {
     return { type: 'mask-repeat', value: presetMap[token], raw: token, arbitrary: false };
   }

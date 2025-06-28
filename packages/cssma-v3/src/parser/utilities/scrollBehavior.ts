@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind scroll-behavior utility parser
 // https://tailwindcss.com/docs/scroll-behavior
 
-export function parseScrollBehavior(token: string): any | null {
+export function parseScrollBehavior(token: string, context?: CssmaContext): any | null {
   if (token === 'scroll-auto') {
     return { type: 'scroll-behavior', value: 'auto', raw: token, preset: 'auto' };
   }

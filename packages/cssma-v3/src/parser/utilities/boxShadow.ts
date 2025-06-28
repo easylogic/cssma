@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind box-shadow utility parser
 // https://tailwindcss.com/docs/box-shadow
 
-export function parseBoxShadow(token: string): any | null {
+export function parseBoxShadow(token: string, context?: CssmaContext): any | null {
   // 1. inset-shadow arbitrary (inset-shadow-[...])
   let m;
   if ((m = token.match(/^inset-shadow-\[(.+)\]$/))) {

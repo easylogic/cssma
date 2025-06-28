@@ -1,6 +1,8 @@
 // Tailwind scroll-padding utility parser
 // https://tailwindcss.com/docs/scroll-padding
 
+import type { CssmaContext } from '../../types';
+
 const propMap = {
   '': 'scroll-padding',
   'x': 'scroll-padding-inline',
@@ -13,7 +15,7 @@ const propMap = {
   'e': 'scroll-padding-inline-end',
 };
 
-export function parseScrollPadding(token) {
+export function parseScrollPadding(token: string, context?: CssmaContext) {
   // scroll-p-4, -scroll-p-4, scroll-px-2, -scroll-pt-6, etc.
   let m = token.match(/^(-?)scroll-p([a-z]*)-(\d+)$/);
   if (m && m[2] in propMap) {

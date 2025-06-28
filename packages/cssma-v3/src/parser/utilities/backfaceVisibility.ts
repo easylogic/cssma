@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind backface-visibility utility parser
 // https://tailwindcss.com/docs/backface-visibility
 
@@ -8,7 +9,7 @@ const presetMap: Record<string, string> = {
 
 const presetRe = /^(backface-hidden|backface-visible)$/;
 
-export function parseBackfaceVisibility(token: string): any | null {
+export function parseBackfaceVisibility(token: string, context?: CssmaContext): any | null {
   if (presetRe.test(token)) {
     return {
       type: 'backface-visibility',

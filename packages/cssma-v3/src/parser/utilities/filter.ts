@@ -1,10 +1,12 @@
 // Tailwind filter utility parser
 // https://tailwindcss.com/docs/filter
 
+import type { CssmaContext } from '../../types';
+
 const arbitraryRe = /^filter-\[(.+)\]$/;
 const customVarRe = /^filter-\((--[\w-]+)\)$/;
 
-export function parseFilter(token: string): any | null {
+export function parseFilter(token: string, context?: CssmaContext): any | null {
   if (token === 'filter-none') {
     return { type: 'filter', value: 'none', raw: token, arbitrary: false };
   }

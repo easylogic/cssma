@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind skew utility parser
 // https://tailwindcss.com/docs/skew
 
@@ -13,7 +14,7 @@ const skewYRe = /^(-?)skew-y-(\d+)$/;
 const skewYCustomPropRe = /^skew-y-\((--[\w-]+)\)$/;
 const skewYArbitraryRe = /^skew-y-\[(.+)\]$/;
 
-export function parseSkew(token: string): any | null {
+export function parseSkew(token: string, context?: CssmaContext): any | null {
   let m;
   if ((m = skewRe.exec(token))) {
     const negative = m[1] === '-';

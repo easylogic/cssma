@@ -1,6 +1,8 @@
 // Tailwind color-scheme utility parser
 // https://tailwindcss.com/docs/color-scheme
 
+import type { CssmaContext } from '../../types';
+
 const schemes = {
   'scheme-normal': 'normal',
   'scheme-dark': 'dark',
@@ -10,7 +12,7 @@ const schemes = {
   'scheme-only-light': 'only light',
 };
 
-export function parseColorScheme(token: string): any | null {
+export function parseColorScheme(token: string, context?: CssmaContext): any | null {
   if (schemes[token]) {
     return { type: 'color-scheme', value: schemes[token], raw: token, preset: schemes[token] };
   }

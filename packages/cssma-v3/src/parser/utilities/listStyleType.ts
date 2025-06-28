@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind v4.1 list-style-type parser
 // https://tailwindcss.com/docs/list-style-type
 
@@ -7,7 +8,7 @@ const PRESETS: Record<string, string> = {
   'none': 'none',
 };
 
-export function parseListStyleType(token: string) {
+export function parseListStyleType(token: string, context?: CssmaContext) {
   // Named presets
   const preset = /^list-(disc|decimal|none)$/.exec(token);
   if (preset) {

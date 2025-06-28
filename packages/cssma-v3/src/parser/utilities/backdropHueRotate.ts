@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind backdrop-hue-rotate utility parser
 // https://tailwindcss.com/docs/backdrop-filter-hue-rotate
 
@@ -5,7 +6,7 @@ const presetRe = /^(-?)backdrop-hue-rotate-(\d{1,3})$/;
 const arbitraryRe = /^backdrop-hue-rotate-\[(.+)\]$/;
 const customVarRe = /^backdrop-hue-rotate-\((--[\w-]+)\)$/;
 
-export function parseBackdropHueRotate(token: string): any | null {
+export function parseBackdropHueRotate(token: string, context?: CssmaContext): any | null {
   let m;
   if ((m = presetRe.exec(token))) {
     return {

@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind transition-duration utility parser
 // https://tailwindcss.com/docs/transition-duration
 
@@ -6,7 +7,7 @@ const initialRe = /^duration-initial$/;
 const customPropRe = /^duration-\((--[\w-]+)\)$/;
 const arbitraryRe = /^duration-\[(.+)\]$/;
 
-export function parseTransitionDuration(token: string): any | null {
+export function parseTransitionDuration(token: string, context?: CssmaContext): any | null {
   const m1 = token.match(numberRe);
   if (m1) {
     return {

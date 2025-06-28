@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind border-style utility parser
 // https://tailwindcss.com/docs/border-style
 
@@ -5,7 +6,7 @@ const stylePresets = [
   'solid', 'dashed', 'dotted', 'double', 'hidden', 'none'
 ];
 
-export function parseBorderStyle(token: string): any | null {
+export function parseBorderStyle(token: string, context?: CssmaContext): any | null {
   // border-style: border-solid, border-dashed, ...
   for (const preset of stylePresets) {
     if (token === `border-${preset}`) {

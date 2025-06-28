@@ -1,6 +1,7 @@
 // Tailwind caret-color utility parser
 // https://tailwindcss.com/docs/caret-color
 import { isColorValue } from '../utils';
+import type { CssmaContext } from '../../types';
 
 const inheritRe = /^caret-inherit$/;
 const currentRe = /^caret-current$/;
@@ -11,7 +12,7 @@ const colorShadeRe = /^caret-([a-z]+)-(\d{2,3})$/; // caret-red-500
 const customPropRe = /^caret-\((--[\w-]+)\)$/;
 const arbitraryRe = /^caret-\[(.+)\]$/;
 
-export function parseCaretColor(token: string): any | null {
+export function parseCaretColor(token: string, context?: CssmaContext): any | null {
   let m;
   if (inheritRe.test(token)) {
     return { type: 'caret-color', value: 'inherit', raw: token, preset: 'inherit' };

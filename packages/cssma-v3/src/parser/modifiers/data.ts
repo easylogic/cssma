@@ -1,10 +1,10 @@
-import type { DataModifier } from '../../types';
+import type { DataModifier, CssmaContext } from '../../types';
 
-export function parseDataModifier(mod: string): DataModifier | null {
+export function parseDataModifier(token: string, context?: CssmaContext): DataModifier | null {
   // data-[foo=bar] 형태
-  if (mod.startsWith('data-[') && mod.endsWith(']')) {
+  if (token.startsWith('data-[') && token.endsWith(']')) {
     // 예: data-[foo=bar]
-    const m = mod.match(/^data-\[(.+?)=(.+)\]$/);
+    const m = token.match(/^data-\[(.+?)=(.+)\]$/);
     if (m) {
       return {
         type: 'data',
@@ -15,11 +15,11 @@ export function parseDataModifier(mod: string): DataModifier | null {
     return null;
   }
   // data-active 등 단순 상태
-  if (mod.startsWith('data-')) {
-    if (mod.length > 5) {
+  if (token.startsWith('data-')) {
+    if (token.length > 5) {
       return {
         type: 'data',
-        attr: mod.slice(5),
+        attr: token.slice(5),
         value: 'true',
       };
     }

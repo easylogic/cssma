@@ -1,6 +1,8 @@
 // Tailwind transition-timing-function utility parser
 // https://tailwindcss.com/docs/transition-timing-function
 
+import type { CssmaContext } from '../../types';
+
 const presetMap: Record<string, string> = {
   'ease-linear': 'linear',
   'ease-in': 'var(--ease-in)',
@@ -13,7 +15,7 @@ const presetRe = /^(ease-linear|ease-in|ease-out|ease-in-out|ease-initial)$/;
 const customPropRe = /^ease-\((--[\w-]+)\)$/;
 const arbitraryRe = /^ease-\[(.+)\]$/;
 
-export function parseTransitionTimingFunction(token: string): any | null {
+export function parseTransitionTimingFunction(token: string, context?: CssmaContext): any | null {
   if (presetRe.test(token)) {
     return {
       type: 'transition-timing-function',

@@ -1,6 +1,8 @@
 // Tailwind cursor utility parser
 // https://tailwindcss.com/docs/cursor
 
+import type { CssmaContext } from '../../types';
+
 const presetCursors = [
   'auto', 'default', 'pointer', 'wait', 'text', 'move', 'help', 'not-allowed', 'none',
   'context-menu', 'progress', 'cell', 'crosshair', 'vertical-text', 'alias', 'copy',
@@ -21,7 +23,7 @@ function isValidCursorValue(val: string): boolean {
   return false;
 }
 
-export function parseCursor(token: string): any | null {
+export function parseCursor(token: string, context?: CssmaContext): any | null {
   let m;
   if ((m = presetRe.exec(token))) {
     return { type: 'cursor', value: m[1], raw: token, preset: m[1] };

@@ -1,11 +1,13 @@
 // Tailwind flex-basis utility parser
 // https://tailwindcss.com/docs/flex-basis
 
+import type { CssmaContext } from '../../types';
+
 const containerPresets = [
   '3xs', '2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl', '4xs'
 ];
 
-export function parseFlexBasis(token: string): any | null {
+export function parseFlexBasis(token: string, context?: CssmaContext): any | null {
   if (token === 'basis-0') return { type: 'flex-basis', preset: '0', raw: token, arbitrary: false };
   if (token === 'basis-full') return { type: 'flex-basis', preset: 'full', raw: token, arbitrary: false };
   if (token === 'basis-auto') return { type: 'flex-basis', preset: 'auto', raw: token, arbitrary: false };

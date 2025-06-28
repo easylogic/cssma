@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind pointer-events utility parser
 // https://tailwindcss.com/docs/pointer-events
 
-export function parsePointerEvents(token: string): any | null {
+export function parsePointerEvents(token: string, context?: CssmaContext): any | null {
   if (token === 'pointer-events-auto') {
     return { type: 'pointer-events', value: 'auto', raw: token, preset: 'auto' };
   }

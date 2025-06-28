@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind mask-type utility parser
 // https://tailwindcss.com/docs/mask-type
 
@@ -6,7 +7,7 @@ const presetMap: Record<string, string> = {
   'mask-type-luminance': 'luminance',
 };
 
-export function parseMaskType(token: string): any | null {
+export function parseMaskType(token: string, context?: CssmaContext): any | null {
   if (token in presetMap) {
     return { type: 'mask-type', value: presetMap[token], raw: token, arbitrary: false };
   }

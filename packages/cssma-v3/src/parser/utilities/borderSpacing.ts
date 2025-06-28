@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind border-spacing utility parser
 // https://tailwindcss.com/docs/border-spacing
 
@@ -13,7 +14,7 @@ const spacingYRe = /^border-spacing-y-(\d+)$/;
 const spacingYArbRe = /^border-spacing-y-\[(.+)\]$/;
 const spacingYVarRe = /^border-spacing-y-\((--[\w-]+)\)$/;
 
-export function parseBorderSpacing(token: string): any | null {
+export function parseBorderSpacing(token: string, context?: CssmaContext): any | null {
   let m;
   if ((m = spacingRe.exec(token))) {
     return { type: 'border-spacing', axis: 'both', value: m[1], raw: token, arbitrary: false };

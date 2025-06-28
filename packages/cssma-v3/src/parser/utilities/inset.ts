@@ -1,11 +1,13 @@
 // Tailwind inset utility parser
 // https://tailwindcss.com/docs/top-right-bottom-left
 
+import type { CssmaContext } from '../../types';
+
 const directions = [
   '', 'x', 'y', 'top', 'right', 'bottom', 'left'
 ];
 
-export function parseInset(token: string): any | null {
+export function parseInset(token: string, context?: CssmaContext): any | null {
   // 1. inset-[arbitrary]
   let m = token.match(/^inset-\[(.+)\]$/);
   if (m) return { type: 'inset', value: m[1], raw: token, arbitrary: true };

@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind perspective utility parser
 // https://tailwindcss.com/docs/perspective
 
@@ -14,7 +15,7 @@ const presetRe = /^(perspective-dramatic|perspective-near|perspective-normal|per
 const customPropRe = /^perspective-\((--[\w-]+)\)$/;
 const arbitraryRe = /^perspective-\[(.+)\]$/;
 
-export function parsePerspective(token: string): any | null {
+export function parsePerspective(token: string, context?: CssmaContext): any | null {
   if (presetRe.test(token)) {
     return {
       type: 'perspective',

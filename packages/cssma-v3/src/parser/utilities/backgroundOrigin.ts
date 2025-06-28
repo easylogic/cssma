@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind background-origin utility parser
 // https://tailwindcss.com/docs/background-origin
 
-export function parseBackgroundOrigin(token: string): any | null {
+export function parseBackgroundOrigin(token: string, context?: CssmaContext): any | null {
   if (token === 'bg-origin-border') {
     return { type: 'background-origin', preset: 'border', raw: token, arbitrary: false };
   }

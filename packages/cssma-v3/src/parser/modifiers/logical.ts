@@ -1,6 +1,6 @@
-import type { LogicalModifier } from '../../types';
+import type { LogicalModifier, CssmaContext } from '../../types';
 
-export function parseLogicalModifier(mod: string): LogicalModifier | null {
+export function parseLogicalModifier(mod: string, context?: CssmaContext): LogicalModifier | null {
   // has-[foo=bar] 형태
   if (mod.startsWith('has-[') && mod.endsWith(']')) {
     const m = mod.match(/^has-\[(.+?)=(.+)\]$/);

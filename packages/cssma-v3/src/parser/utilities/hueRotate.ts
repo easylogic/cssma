@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind hue-rotate utility parser
 // https://tailwindcss.com/docs/filter-hue-rotate
 
@@ -5,7 +6,7 @@ const presetRe = /^-?hue-rotate-(\d{1,3})$/;
 const arbitraryRe = /^hue-rotate-\[(.+)\]$/;
 const customVarRe = /^hue-rotate-\((--[\w-]+)\)$/;
 
-export function parseHueRotate(token: string): any | null {
+export function parseHueRotate(token: string, context?: CssmaContext): any | null {
   let m;
   if ((m = presetRe.exec(token))) {
     return {

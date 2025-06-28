@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind mask-clip utility parser
 // https://tailwindcss.com/docs/mask-clip
 
@@ -11,7 +12,7 @@ const presetMap: Record<string, string> = {
   'mask-no-clip': 'no-clip',
 };
 
-export function parseMaskClip(token: string): any | null {
+export function parseMaskClip(token: string, context?: CssmaContext): any | null {
   if (token in presetMap) {
     return { type: 'mask-clip', value: presetMap[token], raw: token, arbitrary: false };
   }

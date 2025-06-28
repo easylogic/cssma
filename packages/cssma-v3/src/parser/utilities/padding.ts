@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind padding utility parser
 // https://tailwindcss.com/docs/padding
 
@@ -13,7 +14,7 @@ const directions = {
   'l': 'left',
 };
 
-export function parsePadding(token: string): any | null {
+export function parsePadding(token: string, context?: CssmaContext): any | null {
   // p-*, px-*, py-*, ps-*, pe-*, pt-*, pr-*, pb-*, pl-*
   const match = token.match(/^p([xysetrbl]?)\-(.+)$/);
   if (!match) return null;

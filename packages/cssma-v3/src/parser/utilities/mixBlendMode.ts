@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind mix-blend-mode utility parser
 // https://tailwindcss.com/docs/mix-blend-mode
 
@@ -8,7 +9,7 @@ const presets = [
   'plus-darker', 'plus-lighter'
 ];
 
-export function parseMixBlendMode(token: string): any | null {
+export function parseMixBlendMode(token: string, context?: CssmaContext): any | null {
   for (const preset of presets) {
     if (token === `mix-blend-${preset}`) {
       return { type: 'mix-blend-mode', value: preset, raw: token, arbitrary: false };

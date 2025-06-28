@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind min-width utility parser
 // https://tailwindcss.com/docs/min-width
 
@@ -5,7 +6,7 @@ const presetMap = [
   '0','full','min','max','fit','px','screen','dvw','dvh','lvw','lvh','svw','svh'
 ];
 
-export function parseMinWidth(token: string): any | null {
+export function parseMinWidth(token: string, context?: CssmaContext): any | null {
   // min-w-<preset>, min-w-(<custom-property>), min-w-[<value>]
   const match = token.match(/^min-w\-(.+)$/);
   if (!match) return null;

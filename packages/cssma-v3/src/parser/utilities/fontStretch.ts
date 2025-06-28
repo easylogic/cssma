@@ -1,3 +1,5 @@
+import type { CssmaContext } from '../../types';
+
 // Tailwind v4.1 font-stretch utilities:
 // font-stretch-ultra-condensed, font-stretch-extra-condensed, ..., font-stretch-<percentage>, font-stretch-(<custom-property>), font-stretch-[<value>]
 
@@ -13,7 +15,7 @@ const presetMap: Record<string, string> = {
   'ultra-expanded': 'ultra-expanded',
 };
 
-export function parseFontStretch(token: string): any | null {
+export function parseFontStretch(token: string, context?: CssmaContext): any | null {
   // Named presets
   const preset = token.match(/^font-stretch-(ultra-condensed|extra-condensed|condensed|semi-condensed|normal|semi-expanded|expanded|extra-expanded|ultra-expanded)$/);
   if (preset) {

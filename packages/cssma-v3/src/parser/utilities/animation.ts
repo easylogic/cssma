@@ -1,6 +1,8 @@
 // Tailwind animation utility parser
 // https://tailwindcss.com/docs/animation
 
+import type { CssmaContext } from '../../types';
+
 const presetMap: Record<string, string> = {
   'animate-spin': 'var(--animate-spin)',
   'animate-ping': 'var(--animate-ping)',
@@ -13,7 +15,7 @@ const presetRe = /^(animate-spin|animate-ping|animate-pulse|animate-bounce|anima
 const customPropRe = /^animate-\((--[\w-]+)\)$/;
 const arbitraryRe = /^animate-\[(.+)\]$/;
 
-export function parseAnimation(token: string): any | null {
+export function parseAnimation(token: string, context?: CssmaContext): any | null {
   if (presetRe.test(token)) {
     return {
       type: 'animation',

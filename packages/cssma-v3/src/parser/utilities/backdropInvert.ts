@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind backdrop-invert utility parser
 // https://tailwindcss.com/docs/backdrop-filter-invert
 
@@ -6,7 +7,7 @@ const presetRe = /^backdrop-invert-(\d{1,3})$/;
 const arbitraryRe = /^backdrop-invert-\[(.+)\]$/;
 const customVarRe = /^backdrop-invert-\((--[\w-]+)\)$/;
 
-export function parseBackdropInvert(token: string): any | null {
+export function parseBackdropInvert(token: string, context?: CssmaContext): any | null {
   let m;
   if (defaultRe.test(token)) {
     return { type: 'backdrop-invert', value: '100', raw: token, arbitrary: false, default: true };

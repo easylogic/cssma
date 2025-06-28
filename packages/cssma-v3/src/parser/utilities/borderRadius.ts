@@ -1,6 +1,8 @@
 // Tailwind border-radius utility parser
 // https://tailwindcss.com/docs/border-radius
 
+import type { CssmaContext } from '../../types';
+
 const presetMap: Record<string, string> = {
   'none': '0',
   'xs': 'var(--radius-xs)',
@@ -14,7 +16,7 @@ const presetMap: Record<string, string> = {
   'full': 'calc(infinity * 1px)',
 };
 
-export function parseBorderRadius(token: string): any | null {
+export function parseBorderRadius(token: string, context?: CssmaContext): any | null {
   // 기본 rounded, rounded-none, rounded-full 등
   if (token === 'rounded') return { type: 'border-radius', preset: 'md', raw: token, arbitrary: false };
   if (token === 'rounded-none') return { type: 'border-radius', preset: 'none', raw: token, arbitrary: false };

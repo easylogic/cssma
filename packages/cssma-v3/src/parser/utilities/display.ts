@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind display utility parser
 // https://tailwindcss.com/docs/display
 
@@ -8,7 +9,7 @@ const presets = [
   'list-item', 'hidden'
 ];
 
-export function parseDisplay(token: string): any | null {
+export function parseDisplay(token: string, context?: CssmaContext): any | null {
   for (const preset of presets) {
     if (token === preset) return { type: 'display', preset, raw: token, arbitrary: false };
   }

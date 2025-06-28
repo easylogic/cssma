@@ -3,13 +3,15 @@
 // https://tailwindcss.com/docs/flex-wrap
 // https://tailwindcss.com/docs/flex
 
+import type { CssmaContext } from '../../types';
+
 const presets = [
   'row', 'row-reverse', 'col', 'col-reverse',
   'wrap', 'wrap-reverse', 'nowrap',
   '1', 'auto', 'initial', 'none'
 ];
 
-export function parseFlex(token: string): any | null {
+export function parseFlex(token: string, context?: CssmaContext): any | null {
   // Direction
   if (token === 'flex-row') return { type: 'flex-direction', preset: 'row', raw: token, arbitrary: false };
   if (token === 'flex-row-reverse') return { type: 'flex-direction', preset: 'row-reverse', raw: token, arbitrary: false };

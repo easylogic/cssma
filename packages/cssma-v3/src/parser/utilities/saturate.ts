@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind saturate utility parser
 // https://tailwindcss.com/docs/filter-saturate
 
@@ -5,7 +6,7 @@ const presetRe = /^saturate-(\d{1,3})$/;
 const arbitraryRe = /^saturate-\[(.+)\]$/;
 const customVarRe = /^saturate-\((--[\w-]+)\)$/;
 
-export function parseSaturate(token: string): any | null {
+export function parseSaturate(token: string, context?: CssmaContext): any | null {
   let m;
   if ((m = presetRe.exec(token))) {
     return { type: 'saturate', value: m[1], raw: token, arbitrary: false };

@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind gap utility parser
 // https://tailwindcss.com/docs/gap
 
-export function parseGap(token: string): any | null {
+export function parseGap(token: string, context?: CssmaContext): any | null {
   // gap-*, gap-x-*, gap-y-*
   let match = token.match(/^gap(?:-([xy]))?-(.+)$/);
   if (!match) return null;

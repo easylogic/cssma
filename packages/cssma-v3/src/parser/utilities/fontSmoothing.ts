@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind font-smoothing utility parser
 // https://tailwindcss.com/docs/font-smoothing
 
-export function parseFontSmoothing(token: string): any | null {
+export function parseFontSmoothing(token: string, context?: CssmaContext): any | null {
   if (token === 'antialiased') {
     return {
       type: 'font-smoothing',

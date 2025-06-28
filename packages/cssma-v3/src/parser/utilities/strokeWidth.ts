@@ -1,8 +1,9 @@
 // Tailwind stroke-width utility parser
 // https://tailwindcss.com/docs/stroke-width
 import { extractArbitraryValue, isLengthValue } from '../utils';
+import type { CssmaContext } from '../../types';
 
-export function parseStrokeWidth(token: string): any | null {
+export function parseStrokeWidth(token: string, context?: CssmaContext): any | null {
   if (token.startsWith('stroke-')) {
     const value = token.slice(7);
     // Numeric preset: stroke-1, stroke-2, etc.

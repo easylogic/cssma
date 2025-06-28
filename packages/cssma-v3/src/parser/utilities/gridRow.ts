@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind grid-row utility parser
 // https://tailwindcss.com/docs/grid-row
 
-export function parseGridRow(token: string): any | null {
+export function parseGridRow(token: string, context?: CssmaContext): any | null {
   if (token === 'grid-row-auto') return { type: 'grid-row', preset: 'auto', raw: token, arbitrary: false };
   const span = token.match(/^grid-row-span-(\d+)$/);
   if (span) return { type: 'grid-row-span', value: parseInt(span[1], 10), raw: token, arbitrary: false };

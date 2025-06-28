@@ -1,6 +1,7 @@
 // Tailwind accent-color utility parser
 // https://tailwindcss.com/docs/accent-color
 import { isColorValue } from '../utils';
+import type { CssmaContext } from '../../types';
 
 const inheritRe = /^accent-inherit$/;
 const currentRe = /^accent-current$/;
@@ -14,7 +15,7 @@ const arbitraryRe = /^accent-\[(.+)\]$/;
 const customPropWithOpacityRe = /^accent-\((--[\w-]+)\)\/(\d{1,3})$/;
 const arbitraryWithOpacityRe = /^accent-\[(.+)\]\/(\d{1,3})$/;
 
-export function parseAccentColor(token: string): any | null {
+export function parseAccentColor(token: string, context?: CssmaContext): any | null {
   let m;
   if (inheritRe.test(token)) {
     return { type: 'accent-color', value: 'inherit', raw: token, preset: 'inherit' };

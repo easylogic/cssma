@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind perspective-origin utility parser
 // https://tailwindcss.com/docs/perspective-origin
 
@@ -17,7 +18,7 @@ const presetRe = /^(perspective-origin-center|perspective-origin-top|perspective
 const customPropRe = /^perspective-origin-\((--[\w-]+)\)$/;
 const arbitraryRe = /^perspective-origin-\[(.+)\]$/;
 
-export function parsePerspectiveOrigin(token: string): any | null {
+export function parsePerspectiveOrigin(token: string, context?: CssmaContext): any | null {
   if (presetRe.test(token)) {
     return {
       type: 'perspective-origin',

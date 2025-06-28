@@ -2,6 +2,7 @@
 // https://tailwindcss.com/docs/outline-color
 
 import { extractArbitraryValue, isColorValue } from '../utils';
+import type { CssmaContext } from '../../types';
 
 const presets = [
   'inherit', 'current', 'transparent', 'black', 'white',
@@ -10,7 +11,7 @@ const presets = [
   'regal-blue'
 ];
 
-export function parseOutlineColor(token: string): any | null {
+export function parseOutlineColor(token: string, context?: CssmaContext): any | null {
   // outline-inherit, outline-current, outline-transparent, outline-black, outline-white
   if (token === 'outline-inherit') return { type: 'outline-color', preset: 'inherit', raw: token, arbitrary: false };
   if (token === 'outline-current') return { type: 'outline-color', preset: 'current', raw: token, arbitrary: false };

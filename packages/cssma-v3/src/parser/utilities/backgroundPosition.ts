@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind background-position utility parser
 // https://tailwindcss.com/docs/background-position
 
@@ -7,7 +8,7 @@ const presets = [
   'bottom-left', 'bottom', 'bottom-right'
 ];
 
-export function parseBackgroundPosition(token: string): any | null {
+export function parseBackgroundPosition(token: string, context?: CssmaContext): any | null {
   if (presets.includes(token.replace('bg-', ''))) {
     return {
       type: 'background-position',

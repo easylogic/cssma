@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind blur utility parser
 // https://tailwindcss.com/docs/filter-blur
 
@@ -9,7 +10,7 @@ const presetRe = /^blur-(none|2xs|xs|sm|md|lg|xl|2xl|3xl)$/;
 const arbitraryRe = /^blur-\[(.+)\]$/;
 const customVarRe = /^blur-\((--[\w-]+)\)$/;
 
-export function parseBlur(token: string): any | null {
+export function parseBlur(token: string, context?: CssmaContext): any | null {
   let m;
   if ((m = presetRe.exec(token))) {
     return { type: 'blur', preset: m[1], raw: token, arbitrary: false };

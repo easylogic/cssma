@@ -2,8 +2,9 @@
 // https://tailwindcss.com/docs/outline-width
 
 import { extractArbitraryValue, isLengthValue } from '../utils';
+import type { CssmaContext } from '../../types';
 
-export function parseOutlineWidth(token: string): any | null {
+export function parseOutlineWidth(token: string, context?: CssmaContext): any | null {
   // outline (default 1px)
   if (token === 'outline') return { type: 'outline-width', value: '1px', raw: token, arbitrary: false };
   // outline-<number>

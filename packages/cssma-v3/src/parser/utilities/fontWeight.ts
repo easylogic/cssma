@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind font-weight utility parser
 // https://tailwindcss.com/docs/font-weight
 
@@ -13,7 +14,7 @@ const presetMap: Record<string, string> = {
   'black': '900',
 };
 
-export function parseFontWeight(token: string): any | null {
+export function parseFontWeight(token: string, context?: CssmaContext): any | null {
   // Preset: font-thin, font-bold, etc.
   const preset = token.match(/^font-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black)$/);
   if (preset) {

@@ -1,6 +1,7 @@
 import { extractArbitraryValue } from '../utils';
+import type { CssmaContext } from '../../types';
 
-export function parseTextAlign(token: string) {
+export function parseTextAlign(token: string, context?: CssmaContext) {
   // Tailwind v4.1 text-align utilities
   // https://tailwindcss.com/docs/text-align
   switch (token) {

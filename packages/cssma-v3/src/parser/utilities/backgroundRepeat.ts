@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind background-repeat utility parser
 // https://tailwindcss.com/docs/background-repeat
 
-export function parseBackgroundRepeat(token: string): any | null {
+export function parseBackgroundRepeat(token: string, context?: CssmaContext): any | null {
   if (token === 'bg-repeat') {
     return { type: 'background-repeat', preset: 'repeat', raw: token, arbitrary: false };
   }

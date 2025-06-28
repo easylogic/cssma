@@ -2,6 +2,7 @@
 // https://tailwindcss.com/docs/vertical-align
 
 import { extractArbitraryValue } from '../utils';
+import type { CssmaContext } from '../../types';
 
 const presets = [
   'baseline',
@@ -14,7 +15,7 @@ const presets = [
   'super',
 ];
 
-export function parseVerticalAlign(token: string) {
+export function parseVerticalAlign(token: string, context?: CssmaContext) {
   let preset = null;
   if (token.startsWith('align-')) {
     preset = token.slice(6);

@@ -1,6 +1,8 @@
 // Tailwind translate utility parser
 // https://tailwindcss.com/docs/translate
 
+import type { CssmaContext } from '../../types';
+
 const noneRe = /^translate-none$/;
 const fullRe = /^(-?)translate-full$/;
 const pxRe = /^(-?)translate-px$/;
@@ -28,7 +30,7 @@ const zNumberRe = /^(-?)translate-z-(\d+)$/;
 const zCustomPropRe = /^translate-z-\((--[\w-]+)\)$/;
 const zArbitraryRe = /^translate-z-\[(.+)\]$/;
 
-export function parseTranslate(token: string): any | null {
+export function parseTranslate(token: string, context?: CssmaContext): any | null {
   let m;
   if (noneRe.test(token)) {
     return { type: 'translate', value: 'none', raw: token, preset: 'none' };

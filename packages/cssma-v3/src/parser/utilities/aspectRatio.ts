@@ -1,7 +1,9 @@
 // Tailwind aspect-ratio utility parser
 // https://tailwindcss.com/docs/aspect-ratio
 
-export function parseAspectRatio(token: string): any | null {
+import type { CssmaContext } from '../../types';
+
+export function parseAspectRatio(token: string, context?: CssmaContext): any | null {
   if (token === 'aspect-square') return { type: 'aspect-ratio', preset: 'square', value: '1/1', raw: token, arbitrary: false };
   if (token === 'aspect-video') return { type: 'aspect-ratio', preset: 'video', value: '16/9', raw: token, arbitrary: false };
   if (token === 'aspect-auto') return { type: 'aspect-ratio', preset: 'auto', value: 'auto', raw: token, arbitrary: false };

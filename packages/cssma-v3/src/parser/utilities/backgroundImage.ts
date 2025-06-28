@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind background-image utility parser (full v4.1 spec)
 // https://tailwindcss.com/docs/background-image
 
@@ -5,7 +6,7 @@ const directions = [
   't', 'tr', 'r', 'br', 'b', 'bl', 'l', 'tl'
 ];
 
-export function parseBackgroundImage(token: string): any | null {
+export function parseBackgroundImage(token: string, context?: CssmaContext): any | null {
   // bg-none
   if (token === 'bg-none') {
     return { type: 'background-image', preset: 'none', raw: token, arbitrary: false };

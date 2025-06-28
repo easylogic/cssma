@@ -1,6 +1,7 @@
 // Tailwind stroke utility parser
 // https://tailwindcss.com/docs/stroke
 import { extractArbitraryValue, isColorValue } from '../utils';
+import type { CssmaContext } from '../../types';
 
 const presets = [
   'none',
@@ -16,7 +17,7 @@ function isCustomProperty(val: string): boolean {
   return val.startsWith('--') && /^[a-zA-Z0-9-_]+$/.test(val.slice(2));
 }
 
-export function parseStroke(token: string): any | null {
+export function parseStroke(token: string, context?: CssmaContext): any | null {
   if (token.startsWith('stroke-')) {
     const value = token.slice(7);
     // Preset

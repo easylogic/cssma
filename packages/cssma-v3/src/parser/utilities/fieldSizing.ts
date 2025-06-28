@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind field-sizing utility parser
 // https://tailwindcss.com/docs/field-sizing
 
-export function parseFieldSizing(token: string): any | null {
+export function parseFieldSizing(token: string, context?: CssmaContext): any | null {
   if (token === 'field-sizing-fixed') {
     return { type: 'field-sizing', value: 'fixed', raw: token, preset: 'fixed' };
   }

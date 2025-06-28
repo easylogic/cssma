@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind text-decoration-line utility parser
 // https://tailwindcss.com/docs/text-decoration-line
 
@@ -8,7 +9,7 @@ const presets = [
   'no-underline',
 ];
 
-export function parseTextDecorationLine(token: string) {
+export function parseTextDecorationLine(token: string, context?: CssmaContext): any | null {
   if (presets.includes(token)) {
     let preset = token;
     if (token === 'no-underline') preset = 'none';

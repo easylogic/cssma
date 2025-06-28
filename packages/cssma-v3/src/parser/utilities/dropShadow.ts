@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind drop-shadow utility parser
 // https://tailwindcss.com/docs/filter-drop-shadow
 
@@ -7,7 +8,7 @@ const customVarRe = /^drop-shadow-\((--[\w-]+)\)$/;
 const colorVarRe = /^drop-shadow-\(color:(--[\w-]+)\)$/;
 const colorPresetRe = /^drop-shadow-(inherit|current|transparent|black|white|[a-z]+-\d{2,3}(?:\/\d{1,3})?)$/;
 
-export function parseDropShadow(token: string): any | null {
+export function parseDropShadow(token: string, context?: CssmaContext): any | null {
   let m;
   if ((m = presetRe.exec(token))) {
     return { type: 'drop-shadow', preset: m[1], raw: token, arbitrary: false };

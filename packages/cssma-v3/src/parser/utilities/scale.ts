@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind scale utility parser
 // https://tailwindcss.com/docs/scale
 
@@ -20,7 +21,7 @@ const scaleZArbitraryRe = /^scale-z-\[(.+)\]$/;
 
 const scale3dRe = /^scale-3d$/;
 
-export function parseScale(token: string): any | null {
+export function parseScale(token: string, context?: CssmaContext): any | null {
   if (scaleNoneRe.test(token)) {
     return { type: 'scale', value: 'none', raw: token, preset: 'none', arbitrary: false };
   }
@@ -125,7 +126,7 @@ export function parseScale(token: string): any | null {
   if ((m = scaleZCustomPropRe.exec(token))) {
     return {
       type: 'scale-z',
-      value: `var(--tw-scale-x) var(--tw-scale-y) var(${m[1]})`,
+      value: `var(--tw-scale-x) var(--tw-scale-y) var(--tw-scale-z)`,
       raw: token,
       customProperty: true,
       arbitrary: false,
@@ -134,10 +135,10 @@ export function parseScale(token: string): any | null {
   if ((m = scaleZArbitraryRe.exec(token))) {
     return {
       type: 'scale-z',
-      value: `var(--tw-scale-x) var(--tw-scale-y) ${m[1]}`,
+      value: m[1],
       raw: token,
       arbitrary: true,
     };
   }
   return null;
-} 
+}

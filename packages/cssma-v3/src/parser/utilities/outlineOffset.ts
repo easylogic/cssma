@@ -2,8 +2,9 @@
 // https://tailwindcss.com/docs/outline-offset
 
 import { extractArbitraryValue, isLengthValue } from '../utils';
+import type { CssmaContext } from '../../types';
 
-export function parseOutlineOffset(token: string): any | null {
+export function parseOutlineOffset(token: string, context?: CssmaContext): any | null {
   // outline-offset-<number> (e.g., outline-offset-2 => 2px)
   const m = token.match(/^(-?)outline-offset-(\d+)$/);
   if (m) {

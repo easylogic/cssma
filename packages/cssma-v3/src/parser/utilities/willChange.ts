@@ -2,6 +2,7 @@
 // https://tailwindcss.com/docs/will-change
 
 import { extractArbitraryValue } from '../utils';
+import type { CssmaContext } from '../../types';
 
 const presets = [
   'auto',
@@ -10,7 +11,7 @@ const presets = [
   'transform',
 ];
 
-export function parseWillChange(token: string): any | null {
+export function parseWillChange(token: string, context?: CssmaContext): any | null {
   if (token.startsWith('will-change-')) {
     const value = token.slice(12);
     // Preset

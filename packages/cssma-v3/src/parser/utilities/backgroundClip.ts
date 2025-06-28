@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind background-clip utility parser
 // https://tailwindcss.com/docs/background-clip
 
-export function parseBackgroundClip(token: string): any | null {
+export function parseBackgroundClip(token: string, context?: CssmaContext): any | null {
   if (token === 'bg-clip-border') {
     return { type: 'background-clip', preset: 'border', raw: token, arbitrary: false };
   }

@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind mask-size utility parser
 // https://tailwindcss.com/docs/mask-size
 
@@ -10,7 +11,7 @@ const presetMap: Record<string, string> = {
 const arbitraryRe = /^mask-size-\[(.+)\]$/;
 const customVarRe = /^mask-size-\((--[\w-]+)\)$/;
 
-export function parseMaskSize(token: string): any | null {
+export function parseMaskSize(token: string, context?: CssmaContext): any | null {
   if (token in presetMap) {
     return { type: 'mask-size', value: presetMap[token], raw: token, arbitrary: false };
   }

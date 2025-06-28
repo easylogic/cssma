@@ -1,7 +1,8 @@
+import type { CssmaContext } from '../../types';
 // Tailwind place-self utility parser
 // https://tailwindcss.com/docs/place-self
 
-export function parsePlaceSelf(token: string): any | null {
+export function parsePlaceSelf(token: string, context?: CssmaContext): any | null {
   if (token === 'place-self-auto') return { type: 'place-self', preset: 'auto', raw: token, arbitrary: false };
   if (token === 'place-self-start') return { type: 'place-self', preset: 'start', raw: token, arbitrary: false };
   if (token === 'place-self-end') return { type: 'place-self', preset: 'end', raw: token, arbitrary: false };

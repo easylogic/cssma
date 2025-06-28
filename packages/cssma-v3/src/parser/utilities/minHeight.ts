@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind v4.1 min-height utility parser
 // https://tailwindcss.com/docs/min-height
 
@@ -11,7 +12,7 @@ const PRESETS: Record<string, string> = {
   'fit': 'fit-content',
 };
 
-export function parseMinHeight(token: string) {
+export function parseMinHeight(token: string, context?: CssmaContext) {
   const match = /^min-h-(.+)$/.exec(token);
   if (!match) return null;
   const value = match[1];

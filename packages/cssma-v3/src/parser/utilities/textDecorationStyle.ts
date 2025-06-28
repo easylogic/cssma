@@ -1,6 +1,8 @@
 // Tailwind text-decoration-style utility parser
 // https://tailwindcss.com/docs/text-decoration-style
 
+import type { CssmaContext } from '../../types';
+
 const presets = [
   'solid',
   'double',
@@ -9,7 +11,7 @@ const presets = [
   'wavy',
 ];
 
-export function parseTextDecorationStyle(token: string): any | null {
+export function parseTextDecorationStyle(token: string, context?: CssmaContext): any | null {
   for (const preset of presets) {
     if (token === `decoration-${preset}`) {
       return { type: 'text-decoration-style', preset, raw: token, arbitrary: false };

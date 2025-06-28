@@ -1,3 +1,4 @@
+import type { CssmaContext } from '../../types';
 // Tailwind outline-style utility parser
 // https://tailwindcss.com/docs/outline-style
 
@@ -5,7 +6,7 @@ const stylePresets = [
   'solid', 'dashed', 'dotted', 'double', 'none', 'hidden'
 ];
 
-export function parseOutlineStyle(token: string): any | null {
+export function parseOutlineStyle(token: string, context?: CssmaContext): any | null {
   for (const preset of stylePresets) {
     if (token === `outline-${preset}`) {
       // outline-hidden is a special case: outline: 2px solid transparent; outline-offset: 2px;
