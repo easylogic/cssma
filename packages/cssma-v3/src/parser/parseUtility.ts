@@ -22,7 +22,7 @@ import { parseTextOverflow } from './utilities/textOverflow';
 import { parseTextWrap } from './utilities/textWrap';
 import { parseTextIndent } from './utilities/textIndent';
 import { parseVerticalAlign } from './utilities/verticalAlign';
-import { parseWhiteSpace } from './utilities/whiteSpace';
+import { parseWhitespace } from './utilities/whiteSpace';
 import { parseWordBreak } from './utilities/wordBreak';
 import { parseOverflowWrap } from './utilities/overflowWrap';
 import { parseHyphens } from './utilities/hyphens';
@@ -286,7 +286,7 @@ const utilityParsers = [
   parseTextWrap,
   parseTextIndent,
   parseVerticalAlign,
-  parseWhiteSpace,
+  parseWhitespace,
   parseWordBreak,
   parseOverflowWrap,
   parseHyphens,

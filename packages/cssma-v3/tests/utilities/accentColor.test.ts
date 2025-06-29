@@ -1,48 +1,94 @@
+import { CssmaContext } from './../../src/theme-types';
 import { describe, it, expect } from 'vitest';
 import { parseAccentColor } from '../../src/parser/utilities/accentColor';
+import { theme as themeGetter } from '../../src/config/theme-getter';
+import { createContext } from '../../src/config/context';
+import { defaultConfig } from '../../src/config/defaults';
 
-describe('parseAccentColor', () => {
-  it('parses accent-inherit', () => {
-    expect(parseAccentColor('accent-inherit')).toEqual({ type: 'accent-color', value: 'inherit', raw: 'accent-inherit', preset: 'inherit' });
+// Mock context
+const mockThemeObj = {
+  colors: {
+    red: { 500: "#f00" },
+    blue: { 200: "#00f" },
+    rose: { 500: "#ff007f" },
+    black: "#000",
+    white: "#fff",
+    transparent: "transparent",
+    inherit: "inherit",
+    current: "currentColor"
+  }
+};
+const mockContext: CssmaContext = { 
+  theme: (...args: any[]) => themeGetter(mockThemeObj, ...args),
+  config: () => {},
+  plugins: []
+};
+const defaultCtx = createContext(defaultConfig);
+
+describe('parseAccentColor (mock context)', () => {
+  it('parses special accent color keywords', () => {
+    expect(parseAccentColor('accent-inherit', mockContext)).toEqual({
+      type: 'accent-color', value: 'inherit', raw: 'accent-inherit', arbitrary: false, customProperty: false, preset: 'colors.inherit'
+    });
+    expect(parseAccentColor('accent-current', mockContext)).toEqual({
+      type: 'accent-color', value: 'current', raw: 'accent-current', arbitrary: false, customProperty: false, preset: 'colors.current'
+    });
+    expect(parseAccentColor('accent-transparent', mockContext)).toEqual({
+      type: 'accent-color', value: 'transparent', raw: 'accent-transparent', arbitrary: false, customProperty: false, preset: 'colors.transparent'
+    });
+    expect(parseAccentColor('accent-black', mockContext)).toEqual({
+      type: 'accent-color', value: 'black', raw: 'accent-black', arbitrary: false, customProperty: false, preset: 'colors.black'
+    });
+    expect(parseAccentColor('accent-white', mockContext)).toEqual({
+      type: 'accent-color', value: 'white', raw: 'accent-white', arbitrary: false, customProperty: false, preset: 'colors.white'
+    });
   });
-  it('parses accent-current', () => {
-    expect(parseAccentColor('accent-current')).toEqual({ type: 'accent-color', value: 'currentColor', raw: 'accent-current', preset: 'current' });
+  it('parses palette accent color', () => {
+    expect(parseAccentColor('accent-red-500', mockContext)).toEqual({
+      type: 'accent-color', value: 'red-500', raw: 'accent-red-500', arbitrary: false, customProperty: false, preset: 'colors.red.500'
+    });
+    expect(parseAccentColor('accent-blue-200', mockContext)).toEqual({
+      type: 'accent-color', value: 'blue-200', raw: 'accent-blue-200', arbitrary: false, customProperty: false, preset: 'colors.blue.200'
+    });
+    expect(parseAccentColor('accent-rose-500/75', mockContext)).toEqual({
+      type: 'accent-color', value: 'rose-500', raw: 'accent-rose-500/75', arbitrary: false, customProperty: false, preset: 'colors.rose.500', opacity: 75
+    });
   });
-  it('parses accent-transparent', () => {
-    expect(parseAccentColor('accent-transparent')).toEqual({ type: 'accent-color', value: 'transparent', raw: 'accent-transparent', preset: 'transparent' });
+  it('parses custom property', () => {
+    expect(parseAccentColor('accent-(--my-accent-color)', mockContext)).toEqual({
+      type: 'accent-color', value: '--my-accent-color', raw: 'accent-(--my-accent-color)', arbitrary: true, customProperty: true
+    });
+    expect(parseAccentColor('accent-(--my-accent-color)/25', mockContext)).toBeNull();
   });
-  it('parses accent-black and accent-white', () => {
-    expect(parseAccentColor('accent-black')).toEqual({ type: 'accent-color', value: 'var(--color-black)', raw: 'accent-black', preset: 'black' });
-    expect(parseAccentColor('accent-white')).toEqual({ type: 'accent-color', value: 'var(--color-white)', raw: 'accent-white', preset: 'white' });
-  });
-  it('parses accent-{color}-{shade}', () => {
-    expect(parseAccentColor('accent-red-500')).toEqual({ type: 'accent-color', value: 'var(--color-red-500)', raw: 'accent-red-500', color: 'red', shade: '500' });
-    expect(parseAccentColor('accent-blue-200')).toEqual({ type: 'accent-color', value: 'var(--color-blue-200)', raw: 'accent-blue-200', color: 'blue', shade: '200' });
-  });
-  it('parses accent-{color}-{shade}/opacity', () => {
-    expect(parseAccentColor('accent-rose-500/75')).toEqual({ type: 'accent-color', value: 'var(--color-rose-500)', raw: 'accent-rose-500/75', color: 'rose', shade: '500', opacity: 75 });
-  });
-  it('parses accent-(<custom-property>)', () => {
-    expect(parseAccentColor('accent-(--my-accent-color)')).toEqual({ type: 'accent-color', value: 'var(--my-accent-color)', raw: 'accent-(--my-accent-color)', customProperty: true });
-  });
-  it('parses accent-(<custom-property>)/opacity', () => {
-    expect(parseAccentColor('accent-(--my-accent-color)/25')).toEqual({ type: 'accent-color', value: 'var(--my-accent-color)', raw: 'accent-(--my-accent-color)/25', customProperty: true, opacity: 25 });
-  });
-  it('parses accent-[<value>]', () => {
-    expect(parseAccentColor('accent-[#50d71e]')).toEqual({ type: 'accent-color', value: '#50d71e', raw: 'accent-[#50d71e]', arbitrary: true });
-  });
-  it('parses accent-[<value>]/opacity', () => {
-    expect(parseAccentColor('accent-[#50d71e]/80')).toEqual({ type: 'accent-color', value: '#50d71e', raw: 'accent-[#50d71e]/80', arbitrary: true, opacity: 80 });
+  it('parses arbitrary value', () => {
+    expect(parseAccentColor('accent-[#50d71e]', mockContext)).toEqual({
+      type: 'accent-color', value: '#50d71e', raw: 'accent-[#50d71e]', arbitrary: true, customProperty: false
+    });
+    expect(parseAccentColor('accent-[#50d71e]/80', mockContext)).toEqual({
+      type: 'accent-color', value: '#50d71e', raw: 'accent-[#50d71e]/80', arbitrary: true, customProperty: false, opacity: 80
+    });
   });
   it('returns null for invalid input', () => {
-    expect(parseAccentColor('accent-')).toBeNull();
-    expect(parseAccentColor('accent-foo')).toBeNull();
-    expect(parseAccentColor('accent-red')).toBeNull();
-    expect(parseAccentColor('accent-red-')).toBeNull();
-    expect(parseAccentColor('accent-red-500/')).toBeNull();
-    expect(parseAccentColor('accent-()')).toBeNull();
-    expect(parseAccentColor('accent-[]')).toBeNull();
-    expect(parseAccentColor('accent-(foo)')).toBeNull();
-    expect(parseAccentColor('accent-[foo]')).toBeNull();
+    expect(parseAccentColor('accent-', mockContext)).toBeNull();
+    expect(parseAccentColor('accent-foo', mockContext)).toBeNull();
+    expect(parseAccentColor('accent-red', mockContext)).toBeNull();
+    expect(parseAccentColor('accent-red-', mockContext)).toBeNull();
+    expect(parseAccentColor('accent-red-500/', mockContext)).toBeNull();
+    expect(parseAccentColor('accent-()', mockContext)).toBeNull();
+    expect(parseAccentColor('accent-[]', mockContext)).toBeNull();
+    expect(parseAccentColor('accent-(foo)', mockContext)).toBeNull();
+    expect(parseAccentColor('accent-[foo]', mockContext)).toBeNull();
+  });
+});
+
+describe('parseAccentColor (defaultConfig context)', () => {
+  it('parses Tailwind palette color', () => {
+    expect(parseAccentColor('accent-red-500', defaultCtx)).toEqual({
+      type: 'accent-color', value: 'red-500', raw: 'accent-red-500', arbitrary: false, customProperty: false, preset: 'colors.red.500'
+    });
+  });
+  it('returns null for invalid value', () => {
+    expect(parseAccentColor('accent-foo', defaultCtx)).toBeNull();
+    expect(parseAccentColor('accent-red-999', defaultCtx)).toBeNull();
   });
 }); 

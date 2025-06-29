@@ -1,28 +1,31 @@
+import { isColorValue } from '../utils';
+import { parseContextColorUtility } from '../utils/colorParser';
+import { parseCustomPropertyUtility } from '../utils/customPropertyParser';
 import type { CssmaContext } from '../../types';
 // Tailwind background-color utility parser
 // https://tailwindcss.com/docs/background-color
 
 export function parseBackgroundColor(token: string, context?: CssmaContext): any | null {
-  // bg-[<arbitrary-value>]
-  const arbitrary = token.match(/^bg-\[(.+)]$/);
-  if (arbitrary) {
-    return { type: 'background-color', preset: arbitrary[1], raw: token, arbitrary: true };
-  }
-  // bg-(--custom)
-  const customProp = token.match(/^bg-\((--[a-zA-Z0-9-_]+)\)$/);
-  if (customProp) {
-    return { type: 'background-color', preset: customProp[1], raw: token, arbitrary: true };
-  }
-  // bg-{color} or bg-{color}/{opacity}
-  const color = token.match(/^bg-([a-zA-Z0-9-]+)(?:\/(\d{1,3}))?$/);
-  if (color) {
+  // 1. context-based palette lookup (with opacity)
+  const result = parseContextColorUtility({ token, prefix: 'bg', type: 'background-color', context, allowOpacity: true });
+  if (result) return result;
+
+  // 2. bg-(--my-color) (custom property)
+  const customProp = parseCustomPropertyUtility({ token, prefix: 'bg', type: 'background-color' });
+  if (customProp) return customProp;
+
+  // 3. bg-[arbitrary](/opacity)
+  const arbVal = token.match(/^bg-\[(.+)\](?:\/(\d{1,3}))?$/);
+  if (arbVal && isColorValue(arbVal[1])) {
     return {
       type: 'background-color',
-      preset: color[1],
-      opacity: color[2] ? Number(color[2]) : undefined,
+      value: arbVal[1],
       raw: token,
-      arbitrary: false,
+      arbitrary: true,
+      customProperty: false,
+      ...(arbVal[2] ? { opacity: parseInt(arbVal[2], 10) } : {})
     };
   }
+
   return null;
 } 

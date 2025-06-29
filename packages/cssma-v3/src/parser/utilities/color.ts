@@ -3,38 +3,17 @@
 
 import type { CssmaContext, ParsedUtility } from '../../types';
 import { extractArbitraryValue, isColorValue } from '../utils';
+import { parseContextColorUtility } from '../utils/colorParser';
+import { parseCustomPropertyUtility } from '../utils/customPropertyParser';
 
 export function parseTextColor(token: string, context?: CssmaContext): ParsedUtility | null {
-  // 1. text-<color> 또는 text-<color-shade> 패턴 추출 (context 기반 preset)
-  const match = token.match(/^text-([a-zA-Z0-9_.-]+)$/);
-  if (match && context?.theme) {
-    const colorKey = match[1].replace(/-/g, '.'); // "red-500" → "red.500"
-    const themePath = `colors.${colorKey}`;
-    const themeValue = context.theme(themePath);
-    // console.log("[parseTextColor]", { themePath, themeValue, typeofThemeValue: typeof themeValue });
-    if (typeof themeValue === 'string') {
-      return {
-        type: 'color',
-        value: match[1],
-        raw: token,
-        arbitrary: false,
-        customProperty: false,
-        preset: themePath
-      };
-    }
-  }
+  // 1. context 기반 preset lookup (opacity 지원 없음)
+  const result = parseContextColorUtility({ token, prefix: 'text', type: 'color', context });
+  if (result) return result;
 
-  // 2. custom property 패턴: text-(--my-color)만 지원
-  const customProp = token.match(/^text-\((--[a-zA-Z0-9-_]+)\)$/);
-  if (customProp) {
-    return {
-      type: 'color',
-      value: customProp[1],
-      raw: token,
-      arbitrary: true,
-      customProperty: true
-    };
-  }
+  // 2. custom property 패턴: text-(--my-color)
+  const customProp = parseCustomPropertyUtility({ token, prefix: 'text', type: 'color' });
+  if (customProp) return customProp;
 
   // 3. text-[value] (arbitrary value, utils 사용)
   const arbitrary = extractArbitraryValue(token, 'text');

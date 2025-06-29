@@ -1,87 +1,66 @@
 // Tailwind border-color utility parser
 // https://tailwindcss.com/docs/border-color
 
-import { extractArbitraryValue, isColorValue } from '../utils';
+import { isColorValue } from '../utils';
+import { parseContextColorUtility } from '../utils/colorParser';
+import { parseCustomPropertyUtility } from '../utils/customPropertyParser';
 import type { CssmaContext } from '../../types';
 
-const presets = [
-  'inherit', 'current', 'transparent', 'black', 'white',
-  // 주요 색상 프리셋 (대표적으로 red, blue, green 등)
-  'slate', 'gray', 'zinc', 'neutral', 'stone', 'red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose', 'lime', 'amber', 'emerald', 'teal', 'cyan', 'sky', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose', 'neutral', 'stone', 'regal-blue'
-];
-
+// borderColor parser: context-based, supports side, opacity, custom property, arbitrary value
 export function parseBorderColor(token: string, context?: CssmaContext): any | null {
-  // border-inherit, border-current, border-transparent, border-black, border-white
-  if (token === 'border-inherit') return { type: 'border-color', side: 'all', preset: 'inherit', raw: token, arbitrary: false };
-  if (token === 'border-current') return { type: 'border-color', side: 'all', preset: 'current', raw: token, arbitrary: false };
-  if (token === 'border-transparent') return { type: 'border-color', side: 'all', preset: 'transparent', raw: token, arbitrary: false };
-  if (token === 'border-black') return { type: 'border-color', side: 'all', preset: 'black', raw: token, arbitrary: false };
-  if (token === 'border-white') return { type: 'border-color', side: 'all', preset: 'white', raw: token, arbitrary: false };
-
-  // border-{color}-{shade}(/opacity)
-  const palette = token.match(/^border-([a-z-]+)-(\d{2,3})(?:\/(\d{1,3}))?$/);
-  if (palette && presets.includes(palette[1])) {
-    return {
-      type: 'border-color',
-      side: 'all',
-      preset: `${palette[1]}-${palette[2]}` + (palette[3] ? `/${palette[3]}` : ''),
-      raw: token,
-      arbitrary: false
-    };
-  }
-
-  // border-x-{color}-{shade}(/opacity)
-  const xPalette = token.match(/^border-x-([a-z-]+)-(\d{2,3})(?:\/(\d{1,3}))?$/);
-  if (xPalette && presets.includes(xPalette[1])) {
-    return {
-      type: 'border-color',
-      side: 'x',
-      preset: `${xPalette[1]}-${xPalette[2]}` + (xPalette[3] ? `/${xPalette[3]}` : ''),
-      raw: token,
-      arbitrary: false
-    };
-  }
-
-  // border-t-{color}-{shade}(/opacity) 등
-  const sidePalette = token.match(/^border-([trblse])-([a-z-]+)-(\d{2,3})(?:\/(\d{1,3}))?$/);
-  if (sidePalette && presets.includes(sidePalette[2])) {
-    return {
-      type: 'border-color',
-      side: sidePalette[1],
-      preset: `${sidePalette[2]}-${sidePalette[3]}` + (sidePalette[4] ? `/${sidePalette[4]}` : ''),
-      raw: token,
-      arbitrary: false
-    };
-  }
-
-  // border-[#243c5a] (arbitrary value, 컬러 패턴만 허용)
-  const arbVal = extractArbitraryValue(token, 'border');
-  if (arbVal && isColorValue(arbVal)) {
-    return { type: 'border-color', side: 'all', value: arbVal, raw: token, arbitrary: true };
-  }
-  // border-(--my-border) (custom property)
-  const custom = token.match(/^border-\((--[a-zA-Z0-9-_]+)\)$/);
-  if (custom) return { type: 'border-color', side: 'all', value: `var(${custom[1]})`, raw: token, arbitrary: true };
-
-  // border-x-[#243c5a], border-x-(--my-border)
-  const xArbVal = extractArbitraryValue(token, 'border-x');
-  if (xArbVal && isColorValue(xArbVal)) {
-    return { type: 'border-color', side: 'x', value: xArbVal, raw: token, arbitrary: true };
-  }
-  const xCustom = token.match(/^border-x-\((--[a-zA-Z0-9-_]+)\)$/);
-  if (xCustom) return { type: 'border-color', side: 'x', value: `var(${xCustom[1]})`, raw: token, arbitrary: true };
-
-  // border-t-[#243c5a], border-t-(--my-border) 등
-  const sideArbVal = token.match(/^border-([trblse])-\[(.+)\]$/);
-  if (sideArbVal) {
-    const v = sideArbVal[2].trim();
-    if (isColorValue(v)) {
-      return { type: 'border-color', side: sideArbVal[1], value: v, raw: token, arbitrary: true };
+  // 1. side prefix 분리 (border-x-blue-200, border-t-red-500 등)
+  const sideMatch = token.match(/^border-([trblse]|x)-(.*)$/);
+  if (sideMatch) {
+    const side = sideMatch[1];
+    const rest = sideMatch[2];
+    // 나머지 토큰에 대해 context-based palette lookup (with opacity)
+    const result = parseContextColorUtility({ token: `border-${rest}`, prefix: 'border', type: 'border-color', context, allowOpacity: true });
+    if (result) {
+      return { ...result, side, raw: token };
+    }
+    // custom property, arbitrary 등은 기존 로직 활용
+    // border-x-(--my-color) 및 border-x-(--my-color)/opacity
+    const customProp = parseCustomPropertyUtility({ token: `border-${rest}`, prefix: 'border', type: 'border-color' });
+    if (customProp) {
+      return { ...customProp, side, raw: token };
+    }
+    // border-x-[arbitrary](/opacity)
+    const arbVal = rest.match(/^\[(.+)\](?:\/(\d{1,3}))?$/);
+    if (arbVal && isColorValue(arbVal[1])) {
+      return {
+        type: 'border-color',
+        side,
+        value: arbVal[1],
+        raw: token,
+        arbitrary: true,
+        customProperty: false,
+        ...(arbVal[2] ? { opacity: parseInt(arbVal[2], 10) } : {})
+      };
     }
     return null;
   }
-  const sideCustom = token.match(/^border-([trblse])-\((--[a-zA-Z0-9-_]+)\)$/);
-  if (sideCustom) return { type: 'border-color', side: sideCustom[1], value: `var(${sideCustom[2]})`, raw: token, arbitrary: true };
+
+  // 2. context-based palette lookup (with opacity) (side 없는 경우)
+  const result = parseContextColorUtility({ token, prefix: 'border', type: 'border-color', context, allowOpacity: true });
+  if (result) return { ...result, side: 'all' };
+
+  // 3. border-(--my-color) (custom property)
+  const customProp = parseCustomPropertyUtility({ token, prefix: 'border', type: 'border-color' });
+  if (customProp) return { ...customProp, side: 'all' };
+
+  // 4. border-[arbitrary](/opacity)
+  const arbVal = token.match(/^border-\[(.+)\](?:\/(\d{1,3}))?$/);
+  if (arbVal && isColorValue(arbVal[1])) {
+    return {
+      type: 'border-color',
+      side: 'all',
+      value: arbVal[1],
+      raw: token,
+      arbitrary: true,
+      customProperty: false,
+      ...(arbVal[2] ? { opacity: parseInt(arbVal[2], 10) } : {})
+    };
+  }
 
   return null;
 } 

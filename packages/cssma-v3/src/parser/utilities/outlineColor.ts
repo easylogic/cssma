@@ -1,43 +1,51 @@
 // Tailwind outline-color utility parser
 // https://tailwindcss.com/docs/outline-color
 
-import { extractArbitraryValue, isColorValue } from '../utils';
+import { isColorValue } from '../utils';
+import { parseContextColorUtility } from '../utils/colorParser';
+import { parseCustomPropertyUtility } from '../utils/customPropertyParser';
 import type { CssmaContext } from '../../types';
 
-const presets = [
-  'inherit', 'current', 'transparent', 'black', 'white',
-  'slate', 'gray', 'zinc', 'neutral', 'stone', 'red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose',
-  // custom theme color example
-  'regal-blue'
-];
-
+// outlineColor parser: context-based, supports opacity, custom property, arbitrary value
 export function parseOutlineColor(token: string, context?: CssmaContext): any | null {
-  // outline-inherit, outline-current, outline-transparent, outline-black, outline-white
-  if (token === 'outline-inherit') return { type: 'outline-color', preset: 'inherit', raw: token, arbitrary: false };
-  if (token === 'outline-current') return { type: 'outline-color', preset: 'current', raw: token, arbitrary: false };
-  if (token === 'outline-transparent') return { type: 'outline-color', preset: 'transparent', raw: token, arbitrary: false };
-  if (token === 'outline-black') return { type: 'outline-color', preset: 'black', raw: token, arbitrary: false };
-  if (token === 'outline-white') return { type: 'outline-color', preset: 'white', raw: token, arbitrary: false };
+  // 1. context-based palette lookup (with opacity)
+  const result = parseContextColorUtility({ token, prefix: 'outline', type: 'outline-color', context, allowOpacity: true });
+  if (result) return result;
 
-  // outline-{color}-{shade}(/opacity)
-  const palette = token.match(/^outline-([a-z-]+)-(\d{2,3})(?:\/(\d{1,3}))?$/);
-  if (palette && presets.includes(palette[1])) {
+  // 2. outline-(--my-color) (custom property)
+  const customProp = parseCustomPropertyUtility({ token, prefix: 'outline', type: 'outline-color' });
+  if (customProp) return customProp;
+
+  // 3. outline-[arbitrary](/opacity)
+  const arbVal = token.match(/^outline-\[(.+)\](?:\/(\d{1,3}))?$/);
+  if (arbVal && isColorValue(arbVal[1])) {
     return {
       type: 'outline-color',
-      preset: `${palette[1]}-${palette[2]}` + (palette[3] ? `/${palette[3]}` : ''),
+      value: arbVal[1],
       raw: token,
-      arbitrary: false
+      arbitrary: true,
+      customProperty: false,
+      ...(arbVal[2] ? { opacity: parseInt(arbVal[2], 10) } : {})
     };
   }
 
-  // outline-(--my-color) (custom property)
-  const custom = token.match(/^outline-\((--[a-zA-Z0-9-_]+)\)$/);
-  if (custom) return { type: 'outline-color', value: `var(${custom[1]})`, raw: token, arbitrary: true };
-
-  // outline-[#243c5a] (arbitrary value)
-  const arbVal = extractArbitraryValue(token, 'outline');
-  if (arbVal && isColorValue(arbVal)) {
-    return { type: 'outline-color', value: arbVal, raw: token, arbitrary: true };
+  // 4. outline-inherit, outline-current, outline-transparent, outline-black, outline-white
+  if (context?.theme) {
+    const special = token.match(/^outline-(inherit|current|transparent|black|white)$/);
+    if (special) {
+      const themePath = `colors.${special[1]}`;
+      const themeValue = context.theme(themePath);
+      if (typeof themeValue === 'string') {
+        return {
+          type: 'outline-color',
+          value: special[1],
+          raw: token,
+          arbitrary: false,
+          customProperty: false,
+          preset: themePath
+        };
+      }
+    }
   }
 
   return null;
