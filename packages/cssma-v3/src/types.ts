@@ -389,20 +389,5 @@ export interface ParsedClass {
   utility: ParsedUtility | null;
 }
 
-/**
- * CssmaContext: 파서/제너레이터/플러그인 등 cssma 엔진 전체에서 사용하는 통합 환경(context) 객체
- *
- * - config: Tailwind/CSSMA 설정(Config, ParserConfig 등)
- * - theme: 색상, spacing, breakpoints 등 테마 정보
- * - presets: 외부 프리셋/플러그인 등 (선택)
- * - 기타 확장 필드 추가 가능
- */
-export interface CssmaContext {
-  config: Config | ParserConfig;
-  theme: Record<string, any>;
-  presets?: any[];
-  // 필요시: customResolvers, runtime, etc.
-}
-
 // theme/config 관련 타입은 theme-types.ts에서 관리
 export * from "./theme-types";

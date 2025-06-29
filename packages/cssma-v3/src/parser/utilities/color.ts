@@ -1,41 +1,51 @@
 // Tailwind text color utility parser
 // https://tailwindcss.com/docs/color
 
-const presets = [
-  'inherit', 'current', 'transparent', 'black', 'white',
-  // 주요 색상 프리셋 (대표적으로 red, blue, green 등)
-  // 실제 구현에서는 전체 팔레트가 필요하지만, 예시로 일부만 나열
-  'slate', 'gray', 'zinc', 'neutral', 'stone', 'red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose',
-];
+import type { CssmaContext, ParsedUtility } from '../../types';
+import { extractArbitraryValue, isColorValue } from '../utils';
 
-export function parseTextColor(token: string): any | null {
-  if (token === 'text-inherit') return { type: 'color', preset: 'inherit', raw: token, arbitrary: false };
-  if (token === 'text-current') return { type: 'color', preset: 'current', raw: token, arbitrary: false };
-  if (token === 'text-transparent') return { type: 'color', preset: 'transparent', raw: token, arbitrary: false };
-  if (token === 'text-black') return { type: 'color', preset: 'black', raw: token, arbitrary: false };
-  if (token === 'text-white') return { type: 'color', preset: 'white', raw: token, arbitrary: false };
+export function parseTextColor(token: string, context?: CssmaContext): ParsedUtility | null {
+  // 1. text-<color> 또는 text-<color-shade> 패턴 추출 (context 기반 preset)
+  const match = token.match(/^text-([a-zA-Z0-9_.-]+)$/);
+  if (match && context?.theme) {
+    const colorKey = match[1].replace(/-/g, '.'); // "red-500" → "red.500"
+    const themePath = `colors.${colorKey}`;
+    const themeValue = context.theme(themePath);
+    // console.log("[parseTextColor]", { themePath, themeValue, typeofThemeValue: typeof themeValue });
+    if (typeof themeValue === 'string') {
+      return {
+        type: 'color',
+        value: match[1],
+        raw: token,
+        arbitrary: false,
+        customProperty: false,
+        preset: themePath
+      };
+    }
+  }
 
-  // text-red-500, text-blue-600 등
-  const palette = token.match(/^text-([a-z]+)-(\d{2,3})(?:\/(\d{1,3}))?$/);
-  if (palette && presets.includes(palette[1])) {
+  // 2. custom property 패턴: text-(--my-color)만 지원
+  const customProp = token.match(/^text-\((--[a-zA-Z0-9-_]+)\)$/);
+  if (customProp) {
     return {
       type: 'color',
-      preset: `${palette[1]}-${palette[2]}` + (palette[3] ? `/${palette[3]}` : ''),
+      value: customProp[1],
       raw: token,
-      arbitrary: false
+      arbitrary: true,
+      customProperty: true
     };
   }
 
-  // text-(--my-color) (custom property)
-  const customProp = token.match(/^text-\((--[a-zA-Z0-9-_]+)\)$/);
-  if (customProp) {
-    return { type: 'color', preset: customProp[1], raw: token, arbitrary: true };
-  }
-
-  // text-[value] (arbitrary value)
-  const arbitrary = token.match(/^text-\[(.+)]$/);
-  if (arbitrary) {
-    return { type: 'color', preset: arbitrary[1], raw: token, arbitrary: true };
+  // 3. text-[value] (arbitrary value, utils 사용)
+  const arbitrary = extractArbitraryValue(token, 'text');
+  if (arbitrary && isColorValue(arbitrary)) {
+    return {
+      type: 'color',
+      value: arbitrary,
+      raw: token,
+      arbitrary: true,
+      customProperty: false
+    };
   }
 
   return null;

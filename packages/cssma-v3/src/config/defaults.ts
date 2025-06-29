@@ -148,15 +148,3 @@ export function extendTheme(theme: CssmaTheme, extension: Partial<CssmaTheme>): 
 export function createPreset(name: string, theme: CssmaTheme, options?: Partial<CssmaPreset>): CssmaPreset {
   return { name, theme, ...options };
 }
-
-export function extendPreset(preset: CssmaPreset, extension: Partial<CssmaPreset>): CssmaPreset {
-  return { ...preset, ...extension };
-}
-
-export function createConfig(base: CssmaConfig, override?: Partial<CssmaConfig>): CssmaConfig {
-  return { ...base, ...override };
-}
-
-export function extendConfig(config: CssmaConfig, extension: Partial<CssmaConfig>): CssmaConfig {
-  return { ...config, ...extension };
-} 
