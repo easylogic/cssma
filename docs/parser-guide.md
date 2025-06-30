@@ -24,6 +24,7 @@ This guide summarizes best practices and checklists for implementing and testing
 
 ### 1) Context-based preset lookup (with parseContextColorUtility or parseContextSpacingUtility)
 - Use `parseContextColorUtility` for color utilities and `parseContextSpacingUtility` (or equivalent) for spacing utilities (e.g. margin, padding).
+- For gap/gap-x/gap-y, use `parseContextGapUtility` instead of parseContextSpacingUtility.
 - Pass `{ token, prefix, type, context, allowOpacity }` to the utility:
   - `token`: the full utility class (e.g. 'bg-blue-200/50', 'm-4')
   - `prefix`: the utility prefix (e.g. 'bg', 'm', 'p', ...)
@@ -194,6 +195,7 @@ expect(parseMargin("m-[5px]", context)).toEqual({
 - **Always use string keys for numeric theme values in all test mocks and real themes.**
 - **Always expect the full theme path in the `preset` field for all preset-based utilities.**
 - **Test expectations must always match the parser's actual output, including all fields.**
+- For gap/gap-x/gap-y, always use `parseContextGapUtility` (not parseContextSpacingUtility).
 
 ---
 
@@ -224,11 +226,125 @@ expect(parseMargin("m-[5px]", context)).toEqual({
   - Returns a standardized object with `type`, `value`, `direction`, `raw`, `arbitrary`, `negative`, `preset`.
   - Used as the first step in all spacing utility parsers (margin, padding, etc.).
 
+- **parseContextGapUtility({ token, type, context }):**
+  - Context-based gap preset parser for `gap`, `gap-x`, `gap-y` utilities only.
+  - Handles tokens like `gap-4`, `gap-x-2`, `gap-y-1` (where axis is part of the prefix, not a direction character).
+  - Returns a standardized object with `type`, `value`, `direction` (`all`/`inline`/`block`), `raw`, `arbitrary`, `customProperty`, `preset`.
+  - Example usage:
+    ```ts
+    const result = parseContextGapUtility({ token: 'gap-x-2', type: 'gap', context });
+    // → {
+    //   type: 'gap',
+    //   value: '8',
+    //   direction: 'inline',
+    //   raw: 'gap-x-2',
+    //   arbitrary: false,
+    //   customProperty: false,
+    //   preset: 'spacing.2',
+    // }
+    ```
+  - Use this only for gap/gap-x/gap-y, not for margin/padding.
+  - **Differs from parseContextSpacingUtility:** gap은 prefix 자체가 axis(gap-x, gap-y)로 바뀌므로, direction 추출 및 spacing lookup 방식이 다름.
+
 ### Custom Property Parser Utils (`customPropertyParser.ts`)
 - **parseCustomPropertyUtility({ token, prefix, type }):**
   - Parses custom property utility syntax (e.g. `bg-(--my-color)`, `m-(--my-margin)`).
   - Returns a standardized object with `type`, `value`, `raw`, `arbitrary`, `customProperty`, and optional `opacity`.
   - Used as the fallback for custom property parsing in all utility parsers.
+
+---
+
+## 5.6. Negative Prefix Parsing for Spacing Utilities (margin, scrollMargin 등)
+
+### Overview
+
+Tailwind CSS의 spacing 계열 유틸리티(margin, scrollMargin 등)는 음수 값 지원을 위해 클래스 앞에 negative prefix(`-`)를 붙일 수 있습니다. cssma-v3 파서에서는 negative prefix를 일관성 있게 처리하기 위해 다음과 같은 패턴을 사용합니다.
+
+### Best Practices & Implementation Checklist
+
+1. **Negative Prefix 분리**
+   - 입력 토큰이 `--`로 시작하면 무효(null 반환)로 간주합니다. (negative prefix는 한 번만 허용)
+   - 입력 토큰이 `-`로 시작하면 negative: true로 표시하고, prefix를 한 번만 제거한 새로운 토큰으로 파싱을 진행합니다.
+   - negative prefix가 없는 경우 negative: false로 처리합니다.
+
+2. **파싱 결과에 negative 필드 항상 포함**
+   - 모든 결과 객체에 `negative: true/false` 필드를 항상 포함합니다.
+   - custom property, arbitrary value 등도 negative: false를 명시적으로 포함합니다.
+
+3. **raw 필드는 항상 입력값(negative prefix 포함) 사용**
+   - 결과 객체의 `raw` 필드는 negative prefix가 포함된 원본 입력값을 그대로 사용합니다.
+
+4. **기존 파싱 로직과 utils 적극 활용**
+   - negative prefix 분리 후, 나머지 파싱은 기존 context-based parser(utils)로 진행합니다.
+   - 예: `parseContextSpacingUtility`, `parseContextScrollMarginUtility`, `parseCustomPropertyUtility`, `extractArbitraryValue` 등
+
+5. **테스트 기대값도 negative, raw 필드 포함 구조로 작성**
+   - 모든 테스트에서 negative: true/false, raw: 입력값 그대로를 기대해야 합니다.
+   - custom property, arbitrary value 등도 negative: false를 명시적으로 포함합니다.
+
+### Example Implementation (margin)
+
+```ts
+export function parseMargin(token: string, context?: CssmaContext): any | null {
+  const originalToken = token; // 입력값 보관
+  if (token.startsWith('--')) {
+    return null;
+  }
+  let negative = false;
+  if (token.startsWith('-')) {
+    negative = true;
+    token = token.slice(1);
+  }
+  // 기존 파싱 로직 호출 (예: parseContextSpacingUtility)
+  const result = parseContextSpacingUtility({ token, prefix: 'm', type: 'margin', context });
+  if (result) return { ...result, raw: originalToken, negative };
+  // custom property, arbitrary value 등도 동일하게 raw/negative 필드 포함
+  const custom = parseCustomPropertyUtility({ token: originalToken, prefix: 'm', type: 'margin' });
+  if (custom) return { ...custom, raw: originalToken, negative: false };
+  const arbitrary = extractArbitraryValue(originalToken, 'm-');
+  if (arbitrary) return { type: 'margin', value: arbitrary, raw: originalToken, arbitrary: true, customProperty: false, negative: false };
+  return null;
+}
+```
+
+### Example Test Expectation
+
+```ts
+expect(parseMargin('-m-4', mockContext)).toEqual({
+  type: 'margin',
+  value: '16',
+  raw: '-m-4',
+  arbitrary: false,
+  customProperty: false,
+  negative: true,
+  preset: 'spacing.4'
+});
+expect(parseMargin('m-(--my-margin)', mockContext)).toEqual({
+  type: 'margin',
+  value: 'var(--my-margin)',
+  raw: 'm-(--my-margin)',
+  arbitrary: false,
+  customProperty: true,
+  negative: false
+});
+expect(parseMargin('m-[5px]', mockContext)).toEqual({
+  type: 'margin',
+  value: '5px',
+  raw: 'm-[5px]',
+  arbitrary: true,
+  customProperty: false,
+  negative: false
+});
+expect(parseMargin('--m-4', mockContext)).toBeNull(); // invalid (negative prefix 2회)
+```
+
+### 적용 대상
+- margin, scrollMargin 등 negative prefix를 지원하는 spacing 계열 유틸리티에 적용
+- padding, gap 등 negative prefix를 지원하지 않는 유틸리티에는 적용하지 않음
+
+### 참고
+- Tailwind CSS 공식 문서: [margin](https://tailwindcss.com/docs/margin), [scroll-margin](https://tailwindcss.com/docs/scroll-margin)
+- gap, padding 등은 negative prefix 미지원 (2024-06 기준)
 
 ---
 

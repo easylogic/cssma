@@ -67,4 +67,92 @@ export function parseContextSpacingUtility({
     return result;
   }
   return null;
+}
+
+/**
+ * Context-based gap preset parser (gap, gap-x, gap-y)
+ * @param token - gap-4, gap-x-2, gap-y-1 등 theme.spacing preset만 처리
+ * @param type - 'gap'
+ * @param context - CssmaContext (theme.spacing lookup)
+ */
+export function parseContextGapUtility({
+  token,
+  type,
+  context
+}: {
+  token: string;
+  type: string;
+  context?: CssmaContext;
+}): any | null {
+  const match = token.match(/^gap(?:-([xy]))?-(.+)$/);
+  if (!match) return null;
+  const [, axis, valRaw] = match;
+  const val = valRaw.trim();
+  const direction = axis === 'x' ? 'inline' : axis === 'y' ? 'block' : 'all';
+  const themePath = `spacing.${val}`;
+  const themeValue = context?.theme?.(themePath);
+  if (themeValue !== undefined) {
+    return {
+      type,
+      value: themeValue,
+      direction,
+      raw: token,
+      arbitrary: false,
+      customProperty: false,
+      preset: themePath,
+    };
+  }
+  return null;
+}
+
+/**
+ * Context-based scroll-margin preset parser (scroll-m, scroll-mt, scroll-mx, ...)
+ * @param token - scroll-mt-4, -scroll-mx-2, scroll-m-4 등 theme.spacing preset만 처리
+ * @param type - 'scroll-margin'
+ * @param context - CssmaContext (theme.spacing lookup)
+ */
+export function parseContextScrollMarginUtility({
+  token,
+  type,
+  context
+}: {
+  token: string;
+  type: string;
+  context?: CssmaContext;
+}): any | null {
+  const propMap = {
+    '': 'scroll-margin',
+    'x': 'scroll-margin-inline',
+    'y': 'scroll-margin-block',
+    't': 'scroll-margin-top',
+    'r': 'scroll-margin-right',
+    'b': 'scroll-margin-bottom',
+    'l': 'scroll-margin-left',
+    's': 'scroll-margin-inline-start',
+    'e': 'scroll-margin-inline-end',
+  };
+  // scroll-m-4, -scroll-mt-2, scroll-mx-1, etc.
+  const m = token.match(/^(-?)scroll-m([a-z]*)-(.+)$/);
+  if (!m || !(m[2] in propMap)) return null;
+  const negative = m[1] === '-';
+  const dir = m[2];
+  const val = m[3].trim();
+  const direction = dir || '';
+  const property = propMap[dir];
+  const themePath = `spacing.${val}`;
+  const themeValue = context?.theme?.(themePath);
+  if (themeValue !== undefined) {
+    return {
+      type,
+      property,
+      value: negative ? (typeof themeValue === 'string' && /^-?\d/.test(themeValue) ? '-' + themeValue : `calc(-1 * ${themeValue})`) : themeValue,
+      direction,
+      raw: token,
+      arbitrary: false,
+      customProperty: false,
+      negative,
+      preset: themePath,
+    };
+  }
+  return null;
 } 

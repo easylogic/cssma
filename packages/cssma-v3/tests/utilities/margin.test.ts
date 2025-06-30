@@ -79,6 +79,7 @@ describe('parseMargin (mock context)', () => {
       raw: 'm-(--my-margin)',
       arbitrary: false,
       customProperty: true,
+      negative: false,
     });
   });
   it('parses m-[<value>]', () => {
@@ -89,6 +90,7 @@ describe('parseMargin (mock context)', () => {
       raw: 'm-[5px]',
       arbitrary: true,
       customProperty: false,
+      negative: false,
     });
   });
   it('parses mx-<number>', () => {
@@ -121,6 +123,7 @@ describe('parseMargin (mock context)', () => {
       raw: 'ms-(--pad)',
       arbitrary: false,
       customProperty: true,
+      negative: false,
     });
   });
   it('parses me-[<value>]', () => {
@@ -131,6 +134,7 @@ describe('parseMargin (mock context)', () => {
       raw: 'me-[2em]',
       arbitrary: true,
       customProperty: false,
+      negative: false,
     });
   });
   it('parses mt-<number>', () => {
@@ -163,6 +167,7 @@ describe('parseMargin (mock context)', () => {
       raw: 'mb-(--foo)',
       arbitrary: false,
       customProperty: true,
+      negative: false,
     });
   });
   it('parses ml-[<value>]', () => {
@@ -173,6 +178,7 @@ describe('parseMargin (mock context)', () => {
       raw: 'ml-[1rem]',
       arbitrary: true,
       customProperty: false,
+      negative: false,
     });
   });
   it('returns null for invalid input', () => {
