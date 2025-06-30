@@ -52,21 +52,23 @@ describe('parseMargin (mock context)', () => {
   it('parses m-px', () => {
     expect(parseMargin('m-px', mockContext)).toEqual({
       type: 'margin',
-      preset: 'px',
+      value: '1px',
       direction: 'all',
       raw: 'm-px',
       arbitrary: false,
       negative: false,
+      preset: 'spacing.px',
     });
   });
   it('parses -m-px (negative)', () => {
     expect(parseMargin('-m-px', mockContext)).toEqual({
       type: 'margin',
-      preset: 'px',
+      value: '1px',
       direction: 'all',
       raw: '-m-px',
       arbitrary: false,
       negative: true,
+      preset: 'spacing.px',
     });
   });
   it('parses m-(<custom-property>)', () => {
@@ -76,7 +78,7 @@ describe('parseMargin (mock context)', () => {
       direction: 'all',
       raw: 'm-(--my-margin)',
       arbitrary: false,
-      negative: false,
+      customProperty: true,
     });
   });
   it('parses m-[<value>]', () => {
@@ -86,7 +88,7 @@ describe('parseMargin (mock context)', () => {
       direction: 'all',
       raw: 'm-[5px]',
       arbitrary: true,
-      negative: false,
+      customProperty: false,
     });
   });
   it('parses mx-<number>', () => {
@@ -103,11 +105,12 @@ describe('parseMargin (mock context)', () => {
   it('parses my-px', () => {
     expect(parseMargin('my-px', mockContext)).toEqual({
       type: 'margin',
-      preset: 'px',
+      value: '1px',
       direction: 'block',
       raw: 'my-px',
       arbitrary: false,
       negative: false,
+      preset: 'spacing.px',
     });
   });
   it('parses ms-(<custom-property>)', () => {
@@ -117,7 +120,7 @@ describe('parseMargin (mock context)', () => {
       direction: 'inline-start',
       raw: 'ms-(--pad)',
       arbitrary: false,
-      negative: false,
+      customProperty: true,
     });
   });
   it('parses me-[<value>]', () => {
@@ -127,7 +130,7 @@ describe('parseMargin (mock context)', () => {
       direction: 'inline-end',
       raw: 'me-[2em]',
       arbitrary: true,
-      negative: false,
+      customProperty: false,
     });
   });
   it('parses mt-<number>', () => {
@@ -144,11 +147,12 @@ describe('parseMargin (mock context)', () => {
   it('parses -mr-px (negative)', () => {
     expect(parseMargin('-mr-px', mockContext)).toEqual({
       type: 'margin',
-      preset: 'px',
+      value: '1px',
       direction: 'right',
       raw: '-mr-px',
       arbitrary: false,
       negative: true,
+      preset: 'spacing.px',
     });
   });
   it('parses mb-(<custom-property>)', () => {
@@ -158,7 +162,7 @@ describe('parseMargin (mock context)', () => {
       direction: 'bottom',
       raw: 'mb-(--foo)',
       arbitrary: false,
-      negative: false,
+      customProperty: true,
     });
   });
   it('parses ml-[<value>]', () => {
@@ -168,7 +172,7 @@ describe('parseMargin (mock context)', () => {
       direction: 'left',
       raw: 'ml-[1rem]',
       arbitrary: true,
-      negative: false,
+      customProperty: false,
     });
   });
   it('returns null for invalid input', () => {

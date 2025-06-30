@@ -3,8 +3,10 @@
 
 import type { CssmaContext } from '../../types';
 import { parseContextSpacingUtility } from '../utils/spacingParser';
+import { parseCustomPropertyUtility } from '../utils/customPropertyParser';
+import { extractArbitraryValue, isLengthValue, isVarFunction } from '../utils';
 
-const directions = {
+const directions: { [key: string]: string } = {
   '': 'all',
   'x': 'inline',
   'y': 'block',
@@ -22,25 +24,23 @@ export function parseMargin(token: string, context?: CssmaContext): any | null {
   if (preset) return preset;
 
   // 2. px, custom property, arbitrary value 등
-  const negative = token.startsWith('-');
-  const t = negative ? token.slice(1) : token;
-  const match = t.match(/^m([xysetrbl]?)\-(.+)$/);
-  if (!match) return null;
+  const t = token;
+  const match = t.match(/^m([xysetrbl]?)-(.+)$/);
+  if (!match) {
+    return null;
+  }
   const [, dir, valRaw] = match;
   const val = valRaw.trim();
   const direction = directions[dir] || 'all';
 
-  // px
-  if (val === 'px') return { type: 'margin', preset: 'px', direction, raw: token, arbitrary: false, negative };
-  // custom property (m-(--foo), m--foo)
-  let custom = val.match(/^\(\s*(--[a-zA-Z0-9-_]+)\s*\)$/);
-  if (!custom) custom = val.match(/^(--[a-zA-Z0-9-_]+)$/);
-  if (custom) return { type: 'margin', value: `var(${custom[1]})`, direction, raw: token, arbitrary: false, negative };
+  // custom property (m-(--foo))
+  const customProp = parseCustomPropertyUtility({ token, prefix: `m${dir}`, type: 'margin' });
+  if (customProp) return { ...customProp, direction, arbitrary: false, customProperty: true };
+
   // arbitrary value (m-[10px])
-  const arbitrary = val.match(/^\[(.*)\]$/);
-  if (arbitrary) {
-    if (!arbitrary[1]) return null;
-    return { type: 'margin', value: arbitrary[1], direction, raw: token, arbitrary: true, negative };
+  const arbitraryValue = extractArbitraryValue(token, `m${dir}`);
+  if (arbitraryValue !== null && (isLengthValue(arbitraryValue) || isVarFunction(arbitraryValue))) {
+    return { type: 'margin', value: arbitraryValue, direction, raw: token, arbitrary: true, customProperty: false };
   }
   // spacing preset이 context에 없으면 null 반환 (fallback 제거)
   return null;

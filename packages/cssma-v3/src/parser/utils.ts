@@ -38,6 +38,13 @@ export function isNumberValue(val: string): boolean {
 }
 
 /**
+ * Checks if a value is a valid CSS var() function (e.g. var(--foo))
+ */
+export function isVarFunction(val: string): boolean {
+  return /^var\(--[a-zA-Z0-9-_]+\)$/.test(val);
+}
+
+/**
  * Selector 계열 modifier 타입 가드
  * (pseudo, pseudo-element, group, peer, state, logical, nth, nth-of-type, nth-last-of-type, attribute, aria, data)
  */

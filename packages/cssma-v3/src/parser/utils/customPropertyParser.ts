@@ -23,15 +23,15 @@ export function parseCustomPropertyUtility({
   prefix: string;
   type: string;
 }): CustomPropertyParseResult | null {
-  // e.g. bg-(--my-color)
-  const customProp = token.match(new RegExp(`^${prefix}-\\((--[a-zA-Z0-9-_]+)\\)$`));
+  // e.g. bg-(--my-color) or bg-( --my-color )
+  const customProp = token.match(new RegExp(`^${prefix}-\\(\s*(--[a-zA-Z0-9-_]+)\s*\\)$`));
   if (customProp) {
     return {
       type,
-      value: customProp[1],
+      value: `var(${customProp[1]})`,
       raw: token,
-      arbitrary: true,
-      customProperty: true
+      arbitrary: false,
+      customProperty: false
     };
   }
   return null;

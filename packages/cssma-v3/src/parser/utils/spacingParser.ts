@@ -44,26 +44,27 @@ export function parseContextSpacingUtility({
   const negative = token.startsWith('-');
   const t = negative ? token.slice(1) : token;
   // m-*, mx-*, my-*, ms-*, me-*, mt-*, mr-*, mb-*, ml-* (숫자 preset만)
-  const regex = new RegExp(`^${prefix}([xysetrbl]?)-(\\d+)$`);
+  const regex = new RegExp(`^${prefix}([xysetrbl]?)-([\\w-]+)$`);
   const match = t.match(regex);
-  if (!match) return null;
+  if (!match) {
+    return null;
+  }
   const [, dir, val] = match;
   const direction = directions[dir] || 'all';
   // theme.spacing lookup (context 기반)
-  if (context?.theme) {
-    const themePath = `spacing.${val}`;
-    const themeValue = context.theme(themePath);
-    if (typeof themeValue === 'string' || typeof themeValue === 'number') {
-      return {
-        type,
-        value: themeValue,
-        direction,
-        raw: token,
-        arbitrary: false,
-        negative,
-        preset: themePath
-      };
-    }
+  const themePath = `spacing.${val}`;
+  const themeValue = context?.theme?.(themePath);
+  if (themeValue !== undefined) {
+    const result = {
+      type,
+      value: themeValue,
+      direction,
+      raw: token,
+      arbitrary: false,
+      negative,
+      preset: themePath
+    };
+    return result;
   }
   return null;
 } 
