@@ -122,6 +122,24 @@ This guide summarizes best practices and checklists for implementing and testing
 - **borderSpacing은 theme context를 사용하지 않으므로, context 관련 버그는 신경 쓸 필요 없음.**
 - **borderSpacing은 숫자/커스텀 프로퍼티/임의값만 파싱하며, theme preset, negative prefix, direction 등은 무시함.**
 
+## 1.6. 실전 디버깅/리팩터링 사례: inset 파서(2024-06)
+
+### 주요 교훈 및 실전 팁
+- **정규식 순서의 중요성**: direction prefix가 겹칠 때(예: 'inset', 'inset-x', 'inset-y'), 반드시 긴 prefix부터 나열해야 한다. (예: `/^(inset-x|inset-y|inset|top|...)-(.+)$/`)
+- **extractArbitraryValue, parseCustomPropertyUtility 사용 시**: 항상 음수(-) prefix가 제거된 토큰(t)을 넘겨야 한다. 원본 토큰(originalToken)은 반환 객체의 raw 필드에만 사용.
+- **isLengthValue 개선**: 음수(-) 값도 체크할 수 있도록 정규식 맨 앞에 `-?` 추가. (예: `-10%`, `-1.5rem` 등)
+- **isCalcFunction 도입**: calc() 함수(`calc(100%-4rem)`, `-calc(...)`)도 지원해야 하므로 별도 함수로 분리.
+- **arbitrary value, custom property, calc, var 등 다양한 값 지원**: inset, spacing 계열 파서는 다양한 CSS 값 패턴을 모두 지원해야 하며, 각 유틸리티 함수의 역할을 명확히 분리.
+- **테스트와 파서 반환 구조 완전 일치**: value 타입, negative, arbitrary, customProperty 등 모든 필드를 테스트 기대값과 1:1로 맞춰야 한다. (테스트 실패 원인의 90%는 구조/필드 미일치)
+- **상세 로그로 prefix, 값 추적**: 디버깅 시 console.log로 prefix, 토큰, 추출값을 찍어가며 실제 파서 동작을 추적하면 빠르게 원인을 찾을 수 있다.
+
+### 실전 적용 예시
+- inset-x, inset-y, inset 등 prefix가 겹치는 경우, 정규식 순서만 바꿔도 모든 파싱 실패가 해결됨
+- extractArbitraryValue, parseCustomPropertyUtility에 음수 제거된 토큰을 넘기지 않으면 custom/arbitrary value가 추출되지 않음
+- isLengthValue가 음수/소수/calc를 지원하지 않으면 -10%, calc(100%-4rem) 등 모든 케이스가 실패함
+- isCalcFunction을 도입해 calc()도 지원하면 Tailwind와 완벽히 호환됨
+- 테스트와 파서 반환 구조가 완전히 일치해야만 모든 테스트가 통과함
+
 ---
 
 ## 2. Parser Implementation Example (color & spacing)
@@ -239,24 +257,25 @@ expect(parseMargin("m-[5px]", context)).toEqual({
 ## 5.5. Shared Utility Functions Reference
 
 ### 1. General Parser Utils (`utils.ts`)
-- **extractArbitraryValue(token, prefix):**
-  - 주어진 prefix로 시작하는 토큰에서 `[brackets]` 내부 값을 추출
-  - 예: `m-[10px]` → `10px`
-  - 모든 spacing/color 등 임의값 파싱에 사용
 
-- **isLengthValue(val):**
-  - CSS 길이 단위(예: `2vw`, `1.5rem`, `10px`, `100%`)인지 판별
-  - spacing 계열 arbitrary value 유효성 검사에 사용
+- **extractArbitraryValue(token, prefix)**: prefix로 시작하는 토큰에서 `[brackets]` 내부 값을 추출합니다. 예) `inset-x-[50%]` → `50%`
+- **isLengthValue(val)**: CSS 길이 단위(정수, 소수, 음수, 단위, %) 판별. 예) `-10%`, `1.5rem`, `100%` 모두 true
+- **isCalcFunction(val)**: CSS `calc()` 함수(양수/음수) 판별. 예) `calc(100%-4rem)`, `-calc(100%-4rem)` 모두 true
+- **isVarFunction(val)**: CSS custom property 함수 판별. 예) `var(--foo)`
+- **isColorValue(val)**: CSS 색상값(HEX, rgb, hsl, oklch, okhsl) 판별. 예) `#fff`, `oklch(0.6 0.2 120)`
+- **isNumberValue(val)**: 순수 숫자(정수/실수, 음수 포함) 판별. 예) `-1.5`, `10`
 
-- **isColorValue(val):**
-  - CSS 색상값(HEX, rgb, hsl, oklch 등)인지 판별
-  - color 계열 arbitrary value 유효성 검사에 사용
+예시 코드:
+```ts
+extractArbitraryValue('inset-x-[50%]', 'inset-x'); // '50%'
+isLengthValue('-10%'); // true
+isCalcFunction('calc(100%-4rem)'); // true
+```
 
-- **isNumberValue(val):**
-  - 순수 숫자(정수/실수)인지 판별
-
-- **isVarFunction(val):**
-  - `var(--foo)` 형태의 CSS custom property 함수인지 판별
+실전 팁:
+- extractArbitraryValue: prefix는 항상 음수(-) 제거 후 사용
+- isLengthValue: calc()는 false, 음수/소수/단위 없는 숫자/퍼센트 모두 true
+- isCalcFunction: 음수 부호도 true
 
 ---
 

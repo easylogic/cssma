@@ -18,23 +18,23 @@
   - 구현 및 테스트 완료
 - [x] **borderSpacing**
   - context 기반 preset 미사용, 숫자/custom/arbitrary 구조 통일, 테스트 완료
+- [x] **textIndent**
+  - context(theme) 미사용, 숫자/px/negative/custom/arbitrary value 지원, value string 통일, 테스트 완료
 
 ---
 
 ## ⏳ 진행/예정 항목
 
-- [ ] **textIndent**
-  - negative prefix 구조 적용 필요
 - [ ] **spaceBetween** (`space-x-*`, `space-y-*`)
   - axis(x/y) 분기, context 기반 preset/custom/arbitrary 구조 통일 필요
 - [ ] **inset** (`inset-*`, `inset-x-*`, `inset-y-*`, `top-*`, `right-*`, `bottom-*`, `left-*`)
-  - negative prefix, direction(x/y/각각) 분기, context 기반 preset/custom/arbitrary 구조 통일 필요
+  - negative prefix, direction 분기, 구조 통일
 - [ ] **ringOffsetWidth** (`ring-offset-*`)
-  - context 기반 preset/custom/arbitrary 구조 통일 필요
+  - 구조 통일, context 기반 preset/custom/arbitrary
 - [ ] **outlineOffset** (`outline-offset-*`)
-  - context 기반 preset/custom/arbitrary 구조 통일 필요
+  - 구조 통일, context 기반 preset/custom/arbitrary
 - [ ] **divideWidth** (`divide-x-*`, `divide-y-*`)
-  - axis(x/y) 분기, context 기반 preset/custom/arbitrary 구조 통일 필요
+  - axis(x/y) 분기, 구조 통일
 
 ---
 

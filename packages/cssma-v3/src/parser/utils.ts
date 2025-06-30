@@ -11,10 +11,10 @@ export function extractArbitraryValue(token: string, prefix: string): string | n
 }
 
 /**
- * Checks if a value is a valid CSS length (e.g. 2vw, 1.5rem, 10px, 100%)
+ * Checks if a value is a valid CSS length (e.g. 2vw, 1.5rem, 10px, 100%, -10%, -1.5rem)
  */
 export function isLengthValue(val: string): boolean {
-  return /^\d+(\.\d+)?(px|em|rem|vw|vh|%|ch|ex|cm|mm|in|pt|pc)?$/.test(val);
+  return /^-?\d+(\.\d+)?(px|em|rem|vw|vh|%|ch|ex|cm|mm|in|pt|pc)?$/.test(val);
 }
 
 /**
@@ -42,6 +42,13 @@ export function isNumberValue(val: string): boolean {
  */
 export function isVarFunction(val: string): boolean {
   return /^var\(--[a-zA-Z0-9-_]+\)$/.test(val);
+}
+
+/**
+ * Checks if a value is a valid CSS calc() function (e.g. calc(100%-4rem), -calc(100%-4rem))
+ */
+export function isCalcFunction(val: string): boolean {
+  return /^-?calc\(.+\)$/.test(val);
 }
 
 /**
