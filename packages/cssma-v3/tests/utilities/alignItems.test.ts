@@ -1,59 +1,37 @@
 import { describe, it, expect } from 'vitest';
 import { parseAlignItems } from '../../src/parser/utilities/alignItems';
 
-describe('parseAlignItemsUtility', () => {
-  it('parses items-start', () => {
-    expect(parseAlignItems('items-start')).toEqual({
-      type: 'align-items',
-      preset: 'start',
-      raw: 'items-start',
-      arbitrary: false,
-    });
+describe('parseAlignItems', () => {
+  it('parses all Tailwind align-items presets', () => {
+    const presets = [
+      'start',
+      'end',
+      'end-safe',
+      'center',
+      'center-safe',
+      'baseline',
+      'baseline-last',
+      'stretch'
+    ];
+    for (const preset of presets) {
+      const token = `items-${preset}`;
+      expect(parseAlignItems(token)).toEqual({
+        type: 'align-items',
+        value: preset,
+        raw: token,
+        arbitrary: false,
+        customProperty: false,
+        preset
+      });
+    }
   });
-  it('parses items-end', () => {
-    expect(parseAlignItems('items-end')).toEqual({
-      type: 'align-items',
-      preset: 'end',
-      raw: 'items-end',
-      arbitrary: false,
-    });
-  });
-  it('parses items-center', () => {
-    expect(parseAlignItems('items-center')).toEqual({
-      type: 'align-items',
-      preset: 'center',
-      raw: 'items-center',
-      arbitrary: false,
-    });
-  });
-  it('parses items-baseline', () => {
-    expect(parseAlignItems('items-baseline')).toEqual({
-      type: 'align-items',
-      preset: 'baseline',
-      raw: 'items-baseline',
-      arbitrary: false,
-    });
-  });
-  it('parses items-stretch', () => {
-    expect(parseAlignItems('items-stretch')).toEqual({
-      type: 'align-items',
-      preset: 'stretch',
-      raw: 'items-stretch',
-      arbitrary: false,
-    });
-  });
-  it('parses items-[arbitrary]', () => {
-    expect(parseAlignItems('items-[foobar]')).toEqual({
-      type: 'align-items',
-      value: 'foobar',
-      raw: 'items-[foobar]',
-      arbitrary: true,
-    });
-  });
+
   it('returns null for invalid input', () => {
     expect(parseAlignItems('items')).toBeNull();
     expect(parseAlignItems('items-')).toBeNull();
     expect(parseAlignItems('items-arbitrary')).toBeNull();
     expect(parseAlignItems('justify-items-center')).toBeNull();
+    expect(parseAlignItems('items-[foobar]')).toBeNull();
+    expect(parseAlignItems('items-(--my-align)')).toBeNull();
   });
 }); 

@@ -3,11 +3,26 @@ import type { CssmaContext } from '../../types';
 // https://tailwindcss.com/docs/place-items
 
 export function parsePlaceItems(token: string, context?: CssmaContext): any | null {
-  if (token === 'place-items-start') return { type: 'place-items', preset: 'start', raw: token, arbitrary: false };
-  if (token === 'place-items-end') return { type: 'place-items', preset: 'end', raw: token, arbitrary: false };
-  if (token === 'place-items-center') return { type: 'place-items', preset: 'center', raw: token, arbitrary: false };
-  if (token === 'place-items-stretch') return { type: 'place-items', preset: 'stretch', raw: token, arbitrary: false };
-  const arbitrary = token.match(/^place-items-\[(.+)\]$/);
-  if (arbitrary) return { type: 'place-items', value: arbitrary[1], raw: token, arbitrary: true };
+  const presets = [
+    'start',
+    'end',
+    'end-safe',
+    'center',
+    'center-safe',
+    'baseline',
+    'stretch'
+  ];
+  for (const preset of presets) {
+    if (token === `place-items-${preset}`) {
+      return {
+        type: 'place-items',
+        value: preset,
+        raw: token,
+        arbitrary: false,
+        customProperty: false,
+        preset
+      };
+    }
+  }
   return null;
 } 
