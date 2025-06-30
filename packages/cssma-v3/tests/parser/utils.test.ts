@@ -6,6 +6,7 @@ import {
   isArbitraryModifier,
   isSelectorModifier,
   sortModifiersForSelector,
+  extractArbitraryValue,
 } from '../../src/parser/utils';
 import type { ParsedModifier } from '../../src/types';
 
@@ -94,5 +95,11 @@ describe('modifier sort (Tailwind order)', () => {
     expect(priorities).toEqual([
       1,1,2,2,3,3,4,4,4,4,4,4,4,4,4,5,6
     ]);
+  });
+});
+
+describe('extractArbitraryValue', () => {
+  it('parses indent-[50%] correctly', () => {
+    expect(extractArbitraryValue('indent-[50%]', 'indent-')).toBe('50%');
   });
 }); 

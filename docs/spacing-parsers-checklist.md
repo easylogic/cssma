@@ -16,15 +16,25 @@
   - 구현 및 테스트 완료 (negative prefix 지원)
 - [x] **scrollPadding**
   - 구현 및 테스트 완료
+- [x] **borderSpacing**
+  - context 기반 preset 미사용, 숫자/custom/arbitrary 구조 통일, 테스트 완료
 
 ---
 
 ## ⏳ 진행/예정 항목
 
-- [ ] **borderSpacing**
-  - context 기반 preset, custom property, arbitrary value 구조 통일 필요
 - [ ] **textIndent**
   - negative prefix 구조 적용 필요
+- [ ] **spaceBetween** (`space-x-*`, `space-y-*`)
+  - axis(x/y) 분기, context 기반 preset/custom/arbitrary 구조 통일 필요
+- [ ] **inset** (`inset-*`, `inset-x-*`, `inset-y-*`, `top-*`, `right-*`, `bottom-*`, `left-*`)
+  - negative prefix, direction(x/y/각각) 분기, context 기반 preset/custom/arbitrary 구조 통일 필요
+- [ ] **ringOffsetWidth** (`ring-offset-*`)
+  - context 기반 preset/custom/arbitrary 구조 통일 필요
+- [ ] **outlineOffset** (`outline-offset-*`)
+  - context 기반 preset/custom/arbitrary 구조 통일 필요
+- [ ] **divideWidth** (`divide-x-*`, `divide-y-*`)
+  - axis(x/y) 분기, context 기반 preset/custom/arbitrary 구조 통일 필요
 
 ---
 
@@ -33,7 +43,11 @@
 - margin/scrollMargin: negative prefix 분리 구조, raw/negative 필드 일관성, 테스트 100% 통과
 - padding/gap: negative prefix 미지원, context 기반 preset/custom/arbitrary 구조 통일
 - scrollPadding: Tailwind v4 기준 negative prefix 지원, margin 구조 참고하여 리팩터링 필요
-- borderSpacing/textIndent: 구조 통일 및 negative prefix 적용 필요
+- borderSpacing: context 미사용, 숫자/custom/arbitrary 구조 통일, axis 분기, negative prefix 미지원
+- textIndent: negative prefix 구조 적용 필요
+- spaceBetween/divideWidth: axis(x/y) 분기, 반환 객체 구조 통일 필요
+- inset: negative prefix, direction(x/y/각각), context 기반 preset 등 margin 구조 참고
+- ring/outline/divide: negative prefix 미지원, spacing preset/arbitrary/custom property 구조 통일
 
 ---
 
