@@ -1,47 +1,67 @@
-import type { CssmaContext } from '../../types';
+import type { CssmaContext } from "../../types";
+import { parseNumericSpacingToken } from "../utils/spacingParser";
+import { parseCustomPropertyUtility } from "../utils/customPropertyParser";
+import { extractArbitraryValue, isLengthValue, isVarFunction } from "../utils";
+
 // Tailwind border-spacing utility parser
 // https://tailwindcss.com/docs/border-spacing
 
-const spacingRe = /^border-spacing-(\d+)$/;
-const spacingArbRe = /^border-spacing-\[(.+)\]$/;
-const spacingVarRe = /^border-spacing-\((--[\w-]+)\)$/;
+const axisMap = { "": "both", x: "x", y: "y" };
 
-const spacingXRe = /^border-spacing-x-(\d+)$/;
-const spacingXArbRe = /^border-spacing-x-\[(.+)\]$/;
-const spacingXVarRe = /^border-spacing-x-\((--[\w-]+)\)$/;
+export function parseBorderSpacing(
+  token: string,
+  context?: CssmaContext
+): any | null {
+  if (token.startsWith("--") || token.startsWith("-")) return null;
+  const originalToken = token;
 
-const spacingYRe = /^border-spacing-y-(\d+)$/;
-const spacingYArbRe = /^border-spacing-y-\[(.+)\]$/;
-const spacingYVarRe = /^border-spacing-y-\((--[\w-]+)\)$/;
+  // 1. 구조 파싱: border-spacing(-x|-y)?-(...)
+  const m = token.match(/^border-spacing(?:-([xy]))?-(.+)$/);
+  if (!m) return null;
+  const axisKey = m[1] || "";
+  const axis = axisMap[axisKey as keyof typeof axisMap];
+  const prefix = axisKey ? `border-spacing-${axisKey}` : "border-spacing";
 
-export function parseBorderSpacing(token: string, context?: CssmaContext): any | null {
-  let m;
-  if ((m = spacingRe.exec(token))) {
-    return { type: 'border-spacing', axis: 'both', value: m[1], raw: token, arbitrary: false };
+  // 2. 숫자 매칭 (공통 함수)
+  const numeric = parseNumericSpacingToken(token, {
+    prefix,
+    type: "border-spacing",
+    axis,
+    raw: originalToken,
+  });
+  if (numeric) return numeric;
+
+  // 3. custom property
+  const customProp = parseCustomPropertyUtility({
+    token,
+    prefix,
+    type: "border-spacing",
+  });
+  if (customProp) {
+    return {
+      type: "border-spacing",
+      axis,
+      value: customProp.value,
+      raw: originalToken,
+      arbitrary: true,
+      customProperty: true,
+    };
   }
-  if ((m = spacingArbRe.exec(token))) {
-    return { type: 'border-spacing', axis: 'both', value: m[1], raw: token, arbitrary: true };
+
+  // 4. arbitrary value
+  const arbitraryValue = extractArbitraryValue(token, prefix);
+  if (
+    arbitraryValue !== null &&
+    (isLengthValue(arbitraryValue) || isVarFunction(arbitraryValue))
+  ) {
+    return {
+      type: "border-spacing",
+      axis,
+      value: arbitraryValue,
+      raw: originalToken,
+      arbitrary: true,
+    };
   }
-  if ((m = spacingVarRe.exec(token))) {
-    return { type: 'border-spacing', axis: 'both', value: `var(${m[1]})`, raw: token, arbitrary: true };
-  }
-  if ((m = spacingXRe.exec(token))) {
-    return { type: 'border-spacing', axis: 'x', value: m[1], raw: token, arbitrary: false };
-  }
-  if ((m = spacingXArbRe.exec(token))) {
-    return { type: 'border-spacing', axis: 'x', value: m[1], raw: token, arbitrary: true };
-  }
-  if ((m = spacingXVarRe.exec(token))) {
-    return { type: 'border-spacing', axis: 'x', value: `var(${m[1]})`, raw: token, arbitrary: true };
-  }
-  if ((m = spacingYRe.exec(token))) {
-    return { type: 'border-spacing', axis: 'y', value: m[1], raw: token, arbitrary: false };
-  }
-  if ((m = spacingYArbRe.exec(token))) {
-    return { type: 'border-spacing', axis: 'y', value: m[1], raw: token, arbitrary: true };
-  }
-  if ((m = spacingYVarRe.exec(token))) {
-    return { type: 'border-spacing', axis: 'y', value: `var(${m[1]})`, raw: token, arbitrary: true };
-  }
+
   return null;
-} 
+}

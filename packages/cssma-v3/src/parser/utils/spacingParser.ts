@@ -207,4 +207,32 @@ export function parseContextScrollPaddingUtility({
     };
   }
   return null;
+}
+
+/**
+ * 공통 숫자 spacing 파서 (context와 무관, 단순 숫자 추출)
+ * @param token - 예: border-spacing-2, border-spacing-x-3
+ * @param prefix - 'border-spacing', 'border-spacing-x', ...
+ * @param type - 'border-spacing' 등
+ * @param axis - 'both' | 'x' | 'y'
+ * @param raw - 원본 토큰
+ */
+export function parseNumericSpacingToken(token: string, {
+  prefix,
+  type,
+  axis,
+  raw,
+}: { prefix: string, type: string, axis: string, raw: string }) {
+  const re = new RegExp(`^${prefix}-(\\d+)$`);
+  const m = token.match(re);
+  if (m) {
+    return {
+      type,
+      axis,
+      value: m[1],
+      raw,
+      arbitrary: false,
+    };
+  }
+  return null;
 } 

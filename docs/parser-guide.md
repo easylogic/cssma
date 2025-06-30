@@ -40,6 +40,41 @@ This guide summarizes best practices and checklists for implementing and testing
   ```
 - If not using context utility, fallback to custom property/arbitrary value logic as needed.
 
+### 1.1) borderSpacing parser (2024-06 refactor)
+- **borderSpacing은 context(theme) lookup을 사용하지 않음.**
+- 숫자, custom property, arbitrary value만 파싱하며, theme context는 무시함.
+- 숫자 파싱은 반드시 `parseNumericSpacingToken`(공통 유틸)으로 처리.
+- custom property는 `parseCustomPropertyUtility`로, arbitrary value는 `extractArbitraryValue` + `isLengthValue`/`isVarFunction`으로 처리.
+- 반환 객체는 `{ type: 'border-spacing', axis, value, raw, arbitrary, customProperty? }` 구조를 따름.
+- axis는 'both'|'x'|'y' 중 하나이며, prefix에서 추출.
+- negative prefix는 지원하지 않으며, '--' 또는 '-'로 시작하면 null 반환.
+- context 인자는 무시(호환성 위해 받지만 사용하지 않음).
+- Example:
+  ```ts
+  export function parseBorderSpacing(token: string, context?: CssmaContext): any | null {
+    if (token.startsWith('--') || token.startsWith('-')) return null;
+    const originalToken = token;
+    const m = token.match(/^border-spacing(?:-([xy]))?-(.+)$/);
+    if (!m) return null;
+    const axisKey = m[1] || "";
+    const axis = axisMap[axisKey as keyof typeof axisMap];
+    const prefix = axisKey ? `border-spacing-${axisKey}` : "border-spacing";
+    const numeric = parseNumericSpacingToken(token, { prefix, type: "border-spacing", axis, raw: originalToken });
+    if (numeric) return numeric;
+    const customProp = parseCustomPropertyUtility({ token, prefix, type: "border-spacing" });
+    if (customProp) {
+      return { type: "border-spacing", axis, value: customProp.value, raw: originalToken, arbitrary: true, customProperty: true };
+    }
+    const arbitraryValue = extractArbitraryValue(token, prefix);
+    if (arbitraryValue !== null && (isLengthValue(arbitraryValue) || isVarFunction(arbitraryValue))) {
+      return { type: "border-spacing", axis, value: arbitraryValue, raw: originalToken, arbitrary: true };
+    }
+    return null;
+  }
+  ```
+- **테스트는 context를 넘기더라도 무시됨.**
+- **borderSpacing은 theme.spacing preset, negative prefix, direction 등 context 기반 파싱을 하지 않음.**
+
 ### 2) Custom property parsing (with parseCustomPropertyUtility)
 - Use `parseCustomPropertyUtility` for custom property parsing.
 - Pass `{ token, prefix, type }` as parameters.
@@ -84,6 +119,8 @@ This guide summarizes best practices and checklists for implementing and testing
   - All spacing and color utilities must return objects with the same field structure for preset, custom property, and arbitrary value cases.
 - **Debug Logging:**
   - Use detailed logs in parser/test debugging to trace field mismatches and lookup failures.
+- **borderSpacing은 theme context를 사용하지 않으므로, context 관련 버그는 신경 쓸 필요 없음.**
+- **borderSpacing은 숫자/커스텀 프로퍼티/임의값만 파싱하며, theme preset, negative prefix, direction 등은 무시함.**
 
 ---
 
@@ -201,247 +238,75 @@ expect(parseMargin("m-[5px]", context)).toEqual({
 
 ## 5.5. Shared Utility Functions Reference
 
-### General Parser Utils (`utils.ts`)
-- **extractArbitraryValue(token, prefix):** Extracts the value inside `[brackets]` for a given prefix (e.g. `m-[10px]` → `10px`). Used for arbitrary value parsing in all utility parsers.
-- **isLengthValue(val):** Checks if a string is a valid CSS length (e.g. `2vw`, `1.5rem`, `10px`, `100%`). Use to validate arbitrary values for spacing utilities.
-- **isColorValue(val):** Checks if a string is a valid CSS color (hex, rgb, hsl, oklch, okhsl). Use to validate arbitrary values for color utilities.
-- **isNumberValue(val):** Checks if a string is a pure number (integer or float).
-- **isVarFunction(val):** Checks if a string is a valid CSS `var()` function (e.g. `var(--foo)`). Use to allow custom property values as arbitrary values.
-- **isSelectorModifier(mod):** Type guard for selector-like modifiers (pseudo, group, peer, state, etc.).
-- **isResponsiveModifier(mod):** Type guard for responsive/breakpoint/container modifiers.
-- **isMediaModifier(mod):** Type guard for media/darkmode/motion modifiers.
-- **isArbitraryModifier(mod):** Type guard for arbitrary/attribute modifiers.
-- **getModifierPriority(mod):** Returns the sort priority for Tailwind-style modifiers (used for selector sorting).
-- **sortModifiersForSelector(modifiers):** Sorts an array of modifiers by Tailwind priority.
+### 1. General Parser Utils (`utils.ts`)
+- **extractArbitraryValue(token, prefix):**
+  - 주어진 prefix로 시작하는 토큰에서 `[brackets]` 내부 값을 추출
+  - 예: `m-[10px]` → `10px`
+  - 모든 spacing/color 등 임의값 파싱에 사용
 
-### Color Parser Utils (`colorParser.ts`)
+- **isLengthValue(val):**
+  - CSS 길이 단위(예: `2vw`, `1.5rem`, `10px`, `100%`)인지 판별
+  - spacing 계열 arbitrary value 유효성 검사에 사용
+
+- **isColorValue(val):**
+  - CSS 색상값(HEX, rgb, hsl, oklch 등)인지 판별
+  - color 계열 arbitrary value 유효성 검사에 사용
+
+- **isNumberValue(val):**
+  - 순수 숫자(정수/실수)인지 판별
+
+- **isVarFunction(val):**
+  - `var(--foo)` 형태의 CSS custom property 함수인지 판별
+
+---
+
+### 2. Color Parser Utils (`colorParser.ts`)
 - **parseContextColorUtility({ token, prefix, type, context, allowOpacity }):**
-  - Context-based color preset parser (e.g. `bg-blue-200`, `border-red-500/75`).
-  - Returns a standardized object with `type`, `value`, `raw`, `arbitrary`, `customProperty`, `preset`, and optional `opacity`.
-  - Used as the first step in all color utility parsers.
+  - context 기반 색상 preset 파싱 (예: `bg-blue-200`, `border-red-500/75`)
+  - 반환: `{ type, value, raw, arbitrary, customProperty, preset, opacity? }`
+  - color 계열 파서의 첫 단계로 사용
 
-### Spacing Parser Utils (`spacingParser.ts`)
+---
+
+### 3. Spacing Parser Utils (`spacingParser.ts`)
 - **parseContextSpacingUtility({ token, prefix, type, context }):**
-  - Context-based spacing preset parser (e.g. `m-4`, `px-2`).
-  - Returns a standardized object with `type`, `value`, `direction`, `raw`, `arbitrary`, `negative`, `preset`.
-  - Used as the first step in all spacing utility parsers (margin, padding, etc.).
+  - context 기반 spacing preset 파싱 (예: `m-4`, `px-2`)
+  - 반환: `{ type, value, direction, raw, arbitrary, negative, preset }`
+  - margin, padding 등 spacing 계열 파서의 첫 단계로 사용
 
 - **parseContextGapUtility({ token, type, context }):**
-  - Context-based gap preset parser for `gap`, `gap-x`, `gap-y` utilities only.
-  - Handles tokens like `gap-4`, `gap-x-2`, `gap-y-1` (where axis is part of the prefix, not a direction character).
-  - Returns a standardized object with `type`, `value`, `direction` (`all`/`inline`/`block`), `raw`, `arbitrary`, `customProperty`, `preset`.
-  - Example usage:
-    ```ts
-    const result = parseContextGapUtility({ token: 'gap-x-2', type: 'gap', context });
-    // → {
-    //   type: 'gap',
-    //   value: '8',
-    //   direction: 'inline',
-    //   raw: 'gap-x-2',
-    //   arbitrary: false,
-    //   customProperty: false,
-    //   preset: 'spacing.2',
-    // }
-    ```
-  - Use this only for gap/gap-x/gap-y, not for margin/padding.
-  - **Differs from parseContextSpacingUtility:** gap은 prefix 자체가 axis(gap-x, gap-y)로 바뀌므로, direction 추출 및 spacing lookup 방식이 다름.
+  - gap/gap-x/gap-y 전용 context 기반 gap preset 파싱
+  - 반환: `{ type, value, direction, raw, arbitrary, customProperty, preset }`
+  - gap 계열 파서에서만 사용
 
-### Custom Property Parser Utils (`customPropertyParser.ts`)
+- **parseNumericSpacingToken(token, { prefix, type, axis, raw }):**
+  - theme context 없이 숫자 기반 spacing 파싱 (예: `border-spacing-2`)
+  - 반환: `{ type, axis, value, raw, arbitrary: false, customProperty: false }`
+  - borderSpacing 등 theme lookup 없는 spacing 파서에서 사용
+
+---
+
+### 4. Custom Property Parser Utils (`customPropertyParser.ts`)
 - **parseCustomPropertyUtility({ token, prefix, type }):**
-  - Parses custom property utility syntax (e.g. `bg-(--my-color)`, `m-(--my-margin)`).
-  - Returns a standardized object with `type`, `value`, `raw`, `arbitrary`, `customProperty`, and optional `opacity`.
-  - Used as the fallback for custom property parsing in all utility parsers.
+  - custom property 유틸리티 파싱 (예: `bg-(--my-color)`, `m-(--my-margin)`)
+  - 반환: `{ type, value, raw, arbitrary, customProperty, ... }`
+  - 모든 파서에서 custom property fallback 용도로 사용
 
 ---
 
-## 5.6. Negative Prefix Parsing for Spacing Utilities (margin, scrollMargin 등)
-
-### Overview
-
-Tailwind CSS의 spacing 계열 유틸리티(margin, scrollMargin 등)는 음수 값 지원을 위해 클래스 앞에 negative prefix(`-`)를 붙일 수 있습니다. cssma-v3 파서에서는 negative prefix를 일관성 있게 처리하기 위해 다음과 같은 패턴을 사용합니다.
-
-### Best Practices & Implementation Checklist
-
-1. **Negative Prefix 분리**
-   - 입력 토큰이 `--`로 시작하면 무효(null 반환)로 간주합니다. (negative prefix는 한 번만 허용)
-   - 입력 토큰이 `-`로 시작하면 negative: true로 표시하고, prefix를 한 번만 제거한 새로운 토큰으로 파싱을 진행합니다.
-   - negative prefix가 없는 경우 negative: false로 처리합니다.
-
-2. **파싱 결과에 negative 필드 항상 포함**
-   - 모든 결과 객체에 `negative: true/false` 필드를 항상 포함합니다.
-   - custom property, arbitrary value 등도 negative: false를 명시적으로 포함합니다.
-
-3. **raw 필드는 항상 입력값(negative prefix 포함) 사용**
-   - 결과 객체의 `raw` 필드는 negative prefix가 포함된 원본 입력값을 그대로 사용합니다.
-
-4. **기존 파싱 로직과 utils 적극 활용**
-   - negative prefix 분리 후, 나머지 파싱은 기존 context-based parser(utils)로 진행합니다.
-   - 예: `parseContextSpacingUtility`, `parseContextScrollMarginUtility`, `parseCustomPropertyUtility`, `extractArbitraryValue` 등
-
-5. **테스트 기대값도 negative, raw 필드 포함 구조로 작성**
-   - 모든 테스트에서 negative: true/false, raw: 입력값 그대로를 기대해야 합니다.
-   - custom property, arbitrary value 등도 negative: false를 명시적으로 포함합니다.
-
-### Example Implementation (margin)
-
-```ts
-export function parseMargin(token: string, context?: CssmaContext): any | null {
-  const originalToken = token; // 입력값 보관
-  if (token.startsWith('--')) {
-    return null;
-  }
-  let negative = false;
-  if (token.startsWith('-')) {
-    negative = true;
-    token = token.slice(1);
-  }
-  // 기존 파싱 로직 호출 (예: parseContextSpacingUtility)
-  const result = parseContextSpacingUtility({ token, prefix: 'm', type: 'margin', context });
-  if (result) return { ...result, raw: originalToken, negative };
-  // custom property, arbitrary value 등도 동일하게 raw/negative 필드 포함
-  const custom = parseCustomPropertyUtility({ token: originalToken, prefix: 'm', type: 'margin' });
-  if (custom) return { ...custom, raw: originalToken, negative: false };
-  const arbitrary = extractArbitraryValue(originalToken, 'm-');
-  if (arbitrary) return { type: 'margin', value: arbitrary, raw: originalToken, arbitrary: true, customProperty: false, negative: false };
-  return null;
-}
-```
-
-### Example Test Expectation
-
-```ts
-expect(parseMargin('-m-4', mockContext)).toEqual({
-  type: 'margin',
-  value: '16',
-  raw: '-m-4',
-  arbitrary: false,
-  customProperty: false,
-  negative: true,
-  preset: 'spacing.4'
-});
-expect(parseMargin('m-(--my-margin)', mockContext)).toEqual({
-  type: 'margin',
-  value: 'var(--my-margin)',
-  raw: 'm-(--my-margin)',
-  arbitrary: false,
-  customProperty: true,
-  negative: false
-});
-expect(parseMargin('m-[5px]', mockContext)).toEqual({
-  type: 'margin',
-  value: '5px',
-  raw: 'm-[5px]',
-  arbitrary: true,
-  customProperty: false,
-  negative: false
-});
-expect(parseMargin('--m-4', mockContext)).toBeNull(); // invalid (negative prefix 2회)
-```
-
-### 적용 대상
-- margin, scrollMargin 등 negative prefix를 지원하는 spacing 계열 유틸리티에 적용
-- padding, gap 등 negative prefix를 지원하지 않는 유틸리티에는 적용하지 않음
-
-### 참고
-- Tailwind CSS 공식 문서: [margin](https://tailwindcss.com/docs/margin), [scroll-margin](https://tailwindcss.com/docs/scroll-margin)
-- gap, padding 등은 negative prefix 미지원 (2024-06 기준)
+### 5. Negative Prefix Handling (spacing 계열)
+- **Negative prefix(-) 분리 및 처리 패턴**
+  - spacing 계열(margin, scrollMargin 등)에서만 사용
+  - `-`로 시작하면 negative: true, 아니면 false
+  - raw 필드는 항상 원본 입력값 사용
+  - negative prefix가 2회(`--`)면 무효(null 반환)
 
 ---
 
-## 6. Documentation/Sharing
-
-- Save this guide as `/docs/parser-guide.md`.
-- Reference it for all new parser/test development to ensure consistency and maintainability.
-- Update this guide whenever a new pattern or lesson is learned from debugging or refactoring.
-
----
-
-## 7. Advanced Best Practices & Clarifications (2024-06 backgroundColor & spacing refactor)
-
-### 1) Opacity Support (e.g., bg-blue-200/50) with parseContextColorUtility
-- If a color utility supports `/opacity` (e.g., `bg-blue-200/50`), set `allowOpacity: true` in the call to `parseContextColorUtility`.
-- Example:
-  ```ts
-  const result = parseContextColorUtility({ token, prefix: 'bg', type: 'background-color', context, allowOpacity: true });
-  if (result) return result;
-  ```
-- The returned object will include an `opacity` field if present in the token.
-- `value` should always be the logical color value (e.g., `blue-200`), and `opacity` should be an integer (0~100).
-- Example:
-  ```ts
-  expect(parseBackgroundColor('bg-blue-200/50', context)).toEqual({
-    type: 'background-color',
-    value: 'blue-200',
-    raw: 'bg-blue-200/50',
-    arbitrary: false,
-    customProperty: false,
-    preset: 'colors.blue.200',
-    opacity: 50
-  });
-  ```
-
-### 2) customProperty, arbitrary, preset Field Structure
-- **Custom property** (e.g., `bg-(--my-bg)`, `m-(--my-margin)`):
-  - For color: `{ arbitrary: true, customProperty: true }`
-  - For spacing: `{ arbitrary: false, customProperty: true }`
-- **Arbitrary value** (e.g., `bg-[#50d71e]`, `m-[5px]`): `{ arbitrary: true, customProperty: false }`
-- **Preset (palette/theme)**: `{ arbitrary: false, customProperty: false, preset: 'colors.xxx.xxx' }` or `{ ...preset: 'spacing.4' }`
-- All returned objects must follow this structure for consistency.
-- **Tests must expect the exact structure as returned by the parser.**
-
-### 3) Context-based Invalid Handling
-- If context-based utility returns `null`, treat as invalid (e.g., palette object, undefined, or null from context.theme).
-- If called without a context, also return `null`.
-- Example:
-  ```ts
-  expect(parseBackgroundColor('bg-red', context)).toBeNull(); // palette object is invalid
-  expect(parseBackgroundColor('bg-foo', context)).toBeNull(); // not in palette
-  expect(parseMargin('m-foo', context)).toBeNull(); // not in spacing
-  ```
-
-### 4) Explicit Context in Tests
-- All tests must explicitly pass a context (either mock or defaultConfig).
-- Always test both mock context (minimal palette) and defaultConfig context (real palette) for robust coverage.
-- Example:
-  ```ts
-  expect(parseBackgroundColor('bg-red-500', mockContext)).toEqual({
-    type: 'background-color',
-    value: 'red-500',
-    raw: 'bg-red-500',
-    arbitrary: false,
-    customProperty: false,
-    preset: 'colors.red.500'
-  });
-  expect(parseBackgroundColor('bg-red-500', defaultCtx)).toEqual({
-    type: 'background-color',
-    value: 'red-500',
-    raw: 'bg-red-500',
-    arbitrary: false,
-    customProperty: false,
-    preset: 'colors.red.500'
-  });
-  expect(parseMargin('m-4', mockContext)).toEqual({
-    type: 'margin',
-    value: '16',
-    raw: 'm-4',
-    arbitrary: false,
-    customProperty: false,
-    preset: 'spacing.4'
-  });
-  expect(parseMargin('m-4', defaultCtx)).toEqual({
-    type: 'margin',
-    value: '1rem',
-    raw: 'm-4',
-    arbitrary: false,
-    customProperty: false,
-    preset: 'spacing.4'
-  });
-  ```
-
-### 5) custom property 파싱 시 opacity 분리 문법은 허용하지 않음(테스트/문서에서도 기대하지 말 것)
-- context 기반 팔레트/spacing 파싱과 custom property/arbitrary value 파싱은 각각 전용 유틸리티를 사용하여 일관성 유지
-- **Spacing, color 등 모든 유틸리티에서 return object 구조와 필드 일치성 유지**
+### 6. 기타
+- **모든 파서 반환 객체는 `{ type, value, raw, arbitrary, customProperty, ... }` 구조를 통일**
+- 각 파서별로 context 기반 preset, custom property, arbitrary value, negative prefix(해당시) 순서로 파싱
 
 By following these advanced practices, all cssma-v3 parsers and tests will remain robust, extensible, and consistent as the codebase evolves.
 
-**By following this guide, all cssma-v3 parsers and tests will be robust, extensible, and consistent!** 
+**By following this guide, all cssma-v3 parsers and tests will be robust, extensible, and consistent!**
