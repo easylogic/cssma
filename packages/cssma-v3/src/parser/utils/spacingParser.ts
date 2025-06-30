@@ -155,4 +155,56 @@ export function parseContextScrollMarginUtility({
     };
   }
   return null;
+}
+
+/**
+ * Context-based scroll-padding preset parser (scroll-p, scroll-pt, scroll-px, ...)
+ * @param token - scroll-pt-4, -scroll-px-2, scroll-p-4 등 theme.spacing preset만 처리
+ * @param type - 'scroll-padding'
+ * @param context - CssmaContext (theme.spacing lookup)
+ */
+export function parseContextScrollPaddingUtility({
+  token,
+  type,
+  context
+}: {
+  token: string;
+  type: string;
+  context?: CssmaContext;
+}): any | null {
+  const propMap = {
+    '': 'scroll-padding',
+    'x': 'scroll-padding-inline',
+    'y': 'scroll-padding-block',
+    't': 'scroll-padding-top',
+    'r': 'scroll-padding-right',
+    'b': 'scroll-padding-bottom',
+    'l': 'scroll-padding-left',
+    's': 'scroll-padding-inline-start',
+    'e': 'scroll-padding-inline-end',
+  };
+  // scroll-p-4, -scroll-pt-2, scroll-px-1, etc.
+  const m = token.match(/^(-?)scroll-p([a-z]*)-(.+)$/);
+  if (!m || !(m[2] in propMap)) return null;
+  const negative = m[1] === '-';
+  const dir = m[2];
+  const val = m[3].trim();
+  const direction = dir || '';
+  const property = propMap[dir as keyof typeof propMap];
+  const themePath = `spacing.${val}`;
+  const themeValue = context?.theme?.(themePath);
+  if (themeValue !== undefined) {
+    return {
+      type,
+      property,
+      value: themeValue,
+      direction,
+      raw: token,
+      arbitrary: false,
+      customProperty: false,
+      negative,
+      preset: themePath,
+    };
+  }
+  return null;
 } 

@@ -2,6 +2,9 @@
 // https://tailwindcss.com/docs/scroll-padding
 
 import type { CssmaContext } from '../../types';
+import { parseContextScrollPaddingUtility } from '../utils/spacingParser';
+import { parseCustomPropertyUtility } from '../utils/customPropertyParser';
+import { extractArbitraryValue, isLengthValue, isVarFunction } from '../utils';
 
 const propMap = {
   '': 'scroll-padding',
@@ -15,30 +18,43 @@ const propMap = {
   'e': 'scroll-padding-inline-end',
 };
 
-export function parseScrollPadding(token: string, context?: CssmaContext) {
-  // scroll-p-4, -scroll-p-4, scroll-px-2, -scroll-pt-6, etc.
-  let m = token.match(/^(-?)scroll-p([a-z]*)-(\d+)$/);
-  if (m && m[2] in propMap) {
-    const negative = m[1] === '-';
-    const dir = m[2];
-    const value = `calc(var(--spacing) * ${negative ? '-' : ''}${m[3]})`;
-    return { type: 'scroll-padding', property: propMap[dir], value, raw: token, negative };
+export function parseScrollPadding(token: string, context?: CssmaContext): any | null {
+  const originalToken = token;
+  if (token.startsWith('--')) return null;
+  let negative = false;
+  if (token.startsWith('-')) {
+    negative = true;
+    token = token.slice(1);
   }
-  // scroll-pt-(--foo), -scroll-pt-(--foo)
-  m = token.match(/^(-?)scroll-p([a-z]*)-\((--[\w-]+)\)$/);
-  if (m && m[2] in propMap) {
-    const negative = m[1] === '-';
-    const dir = m[2];
-    const value = negative ? `calc(var(--spacing) * -1 * var(${m[3]}))` : `var(${m[3]})`;
-    return { type: 'scroll-padding', property: propMap[dir], value, raw: token, customProperty: true, negative };
+  const result = parseScrollPaddingCore(token, context, originalToken, negative);
+  if (result) return result;
+  return null;
+}
+
+function parseScrollPaddingCore(token: string, context: CssmaContext | undefined, originalToken: string, negative: boolean): any | null {
+  // 1. context-based preset parsing
+  const preset = parseContextScrollPaddingUtility({ token, type: 'scroll-padding', context });
+  if (preset) return { ...preset, raw: originalToken, negative };
+
+  // 2. px, custom property, arbitrary value 등
+  const t = token;
+  const match = t.match(/^scroll-p([a-z]*)-(.+)$/);
+  if (!match) {
+    return null;
   }
-  // scroll-pt-[value], -scroll-pt-[value]
-  m = token.match(/^(-?)scroll-p([a-z]*)-\[(.+)\]$/);
-  if (m && m[2] in propMap) {
-    const negative = m[1] === '-';
-    const dir = m[2];
-    const value = negative ? `calc(-1 * ${m[3]})` : m[3];
-    return { type: 'scroll-padding', property: propMap[dir], value, raw: token, arbitrary: true, negative };
+  const [, dir, valRaw] = match;
+  const val = valRaw.trim();
+  const direction = dir || '';
+  const property = propMap[dir as keyof typeof propMap];
+
+  // custom property (scroll-p-(--foo))
+  const customProp = parseCustomPropertyUtility({ token, prefix: `scroll-p${dir}`, type: 'scroll-padding' });
+  if (customProp) return { ...customProp, property, direction, arbitrary: false, customProperty: true, raw: originalToken, negative };
+
+  // arbitrary value (scroll-p-[value])
+  const arbitraryValue = extractArbitraryValue(token, `scroll-p${dir}`);
+  if (arbitraryValue !== null && (isLengthValue(arbitraryValue) || isVarFunction(arbitraryValue))) {
+    return { type: 'scroll-padding', property, value: arbitraryValue, direction, raw: originalToken, arbitrary: true, customProperty: false, negative };
   }
   return null;
 } 
