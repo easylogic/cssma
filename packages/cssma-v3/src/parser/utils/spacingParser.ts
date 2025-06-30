@@ -235,4 +235,35 @@ export function parseNumericSpacingToken(token: string, {
     };
   }
   return null;
+}
+
+/**
+ * Context-based z-index preset parser (z-10, z-20 등)
+ * @param token - z-10, z-50 등 theme.zIndex preset만 처리
+ * @param context - CssmaContext (theme.zIndex lookup)
+ */
+export function parseContextZIndexUtility({
+  token,
+  context
+}: {
+  token: string;
+  context?: CssmaContext;
+}): any | null {
+  // z-{preset}만 처리
+  const m = token.match(/^z-([\w-]+)$/);
+  if (!m) return null;
+  const val = m[1];
+  const themePath = `zIndex.${val}`;
+  const themeValue = context?.theme?.(themePath);
+  if (themeValue !== undefined) {
+    return {
+      type: 'z-index',
+      value: themeValue,
+      raw: token,
+      arbitrary: false,
+      customProperty: false,
+      preset: themePath,
+    };
+  }
+  return null;
 } 

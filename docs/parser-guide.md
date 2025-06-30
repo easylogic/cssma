@@ -121,6 +121,7 @@ This guide summarizes best practices and checklists for implementing and testing
   - Use detailed logs in parser/test debugging to trace field mismatches and lookup failures.
 - **borderSpacing은 theme context를 사용하지 않으므로, context 관련 버그는 신경 쓸 필요 없음.**
 - **borderSpacing은 숫자/커스텀 프로퍼티/임의값만 파싱하며, theme preset, negative prefix, direction 등은 무시함.**
+- **isNumberValue, isLengthValue 등 유틸 함수가 음수(-)를 지원하지 않으면 z-[-1], -10% 등 모든 케이스가 실패함. zIndex arbitrary value(-1)도 반드시 지원해야 Tailwind와 완전 호환.**
 
 ## 1.6. 실전 디버깅/리팩터링 사례: inset 파서(2024-06)
 
@@ -132,6 +133,8 @@ This guide summarizes best practices and checklists for implementing and testing
 - **arbitrary value, custom property, calc, var 등 다양한 값 지원**: inset, spacing 계열 파서는 다양한 CSS 값 패턴을 모두 지원해야 하며, 각 유틸리티 함수의 역할을 명확히 분리.
 - **테스트와 파서 반환 구조 완전 일치**: value 타입, negative, arbitrary, customProperty 등 모든 필드를 테스트 기대값과 1:1로 맞춰야 한다. (테스트 실패 원인의 90%는 구조/필드 미일치)
 - **상세 로그로 prefix, 값 추적**: 디버깅 시 console.log로 prefix, 토큰, 추출값을 찍어가며 실제 파서 동작을 추적하면 빠르게 원인을 찾을 수 있다.
+- **isLengthValue, isNumberValue 개선**: 음수(-) 값도 체크할 수 있도록 정규식 맨 앞에 `-?` 추가. (예: `-10%`, `-1.5rem`, `-1` 등)
+- **zIndex 등 arbitrary value에서 음수(-1) 지원은 Tailwind 호환성에 필수. isNumberValue가 음수도 true여야 함.**
 
 ### 실전 적용 예시
 - inset-x, inset-y, inset 등 prefix가 겹치는 경우, 정규식 순서만 바꿔도 모든 파싱 실패가 해결됨
@@ -263,19 +266,21 @@ expect(parseMargin("m-[5px]", context)).toEqual({
 - **isCalcFunction(val)**: CSS `calc()` 함수(양수/음수) 판별. 예) `calc(100%-4rem)`, `-calc(100%-4rem)` 모두 true
 - **isVarFunction(val)**: CSS custom property 함수 판별. 예) `var(--foo)`
 - **isColorValue(val)**: CSS 색상값(HEX, rgb, hsl, oklch, okhsl) 판별. 예) `#fff`, `oklch(0.6 0.2 120)`
-- **isNumberValue(val)**: 순수 숫자(정수/실수, 음수 포함) 판별. 예) `-1.5`, `10`
+- **isNumberValue(val)**: 순수 숫자(정수/실수, **음수 포함**). 예) `-1.5`, `10`, `-1` 모두 true (2024-06 개선)
 
 예시 코드:
 ```ts
 extractArbitraryValue('inset-x-[50%]', 'inset-x'); // '50%'
 isLengthValue('-10%'); // true
 isCalcFunction('calc(100%-4rem)'); // true
+isNumberValue('-1'); // true (z-[-1] 등 음수 arbitrary value 지원)
 ```
 
 실전 팁:
 - extractArbitraryValue: prefix는 항상 음수(-) 제거 후 사용
 - isLengthValue: calc()는 false, 음수/소수/단위 없는 숫자/퍼센트 모두 true
 - isCalcFunction: 음수 부호도 true
+- **isNumberValue: 음수(-)도 true. z-[-1] 등 Tailwind arbitrary value 호환에 필수!**
 
 ---
 

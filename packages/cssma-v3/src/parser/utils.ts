@@ -31,10 +31,10 @@ export function isColorValue(val: string): boolean {
 }
 
 /**
- * Checks if a value is a pure number (integer or float)
+ * Checks if a value is a pure number (integer or float, 음수 포함)
  */
 export function isNumberValue(val: string): boolean {
-  return /^\d+(\.\d+)?$/.test(val);
+  return /^-?\d+(\.\d+)?$/.test(val);
 }
 
 /**
