@@ -4,6 +4,19 @@ This guide summarizes best practices and checklists for implementing and testing
 
 ---
 
+## 0. ⚠️ Number Parsing & Theme Lookup: Critical Note
+
+**Always use string keys for numeric theme lookups!**
+
+- When looking up values in `theme.spacing`, `theme.fontSize`, etc., always use string keys (e.g., `'4'`, `'2'`, `'6'`), not numbers (4, 2, 6).
+- This applies to both parser code and test mocks:
+  - `theme.spacing['4']` is valid, but `theme.spacing[4]` is not (unless the theme object redundantly defines both).
+  - When writing mock theme objects for tests, always use string keys for all numeric values.
+- If you use a number as a key, lookups will fail and return `undefined`, causing subtle bugs.
+- **Troubleshooting tip:** If a context-based parser returns `null` for a valid preset, check that your theme object uses string keys for all numbers.
+
+---
+
 ## 1. Parser Implementation Checklist
 
 ### 1) Context-based preset lookup (with parseContextColorUtility)
@@ -41,6 +54,12 @@ This guide summarizes best practices and checklists for implementing and testing
 - `value`: the logical value extracted from the token (not the resolved color code).
 - `preset`: the context lookup path, if relevant.
 
+### 5) ⚠️ Spacing/Number-based Preset Parsing
+- When parsing spacing, fontSize, or any numeric preset, always convert the matched number to a string before theme lookup:
+  - Example: `theme.spacing[String(val)]` or `theme.spacing[val]` where `val` is already a string from regex.
+- When writing mock theme objects for tests, always use string keys for all numeric values (e.g., `'4': 16`, not `4: 16`).
+- If you get `undefined` from the theme, check your key type!
+
 ---
 
 ## 2. Parser Implementation Example (color)
@@ -65,6 +84,7 @@ export function parseBackgroundColor(token: string, context?: CssmaContext): any
 ### 1) Test with both mock context and defaultConfig context
 - **Mock context**: minimal palette for fast, focused unit tests.
 - **defaultConfig context**: real palette for integration/compatibility tests.
+- **Always use string keys for numeric theme values in mocks!**
 
 ### 2) Always check that `value` is the logical token value
 - Never expect the resolved color code in `value`.
@@ -104,6 +124,7 @@ expect(parseTextColor("text-[#50d71e]", context)).toEqual({
 - Apply the same pattern to other parsers (e.g., backgroundColor, borderColor, etc.).
 - Only the context.theme path changes; the rest of the structure and tests are nearly identical.
 - Use utils (extractArbitraryValue, isColorValue, etc.) for consistency.
+- **Always use string keys for numeric theme values in all test mocks and real themes.**
 
 ---
 
