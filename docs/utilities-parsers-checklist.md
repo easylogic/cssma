@@ -11,7 +11,7 @@
 | outlineColor          | ✅             | ✅      | ✅       | ✅       | ✅              | ✅     | ✅          |
 | alignItems            | ✅             | ✅      | ✅       | ✅       | ✅              | ✅     | ✅          |
 | alignSelf             | ✅             | ✅      | ✅       | ✅       | ✅              | ✅     | ✅          |
-| animation             | ⬜️             | ⬜️      | ⬜️       | ⬜️       | ⬜️              | ⬜️     | ⬜️          |
+| animation             | ✅             | ✅      | ✅       | ✅       | ✅              | ✅     | ✅          |
 | appearance            | ⬜️             | ⬜️      | ⬜️       | ⬜️       | ⬜️              | ⬜️     | ⬜️          |
 | aspectRatio           | ⬜️             | ⬜️      | ⬜️       | ⬜️       | ⬜️              | ⬜️     | ⬜️          |
 | backdropBlur          | ⬜️             | ⬜️      | ⬜️       | ⬜️       | ⬜️              | ⬜️     | ⬜️          |

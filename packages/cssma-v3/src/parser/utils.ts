@@ -161,7 +161,7 @@ export function parseContextPresetUtility({
     const key = match[1];
     const themePath = `${namespace}.${key}`;
     const themeValue = context.theme(themePath);
-    if (typeof themeValue === 'string') {
+    if (themeValue !== 'undefined') {
       return {
         type,
         value: key,

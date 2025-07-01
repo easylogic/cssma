@@ -2,46 +2,36 @@
 // https://tailwindcss.com/docs/animation
 
 import type { CssmaContext } from '../../types';
+import { extractArbitraryValue, isVarFunction, parseContextPresetUtility } from '../utils';
+import { parseCustomPropertyUtility } from '../utils/customPropertyParser';
 
-const presetMap: Record<string, string> = {
-  'animate-spin': 'var(--animate-spin)',
-  'animate-ping': 'var(--animate-ping)',
-  'animate-pulse': 'var(--animate-pulse)',
-  'animate-bounce': 'var(--animate-bounce)',
-  'animate-none': 'none',
-};
-
-const presetRe = /^(animate-spin|animate-ping|animate-pulse|animate-bounce|animate-none)$/;
-const customPropRe = /^animate-\((--[\w-]+)\)$/;
-const arbitraryRe = /^animate-\[(.+)\]$/;
 
 export function parseAnimation(token: string, context?: CssmaContext): any | null {
-  if (presetRe.test(token)) {
+  // 1. context 기반 preset lookup
+  const preset = parseContextPresetUtility({
+    token,
+    prefix: 'animate',
+    type: 'animation',
+    context,
+    namespace: 'animation'
+  });
+  if (preset) return preset;
+
+  // 2. custom property (animate-(--foo))
+  const custom = parseCustomPropertyUtility({ token, prefix: 'animate', type: 'animation' });
+  if (custom) return custom;
+
+  // 3. arbitrary value (animate-[...])
+  const arbitrary = extractArbitraryValue(token, 'animate');
+  if (arbitrary !== null) {
     return {
       type: 'animation',
-      value: presetMap[token],
-      raw: token,
-      preset: token,
-    };
-  }
-  const m1 = token.match(customPropRe);
-  if (m1) {
-    return {
-      type: 'animation',
-      value: `var(${m1[1]})`,
-      raw: token,
-      customProperty: true,
-      arbitrary: false,
-    };
-  }
-  const m2 = token.match(arbitraryRe);
-  if (m2) {
-    return {
-      type: 'animation',
-      value: m2[1],
+      value: arbitrary,
       raw: token,
       arbitrary: true,
+      customProperty: false,
     };
   }
+
   return null;
 } 
