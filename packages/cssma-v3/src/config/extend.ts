@@ -1,3 +1,6 @@
+// ⚠️ 이 파일의 유틸리티는 merge-utils.ts로 통합되었습니다.
+// deepMerge, shallowMerge를 merge-utils.ts에서 import해서 사용하세요.
+
 import { CssmaTheme, CssmaPreset, CssmaConfig } from '../theme-types';
 
 // 내부 딥 머지 유틸리티 (외부 노출 X)

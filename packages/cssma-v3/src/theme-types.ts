@@ -10,12 +10,12 @@ export interface CssmaTheme {
   /** 폰트 굵기 (ex: thin, bold, extrabold, ... ) */
   fontWeight?: Record<string, string | number>;
   /** 폰트 사이즈 (ex: xs, sm, base, lg, ... ) */
-  textSize?: Record<string, string>;
+  fontSize?: Record<string, string>;
   /** 타이포그래피 */
-  tracking?: Record<string, string>; // letter-spacing
-  leading?: Record<string, string>; // line-height
+  letterSpacing?: Record<string, string>;
+  lineHeight?: Record<string, string>;
   /** 브레이크포인트 (ex: sm, md, lg, xl, 2xl, ... ) */
-  breakpoints?: Record<string, string>;
+  screens?: Record<string, string>;
   container?: Record<string, string>;
   /** spacing/sizing */
   spacing?: Record<string, string>;
@@ -26,12 +26,12 @@ export interface CssmaTheme {
   minHeight?: Record<string, string>;
   maxHeight?: Record<string, string>;
   /** border */
-  radius?: Record<string, string>;
+  borderRadius?: Record<string, string>;
   borderWidth?: Record<string, string>;
   borderColor?: Record<string, string>;
   borderStyle?: Record<string, string>;
   /** box-shadow (ex: sm, md, lg, ... ) */
-  shadow?: Record<string, string>;
+  boxShadow?: Record<string, string>;
   /** inset box-shadow */
   insetShadow?: Record<string, string>;
   /** drop-shadow (filter) */
@@ -51,7 +51,7 @@ export interface CssmaTheme {
   /** transition timing function */
   ease?: Record<string, string>;
   /** animation (ex: spin, ping, bounce, ...) */
-  animate?: Record<string, string>;
+  animation?: Record<string, string>;
   /** 기타 네임스페이스 */
   outline?: Record<string, string>;
   mask?: Record<string, string>;

@@ -179,6 +179,30 @@ export const defaultTheme: CssmaTheme = {
     inner: 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
     none: 'none',
   },
+  animation: {
+    spin: 'spin 1s linear infinite',
+    ping: 'ping 1s cubic-bezier(0,0,0.2,1) infinite',
+    pulse: 'pulse 2s cubic-bezier(0.4,0,0.6,1) infinite',
+    bounce: 'bounce 1s infinite',
+    none: 'none',
+  },
+  keyframes: {
+    spin: {
+      from: { transform: 'rotate(0deg)' },
+      to: { transform: 'rotate(360deg)' },
+    },
+    ping: {
+      '75%, 100%': { transform: 'scale(2)', opacity: '0' },
+    },
+    pulse: {
+      '0%, 100%': { opacity: '1' },
+      '50%': { opacity: '.5' },
+    },
+    bounce: {
+      '0%, 100%': { transform: 'translateY(-25%)', animationTimingFunction: 'cubic-bezier(0.8,0,1,1)' },
+      '50%': { transform: 'none', animationTimingFunction: 'cubic-bezier(0,0,0.2,1)' },
+    },
+  },
   // ... 기타 네임스페이스도 필요시 추가
 };
 
@@ -210,3 +234,6 @@ export function extendTheme(theme: CssmaTheme, extension: Partial<CssmaTheme>): 
 export function createPreset(name: string, theme: CssmaTheme, options?: Partial<CssmaPreset>): CssmaPreset {
   return { name, theme, ...options };
 }
+
+// ⚠️ mockTheme, mockSpacing 등 테스트/샘플에서는 항상 string key를 사용하세요.
+// 예: spacing: { '4': '16px', '8': '32px' } (숫자 key는 undefined)
