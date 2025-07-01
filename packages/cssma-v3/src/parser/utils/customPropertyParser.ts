@@ -4,8 +4,8 @@ export interface CustomPropertyParseResult {
   type: string;
   value: string;
   raw: string;
-  arbitrary: true;
-  customProperty: true;
+  arbitrary: boolean;
+  customProperty: boolean;
   opacity?: number;
 }
 
