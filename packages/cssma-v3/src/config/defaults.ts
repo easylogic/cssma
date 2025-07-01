@@ -203,6 +203,19 @@ export const defaultTheme: CssmaTheme = {
       '50%': { transform: 'none', animationTimingFunction: 'cubic-bezier(0,0,0.2,1)' },
     },
   },
+  perspective: {
+    dramatic: '100px',
+    near: '300px',
+    normal: '500px',
+    midrange: '800px',
+    distant: '1200px',
+    none: 'none',
+  },
+  aspect: {
+    auto: 'auto',
+    square: '1/1',
+    video: '16/9',
+  },
   // ... 기타 네임스페이스도 필요시 추가
 };
 

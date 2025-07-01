@@ -104,6 +104,25 @@ This guide summarizes best practices and checklists for implementing and testing
 - If you get `undefined` from the theme, check your key type!
 - **Spacing utilities must always return the full theme path in the `preset` field.**
 
+### 1.7) Fraction Value Parsing (e.g., aspect-16/9, w-3/4)
+- For utilities that support fraction values (e.g., aspect-ratio, width, etc.), use the shared `parseFractionValue(token, prefix)` utility.
+- This function extracts and validates fraction values (e.g., '16/9') from tokens like 'aspect-16/9'.
+- If a valid fraction is found, return a standard object with `value` set to the fraction string, and `arbitrary: false`, `customProperty: false`.
+- Example usage:
+  ```ts
+  const fraction = parseFractionValue(token, 'aspect');
+  if (fraction) {
+    return {
+      type: 'aspect-ratio',
+      value: fraction,
+      raw: token,
+      arbitrary: false,
+      customProperty: false,
+    };
+  }
+  ```
+- This step should come after preset lookup and before custom property/arbitrary value handling.
+
 ---
 
 ## 1.5. Troubleshooting & Debugging Checklist (NEW)
@@ -267,6 +286,7 @@ expect(parseMargin("m-[5px]", context)).toEqual({
 - **isVarFunction(val)**: CSS custom property 함수 판별. 예) `var(--foo)`
 - **isColorValue(val)**: CSS 색상값(HEX, rgb, hsl, oklch, okhsl) 판별. 예) `#fff`, `oklch(0.6 0.2 120)`
 - **isNumberValue(val)**: 순수 숫자(정수/실수, **음수 포함**). 예) `-1.5`, `10`, `-1` 모두 true (2024-06 개선)
+- **parseFractionValue(token, prefix)**: Extracts and validates fraction values (e.g., '16/9') from tokens like 'aspect-16/9', 'w-3/4'. Returns the fraction string if valid, otherwise null. Used for aspect-ratio and other fraction-based utilities.
 
 예시 코드:
 ```ts

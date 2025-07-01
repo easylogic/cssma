@@ -13,7 +13,7 @@
 | alignSelf             | ✅             | ✅      | ✅       | ✅       | ✅              | ✅     | ✅          |
 | animation             | ✅             | ✅      | ✅       | ✅       | ✅              | ✅     | ✅          |
 | appearance            | ⬜️             | ⬜️      | ⬜️       | ⬜️       | ⬜️              | ⬜️     | ⬜️          |
-| aspectRatio           | ⬜️             | ⬜️      | ⬜️       | ⬜️       | ⬜️              | ⬜️     | ⬜️          |
+| aspectRatio           | ✅             | ✅      | ✅       | ✅       | ✅              | ✅     | ✅          |
 | backdropBlur          | ⬜️             | ⬜️      | ⬜️       | ⬜️       | ⬜️              | ⬜️     | ⬜️          |
 | backdropBrightness    | ⬜️             | ⬜️      | ⬜️       | ⬜️       | ⬜️              | ⬜️     | ⬜️          |
 | backgroundAttachment  | ⬜️             | ⬜️      | ⬜️       | ⬜️       | ⬜️              | ⬜️     | ⬜️          |

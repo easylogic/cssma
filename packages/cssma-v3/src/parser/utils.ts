@@ -155,13 +155,14 @@ export function parseContextPresetUtility({
   context?: CssmaContext;
   namespace: string;
 }): any | null {
-  const re = new RegExp(`^${prefix}-([a-zA-Z0-9-_]+)$`);
+  const re = new RegExp(`^${prefix}-([^\\s]+)$`);
   const match = token.match(re);
   if (match && context?.theme) {
     const key = match[1];
     const themePath = `${namespace}.${key}`;
     const themeValue = context.theme(themePath);
-    if (themeValue !== 'undefined') {
+    console.log('themeValue', themeValue, themePath);
+    if (themeValue !== undefined) {
       return {
         type,
         value: key,
@@ -170,6 +171,27 @@ export function parseContextPresetUtility({
         customProperty: false,
         preset: themePath,
       };
+    }
+  }
+  return null;
+}
+
+/**
+ * Extracts a fraction value (e.g. 16/9) from a token with a given prefix (e.g. aspect-16/9, w-3/4).
+ * Returns the fraction string if valid, otherwise null.
+ *
+ * @param token - The input token (e.g. 'aspect-16/9')
+ * @param prefix - The prefix to match (e.g. 'aspect')
+ * @returns The fraction string (e.g. '16/9') if valid, otherwise null
+ */
+export function parseFractionValue(token: string, prefix: string): string | null {
+  const re = new RegExp(`^${prefix}-(\\d+\/\\d+)$`);
+  const match = token.match(re);
+  if (match) {
+    // Optionally, validate denominator is not zero
+    const [numerator, denominator] = match[1].split('/').map(Number);
+    if (denominator !== 0) {
+      return match[1];
     }
   }
   return null;
