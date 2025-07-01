@@ -1,6 +1,6 @@
 // 파서 공통 유틸리티 함수 (추후 구현) 
 
-import type { ParsedModifier } from '../types';
+import type { CssmaContext, ParsedModifier } from '../types';
 
 /**
  * Extracts the value inside [brackets] for a given prefix (e.g. border-t-[2vw] → 2vw)
@@ -135,4 +135,42 @@ export function getModifierPriority(mod: ParsedModifier): number {
  */
 export function sortModifiersForSelector(modifiers: ParsedModifier[]): ParsedModifier[] {
   return [...modifiers].sort((a, b) => getModifierPriority(a) - getModifierPriority(b));
+}
+
+/**
+ * context.theme에서 지정된 네임스페이스와 키로 값을 조회하고, 일관된 구조로 반환하는 범용 preset 유틸리티
+ * 예: parseContextPresetUtility({ token: 'animate-spin', prefix: 'animate', type: 'animation', context, namespace: 'animation' })
+ * → { type: 'animation', value: 'spin', raw: 'animate-spin', arbitrary: false, customProperty: false, preset: 'animation.spin' }
+ */
+export function parseContextPresetUtility({
+  token,
+  prefix,
+  type,
+  context,
+  namespace
+}: {
+  token: string;
+  prefix: string;
+  type: string;
+  context?: CssmaContext;
+  namespace: string;
+}): any | null {
+  const re = new RegExp(`^${prefix}-([a-zA-Z0-9-_]+)$`);
+  const match = token.match(re);
+  if (match && context?.theme) {
+    const key = match[1];
+    const themePath = `${namespace}.${key}`;
+    const themeValue = context.theme(themePath);
+    if (typeof themeValue === 'string') {
+      return {
+        type,
+        value: key,
+        raw: token,
+        arbitrary: false,
+        customProperty: false,
+        preset: themePath,
+      };
+    }
+  }
+  return null;
 } 
