@@ -12,7 +12,7 @@
 | alignItems            | ✅             | ✅      | ✅       | ✅       | ✅              | ✅     | ✅          |
 | alignSelf             | ✅             | ✅      | ✅       | ✅       | ✅              | ✅     | ✅          |
 | animation             | ✅             | ✅      | ✅       | ✅       | ✅              | ✅     | ✅          |
-| appearance            | ⬜️             | ⬜️      | ⬜️       | ⬜️       | ⬜️              | ⬜️     | ⬜️          |
+| appearance            | ✅             | ✅      | ✅       | ✅       | ✅              | ✅     | ✅          |
 | aspectRatio           | ✅             | ✅      | ✅       | ✅       | ✅              | ✅     | ✅          |
 | backdropBlur          | ⬜️             | ⬜️      | ⬜️       | ⬜️       | ⬜️              | ⬜️     | ⬜️          |
 | backdropBrightness    | ⬜️             | ⬜️      | ⬜️       | ⬜️       | ⬜️              | ⬜️     | ⬜️          |
@@ -23,7 +23,7 @@
 | backgroundPosition    | ⬜️             | ⬜️      | ⬜️       | ⬜️       | ⬜️              | ⬜️     | ⬜️          |
 | backgroundRepeat      | ⬜️             | ⬜️      | ⬜️       | ⬜️       | ⬜️              | ⬜️     | ⬜️          |
 | baselineLast          | ⬜️             | ⬜️      | ⬜️       | ⬜️       | ⬜️              | ⬜️     | ⬜️          |
-| borderRadius          | ⬜️             | ⬜️      | ⬜️       | ⬜️       | ⬜️              | ⬜️     | ⬜️          |
+| borderRadius          | ✅             | ✅      | ✅       | ✅       | ✅              | ✅     | ✅          |
 | borderSpacing         | ✅             | ✅      | ✅       | ✅       | ✅              | ✅     | ✅          |
 | borderStyle           | ⬜️             | ⬜️      | ⬜️       | ⬜️       | ⬜️              | ⬜️     | ⬜️          |
 | borderWidth           | ⬜️             | ⬜️      | ⬜️       | ⬜️       | ⬜️              | ⬜️     | ⬜️          |

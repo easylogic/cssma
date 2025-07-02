@@ -266,4 +266,70 @@ export function parseContextZIndexUtility({
     };
   }
   return null;
+}
+
+interface ContextBorderRadiusResult {
+  type: string;
+  value?: string | number;
+  direction?: string;
+  raw: string;
+  arbitrary: boolean;
+  customProperty: boolean;
+  preset: string;
+}
+
+/**
+ * Context-based border-radius preset parser (rounded, rounded-t, rounded-tr 등)
+ * @param token - rounded-lg, rounded-t-md, rounded-5xl 등 theme.borderRadius preset만 처리
+ * @param prefix - 'rounded'
+ * @param type - 'border-radius'
+ * @param context - CssmaContext (theme.borderRadius lookup)
+ */
+export function parseContextBorderRadiusUtility({
+  token,
+  prefix,
+  type,
+  context
+}: {
+  token: string;
+  prefix: string;
+  type: string;
+  context?: CssmaContext;
+}): ContextBorderRadiusResult | null {
+  // 논리 prefix: t, tr, tl, b, br, bl, l, r, s, e, se, ee, es, ss 등 1~3글자
+  const regex = new RegExp(`^${prefix}(?:-([tblres]{1,3}))?-(.+)$`);
+  const match = token.match(regex);
+  if (match) {
+    const dir = match[1] || 'all'; // 논리 prefix (t, tr, s, se 등) 없으면 'all'
+    const key = match[2]; // preset key (none, full, 5xl, foo, xs, sm, ...)
+    const themePath = `borderRadius.${key}`;
+    const themeValue = context?.theme?.(themePath);
+    if (themeValue !== undefined) {
+      return {
+        type,
+        direction: dir,
+        value: key,
+        raw: token,
+        arbitrary: false,
+        customProperty: false,
+        preset: themePath,
+      };
+    }
+  }
+  // 기본 preset (rounded, rounded-none, rounded-full 등)
+  if (token === 'rounded') {
+    const themeValue = context?.theme?.('borderRadius.md');
+    if (themeValue !== undefined) {
+      return {
+        type,
+        value: 'md',
+        direction: 'all',
+        raw: token,
+        arbitrary: false,
+        customProperty: false,
+        preset: 'borderRadius.md',
+      };
+    }
+  }
+  return null;
 } 

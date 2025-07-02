@@ -2,55 +2,61 @@
 // https://tailwindcss.com/docs/border-radius
 
 import type { CssmaContext } from '../../types';
-
-const presetMap: Record<string, string> = {
-  'none': '0',
-  'xs': 'var(--radius-xs)',
-  'sm': 'var(--radius-sm)',
-  'md': 'var(--radius-md)',
-  'lg': 'var(--radius-lg)',
-  'xl': 'var(--radius-xl)',
-  '2xl': 'var(--radius-2xl)',
-  '3xl': 'var(--radius-3xl)',
-  '4xl': 'var(--radius-4xl)',
-  'full': 'calc(infinity * 1px)',
-};
+import { extractArbitraryValue, isLengthValue } from '../utils';
+import { parseCustomPropertyUtility } from '../utils/customPropertyParser';
+import { parseContextBorderRadiusUtility } from '../utils/spacingParser';
 
 export function parseBorderRadius(token: string, context?: CssmaContext): any | null {
-  // 기본 rounded, rounded-none, rounded-full 등
-  if (token === 'rounded') return { type: 'border-radius', preset: 'md', raw: token, arbitrary: false };
-  if (token === 'rounded-none') return { type: 'border-radius', preset: 'none', raw: token, arbitrary: false };
-  if (token === 'rounded-full') return { type: 'border-radius', preset: 'full', raw: token, arbitrary: false };
-  // rounded-{preset}
-  const preset = token.match(/^rounded-(xs|sm|md|lg|xl|2xl|3xl|4xl)$/);
-  if (preset) return { type: 'border-radius', preset: preset[1], raw: token, arbitrary: false };
-  // 논리적 속성: rounded-t-lg, rounded-tr-md 등
-  const logical = token.match(/^rounded-([tblres]{1,2})-(none|xs|sm|md|lg|xl|2xl|3xl|4xl|full)$/);
-  if (logical) {
+  // 1. context 기반 preset lookup (theme.borderRadius)
+  const preset = parseContextBorderRadiusUtility({ token, prefix: 'rounded', type: 'border-radius', context });
+  if (preset) return { ...preset, customProperty: false, arbitrary: false, raw: token };
+
+  // 2. direction prefix 추출 (rounded-t-[2vw] 등)
+  const logicalPrefix = token.match(/^rounded-([tblres]{1,2})-/);
+  if (logicalPrefix) {
+    const dir = logicalPrefix[1];
+    // custom property
+    const custom = parseCustomPropertyUtility({ token, prefix: `rounded-${dir}`, type: 'border-radius' });
+    if (custom) {
+      return {
+        ...custom,
+        direction: dir,
+        customProperty: true,
+      };
+    }
+    // arbitrary value
+    const arb = extractArbitraryValue(token, `rounded-${dir}`);
+    if (arb && isLengthValue(arb)) {
+      return {
+        type: 'border-radius',
+        direction: dir,
+        value: arb,
+        raw: token,
+        arbitrary: true,
+        customProperty: false,
+      };
+    }
+  }
+  // 3. custom property (rounded-(--my-radius))
+  const custom = parseCustomPropertyUtility({ token, prefix: 'rounded', type: 'border-radius' });
+  if (custom) {
     return {
-      type: 'border-radius',
-      logical: logical[1],
-      preset: logical[2],
-      raw: token,
-      arbitrary: false
+      ...custom,
+      direction: 'all',
+      customProperty: true,
     };
   }
-  // 논리적 속성 + 임의값: rounded-t-[2vw], rounded-tr-[10px]
-  const logicalArb = token.match(/^rounded-([tblres]{1,2})-\[(.+)\]$/);
-  if (logicalArb) {
+  // 4. arbitrary value (rounded-[2vw])
+  const arb = extractArbitraryValue(token, 'rounded');
+  if (arb && isLengthValue(arb)) {
     return {
       type: 'border-radius',
-      logical: logicalArb[1],
-      value: logicalArb[2],
+      value: arb,
+      direction: 'all',
       raw: token,
-      arbitrary: true
+      arbitrary: true,
+      customProperty: false,
     };
   }
-  // 임의값: rounded-[2vw]
-  const arbitrary = token.match(/^rounded-\[(.+)\]$/);
-  if (arbitrary) return { type: 'border-radius', value: arbitrary[1], raw: token, arbitrary: true };
-  // 커스텀 프로퍼티: rounded-(--my-radius)
-  const custom = token.match(/^rounded-\((--[a-zA-Z0-9-_]+)\)$/);
-  if (custom) return { type: 'border-radius', value: `var(${custom[1]})`, raw: token, arbitrary: true };
   return null;
 } 
