@@ -1,20 +1,21 @@
 import { describe, it, expect } from 'vitest';
 import { parseModifier } from '../../src/parser/parseModifier';
+import { baseModifier } from './base';
 
 describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
-    ['before', { type: 'modifier', prefix: 'before' }],
-    ['after', { type: 'modifier', prefix: 'after' }],
-    ['placeholder', { type: 'modifier', prefix: 'placeholder' }],
-    ['selection', { type: 'modifier', prefix: 'selection' }],
-    ['marker', { type: 'modifier', prefix: 'marker' }],
-    ['first-line', { type: 'modifier', prefix: 'first-line' }],
-    ['first-letter', { type: 'modifier', prefix: 'first-letter' }],
-    ['backdrop', { type: 'modifier', prefix: 'backdrop' }],
-    // 잘못된 값
+    ['before', baseModifier({ prefix: 'before', value: '', raw: 'before' })],
+    ['after', baseModifier({ prefix: 'after', value: '', raw: 'after' })],
+    ['placeholder', baseModifier({ prefix: 'placeholder', value: '', raw: 'placeholder' })],
+    ['selection', baseModifier({ prefix: 'selection', value: '', raw: 'selection' })],
+    ['marker', baseModifier({ prefix: 'marker', value: '', raw: 'marker' })],
+    ['first-line', baseModifier({ prefix: 'first-line', value: '', raw: 'first-line' })],
+    ['first-letter', baseModifier({ prefix: 'first-letter', value: '', raw: 'first-letter' })],
+    ['backdrop', baseModifier({ prefix: 'backdrop', value: '', raw: 'backdrop' })],
+    ['hover', baseModifier({ prefix: 'hover', value: '', raw: 'hover' })],
     ['pseudo', { type: 'unknown', raw: 'pseudo' }],
+    ['file', baseModifier({ prefix: 'file', value: '', raw: 'file' })],
     ['', { type: 'unknown', raw: '' }],
-    ['hover', { type: 'modifier', prefix: 'hover' }],
   ];
 
   it.each(cases)('parseModifier(%s)', (input, expected) => {

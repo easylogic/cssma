@@ -1,20 +1,26 @@
 import { describe, it, expect } from 'vitest';
 import { parseModifier } from '../../src/parser/parseModifier';
+import { baseModifier } from './base';
 
 describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
-    ['[foo=bar]', { type: 'modifier', prefix: '[foo=bar]' }],
-    ['[data-state=open]', { type: 'modifier', prefix: '[data-state=open]' }],
-    ['[foo]', { type: 'modifier', prefix: '[foo]' }],
-    // 잘못된 값
+    ['[foo=bar]', baseModifier({ prefix: 'arbitrary', value: 'foo=bar', raw: '[foo=bar]', arbitrary: true, arbitraryType: 'attribute', arbitraryValue: 'foo=bar' })],
+    ['[data-state=open]', baseModifier({ prefix: 'arbitrary', value: 'data-state=open', raw: '[data-state=open]', arbitrary: true, arbitraryType: 'attribute', arbitraryValue: 'data-state=open' })],
+    ['[foo]', baseModifier({ prefix: 'arbitrary', value: 'foo', raw: '[foo]', arbitrary: true, arbitraryType: 'attribute', arbitraryValue: 'foo' })],
+    ['[=bar]', baseModifier({ prefix: 'arbitrary', value: '=bar', raw: '[=bar]', arbitrary: true, arbitraryType: 'attribute', arbitraryValue: '=bar' })],
     ['[]', { type: 'unknown', raw: '[]' }],
-    ['[=bar]', { type: 'modifier', prefix: '[=bar]' }],
+    ['hover', baseModifier({ prefix: 'hover', value: '', raw: 'hover' })],
+    ['[data-open]', baseModifier({ prefix: 'arbitrary', value: 'data-open', raw: '[data-open]', arbitrary: true, arbitraryType: 'attribute', arbitraryValue: 'data-open' })],
     ['foo=bar', { type: 'unknown', raw: 'foo=bar' }],
     ['', { type: 'unknown', raw: '' }],
-    ['hover', { type: 'modifier', prefix: 'hover' }],
   ];
 
   it.each(cases)('parseModifier(%s)', (input, expected) => {
     expect(parseModifier(input)).toEqual(expected);
+  });
+
+  it('should parse multiple modifiers', () => {
+    const result = parseModifier('[data-open]');
+    expect(result).toEqual(baseModifier({ prefix: 'arbitrary', value: 'data-open', raw: '[data-open]', arbitrary: true, arbitraryType: 'attribute', arbitraryValue: 'data-open' }));
   });
 }); 

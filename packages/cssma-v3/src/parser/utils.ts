@@ -225,16 +225,28 @@ export function parseModifierToken(
 ): ParsedClassToken | null {
 
   if (token.startsWith("[")) {
+
+    if (!token.endsWith("]")) {
+      return null;
+    }
+
+    const value = token.slice(1, -1);
+    if (value === "") {
+      return null;
+    }
+
+    const finalValue = value.replace(/_/g, " ");
+
     return {
       type: "modifier" as const,
       raw: token,
       prefix: "arbitrary",
-      value: token.slice(1, -1),
+      value: finalValue,
       slash: undefined,
       customProperty: false,
       arbitrary: true,
       arbitraryType: "attribute",
-      arbitraryValue: token.slice(1, -1),
+      arbitraryValue: finalValue,
       numeric: false,
       preset: false,
       negative: false,

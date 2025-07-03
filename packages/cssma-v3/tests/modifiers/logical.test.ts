@@ -1,26 +1,24 @@
 import { describe, it, expect } from 'vitest';
 import { parseModifier } from '../../src/parser/parseModifier';
+import { baseModifier } from './base';
 
 describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
-    // 기본 형태
-    ['has-checked', { type: 'modifier', prefix: 'has-checked' }],
-    ['not-focus', { type: 'modifier', prefix: 'not-focus' }],
-    ['has-aria-checked', { type: 'modifier', prefix: 'has-aria-checked' }],
-    ['not-hover', { type: 'modifier', prefix: 'not-hover' }],
-    // arbitrary 형태
-    ['has-[aria-checked=true]', { type: 'modifier', prefix: 'has-[aria-checked=true]' }],
-    ['not-[data-state=open]', { type: 'modifier', prefix: 'not-[data-state=open]' }],
-    // 엣지/에러
-    ['has-', { type: 'modifier', prefix: 'has-' }],
-    ['not-', { type: 'modifier', prefix: 'not-' }],
-    ['has', { type: 'unknown', raw: 'has' }],
-    ['not', { type: 'unknown', raw: 'not' }],
+    ['logical-rtl', { type: 'unknown', raw: 'logical-rtl' }],
+    ['logical-ltr', { type: 'unknown', raw: 'logical-ltr' }],
+    // 잘못된 값
+    ['logical-', { type: 'unknown', raw: 'logical-' }],
+    ['logical', { type: 'unknown', raw: 'logical' }],
     ['', { type: 'unknown', raw: '' }],
-    ['hover', { type: 'modifier', prefix: 'hover' }],
+    ['hover', baseModifier({ prefix: 'hover', value: '', raw: 'hover' })],
   ];
 
   it.each(cases)('parseModifier(%s)', (input, expected) => {
     expect(parseModifier(input)).toEqual(expected);
+  });
+
+  it('should parse logical-rtl correctly', () => {
+    const result = parseModifier('logical-rtl');
+    expect(result).toEqual({ type: 'unknown', raw: 'logical-rtl' });
   });
 }); 

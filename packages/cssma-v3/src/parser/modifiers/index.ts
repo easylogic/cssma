@@ -3,18 +3,31 @@ import { parseModifierToken } from "../utils";
 
 // Tailwind 공식 지원 modifier prefix/값 (최대한 고정값)
 export const MODIFIER_PREFIXES = [
+  "not-supports",
   // Pseudo-classes
   "hover",
+  "focus-visible",
+  "focus-within",
   "focus",
   "active",
   "visited",
   "checked",
   "disabled",
   "enabled",
+  "first-line",
+  "first-letter",
   "first",
+  "last-of-type",  
   "last",
+  "only-of-type",
+  "only",
+  "empty",
+  "before",
+  "after",
   "odd",
   "even",
+  "open",
+  "inert",
   "empty",
   "required",
   "optional",
@@ -25,11 +38,30 @@ export const MODIFIER_PREFIXES = [
   "in-range",
   "out-of-range",
   "placeholder-shown",
+  "placeholder",
+  "forced-colors",
+  "not-forced-colors",
+  "inverted-colors",
+  "pointer",
+  "any-pointer",
+  "portrait",
+  "landscape",
+  "noscript",
   "autofill",
   "read-only",
   "details-content",
   "**",
   "*",
+  "rtl",
+  "ltr",
+  "indeterminate",
+  "default",
+  "selection",
+  "marker",
+  "backdrop",
+  "file",
+  "only",
+  "dir",
   // Responsive
   "sm",
   "md",
@@ -56,10 +88,10 @@ export const MODIFIER_PREFIXES = [
   // Logical
   "has",
   "not",
+  "in",
   // Container/Breakpoint
   "@container", // @container, @min-[...]
   "@supports",
-  "@layer",
   "@min",
   "@max",
   // Nth
@@ -68,7 +100,10 @@ export const MODIFIER_PREFIXES = [
   "nth",
   // Supports
   "supports",
+  "starting",
   // 기타 필요한 prefix 추가
+  "theme",
+  "target",
 ];
 
 export function parseModifier(token: string, context?: CssmaContext) {

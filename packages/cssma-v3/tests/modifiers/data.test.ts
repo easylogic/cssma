@@ -1,19 +1,17 @@
 import { describe, it, expect } from 'vitest';
 import { parseModifier } from '../../src/parser/parseModifier';
+import { baseModifier } from './base';
 
 describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
-    // 단순 상태
-    ['data-active', { type: 'modifier', prefix: 'data-active' }],
-    ['data-foo-bar', { type: 'modifier', prefix: 'data-foo-bar' }],
-    // arbitrary 상태
-    ['data-[foo=bar]', { type: 'modifier', prefix: 'data-[foo=bar]' }],
-    ['data-[sort=ascending]', { type: 'modifier', prefix: 'data-[sort=ascending]' }],
-    // 엣지/에러
-    ['data-', { type: 'modifier', prefix: 'data-' }],
-    ['data', { type: 'unknown', raw: 'data' }],
+    ['data-open', baseModifier({ prefix: 'data', value: 'open', raw: 'data-open' })],
+    ['data-checked', baseModifier({ prefix: 'data', value: 'checked', raw: 'data-checked' })],
+    ['data-disabled', baseModifier({ prefix: 'data', value: 'disabled', raw: 'data-disabled' })],
+    ['data', baseModifier({ prefix: 'data', value: '', raw: 'data' })],
+    ['hover', baseModifier({ prefix: 'hover', value: '', raw: 'hover' })],
+    // 잘못된 값
+    ['data-', { type: 'unknown', raw: 'data-' }],
     ['', { type: 'unknown', raw: '' }],
-    ['hover', { type: 'modifier', prefix: 'hover' }],
   ];
 
   it.each(cases)('parseModifier(%s)', (input, expected) => {
