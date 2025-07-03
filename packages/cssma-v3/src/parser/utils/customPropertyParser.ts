@@ -24,14 +24,27 @@ export function parseCustomPropertyUtility({
   type: string;
 }): CustomPropertyParseResult | null {
   // e.g. bg-(--my-color) or bg-( --my-color )
-  const customProp = token.match(new RegExp(`^${prefix}-\\(\s*(--[a-zA-Z0-9-_]+)\s*\\)$`));
+  const customPropRe = new RegExp(`^${prefix}-\\(\s*(--[a-zA-Z0-9-_]+)\s*\\)$`);
+  const customProp = token.match(customPropRe);
   if (customProp) {
     return {
       type,
       value: `var(${customProp[1]})`,
       raw: token,
       arbitrary: false,
-      customProperty: false
+      customProperty: true
+    };
+  }
+  // Tailwind v4: (length:--foo) 패턴 지원
+  const customLengthRe = new RegExp(`^${prefix}-\\(length:(--[a-zA-Z0-9-_]+)\\)$`);
+  const customLength = token.match(customLengthRe);
+  if (customLength) {
+    return {
+      type,
+      value: `var(${customLength[1]})`,
+      raw: token,
+      arbitrary: true,
+      customProperty: true
     };
   }
   return null;

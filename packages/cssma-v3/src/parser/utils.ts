@@ -6,7 +6,8 @@ import type { CssmaContext, ParsedModifier } from '../types';
  * Extracts the value inside [brackets] for a given prefix (e.g. border-t-[2vw] → 2vw)
  */
 export function extractArbitraryValue(token: string, prefix: string): string | null {
-  const m = token.match(new RegExp(`^${prefix}-\\[(.+)\\]$`));
+  const re = new RegExp(`^${prefix}-\\[(.+)\\]$`);
+  const m = token.match(re);
   return m ? m[1].trim() : null;
 }
 

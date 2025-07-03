@@ -332,4 +332,109 @@ export function parseContextBorderRadiusUtility({
     }
   }
   return null;
+}
+
+interface ContextBackgroundImageResult {
+  type: string;
+  value?: string | number;
+  raw: string;
+  arbitrary: boolean;
+  customProperty: boolean;
+  preset: string;
+}
+
+/**
+ * Context-based background-image preset parser (bg-none, bg-gradient-to-t 등)
+ * @param token - bg-none, bg-gradient-to-t, bg-radial 등 theme.backgroundImage preset만 처리
+ * @param prefix - 'bg'
+ * @param type - 'background-image'
+ * @param context - CssmaContext (theme.backgroundImage lookup)
+ */
+export function parseContextBackgroundImageUtility({
+  token,
+  prefix,
+  type,
+  context
+}: {
+  token: string;
+  prefix: string;
+  type: string;
+  context?: CssmaContext;
+}): any | null {
+  // bg-{preset}
+  const regex = new RegExp(`^${prefix}-(.+)$`);
+  const match = token.match(regex);
+  if (match) {
+    const key = match[1];
+    const themePath = `backgroundImage.${key}`;
+    const themeValue = context?.theme?.(themePath);
+    if (themeValue !== undefined) {
+      return {
+        type,
+        value: key,
+        raw: token,
+        arbitrary: false,
+        customProperty: false,
+        preset: themePath,
+      };
+    }
+  }
+  // bg-none (Tailwind 기본 preset)
+  if (token === 'bg-none') {
+    const themeValue = context?.theme?.('backgroundImage.none');
+    if (themeValue !== undefined) {
+      return {
+        type,
+        value: 'none',
+        raw: token,
+        arbitrary: false,
+        customProperty: false,
+        preset: 'backgroundImage.none',
+      };
+    }
+  }
+  return null;
+}
+
+/**
+ * Context-based border-width preset parser (border, border-t-2 등)
+ * @param token - border, border-2, border-t-4 등 theme.borderWidth preset만 처리
+ * @param prefix - 'border'
+ * @param type - 'border-width'
+ * @param context - CssmaContext (theme.borderWidth lookup)
+ */
+export function parseContextBorderWidthUtility({
+  token,
+  prefix,
+  type,
+  context
+}: {
+  token: string;
+  prefix: string;
+  type: string;
+  context?: CssmaContext;
+}): any | null {
+  // border, border-2, border-t, border-t-4, border-x, border-x-2 등
+  const regex = new RegExp(`^${prefix}(?:-([trblxyse]))?(?:-(.+))?$`);
+  const match = token.match(regex);
+  if (match) {
+    const dir = match[1] || 'all'; // t, r, b, l, x, y, s, e, 없으면 'all'
+    const key = match[2] || (dir === 'all' ? 'DEFAULT' : undefined); // border → DEFAULT, border-t → DEFAULT
+    const themePath = key ? `borderWidth.${key}` : 'borderWidth.DEFAULT';
+    console.log('[borderWidth] themePath:', context, themePath, '| key:', key, '| dir:', dir, '| token:', token, '| prefix:', prefix);
+    const themeValue = context?.theme?.(themePath);
+    console.log('[borderWidth] themeValue:', themeValue);
+    if (themeValue !== undefined) {
+      return {
+        type,
+        value: key || 'DEFAULT',
+        direction: dir,
+        raw: token,
+        arbitrary: false,
+        customProperty: false,
+        preset: themePath,
+      };
+    }
+  }
+  return null;
 } 

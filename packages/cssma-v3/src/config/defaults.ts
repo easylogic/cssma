@@ -111,6 +111,13 @@ export const defaultTheme: CssmaTheme = {
     // '5xl': 'var(--radius-5xl, 3rem)',
     // pill: '9999px',
   },
+  borderWidth: {
+    DEFAULT: '1px',
+    '0': '0px',
+    '2': '2px',
+    '4': '4px',
+    '8': '8px',
+  },
   boxShadow: {
     sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
     DEFAULT: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
