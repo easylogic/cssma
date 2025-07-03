@@ -421,9 +421,7 @@ export function parseContextBorderWidthUtility({
     const dir = match[1] || 'all'; // t, r, b, l, x, y, s, e, 없으면 'all'
     const key = match[2] || (dir === 'all' ? 'DEFAULT' : undefined); // border → DEFAULT, border-t → DEFAULT
     const themePath = key ? `borderWidth.${key}` : 'borderWidth.DEFAULT';
-    console.log('[borderWidth] themePath:', context, themePath, '| key:', key, '| dir:', dir, '| token:', token, '| prefix:', prefix);
     const themeValue = context?.theme?.(themePath);
-    console.log('[borderWidth] themeValue:', themeValue);
     if (themeValue !== undefined) {
       return {
         type,

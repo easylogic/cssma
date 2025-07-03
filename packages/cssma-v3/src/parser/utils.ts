@@ -196,4 +196,110 @@ export function parseFractionValue(token: string, prefix: string): string | null
     }
   }
   return null;
+}
+
+export type ParsedUtilityToken = {
+  raw: string;
+  prefix: string;
+  value: string;
+  slash?: string;
+  customProperty: boolean;
+  arbitrary: boolean;
+  arbitraryType?: string;
+  arbitraryValue?: string;
+  numeric: boolean;
+  preset: boolean;
+  negative: boolean;
+  important: boolean;
+};
+
+/**
+ * 공통 유틸리티 토큰 파서
+ * @param token 전체 토큰 (예: border-x-2, border-t-[2vw], border-(--foo))
+ * @param prefixes 유틸리티 prefix 배열 (예: ['border', 'm', 'p'])
+ */
+export function parseUtilityToken(token: string, prefixes: string[], hasSlash: boolean = true): ParsedUtilityToken | null {
+  if (!Array.isArray(prefixes) || prefixes.length === 0) return null;
+  let raw = token;
+  let important = false;
+  if (token.startsWith('!')) {
+    important = true;
+    token = token.slice(1);
+  }
+  let negative = false;
+  if (token.startsWith('-')) {
+    negative = true;
+    token = token.slice(1);
+  }
+  const sorted = prefixes.slice().sort((a, b) => b.length - a.length);
+  for (const prefix of sorted) {
+    if (token === prefix) {
+      return {
+        raw,
+        prefix,
+        value: "",
+        slash: undefined,
+        customProperty: false,
+        arbitrary: false,
+        arbitraryType: undefined,
+        arbitraryValue: undefined,
+        numeric: false,
+        preset: false,
+        negative,
+        important,
+      };
+    }
+    if (token.startsWith(prefix + "-")) {
+      let value = token.slice(prefix.length + 1);
+      if (value === "") return null;
+      let slash: string | undefined = undefined;
+      // 1. slash 먼저 분리
+      if (typeof value === 'string' && hasSlash) {
+        const slashIndex = value.lastIndexOf('/');
+        if (slashIndex > 0) {
+          slash = value.slice(slashIndex + 1);
+          value = value.slice(0, slashIndex);
+        }
+      }
+      // 2. value(슬래시 없는 값)에 대해 arbitrary/customProperty 처리
+      let customProperty = /^\(.+\)$/.test(value);
+      let arbitrary = /^\[.+\]$/.test(value);
+      let arbitraryType: string | undefined = undefined;
+      let arbitraryValue: string | undefined = undefined;
+      let finalValue = value;
+      if (arbitrary) {
+        const inner = value.slice(1, -1);
+        finalValue = inner;
+        arbitraryValue = inner;
+        const funcMatch = inner.match(/^([a-zA-Z][a-zA-Z0-9_-]*)\((.*)\)$/);
+        if (funcMatch) {
+          arbitraryType = funcMatch[1];
+          arbitraryValue = funcMatch[2];
+        } else {
+          arbitraryType = inner.startsWith('#') ? 'hex' : undefined;
+          arbitraryValue = inner;
+        }
+      } else if (customProperty) {
+        const inner = value.slice(1, -1);
+        finalValue = inner;
+      }
+      const numeric = /^-?\d*\.?\d+$/.test(value);
+      const preset = value !== "" && !customProperty && !arbitrary;
+      return {
+        raw,
+        prefix,
+        value: finalValue,
+        slash,
+        customProperty,
+        arbitrary,
+        arbitraryType,
+        arbitraryValue,
+        numeric,
+        preset,
+        negative,
+        important,
+      };
+    }
+  }
+  return null;
 } 
