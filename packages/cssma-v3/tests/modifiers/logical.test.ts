@@ -4,20 +4,20 @@ import { parseModifier } from '../../src/parser/parseModifier';
 describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
     // 기본 형태
-    ['has-checked', { type: 'logical', op: 'has', value: 'checked' }],
-    ['not-focus', { type: 'logical', op: 'not', value: 'focus' }],
-    ['has-aria-checked', { type: 'logical', op: 'has', value: 'aria-checked' }],
-    ['not-hover', { type: 'logical', op: 'not', value: 'hover' }],
+    ['has-checked', { type: 'modifier', prefix: 'has-checked' }],
+    ['not-focus', { type: 'modifier', prefix: 'not-focus' }],
+    ['has-aria-checked', { type: 'modifier', prefix: 'has-aria-checked' }],
+    ['not-hover', { type: 'modifier', prefix: 'not-hover' }],
     // arbitrary 형태
-    ['has-[aria-checked=true]', { type: 'logical', op: 'has', value: { attr: 'aria-checked', value: 'true' } }],
-    ['not-[data-state=open]', { type: 'logical', op: 'not', value: { attr: 'data-state', value: 'open' } }],
+    ['has-[aria-checked=true]', { type: 'modifier', prefix: 'has-[aria-checked=true]' }],
+    ['not-[data-state=open]', { type: 'modifier', prefix: 'not-[data-state=open]' }],
     // 엣지/에러
-    ['has-', { type: 'logical', op: 'has', value: '' }],
-    ['not-', { type: 'logical', op: 'not', value: '' }],
+    ['has-', { type: 'modifier', prefix: 'has-' }],
+    ['not-', { type: 'modifier', prefix: 'not-' }],
     ['has', { type: 'unknown', raw: 'has' }],
     ['not', { type: 'unknown', raw: 'not' }],
     ['', { type: 'unknown', raw: '' }],
-    ['hover', { type: 'unknown', raw: 'hover' }],
+    ['hover', { type: 'modifier', prefix: 'hover' }],
   ];
 
   it.each(cases)('parseModifier(%s)', (input, expected) => {

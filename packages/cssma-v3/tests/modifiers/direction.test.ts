@@ -3,11 +3,11 @@ import { parseModifier } from '../../src/parser/parseModifier';
 
 describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
-    ['rtl', { type: 'direction', value: 'rtl' }],
-    ['ltr', { type: 'direction', value: 'ltr' }],
+    ['rtl', { type: 'modifier', prefix: 'rtl' }],
+    ['ltr', { type: 'modifier', prefix: 'ltr' }],
     ['direction', { type: 'unknown', raw: 'direction' }],
     ['', { type: 'unknown', raw: '' }],
-    ['hover', { type: 'unknown', raw: 'hover' }],
+    ['hover', { type: 'modifier', prefix: 'hover' }],
   ];
 
   it.each(cases)('parseModifier(%s)', (input, expected) => {

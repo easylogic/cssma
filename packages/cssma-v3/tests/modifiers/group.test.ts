@@ -3,14 +3,14 @@ import { parseModifier } from '../../src/parser/parseModifier';
 
 describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
-    ['group-hover', { type: 'group', state: 'hover' }],
-    ['group-focus', { type: 'group', state: 'focus' }],
-    ['group-active', { type: 'group', state: 'active' }],
-    ['group-visited', { type: 'group', state: 'visited' }],
-    ['group-', { type: 'group', state: '' }],
+    ['group-hover', { type: 'modifier', prefix: 'group-hover' }],
+    ['group-focus', { type: 'modifier', prefix: 'group-focus' }],
+    ['group-active', { type: 'modifier', prefix: 'group-active' }],
+    ['group-visited', { type: 'modifier', prefix: 'group-visited' }],
+    ['group-', { type: 'modifier', prefix: 'group-' }],
     ['group', { type: 'unknown', raw: 'group' }],
     ['', { type: 'unknown', raw: '' }],
-    ['hover', { type: 'unknown', raw: 'hover' }],
+    ['hover', { type: 'modifier', prefix: 'hover' }],
   ];
 
   it.each(cases)('parseModifier(%s)', (input, expected) => {

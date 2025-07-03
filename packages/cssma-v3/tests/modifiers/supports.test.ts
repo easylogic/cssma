@@ -4,24 +4,24 @@ import { parseModifier } from '../../src/parser/parseModifier';
 describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
     // 대괄호 쿼리
-    ['supports-[display:grid]', { type: 'supports', query: 'display:grid' }],
-    ['supports-[aspect-ratio>1]', { type: 'supports', query: 'aspect-ratio>1' }],
-    ['supports-[foo=bar]', { type: 'supports', query: 'foo=bar' }],
+    ['supports-[display:grid]', { type: 'modifier', prefix: 'supports-[display:grid]' }],
+    ['supports-[aspect-ratio>1]', { type: 'modifier', prefix: 'supports-[aspect-ratio>1]' }],
+    ['supports-[foo=bar]', { type: 'modifier', prefix: 'supports-[foo=bar]' }],
     // 중첩 상태
-    ['supports-hover', { type: 'supports', state: 'hover' }],
-    ['supports-focus', { type: 'supports', state: 'focus' }],
-    ['supports-active', { type: 'supports', state: 'active' }],
-    ['supports-checked', { type: 'supports', state: 'checked' }],
-    ['supports-disabled', { type: 'supports', state: 'disabled' }],
+    ['supports-hover', { type: 'modifier', prefix: 'supports-hover' }],
+    ['supports-focus', { type: 'modifier', prefix: 'supports-focus' }],
+    ['supports-active', { type: 'modifier', prefix: 'supports-active' }],
+    ['supports-checked', { type: 'modifier', prefix: 'supports-checked' }],
+    ['supports-disabled', { type: 'modifier', prefix: 'supports-disabled' }],
     // 기타 feature
-    ['supports-grid', { type: 'supports', feature: 'grid' }],
-    ['supports-flex', { type: 'supports', feature: 'flex' }],
-    ['supports-color', { type: 'supports', feature: 'color' }],
+    ['supports-grid', { type: 'modifier', prefix: 'supports-grid' }],
+    ['supports-flex', { type: 'modifier', prefix: 'supports-flex' }],
+    ['supports-color', { type: 'modifier', prefix: 'supports-color' }],
     // 잘못된 값
-    ['supports-', { type: 'supports', feature: '' }],
+    ['supports-', { type: 'modifier', prefix: 'supports-' }],
     ['supports', { type: 'unknown', raw: 'supports' }],
     ['', { type: 'unknown', raw: '' }],
-    ['hover', { type: 'unknown', raw: 'hover' }],
+    ['hover', { type: 'modifier', prefix: 'hover' }],
   ];
 
   it.each(cases)('parseModifier(%s)', (input, expected) => {

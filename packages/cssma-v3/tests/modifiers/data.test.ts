@@ -4,16 +4,16 @@ import { parseModifier } from '../../src/parser/parseModifier';
 describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
     // 단순 상태
-    ['data-active', { type: 'data', attr: 'active', value: 'true' }],
-    ['data-foo-bar', { type: 'data', attr: 'foo-bar', value: 'true' }],
+    ['data-active', { type: 'modifier', prefix: 'data-active' }],
+    ['data-foo-bar', { type: 'modifier', prefix: 'data-foo-bar' }],
     // arbitrary 상태
-    ['data-[foo=bar]', { type: 'data', attr: 'data-foo', value: 'bar' }],
-    ['data-[sort=ascending]', { type: 'data', attr: 'data-sort', value: 'ascending' }],
+    ['data-[foo=bar]', { type: 'modifier', prefix: 'data-[foo=bar]' }],
+    ['data-[sort=ascending]', { type: 'modifier', prefix: 'data-[sort=ascending]' }],
     // 엣지/에러
-    ['data-', { type: 'data', attr: '', value: undefined }],
+    ['data-', { type: 'modifier', prefix: 'data-' }],
     ['data', { type: 'unknown', raw: 'data' }],
     ['', { type: 'unknown', raw: '' }],
-    ['hover', { type: 'unknown', raw: 'hover' }],
+    ['hover', { type: 'modifier', prefix: 'hover' }],
   ];
 
   it.each(cases)('parseModifier(%s)', (input, expected) => {

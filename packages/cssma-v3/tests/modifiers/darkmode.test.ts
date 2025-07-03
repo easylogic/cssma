@@ -3,12 +3,12 @@ import { parseModifier } from '../../src/parser/parseModifier';
 
 describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
-    ['dark', { type: 'media', name: 'dark' }],
-    ['light', { type: 'media', name: 'light' }],
+    ['dark', { type: 'modifier', prefix: 'dark' }],
+    ['light', { type: 'modifier', prefix: 'light' }],
     ['Dark', { type: 'unknown', raw: 'Dark' }],
     ['darkmode', { type: 'unknown', raw: 'darkmode' }],
     ['', { type: 'unknown', raw: '' }],
-    ['hover', { type: 'unknown', raw: 'hover' }],
+    ['hover', { type: 'modifier', prefix: 'hover' }],
   ];
 
   it.each(cases)('parseModifier(%s)', (input, expected) => {

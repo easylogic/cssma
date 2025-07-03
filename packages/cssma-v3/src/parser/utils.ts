@@ -228,7 +228,7 @@ export function parseModifierToken(
     return {
       type: "modifier" as const,
       raw: token,
-      prefix: "attribute",
+      prefix: "arbitrary",
       value: token.slice(1, -1),
       slash: undefined,
       customProperty: false,

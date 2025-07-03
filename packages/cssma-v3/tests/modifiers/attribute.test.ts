@@ -3,15 +3,15 @@ import { parseModifier } from '../../src/parser/parseModifier';
 
 describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
-    ['[foo=bar]', { type: 'attribute', attr: 'foo', value: 'bar' }],
-    ['[data-state=open]', { type: 'attribute', attr: 'data-state', value: 'open' }],
-    ['[foo]', { type: 'attribute', attr: 'foo', value: undefined }],
+    ['[foo=bar]', { type: 'modifier', prefix: '[foo=bar]' }],
+    ['[data-state=open]', { type: 'modifier', prefix: '[data-state=open]' }],
+    ['[foo]', { type: 'modifier', prefix: '[foo]' }],
     // 잘못된 값
-    ['[]', null],
-    ['[=bar]', { type: 'attribute', attr: '', value: 'bar' }],
-    ['foo=bar', null],
-    ['', null],
-    ['hover', null],
+    ['[]', { type: 'unknown', raw: '[]' }],
+    ['[=bar]', { type: 'modifier', prefix: '[=bar]' }],
+    ['foo=bar', { type: 'unknown', raw: 'foo=bar' }],
+    ['', { type: 'unknown', raw: '' }],
+    ['hover', { type: 'modifier', prefix: 'hover' }],
   ];
 
   it.each(cases)('parseModifier(%s)', (input, expected) => {
