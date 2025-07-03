@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parsePlaceItems } from '../../src/parser/utilities/placeItems';
+import { parseAlignment } from '../../src/parser/utilities/alignment';
 
 describe('parsePlaceItems', () => {
   it('parses all Tailwind place-items presets', () => {
@@ -14,7 +14,7 @@ describe('parsePlaceItems', () => {
     ];
     for (const preset of presets) {
       const token = `place-items-${preset}`;
-      expect(parsePlaceItems(token)).toEqual({
+      expect(parseAlignment(token)).toEqual({
         type: 'place-items',
         value: preset,
         raw: token,
@@ -26,11 +26,11 @@ describe('parsePlaceItems', () => {
   });
 
   it('returns null for invalid input', () => {
-    expect(parsePlaceItems('place-items')).toBeNull();
-    expect(parsePlaceItems('place-items-')).toBeNull();
-    expect(parsePlaceItems('place-items-arbitrary')).toBeNull();
-    expect(parsePlaceItems('align-items-center')).toBeNull();
-    expect(parsePlaceItems('place-items-[foobar]')).toBeNull();
-    expect(parsePlaceItems('place-items-(--my-align)')).toBeNull();
+    expect(parseAlignment('place-items')).toBeNull();
+    expect(parseAlignment('place-items-')).toBeNull();
+    expect(parseAlignment('place-items-arbitrary')).toBeNull();
+    expect(parseAlignment('align-items-center')).toBeNull();
+    expect(parseAlignment('place-items-[foobar]')).toBeNull();
+    expect(parseAlignment('place-items-(--my-align)')).toBeNull();
   });
 }); 

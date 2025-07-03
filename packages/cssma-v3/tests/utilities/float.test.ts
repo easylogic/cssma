@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseFloat } from '../../src/parser/utilities/float';
+import { parseMisc } from '../../src/parser/utilities/misc';
 
 describe('parseFloatUtility', () => {
   const cases: Array<[string, any]> = [
@@ -11,6 +11,6 @@ describe('parseFloatUtility', () => {
   ];
 
   it.each(cases)('parseFloat(%s)', (input, expected) => {
-    expect(parseFloat(input)).toEqual(expected);
+    expect(parseMisc(input)).toEqual(expected);
   });
 }); 

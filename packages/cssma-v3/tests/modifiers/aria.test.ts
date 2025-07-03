@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { parseAriaModifier } from '../../src/parser/modifiers/aria';
+import { parseModifier } from '../../src/parser/parseModifier';
 
-describe('parseAriaModifier', () => {
+describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
     // 단순 상태
     ['aria-checked', { type: 'aria', attr: 'checked', value: 'true' }],
@@ -18,7 +18,7 @@ describe('parseAriaModifier', () => {
     ['hover', null],
   ];
 
-  it.each(cases)('parseAriaModifier(%s)', (input, expected) => {
-    expect(parseAriaModifier(input)).toEqual(expected);
+  it.each(cases)('parseModifier(%s)', (input, expected) => {
+    expect(parseModifier(input)).toEqual(expected);
   });
 }); 

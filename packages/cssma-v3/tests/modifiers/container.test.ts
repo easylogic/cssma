@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { parseContainerModifier } from '../../src/parser/modifiers/container';
+import { parseModifier } from '../../src/parser/parseModifier';
 
-describe('parseContainerModifier', () => {
+describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
     ['@md', { type: 'container', variant: 'md' }],
     ['@max-md', { type: 'container', variant: 'max-md' }],
@@ -10,18 +10,18 @@ describe('parseContainerModifier', () => {
     ['@min-[475px]', { type: 'container', variant: 'min', value: '475px' }],
     ['@max-[960px]', { type: 'container', variant: 'max', value: '960px' }],
     // 잘못된 값
-    ['md', null],
-    ['container/main', null],
-    ['@', null],
-    ['', null],
-    [null as any, null],
-    ['@min-', null],
-    ['@container/', null],
-    ['@/main', null],
-    ['@min-[', null],
+    ['md', { type: 'unknown', raw: 'md' }],
+    ['container/main', { type: 'unknown', raw: 'container/main' }],
+    ['@', { type: 'unknown', raw: '@' }],
+    ['', { type: 'unknown', raw: '' }],
+    [null as any, { type: 'unknown', raw: null }],
+    ['@min-', { type: 'unknown', raw: '@min-' }],
+    ['@container/', { type: 'unknown', raw: '@container/' }],
+    ['@/main', { type: 'unknown', raw: '@/main' }],
+    ['@min-[', { type: 'unknown', raw: '@min-[' }],
   ];
 
-  it.each(cases)('parseContainerModifier(%s)', (input, expected) => {
-    expect(parseContainerModifier(input)).toEqual(expected);
+  it.each(cases)('parseModifier(%s)', (input, expected) => {
+    expect(parseModifier(input)).toEqual(expected);
   });
 }); 

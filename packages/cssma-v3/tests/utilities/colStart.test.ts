@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { parseColStart } from '../../src/parser/utilities/colStart';
+import { parseGrid } from '../../src/parser/utilities/grid';
 
 describe('parseColStartUtility', () => {
   it('parses col-start-<number>', () => {
-    expect(parseColStart('col-start-1')).toEqual({
+    expect(parseGrid('col-start-1')).toEqual({
       type: 'col-start',
       value: 1,
       raw: 'col-start-1',
       arbitrary: false,
     });
-    expect(parseColStart('col-start-12')).toEqual({
+    expect(parseGrid('col-start-12')).toEqual({
       type: 'col-start',
       value: 12,
       raw: 'col-start-12',
@@ -17,7 +17,7 @@ describe('parseColStartUtility', () => {
     });
   });
   it('parses col-start-auto', () => {
-    expect(parseColStart('col-start-auto')).toEqual({
+    expect(parseGrid('col-start-auto')).toEqual({
       type: 'col-start',
       preset: 'auto',
       raw: 'col-start-auto',
@@ -25,13 +25,13 @@ describe('parseColStartUtility', () => {
     });
   });
   it('parses col-start-[arbitrary]', () => {
-    expect(parseColStart('col-start-[7]')).toEqual({
+    expect(parseGrid('col-start-[7]')).toEqual({
       type: 'col-start',
       value: '7',
       raw: 'col-start-[7]',
       arbitrary: true,
     });
-    expect(parseColStart('col-start-[var(--start)]')).toEqual({
+    expect(parseGrid('col-start-[var(--start)]')).toEqual({
       type: 'col-start',
       value: 'var(--start)',
       raw: 'col-start-[var(--start)]',
@@ -39,9 +39,9 @@ describe('parseColStartUtility', () => {
     });
   });
   it('returns null for invalid input', () => {
-    expect(parseColStart('col-start')).toBeNull();
-    expect(parseColStart('col-start-')).toBeNull();
-    expect(parseColStart('col-start-arbitrary')).toBeNull();
-    expect(parseColStart('row-start-2')).toBeNull();
+    expect(parseGrid('col-start')).toBeNull();
+    expect(parseGrid('col-start-')).toBeNull();
+    expect(parseGrid('col-start-arbitrary')).toBeNull();
+    expect(parseGrid('row-start-2')).toBeNull();
   });
 }); 

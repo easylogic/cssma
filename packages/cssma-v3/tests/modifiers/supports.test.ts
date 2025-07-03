@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { parseSupportsModifier } from '../../src/parser/modifiers/supports';
+import { parseModifier } from '../../src/parser/parseModifier';
 
-describe('parseSupportsModifier', () => {
+describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
     // 대괄호 쿼리
     ['supports-[display:grid]', { type: 'supports', query: 'display:grid' }],
@@ -18,13 +18,13 @@ describe('parseSupportsModifier', () => {
     ['supports-flex', { type: 'supports', feature: 'flex' }],
     ['supports-color', { type: 'supports', feature: 'color' }],
     // 잘못된 값
-    ['supports-', null],
-    ['supports', null],
-    ['', null],
-    ['hover', null],
+    ['supports-', { type: 'supports', feature: '' }],
+    ['supports', { type: 'unknown', raw: 'supports' }],
+    ['', { type: 'unknown', raw: '' }],
+    ['hover', { type: 'unknown', raw: 'hover' }],
   ];
 
-  it.each(cases)('parseSupportsModifier(%s)', (input, expected) => {
-    expect(parseSupportsModifier(input)).toEqual(expected);
+  it.each(cases)('parseModifier(%s)', (input, expected) => {
+    expect(parseModifier(input)).toEqual(expected);
   });
 }); 

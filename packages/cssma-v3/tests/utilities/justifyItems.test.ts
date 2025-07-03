@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { parseJustifyItems } from '../../src/parser/utilities/justifyItems';
+import { parseAlignment } from '../../src/parser/utilities/alignment';
 
 describe('parseJustifyItemsUtility', () => {
   it('parses justify-items-start', () => {
-    expect(parseJustifyItems('justify-items-start')).toEqual({
+    expect(parseAlignment('justify-items-start')).toEqual({
       type: 'justify-items',
       preset: 'start',
       raw: 'justify-items-start',
@@ -11,7 +11,7 @@ describe('parseJustifyItemsUtility', () => {
     });
   });
   it('parses justify-items-end', () => {
-    expect(parseJustifyItems('justify-items-end')).toEqual({
+    expect(parseAlignment('justify-items-end')).toEqual({
       type: 'justify-items',
       preset: 'end',
       raw: 'justify-items-end',
@@ -19,7 +19,7 @@ describe('parseJustifyItemsUtility', () => {
     });
   });
   it('parses justify-items-center', () => {
-    expect(parseJustifyItems('justify-items-center')).toEqual({
+    expect(parseAlignment('justify-items-center')).toEqual({
       type: 'justify-items',
       preset: 'center',
       raw: 'justify-items-center',
@@ -27,7 +27,7 @@ describe('parseJustifyItemsUtility', () => {
     });
   });
   it('parses justify-items-stretch', () => {
-    expect(parseJustifyItems('justify-items-stretch')).toEqual({
+    expect(parseAlignment('justify-items-stretch')).toEqual({
       type: 'justify-items',
       preset: 'stretch',
       raw: 'justify-items-stretch',
@@ -35,7 +35,7 @@ describe('parseJustifyItemsUtility', () => {
     });
   });
   it('parses justify-items-[arbitrary]', () => {
-    expect(parseJustifyItems('justify-items-[foobar]')).toEqual({
+    expect(parseAlignment('justify-items-[foobar]')).toEqual({
       type: 'justify-items',
       value: 'foobar',
       raw: 'justify-items-[foobar]',
@@ -43,9 +43,9 @@ describe('parseJustifyItemsUtility', () => {
     });
   });
   it('returns null for invalid input', () => {
-    expect(parseJustifyItems('justify-items')).toBeNull();
-    expect(parseJustifyItems('justify-items-')).toBeNull();
-    expect(parseJustifyItems('justify-items-arbitrary')).toBeNull();
-    expect(parseJustifyItems('justify-self-center')).toBeNull();
+    expect(parseAlignment('justify-items')).toBeNull();
+    expect(parseAlignment('justify-items-')).toBeNull();
+    expect(parseAlignment('justify-items-arbitrary')).toBeNull();
+    expect(parseAlignment('justify-self-center')).toBeNull();
   });
 }); 

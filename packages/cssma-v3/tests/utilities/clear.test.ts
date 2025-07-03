@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseClear } from '../../src/parser/utilities/clear';
+import { parseMisc } from '../../src/parser/utilities/misc';
 
 describe('parseClearUtility', () => {
   const cases: Array<[string, any]> = [
@@ -10,6 +10,6 @@ describe('parseClearUtility', () => {
   ];
 
   it.each(cases)('parseClear(%s)', (input, expected) => {
-    expect(parseClear(input)).toEqual(expected);
+    expect(parseMisc(input)).toEqual(expected);
   });
 }); 

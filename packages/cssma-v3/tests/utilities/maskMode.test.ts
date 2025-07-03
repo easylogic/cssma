@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseMaskMode } from '../../src/parser/utilities/maskMode';
+import { parseMask } from '../../src/parser/utilities/mask';
 
 describe('parseMaskMode', () => {
   const cases = [
@@ -9,12 +9,12 @@ describe('parseMaskMode', () => {
   ];
   it('parses all mask-mode presets', () => {
     for (const [token, value] of cases) {
-      expect(parseMaskMode(token)).toEqual({ type: 'mask-mode', value, raw: token, arbitrary: false });
+      expect(parseMask(token)).toEqual({ type: 'mask-mode', value, raw: token, arbitrary: false });
     }
   });
   it('returns null for invalid mask-mode', () => {
-    expect(parseMaskMode('mask-mode-foo')).toBeNull();
-    expect(parseMaskMode('mask-foo')).toBeNull();
-    expect(parseMaskMode('mask-')).toBeNull();
+    expect(parseMask('mask-mode-foo')).toBeNull();
+    expect(parseMask('mask-foo')).toBeNull();
+    expect(parseMask('mask-')).toBeNull();
   });
 }); 

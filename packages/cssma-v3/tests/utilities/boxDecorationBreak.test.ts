@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseBoxDecorationBreak } from '../../src/parser/utilities/boxDecorationBreak';
+import { parseBox } from '../../src/parser/utilities/box';
 
 describe('parseBoxDecorationBreakUtility', () => {
   const cases: Array<[string, any]> = [
@@ -8,6 +8,6 @@ describe('parseBoxDecorationBreakUtility', () => {
   ];
 
   it.each(cases)('parseBoxDecorationBreak(%s)', (input, expected) => {
-    expect(parseBoxDecorationBreak(input)).toEqual(expected);
+    expect(parseBox(input)).toEqual(expected);
   });
 }); 

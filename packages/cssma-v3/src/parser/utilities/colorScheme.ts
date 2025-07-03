@@ -1,20 +1,21 @@
-// Tailwind color-scheme utility parser
+// Tailwind color-scheme/forced-color-adjust utility parser (통합)
 // https://tailwindcss.com/docs/color-scheme
+// https://tailwindcss.com/docs/forced-color-adjust
 
-import type { CssmaContext } from '../../types';
+import { parseUtilityToken } from "../utils";
 
-const schemes = {
-  'scheme-normal': 'normal',
-  'scheme-dark': 'dark',
-  'scheme-light': 'light',
-  'scheme-light-dark': 'light dark',
-  'scheme-only-dark': 'only dark',
-  'scheme-only-light': 'only light',
-};
+const colorSchemePrefixes = [
+  "scheme-normal",
+  "scheme-dark",
+  "scheme-light",
+  "scheme-light-dark",
+  "scheme-only-dark",
+  "scheme-only-light",
+  "forced-color-adjust-auto",
+  "forced-color-adjust-none",
+  "forced-color-adjust",
+];
 
-export function parseColorScheme(token: string, context?: CssmaContext): any | null {
-  if (schemes[token]) {
-    return { type: 'color-scheme', value: schemes[token], raw: token, preset: schemes[token] };
-  }
-  return null;
+export function parseColorScheme(token: string) {
+  return parseUtilityToken(token, colorSchemePrefixes, true, true);
 } 

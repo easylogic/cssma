@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { parseAttributeModifier } from '../../src/parser/modifiers/attribute';
+import { parseModifier } from '../../src/parser/parseModifier';
 
-describe('parseAttributeModifier', () => {
+describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
     ['[foo=bar]', { type: 'attribute', attr: 'foo', value: 'bar' }],
     ['[data-state=open]', { type: 'attribute', attr: 'data-state', value: 'open' }],
@@ -14,7 +14,7 @@ describe('parseAttributeModifier', () => {
     ['hover', null],
   ];
 
-  it.each(cases)('parseAttributeModifier(%s)', (input, expected) => {
-    expect(parseAttributeModifier(input)).toEqual(expected);
+  it.each(cases)('parseModifier(%s)', (input, expected) => {
+    expect(parseModifier(input)).toEqual(expected);
   });
 }); 

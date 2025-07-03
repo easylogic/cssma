@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseMaskClip } from '../../src/parser/utilities/maskClip';
+import { parseMask } from '../../src/parser/utilities/mask';
 
 describe('parseMaskClip', () => {
   const cases = [
@@ -13,12 +13,12 @@ describe('parseMaskClip', () => {
   ];
   it('parses all mask-clip presets', () => {
     for (const [token, value] of cases) {
-      expect(parseMaskClip(token)).toEqual({ type: 'mask-clip', value, raw: token, arbitrary: false });
+      expect(parseMask(token)).toEqual({ type: 'mask-clip', value, raw: token, arbitrary: false });
     }
   });
   it('returns null for invalid mask-clip', () => {
-    expect(parseMaskClip('mask-clip-foo')).toBeNull();
-    expect(parseMaskClip('mask-clip-')).toBeNull();
-    expect(parseMaskClip('mask-border')).toBeNull();
+    expect(parseMask('mask-clip-foo')).toBeNull();
+    expect(parseMask('mask-clip-')).toBeNull();
+    expect(parseMask('mask-border')).toBeNull();
   });
 }); 

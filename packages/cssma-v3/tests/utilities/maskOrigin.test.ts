@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseMaskOrigin } from '../../src/parser/utilities/maskOrigin';
+import { parseMask } from '../../src/parser/utilities/mask';
 
 describe('parseMaskOrigin', () => {
   const cases = [
@@ -12,12 +12,12 @@ describe('parseMaskOrigin', () => {
   ];
   it('parses all mask-origin presets', () => {
     for (const [token, value] of cases) {
-      expect(parseMaskOrigin(token)).toEqual({ type: 'mask-origin', value, raw: token, arbitrary: false });
+      expect(parseMask(token)).toEqual({ type: 'mask-origin', value, raw: token, arbitrary: false });
     }
   });
   it('returns null for invalid mask-origin', () => {
-    expect(parseMaskOrigin('mask-origin-foo')).toBeNull();
-    expect(parseMaskOrigin('mask-foo')).toBeNull();
-    expect(parseMaskOrigin('mask-')).toBeNull();
+    expect(parseMask('mask-origin-foo')).toBeNull();
+    expect(parseMask('mask-foo')).toBeNull();
+    expect(parseMask('mask-')).toBeNull();
   });
 }); 

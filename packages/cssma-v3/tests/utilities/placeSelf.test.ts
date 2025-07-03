@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parsePlaceSelf } from '../../src/parser/utilities/placeSelf';
+import { parseAlignment } from '../../src/parser/utilities/alignment';
 
 describe('parsePlaceSelf', () => {
   it('parses all Tailwind place-self presets', () => {
@@ -14,7 +14,7 @@ describe('parsePlaceSelf', () => {
     ];
     for (const preset of presets) {
       const token = `place-self-${preset}`;
-      expect(parsePlaceSelf(token)).toEqual({
+      expect(parseAlignment(token)).toEqual({
         type: 'place-self',
         value: preset,
         raw: token,
@@ -26,11 +26,11 @@ describe('parsePlaceSelf', () => {
   });
 
   it('returns null for invalid input', () => {
-    expect(parsePlaceSelf('place-self')).toBeNull();
-    expect(parsePlaceSelf('place-self-')).toBeNull();
-    expect(parsePlaceSelf('place-self-arbitrary')).toBeNull();
-    expect(parsePlaceSelf('align-self-center')).toBeNull();
-    expect(parsePlaceSelf('place-self-[foobar]')).toBeNull();
-    expect(parsePlaceSelf('place-self-(--my-align)')).toBeNull();
+    expect(parseAlignment('place-self')).toBeNull();
+    expect(parseAlignment('place-self-')).toBeNull();
+    expect(parseAlignment('place-self-arbitrary')).toBeNull();
+    expect(parseAlignment('align-self-center')).toBeNull();
+    expect(parseAlignment('place-self-[foobar]')).toBeNull();
+    expect(parseAlignment('place-self-(--my-align)')).toBeNull();
   });
 }); 

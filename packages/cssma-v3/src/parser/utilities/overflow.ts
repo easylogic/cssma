@@ -1,16 +1,32 @@
-import type { CssmaContext } from '../../types';
-// Tailwind overflow utility parser
+import { parseUtilityToken } from "../utils";
+// Tailwind overflow/scroll utility parser (통합)
 // https://tailwindcss.com/docs/overflow
 
-const presets = [
-  'auto', 'hidden', 'clip', 'visible', 'scroll'
-];
+const overflowPrefixes = [
+  "overscroll-x",
+  "overscroll-y",
+  "overscroll",
+  "overflow-x",
+  "overflow-y",
+  "overflow",
+  "scroll-auto",
+  "scroll-smooth",
+  "scroll-mx",
+  "scroll-my",
+  "scroll-mt",
+  "scroll-mb",
+  "scroll-ml",
+  "scroll-mr",
+  "scroll-px",
+  "scroll-py",
+  "scroll-pt",
+  "scroll-pb",
+  "scroll-pl",
+  "scroll-pr",
+  "scroll-p",
+  "scroll-m",
+].sort((a, b) => b.length - a.length);
 
-export function parseOverflow(token: string, context?: CssmaContext): any | null {
-  for (const preset of presets) {
-    if (token === `overflow-${preset}`) return { type: 'overflow', preset, raw: token, arbitrary: false };
-    if (token === `overflow-x-${preset}`) return { type: 'overflow', axis: 'x', preset, raw: token, arbitrary: false };
-    if (token === `overflow-y-${preset}`) return { type: 'overflow', axis: 'y', preset, raw: token, arbitrary: false };
-  }
-  return null;
+export function parseOverflow(token: string) {
+  return parseUtilityToken(token, overflowPrefixes, true, true);
 } 

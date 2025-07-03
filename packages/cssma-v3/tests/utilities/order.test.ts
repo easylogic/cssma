@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { parseOrder } from '../../src/parser/utilities/order';
+import { parseMisc } from '../../src/parser/utilities/misc';
 
 describe('parseOrderUtility', () => {
   it('parses order-first', () => {
-    expect(parseOrder('order-first')).toEqual({
+    expect(parseMisc('order-first')).toEqual({
       type: 'order',
       preset: 'first',
       raw: 'order-first',
@@ -11,7 +11,7 @@ describe('parseOrderUtility', () => {
     });
   });
   it('parses order-last', () => {
-    expect(parseOrder('order-last')).toEqual({
+    expect(parseMisc('order-last')).toEqual({
       type: 'order',
       preset: 'last',
       raw: 'order-last',
@@ -19,7 +19,7 @@ describe('parseOrderUtility', () => {
     });
   });
   it('parses order-none', () => {
-    expect(parseOrder('order-none')).toEqual({
+    expect(parseMisc('order-none')).toEqual({
       type: 'order',
       preset: 'none',
       raw: 'order-none',
@@ -27,13 +27,13 @@ describe('parseOrderUtility', () => {
     });
   });
   it('parses order-<number>', () => {
-    expect(parseOrder('order-1')).toEqual({
+    expect(parseMisc('order-1')).toEqual({
       type: 'order',
       value: 1,
       raw: 'order-1',
       arbitrary: false,
     });
-    expect(parseOrder('order-12')).toEqual({
+    expect(parseMisc('order-12')).toEqual({
       type: 'order',
       value: 12,
       raw: 'order-12',
@@ -41,13 +41,13 @@ describe('parseOrderUtility', () => {
     });
   });
   it('parses order-[arbitrary]', () => {
-    expect(parseOrder('order-[999]')).toEqual({
+    expect(parseMisc('order-[999]')).toEqual({
       type: 'order',
       value: '999',
       raw: 'order-[999]',
       arbitrary: true,
     });
-    expect(parseOrder('order-[-1]')).toEqual({
+    expect(parseMisc('order-[-1]')).toEqual({
       type: 'order',
       value: '-1',
       raw: 'order-[-1]',
@@ -55,9 +55,9 @@ describe('parseOrderUtility', () => {
     });
   });
   it('returns null for invalid input', () => {
-    expect(parseOrder('order')).toBeNull();
-    expect(parseOrder('order-')).toBeNull();
-    expect(parseOrder('order-arbitrary')).toBeNull();
-    expect(parseOrder('order-first-last')).toBeNull();
+    expect(parseMisc('order')).toBeNull();
+    expect(parseMisc('order-')).toBeNull();
+    expect(parseMisc('order-arbitrary')).toBeNull();
+    expect(parseMisc('order-first-last')).toBeNull();
   });
 }); 

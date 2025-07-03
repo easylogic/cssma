@@ -1,18 +1,18 @@
 import { describe, it, expect } from 'vitest';
-import { parseMotionModifier } from '../../src/parser/modifiers/motion';
+import { parseModifier } from '../../src/parser/parseModifier';
 
-describe('parseMotionModifier', () => {
+describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
     ['motion-safe', { type: 'motion', mode: 'safe' }],
     ['motion-reduce', { type: 'motion', mode: 'reduce' }],
-    ['motion', null],
-    ['safe', null],
-    ['reduce', null],
-    ['', null],
-    ['hover', null],
+    ['motion', { type: 'unknown', raw: 'motion' }],
+    ['safe', { type: 'unknown', raw: 'safe' }],
+    ['reduce', { type: 'unknown', raw: 'reduce' }],
+    ['', { type: 'unknown', raw: '' }],
+    ['hover', { type: 'unknown', raw: 'hover' }],
   ];
 
-  it.each(cases)('parseMotionModifier(%s)', (input, expected) => {
-    expect(parseMotionModifier(input)).toEqual(expected);
+  it.each(cases)('parseModifier(%s)', (input, expected) => {
+    expect(parseModifier(input)).toEqual(expected);
   });
 }); 

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { parseResponsiveModifier } from '../../src/parser/modifiers/responsive';
+import { parseModifier } from '../../src/parser/parseModifier';
 
-describe('parseResponsiveModifier', () => {
+describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
     ['sm', { type: 'responsive', variant: 'sm' }],
     ['md', { type: 'responsive', variant: 'md' }],
@@ -14,16 +14,16 @@ describe('parseResponsiveModifier', () => {
     ['min-[475px]', { type: 'responsive', variant: 'min', value: '475px' }],
     ['max-[960px]', { type: 'responsive', variant: 'max', value: '960px' }],
     // 잘못된 값
-    ['sm-', null],
-    ['max-', null],
-    ['min-', null],
-    ['min-[]', null],
-    ['', null],
-    [null as any, null],
-    ['hover', null],
+    ['sm-', { type: 'unknown', raw: 'sm-' }],
+    ['max-', { type: 'unknown', raw: 'max-' }],
+    ['min-', { type: 'unknown', raw: 'min-' }],
+    ['min-[]', { type: 'unknown', raw: 'min-[]' }],
+    ['', { type: 'unknown', raw: '' }],
+    [null as any, { type: 'unknown', raw: null }],
+    ['hover', { type: 'unknown', raw: 'hover' }],
   ];
 
-  it.each(cases)('parseResponsiveModifier(%s)', (input, expected) => {
-    expect(parseResponsiveModifier(input)).toEqual(expected);
+  it.each(cases)('parseModifier(%s)', (input, expected) => {
+    expect(parseModifier(input)).toEqual(expected);
   });
 }); 

@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { parseBorderCollapse } from '../../src/parser/utilities/borderCollapse';
+import { parseBox } from '../../src/parser/utilities/box';
 
 describe('parseBorderCollapse', () => {
   it('parses border-collapse', () => {
-    expect(parseBorderCollapse('border-collapse')).toEqual({
+    expect(parseBox('border-collapse')).toEqual({
       type: 'border-collapse',
       value: 'collapse',
       raw: 'border-collapse',
@@ -11,7 +11,7 @@ describe('parseBorderCollapse', () => {
   });
 
   it('parses border-separate', () => {
-    expect(parseBorderCollapse('border-separate')).toEqual({
+    expect(parseBox('border-separate')).toEqual({
       type: 'border-collapse',
       value: 'separate',
       raw: 'border-separate',
@@ -19,7 +19,7 @@ describe('parseBorderCollapse', () => {
   });
 
   it('returns null for invalid input', () => {
-    expect(parseBorderCollapse('border-collapse-foo')).toBeNull();
-    expect(parseBorderCollapse('border-foo')).toBeNull();
+    expect(parseBox('border-collapse-foo')).toBeNull();
+    expect(parseBox('border-foo')).toBeNull();
   });
 }); 

@@ -1,19 +1,3 @@
-// 파서 공통 유틸리티 함수 (추후 구현)
-
-import type { CssmaContext, ParsedModifier } from "../types";
-
-/**
- * Extracts the value inside [brackets] for a given prefix (e.g. border-t-[2vw] → 2vw)
- */
-export function extractArbitraryValue(
-  token: string,
-  prefix: string
-): string | null {
-  const re = new RegExp(`^${prefix}-\\[(.+)\\]$`);
-  const m = token.match(re);
-  return m ? m[1].trim() : null;
-}
-
 /**
  * Checks if a value is a valid CSS length (e.g. 2vw, 1.5rem, 10px, 100%, -10%, -1.5rem)
  */
@@ -59,8 +43,8 @@ export function isCalcFunction(val: string): boolean {
  * Selector 계열 modifier 타입 가드
  * (pseudo, pseudo-element, group, peer, state, logical, nth, nth-of-type, nth-last-of-type, attribute, aria, data)
  */
-export function isSelectorModifier(mod: ParsedModifier): boolean {
-  switch (mod.type) {
+export function isSelectorModifier(mod: ParsedClassToken): boolean {
+  switch (mod.prefix) {
     case "pseudo":
     case "pseudo-element":
     case "group":
@@ -79,143 +63,8 @@ export function isSelectorModifier(mod: ParsedModifier): boolean {
   }
 }
 
-/**
- * Responsive 계열 modifier 타입 가드
- * (responsive, breakpoint, container)
- */
-export function isResponsiveModifier(mod: ParsedModifier): boolean {
-  return (
-    mod.type === "responsive" ||
-    mod.type === "breakpoint" ||
-    mod.type === "container"
-  );
-}
-
-/**
- * Media 계열 modifier 타입 가드
- * (media, darkmode, motion)
- */
-export function isMediaModifier(mod: ParsedModifier): boolean {
-  return (
-    mod.type === "media" || mod.type === "darkmode" || mod.type === "motion"
-  );
-}
-
-/**
- * Arbitrary 계열 modifier 타입 가드
- * (arbitrary, attribute)
- */
-export function isArbitraryModifier(mod: ParsedModifier): boolean {
-  return mod.type === "arbitrary" || mod.type === "attribute";
-}
-
-/**
- * Tailwind 스타일 modifier 변환 우선순위 반환 함수
- * 1. Responsive (responsive, breakpoint, container)
- * 2. Media (media, darkmode, motion)
- * 3. Group/Peer (group, peer)
- * 4. State/Pseudo (pseudo, state, logical, nth, nth-of-type, nth-last-of-type, data, aria, attribute)
- * 5. Pseudo-element (pseudo-element)
- * 6. Arbitrary (arbitrary)
- * 기타: 99
- */
-export function getModifierPriority(mod: ParsedModifier): number {
-  if (isResponsiveModifier(mod)) return 1;
-  if (isMediaModifier(mod)) return 2;
-  if (mod.type === "group" || mod.type === "peer") return 3;
-  if (
-    mod.type === "pseudo" ||
-    mod.type === "state" ||
-    mod.type === "logical" ||
-    mod.type === "nth" ||
-    mod.type === "nth-of-type" ||
-    mod.type === "nth-last-of-type" ||
-    mod.type === "data" ||
-    mod.type === "aria" ||
-    mod.type === "attribute"
-  )
-    return 4;
-  if (mod.type === "pseudo-element") return 5;
-  if (isArbitraryModifier(mod)) return 6;
-  return 99;
-}
-
-/**
- * Tailwind 스타일 modifier 정렬 함수
- * (getModifierPriority를 이용해 오름차순 정렬)
- */
-export function sortModifiersForSelector(
-  modifiers: ParsedModifier[]
-): ParsedModifier[] {
-  return [...modifiers].sort(
-    (a, b) => getModifierPriority(a) - getModifierPriority(b)
-  );
-}
-
-/**
- * context.theme에서 지정된 네임스페이스와 키로 값을 조회하고, 일관된 구조로 반환하는 범용 preset 유틸리티
- * 예: parseContextPresetUtility({ token: 'animate-spin', prefix: 'animate', type: 'animation', context, namespace: 'animation' })
- * → { type: 'animation', value: 'spin', raw: 'animate-spin', arbitrary: false, customProperty: false, preset: 'animation.spin' }
- */
-export function parseContextPresetUtility({
-  token,
-  prefix,
-  type,
-  context,
-  namespace,
-}: {
-  token: string;
-  prefix: string;
-  type: string;
-  context?: CssmaContext;
-  namespace: string;
-}): any | null {
-  const re = new RegExp(`^${prefix}-([^\\s]+)$`);
-  const match = token.match(re);
-  if (match && context?.theme) {
-    const key = match[1];
-    const themePath = `${namespace}.${key}`;
-    const themeValue = context.theme(themePath);
-    console.log("themeValue", themeValue, themePath);
-    if (themeValue !== undefined) {
-      return {
-        type,
-        value: key,
-        raw: token,
-        arbitrary: false,
-        customProperty: false,
-        preset: themePath,
-      };
-    }
-  }
-  return null;
-}
-
-/**
- * Extracts a fraction value (e.g. 16/9) from a token with a given prefix (e.g. aspect-16/9, w-3/4).
- * Returns the fraction string if valid, otherwise null.
- *
- * @param token - The input token (e.g. 'aspect-16/9')
- * @param prefix - The prefix to match (e.g. 'aspect')
- * @returns The fraction string (e.g. '16/9') if valid, otherwise null
- */
-export function parseFractionValue(
-  token: string,
-  prefix: string
-): string | null {
-  const re = new RegExp(`^${prefix}-(\\d+\/\\d+)$`);
-  const match = token.match(re);
-  if (match) {
-    // Optionally, validate denominator is not zero
-    const [numerator, denominator] = match[1].split("/").map(Number);
-    if (denominator !== 0) {
-      return match[1];
-    }
-  }
-  return null;
-}
-
-export type ParsedUtilityToken = {
+export type ParsedClassToken = {
+  type: "utility" | "modifier";
   raw: string;
   prefix: string;
   value: string;
@@ -238,8 +87,9 @@ export type ParsedUtilityToken = {
 export function parseUtilityToken(
   token: string,
   prefixes: string[],
-  hasSlash: boolean = true
-): ParsedUtilityToken | null {
+  hasSlash: boolean = true,
+  skipSort: boolean = false
+): ParsedClassToken | null {
   if (!Array.isArray(prefixes) || prefixes.length === 0) return null;
   let raw = token;
   let important = false;
@@ -252,7 +102,7 @@ export function parseUtilityToken(
     negative = true;
     token = token.slice(1);
   }
-  const sorted = prefixes.slice().sort((a, b) => b.length - a.length);
+  const sorted = skipSort ? prefixes : prefixes.slice().sort((a, b) => b.length - a.length);
   for (const prefix of sorted) {
     // 1. 토큰이 프리픽스와 완전히 일치하는 경우
     if (token === prefix) {
@@ -269,6 +119,7 @@ export function parseUtilityToken(
         preset: false,
         negative,
         important,
+        type: "utility" as const,
       };
     }
 
@@ -340,7 +191,6 @@ export function parseUtilityToken(
       let arbitrary = !!arbitraryMatch;
 
       const numeric = /^-?\d*\.?\d+$/.test(finalValue);
-      const preset = finalValue !== "" && !customProperty && !arbitrary;
       return {
         raw,
         prefix,
@@ -351,11 +201,55 @@ export function parseUtilityToken(
         arbitraryType,
         arbitraryValue: arbitraryValue?.replace(/_/g, " "),
         numeric,
-        preset,
+        preset: false,
         negative,
         important,
+        type: "utility" as const,
       };
     }
+  }
+  return null;
+}
+
+
+/**
+ * 공통 Variant 토큰 파서
+ * @param token 전체 토큰 (예: hover:border-x-2, hover:border-t-[2vw], hover:border-(--foo))
+ * @param prefixes 모듈 prefix 배열 (예: ['hover', 'focus', 'active', 'group-hover', 'group-focus', 'group-active'])
+ */
+export function parseModifierToken(
+  token: string,
+  prefixes: string[],
+  hasSlash: boolean = true,
+  skipSort: boolean = false
+): ParsedClassToken | null {
+
+  if (token.startsWith("[")) {
+    return {
+      type: "modifier" as const,
+      raw: token,
+      prefix: "attribute",
+      value: token.slice(1, -1),
+      slash: undefined,
+      customProperty: false,
+      arbitrary: true,
+      arbitraryType: "attribute",
+      arbitraryValue: token.slice(1, -1),
+      numeric: false,
+      preset: false,
+      negative: false,
+      important: false,
+    };
+  }
+
+
+  const result = parseUtilityToken(token, prefixes, hasSlash, skipSort);
+  if (result) {
+    return {
+      ...result,
+      preset: false,
+      type: "modifier" as const,
+    };
   }
   return null;
 }

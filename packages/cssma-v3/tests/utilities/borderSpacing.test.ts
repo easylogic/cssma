@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { parseBorderSpacing } from "../../src/parser/utilities/borderSpacing";
+import { parseGrid } from '../../src/parser/utilities/grid';
 
 describe("parseBorderSpacing", () => {
   it("parses border-spacing preset", () => {
-    expect(parseBorderSpacing("border-spacing-2")).toEqual({
+    expect(parseGrid("border-spacing-2")).toEqual({
       type: "border-spacing",
       axis: "both",
       value: "2",
@@ -12,7 +12,7 @@ describe("parseBorderSpacing", () => {
     });
   });
   it("parses border-spacing arbitrary", () => {
-    expect(parseBorderSpacing("border-spacing-[7px]")).toEqual({
+    expect(parseGrid("border-spacing-[7px]")).toEqual({
       type: "border-spacing",
       axis: "both",
       value: "7px",
@@ -21,7 +21,7 @@ describe("parseBorderSpacing", () => {
     });
   });
   it("parses border-spacing custom property", () => {
-    expect(parseBorderSpacing("border-spacing-(--my-spacing)")).toEqual({
+    expect(parseGrid("border-spacing-(--my-spacing)")).toEqual({
       type: "border-spacing",
       axis: "both",
       value: "var(--my-spacing)",
@@ -31,7 +31,7 @@ describe("parseBorderSpacing", () => {
     });
   });
   it("parses border-spacing-x preset", () => {
-    expect(parseBorderSpacing("border-spacing-x-3")).toEqual({
+    expect(parseGrid("border-spacing-x-3")).toEqual({
       type: "border-spacing",
       axis: "x",
       value: "3",
@@ -40,7 +40,7 @@ describe("parseBorderSpacing", () => {
     });
   });
   it("parses border-spacing-x arbitrary", () => {
-    expect(parseBorderSpacing("border-spacing-x-[2em]")).toEqual({
+    expect(parseGrid("border-spacing-x-[2em]")).toEqual({
       type: "border-spacing",
       axis: "x",
       value: "2em",
@@ -49,7 +49,7 @@ describe("parseBorderSpacing", () => {
     });
   });
   it("parses border-spacing-x custom property", () => {
-    expect(parseBorderSpacing("border-spacing-x-(--foo)")).toEqual({
+    expect(parseGrid("border-spacing-x-(--foo)")).toEqual({
       type: "border-spacing",
       axis: "x",
       value: "var(--foo)",
@@ -59,7 +59,7 @@ describe("parseBorderSpacing", () => {
     });
   });
   it("parses border-spacing-y preset", () => {
-    expect(parseBorderSpacing("border-spacing-y-4")).toEqual({
+    expect(parseGrid("border-spacing-y-4")).toEqual({
       type: "border-spacing",
       axis: "y",
       value: "4",
@@ -68,7 +68,7 @@ describe("parseBorderSpacing", () => {
     });
   });
   it("parses border-spacing-y arbitrary", () => {
-    expect(parseBorderSpacing("border-spacing-y-[1.5rem]")).toEqual({
+    expect(parseGrid("border-spacing-y-[1.5rem]")).toEqual({
       type: "border-spacing",
       axis: "y",
       value: "1.5rem",
@@ -77,7 +77,7 @@ describe("parseBorderSpacing", () => {
     });
   });
   it("parses border-spacing-y custom property", () => {
-    expect(parseBorderSpacing("border-spacing-y-(--bar)")).toEqual({
+    expect(parseGrid("border-spacing-y-(--bar)")).toEqual({
       type: "border-spacing",
       axis: "y",
       value: "var(--bar)",
@@ -87,9 +87,9 @@ describe("parseBorderSpacing", () => {
     });
   });
   it("returns null for invalid input", () => {
-    expect(parseBorderSpacing("border-spacing")).toBeNull();
-    expect(parseBorderSpacing("border-spacing-x")).toBeNull();
-    expect(parseBorderSpacing("border-spacing-y")).toBeNull();
-    expect(parseBorderSpacing("border-spacing-foo")).toBeNull();
+    expect(parseGrid("border-spacing")).toBeNull();
+    expect(parseGrid("border-spacing-x")).toBeNull();
+    expect(parseGrid("border-spacing-y")).toBeNull();
+    expect(parseGrid("border-spacing-foo")).toBeNull();
   });
 });

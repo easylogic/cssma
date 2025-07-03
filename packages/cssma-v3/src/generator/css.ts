@@ -1,24 +1,35 @@
-import type { ParsedModifier, ParsedUtility } from '../types';
-import { sortModifiersForSelector, isSelectorModifier } from '../parser/utils';
-import { modifierSelectorPatterns, registerModifierSelectorPattern } from './patterns/modifierSelectorPatterns';
-import { modifierWrapperPatterns, registerModifierWrapperPattern } from './patterns/modifierWrapperPatterns';
-import { utilityPatterns, registerUtilityPattern } from './patterns/utilityPatterns';
+import type { ParsedModifier, ParsedUtility } from "../types";
+import { isSelectorModifier } from "../parser/utils";
+import {
+  modifierSelectorPatterns,
+  registerModifierSelectorPattern,
+} from "./patterns/modifierSelectorPatterns";
+import {
+  modifierWrapperPatterns,
+  registerModifierWrapperPattern,
+} from "./patterns/modifierWrapperPatterns";
+import {
+  utilityPatterns,
+  registerUtilityPattern,
+} from "./patterns/utilityPatterns";
 
 // --- Main Generator Functions ---
 
 export function modifierToSelector(mod: ParsedModifier): string {
-  const pattern = modifierSelectorPatterns.find(p => p.match(mod));
-  return pattern ? pattern.toSelector(mod) : '';
+  const pattern = modifierSelectorPatterns.find((p) => p.match(mod));
+  return pattern ? pattern.toSelector(mod) : "";
 }
 
-export function modifierToWrapper(mod: ParsedModifier): ((css: string) => string) | null {
-  const pattern = modifierWrapperPatterns.find(p => p.match(mod));
+export function modifierToWrapper(
+  mod: ParsedModifier
+): ((css: string) => string) | null {
+  const pattern = modifierWrapperPatterns.find((p) => p.match(mod));
   return pattern ? pattern.toWrapper(mod) : null;
 }
 
 export function utilityToCss(util: ParsedUtility): string {
-  const pattern = utilityPatterns.find(p => p.match(util));
-  return pattern ? pattern.toCss(util) : '';
+  const pattern = utilityPatterns.find((p) => p.match(util));
+  return pattern ? pattern.toCss(util) : "";
 }
 
 export function generateCssRule(
@@ -27,16 +38,17 @@ export function generateCssRule(
   baseClass: string
 ): string {
   // 1. selector 조립
-  const selectorMods = sortModifiersForSelector(modifiers).filter(isSelectorModifier);
-  const selector = selectorMods.map(modifierToSelector).join('') + `.${baseClass}`;
+  const selectorMods = modifiers.filter(isSelectorModifier);
+  const selector =
+    selectorMods.map(modifierToSelector).join("") + `.${baseClass}`;
 
   // 2. utility → CSS rule
   const rule = utilityToCss(utility);
 
   // 3. 래퍼 계열 modifier 추출
-  const wrappers = sortModifiersForSelector(modifiers)
-    .map(modifierToWrapper)
-    .filter(Boolean) as ((css: string) => string)[];
+  const wrappers = modifiers.map(modifierToWrapper).filter(Boolean) as ((
+    css: string
+  ) => string)[];
 
   // 4. 최종 CSS 조립
   let css = `${selector} { ${rule} }`;
@@ -54,4 +66,4 @@ export {
   registerModifierWrapperPattern,
   utilityPatterns,
   registerUtilityPattern,
-}; 
+};

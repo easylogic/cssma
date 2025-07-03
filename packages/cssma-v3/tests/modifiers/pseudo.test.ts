@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { parsePseudoModifier } from '../../src/parser/modifiers/pseudo';
+import { parseModifier } from '../../src/parser/parseModifier';
 
-describe('parsePseudoModifier', () => {
+describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
     ['hover', { type: 'pseudo', name: 'hover' }],
     ['focus', { type: 'pseudo', name: 'focus' }],
@@ -31,13 +31,12 @@ describe('parsePseudoModifier', () => {
     ['autofill', { type: 'pseudo', name: 'autofill' }],
     ['read-only', { type: 'pseudo', name: 'read-only' }],
     ['details-content', { type: 'pseudo', name: 'details-content' }],
-    // 잘못된 값
-    ['not-a-pseudo', null],
-    ['', null],
-    ['hovered', null],
+    ['not-a-pseudo', { type: 'unknown', raw: 'not-a-pseudo' }],
+    ['', { type: 'unknown', raw: '' }],
+    ['hovered', { type: 'unknown', raw: 'hovered' }],
   ];
 
-  it.each(cases)('parsePseudoModifier(%s)', (input, expected) => {
-    expect(parsePseudoModifier(input)).toEqual(expected);
+  it.each(cases)('parseModifier(%s)', (input, expected) => {
+    expect(parseModifier(input)).toEqual(expected);
   });
 }); 

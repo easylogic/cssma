@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { parseLogicalModifier } from '../../src/parser/modifiers/logical';
+import { parseModifier } from '../../src/parser/parseModifier';
 
-describe('parseLogicalModifier', () => {
+describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
     // 기본 형태
     ['has-checked', { type: 'logical', op: 'has', value: 'checked' }],
@@ -14,13 +14,13 @@ describe('parseLogicalModifier', () => {
     // 엣지/에러
     ['has-', { type: 'logical', op: 'has', value: '' }],
     ['not-', { type: 'logical', op: 'not', value: '' }],
-    ['has', null],
-    ['not', null],
-    ['', null],
-    ['hover', null],
+    ['has', { type: 'unknown', raw: 'has' }],
+    ['not', { type: 'unknown', raw: 'not' }],
+    ['', { type: 'unknown', raw: '' }],
+    ['hover', { type: 'unknown', raw: 'hover' }],
   ];
 
-  it.each(cases)('parseLogicalModifier(%s)', (input, expected) => {
-    expect(parseLogicalModifier(input)).toEqual(expected);
+  it.each(cases)('parseModifier(%s)', (input, expected) => {
+    expect(parseModifier(input)).toEqual(expected);
   });
 }); 

@@ -1,17 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { parseDirectionModifier } from '../../src/parser/modifiers/direction';
+import { parseModifier } from '../../src/parser/parseModifier';
 
-describe('parseDirectionModifier', () => {
+describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
     ['rtl', { type: 'direction', value: 'rtl' }],
     ['ltr', { type: 'direction', value: 'ltr' }],
-    // 잘못된 값
-    ['direction', null],
-    ['', null],
-    ['hover', null],
+    ['direction', { type: 'unknown', raw: 'direction' }],
+    ['', { type: 'unknown', raw: '' }],
+    ['hover', { type: 'unknown', raw: 'hover' }],
   ];
 
-  it.each(cases)('parseDirectionModifier(%s)', (input, expected) => {
-    expect(parseDirectionModifier(input)).toEqual(expected);
+  it.each(cases)('parseModifier(%s)', (input, expected) => {
+    expect(parseModifier(input)).toEqual(expected);
   });
 }); 

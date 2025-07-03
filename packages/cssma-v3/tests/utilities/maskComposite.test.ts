@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseMaskComposite } from '../../src/parser/utilities/maskComposite';
+import { parseMask } from '../../src/parser/utilities/mask';
 
 describe('parseMaskComposite', () => {
   const cases = [

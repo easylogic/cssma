@@ -1,15 +1,18 @@
-// Tailwind position utility parser
-// https://tailwindcss.com/docs/position
+import { parseUtilityToken } from "../utils";
+// Tailwind position utility parser (통합)
+// https://tailwindcss.com/docs/top-right-bottom-left
 
-import type { CssmaContext } from '../../types';
-
-const presets = [
-  'static', 'fixed', 'absolute', 'relative', 'sticky'
+const positionPrefixes = [
+  "inset-x",
+  "inset-y",
+  "inset",
+  "top",
+  "right",
+  "bottom",
+  "left",
+  "z",
 ];
 
-export function parsePosition(token: string, context?: CssmaContext): any | null {
-  for (const preset of presets) {
-    if (token === preset) return { type: 'position', preset, raw: token, arbitrary: false };
-  }
-  return null;
+export function parsePosition(token: string) {
+  return parseUtilityToken(token, positionPrefixes, true, true);
 } 

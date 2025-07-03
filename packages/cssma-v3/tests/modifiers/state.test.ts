@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { parseStateModifier } from '../../src/parser/modifiers/state';
+import { parseModifier } from '../../src/parser/parseModifier';
 
-describe('parseStateModifier', () => {
+describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
     ['open', { type: 'state', value: 'open' }],
     ['inert', { type: 'state', value: 'inert' }],
@@ -9,12 +9,12 @@ describe('parseStateModifier', () => {
     ['state-[foo=bar]', { type: 'state', attr: 'foo', value: 'bar' }],
     ['state-[expanded=true]', { type: 'state', attr: 'expanded', value: 'true' }],
     // 잘못된 값
-    ['state', null],
-    ['', null],
-    ['hover', null],
+    ['state', { type: 'unknown', raw: 'state' }],
+    ['', { type: 'unknown', raw: '' }],
+    ['hover', { type: 'unknown', raw: 'hover' }],
   ];
 
-  it.each(cases)('parseStateModifier(%s)', (input, expected) => {
-    expect(parseStateModifier(input)).toEqual(expected);
+  it.each(cases)('parseModifier(%s)', (input, expected) => {
+    expect(parseModifier(input)).toEqual(expected);
   });
 }); 

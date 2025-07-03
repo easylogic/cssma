@@ -1,17 +1,17 @@
 import { describe, it, expect } from 'vitest';
-import { parseDarkmodeModifier } from '../../src/parser/modifiers/darkmode';
+import { parseModifier } from '../../src/parser/parseModifier';
 
-describe('parseDarkmodeModifier', () => {
+describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
-    ['dark', { type: 'darkmode', mode: 'dark' }],
-    ['light', { type: 'darkmode', mode: 'light' }],
-    ['Dark', null],
-    ['darkmode', null],
-    ['', null],
-    ['hover', null],
+    ['dark', { type: 'media', name: 'dark' }],
+    ['light', { type: 'media', name: 'light' }],
+    ['Dark', { type: 'unknown', raw: 'Dark' }],
+    ['darkmode', { type: 'unknown', raw: 'darkmode' }],
+    ['', { type: 'unknown', raw: '' }],
+    ['hover', { type: 'unknown', raw: 'hover' }],
   ];
 
-  it.each(cases)('parseDarkmodeModifier(%s)', (input, expected) => {
-    expect(parseDarkmodeModifier(input)).toEqual(expected);
+  it.each(cases)('parseModifier(%s)', (input, expected) => {
+    expect(parseModifier(input)).toEqual(expected);
   });
 }); 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseColumns } from '../../src/parser/utilities/columns';
+import { parseGrid } from '../../src/parser/utilities/grid';
 
 describe('parseColumnsUtility', () => {
   const cases: Array<[string, any]> = [
@@ -14,6 +14,6 @@ describe('parseColumnsUtility', () => {
   ];
 
   it.each(cases)('parseColumns(%s)', (input, expected) => {
-    expect(parseColumns(input)).toEqual(expected);
+    expect(parseGrid(input)).toEqual(expected);
   });
 }); 

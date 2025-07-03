@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { parseContent } from '../../src/parser/utilities/content';
+import { parseMisc } from '../../src/parser/utilities/misc';
 
 describe('parseContent', () => {
   it('parses content-none', () => {
-    expect(parseContent('content-none')).toEqual({
+    expect(parseMisc('content-none')).toEqual({
       type: 'content',
       preset: 'none',
       raw: 'content-none',
@@ -12,7 +12,7 @@ describe('parseContent', () => {
   });
 
   it('parses content-(--custom)', () => {
-    expect(parseContent('content-(--my-content)')).toEqual({
+    expect(parseMisc('content-(--my-content)')).toEqual({
       type: 'content',
       preset: '--my-content',
       raw: 'content-(--my-content)',
@@ -21,7 +21,7 @@ describe('parseContent', () => {
   });
 
   it('parses content-[attr(data-x)]', () => {
-    expect(parseContent('content-[attr(data-x)]')).toEqual({
+    expect(parseMisc('content-[attr(data-x)]')).toEqual({
       type: 'content',
       preset: 'attr(data-x)',
       raw: 'content-[attr(data-x)]',
@@ -30,7 +30,7 @@ describe('parseContent', () => {
   });
 
   it('parses content-[var(--foo)]', () => {
-    expect(parseContent('content-[var(--foo)]')).toEqual({
+    expect(parseMisc('content-[var(--foo)]')).toEqual({
       type: 'content',
       preset: 'var(--foo)',
       raw: 'content-[var(--foo)]',
@@ -39,7 +39,7 @@ describe('parseContent', () => {
   });
 
   it("parses content-['Hello_World']", () => {
-    expect(parseContent("content-['Hello_World']")).toEqual({
+    expect(parseMisc("content-['Hello_World']")).toEqual({
       type: 'content',
       preset: "'Hello_World'",
       raw: "content-['Hello_World']",
@@ -48,7 +48,7 @@ describe('parseContent', () => {
   });
 
   it("parses content-['Hello\\_World'] (escaped underscore)", () => {
-    expect(parseContent("content-['Hello\\_World']")).toEqual({
+    expect(parseMisc("content-['Hello\\_World']")).toEqual({
       type: 'content',
       preset: "'Hello\\_World'",
       raw: "content-['Hello\\_World']",
@@ -57,16 +57,16 @@ describe('parseContent', () => {
   });
 
   it('returns null for invalid value (missing brackets)', () => {
-    expect(parseContent('content-foo')).toBeNull();
+    expect(parseMisc('content-foo')).toBeNull();
   });
 
   it('returns null for invalid value (malformed custom property)', () => {
-    expect(parseContent('content-(foo)')).toBeNull();
+    expect(parseMisc('content-(foo)')).toBeNull();
   });
 
   it('returns null for completely invalid', () => {
-    expect(parseContent('content-')).toBeNull();
-    expect(parseContent('content-[]')).toBeNull();
-    expect(parseContent('content-()')).toBeNull();
+    expect(parseMisc('content-')).toBeNull();
+    expect(parseMisc('content-[]')).toBeNull();
+    expect(parseMisc('content-()')).toBeNull();
   });
 }); 

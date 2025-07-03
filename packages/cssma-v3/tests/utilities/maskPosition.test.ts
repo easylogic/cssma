@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseMaskPosition } from '../../src/parser/utilities/maskPosition';
+import { parseMask } from '../../src/parser/utilities/mask';
 
 describe('parseMaskPosition', () => {
   const cases = [
@@ -15,18 +15,18 @@ describe('parseMaskPosition', () => {
   ];
   it('parses all mask-position presets', () => {
     for (const [token, value] of cases) {
-      expect(parseMaskPosition(token)).toEqual({ type: 'mask-position', value, raw: token, arbitrary: false });
+      expect(parseMask(token)).toEqual({ type: 'mask-position', value, raw: token, arbitrary: false });
     }
   });
   it('parses arbitrary value', () => {
-    expect(parseMaskPosition('mask-position-[center_top_1rem]')).toEqual({ type: 'mask-position', value: 'center_top_1rem', raw: 'mask-position-[center_top_1rem]', arbitrary: true });
+    expect(parseMask('mask-position-[center_top_1rem]')).toEqual({ type: 'mask-position', value: 'center_top_1rem', raw: 'mask-position-[center_top_1rem]', arbitrary: true });
   });
   it('parses custom property', () => {
-    expect(parseMaskPosition('mask-position-(--my-mask-position)')).toEqual({ type: 'mask-position', value: 'var(--my-mask-position)', raw: 'mask-position-(--my-mask-position)', arbitrary: true });
+    expect(parseMask('mask-position-(--my-mask-position)')).toEqual({ type: 'mask-position', value: 'var(--my-mask-position)', raw: 'mask-position-(--my-mask-position)', arbitrary: true });
   });
   it('returns null for invalid mask-position', () => {
-    expect(parseMaskPosition('mask-position-foo')).toBeNull();
-    expect(parseMaskPosition('mask-foo')).toBeNull();
-    expect(parseMaskPosition('mask-')).toBeNull();
+    expect(parseMask('mask-position-foo')).toBeNull();
+    expect(parseMask('mask-foo')).toBeNull();
+    expect(parseMask('mask-')).toBeNull();
   });
 }); 

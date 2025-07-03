@@ -1,20 +1,19 @@
 import { describe, it, expect } from 'vitest';
-import { parseGroupModifier } from '../../src/parser/modifiers/group';
+import { parseModifier } from '../../src/parser/parseModifier';
 
-describe('parseGroupModifier', () => {
+describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
     ['group-hover', { type: 'group', state: 'hover' }],
     ['group-focus', { type: 'group', state: 'focus' }],
     ['group-active', { type: 'group', state: 'active' }],
     ['group-visited', { type: 'group', state: 'visited' }],
-    // 잘못된 값
-    ['group-', null],
-    ['group', null],
-    ['', null],
-    ['hover', null],
+    ['group-', { type: 'group', state: '' }],
+    ['group', { type: 'unknown', raw: 'group' }],
+    ['', { type: 'unknown', raw: '' }],
+    ['hover', { type: 'unknown', raw: 'hover' }],
   ];
 
-  it.each(cases)('parseGroupModifier(%s)', (input, expected) => {
-    expect(parseGroupModifier(input)).toEqual(expected);
+  it.each(cases)('parseModifier(%s)', (input, expected) => {
+    expect(parseModifier(input)).toEqual(expected);
   });
 }); 

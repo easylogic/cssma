@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { parseTextIndent } from "../../src/parser/utilities/textIndent";
+import { parseTypography } from '../../src/parser/utilities/typography';
 
 describe("parseTextIndent", () => {
   it("parses indent-4", () => {
-    expect(parseTextIndent("indent-4")).toEqual({
+    expect(parseTypography("indent-4")).toEqual({
       type: "text-indent",
       value: "4",
       raw: "indent-4",
@@ -13,7 +13,7 @@ describe("parseTextIndent", () => {
     });
   });
   it("parses -indent-8", () => {
-    expect(parseTextIndent("-indent-8")).toEqual({
+    expect(parseTypography("-indent-8")).toEqual({
       type: "text-indent",
       value: "8",
       raw: "-indent-8",
@@ -23,7 +23,7 @@ describe("parseTextIndent", () => {
     });
   });
   it("parses indent-px", () => {
-    expect(parseTextIndent("indent-px")).toEqual({
+    expect(parseTypography("indent-px")).toEqual({
       type: "text-indent",
       value: "1px",
       raw: "indent-px",
@@ -33,7 +33,7 @@ describe("parseTextIndent", () => {
     });
   });
   it("parses -indent-px", () => {
-    expect(parseTextIndent("-indent-px")).toEqual({
+    expect(parseTypography("-indent-px")).toEqual({
       type: "text-indent",
       value: "1px",
       raw: "-indent-px",
@@ -43,7 +43,7 @@ describe("parseTextIndent", () => {
     });
   });
   it("parses indent-(--my-indent)", () => {
-    expect(parseTextIndent("indent-(--my-indent)")).toEqual({
+    expect(parseTypography("indent-(--my-indent)")).toEqual({
       type: "text-indent",
       value: "var(--my-indent)",
       raw: "indent-(--my-indent)",
@@ -53,7 +53,7 @@ describe("parseTextIndent", () => {
     });
   });
   it("parses indent-[50%]", () => {
-    expect(parseTextIndent("indent-[50%]")).toEqual({
+    expect(parseTypography("indent-[50%]")).toEqual({
       type: "text-indent",
       value: "50%",
       raw: "indent-[50%]",
@@ -63,10 +63,10 @@ describe("parseTextIndent", () => {
     });
   });
   it("returns null for invalid input", () => {
-    expect(parseTextIndent("indent-")).toBeNull();
-    expect(parseTextIndent("indent-foo")).toBeNull();
-    expect(parseTextIndent("indent-4px")).toBeNull();
-    expect(parseTextIndent("text-indent-4")).toBeNull();
-    expect(parseTextIndent("--indent-4")).toBeNull();
+    expect(parseTypography("indent-")).toBeNull();
+    expect(parseTypography("indent-foo")).toBeNull();
+    expect(parseTypography("indent-4px")).toBeNull();
+    expect(parseTypography("text-indent-4")).toBeNull();
+    expect(parseTypography("--indent-4")).toBeNull();
   });
 }); 

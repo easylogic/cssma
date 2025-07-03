@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { parseArbitraryModifier } from '../../src/parser/modifiers/arbitrary';
+import { parseModifier } from '../../src/parser/parseModifier';
 
-describe('parseArbitraryModifier', () => {
+describe('parseModifier', () => {
   const cases: Array<[string, any]> = [
     ['[&>*]', { type: 'arbitrary', selector: '&>*' }],
     ['[data-state=open]', { type: 'arbitrary', selector: 'data-state=open' }],
@@ -16,7 +16,7 @@ describe('parseArbitraryModifier', () => {
     ['hover', null],
   ];
 
-  it.each(cases)('parseArbitraryModifier(%s)', (input, expected) => {
-    expect(parseArbitraryModifier(input)).toEqual(expected);
+  it.each(cases)('parseModifier(%s)', (input, expected) => {
+    expect(parseModifier(input)).toEqual(expected);
   });
 }); 
