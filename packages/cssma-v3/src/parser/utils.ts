@@ -1,11 +1,14 @@
-// 파서 공통 유틸리티 함수 (추후 구현) 
+// 파서 공통 유틸리티 함수 (추후 구현)
 
-import type { CssmaContext, ParsedModifier } from '../types';
+import type { CssmaContext, ParsedModifier } from "../types";
 
 /**
  * Extracts the value inside [brackets] for a given prefix (e.g. border-t-[2vw] → 2vw)
  */
-export function extractArbitraryValue(token: string, prefix: string): string | null {
+export function extractArbitraryValue(
+  token: string,
+  prefix: string
+): string | null {
   const re = new RegExp(`^${prefix}-\\[(.+)\\]$`);
   const m = token.match(re);
   return m ? m[1].trim() : null;
@@ -58,18 +61,18 @@ export function isCalcFunction(val: string): boolean {
  */
 export function isSelectorModifier(mod: ParsedModifier): boolean {
   switch (mod.type) {
-    case 'pseudo':
-    case 'pseudo-element':
-    case 'group':
-    case 'peer':
-    case 'state':
-    case 'logical':
-    case 'nth':
-    case 'nth-of-type':
-    case 'nth-last-of-type':
-    case 'attribute':
-    case 'aria':
-    case 'data':
+    case "pseudo":
+    case "pseudo-element":
+    case "group":
+    case "peer":
+    case "state":
+    case "logical":
+    case "nth":
+    case "nth-of-type":
+    case "nth-last-of-type":
+    case "attribute":
+    case "aria":
+    case "data":
       return true;
     default:
       return false;
@@ -81,7 +84,11 @@ export function isSelectorModifier(mod: ParsedModifier): boolean {
  * (responsive, breakpoint, container)
  */
 export function isResponsiveModifier(mod: ParsedModifier): boolean {
-  return mod.type === 'responsive' || mod.type === 'breakpoint' || mod.type === 'container';
+  return (
+    mod.type === "responsive" ||
+    mod.type === "breakpoint" ||
+    mod.type === "container"
+  );
 }
 
 /**
@@ -89,7 +96,9 @@ export function isResponsiveModifier(mod: ParsedModifier): boolean {
  * (media, darkmode, motion)
  */
 export function isMediaModifier(mod: ParsedModifier): boolean {
-  return mod.type === 'media' || mod.type === 'darkmode' || mod.type === 'motion';
+  return (
+    mod.type === "media" || mod.type === "darkmode" || mod.type === "motion"
+  );
 }
 
 /**
@@ -97,7 +106,7 @@ export function isMediaModifier(mod: ParsedModifier): boolean {
  * (arbitrary, attribute)
  */
 export function isArbitraryModifier(mod: ParsedModifier): boolean {
-  return mod.type === 'arbitrary' || mod.type === 'attribute';
+  return mod.type === "arbitrary" || mod.type === "attribute";
 }
 
 /**
@@ -113,19 +122,20 @@ export function isArbitraryModifier(mod: ParsedModifier): boolean {
 export function getModifierPriority(mod: ParsedModifier): number {
   if (isResponsiveModifier(mod)) return 1;
   if (isMediaModifier(mod)) return 2;
-  if (mod.type === 'group' || mod.type === 'peer') return 3;
+  if (mod.type === "group" || mod.type === "peer") return 3;
   if (
-    mod.type === 'pseudo' ||
-    mod.type === 'state' ||
-    mod.type === 'logical' ||
-    mod.type === 'nth' ||
-    mod.type === 'nth-of-type' ||
-    mod.type === 'nth-last-of-type' ||
-    mod.type === 'data' ||
-    mod.type === 'aria' ||
-    mod.type === 'attribute'
-  ) return 4;
-  if (mod.type === 'pseudo-element') return 5;
+    mod.type === "pseudo" ||
+    mod.type === "state" ||
+    mod.type === "logical" ||
+    mod.type === "nth" ||
+    mod.type === "nth-of-type" ||
+    mod.type === "nth-last-of-type" ||
+    mod.type === "data" ||
+    mod.type === "aria" ||
+    mod.type === "attribute"
+  )
+    return 4;
+  if (mod.type === "pseudo-element") return 5;
   if (isArbitraryModifier(mod)) return 6;
   return 99;
 }
@@ -134,8 +144,12 @@ export function getModifierPriority(mod: ParsedModifier): number {
  * Tailwind 스타일 modifier 정렬 함수
  * (getModifierPriority를 이용해 오름차순 정렬)
  */
-export function sortModifiersForSelector(modifiers: ParsedModifier[]): ParsedModifier[] {
-  return [...modifiers].sort((a, b) => getModifierPriority(a) - getModifierPriority(b));
+export function sortModifiersForSelector(
+  modifiers: ParsedModifier[]
+): ParsedModifier[] {
+  return [...modifiers].sort(
+    (a, b) => getModifierPriority(a) - getModifierPriority(b)
+  );
 }
 
 /**
@@ -148,7 +162,7 @@ export function parseContextPresetUtility({
   prefix,
   type,
   context,
-  namespace
+  namespace,
 }: {
   token: string;
   prefix: string;
@@ -162,7 +176,7 @@ export function parseContextPresetUtility({
     const key = match[1];
     const themePath = `${namespace}.${key}`;
     const themeValue = context.theme(themePath);
-    console.log('themeValue', themeValue, themePath);
+    console.log("themeValue", themeValue, themePath);
     if (themeValue !== undefined) {
       return {
         type,
@@ -185,12 +199,15 @@ export function parseContextPresetUtility({
  * @param prefix - The prefix to match (e.g. 'aspect')
  * @returns The fraction string (e.g. '16/9') if valid, otherwise null
  */
-export function parseFractionValue(token: string, prefix: string): string | null {
+export function parseFractionValue(
+  token: string,
+  prefix: string
+): string | null {
   const re = new RegExp(`^${prefix}-(\\d+\/\\d+)$`);
   const match = token.match(re);
   if (match) {
     // Optionally, validate denominator is not zero
-    const [numerator, denominator] = match[1].split('/').map(Number);
+    const [numerator, denominator] = match[1].split("/").map(Number);
     if (denominator !== 0) {
       return match[1];
     }
@@ -218,21 +235,26 @@ export type ParsedUtilityToken = {
  * @param token 전체 토큰 (예: border-x-2, border-t-[2vw], border-(--foo))
  * @param prefixes 유틸리티 prefix 배열 (예: ['border', 'm', 'p'])
  */
-export function parseUtilityToken(token: string, prefixes: string[], hasSlash: boolean = true): ParsedUtilityToken | null {
+export function parseUtilityToken(
+  token: string,
+  prefixes: string[],
+  hasSlash: boolean = true
+): ParsedUtilityToken | null {
   if (!Array.isArray(prefixes) || prefixes.length === 0) return null;
   let raw = token;
   let important = false;
-  if (token.startsWith('!')) {
+  if (token.startsWith("!")) {
     important = true;
     token = token.slice(1);
   }
   let negative = false;
-  if (token.startsWith('-')) {
+  if (token.startsWith("-")) {
     negative = true;
     token = token.slice(1);
   }
   const sorted = prefixes.slice().sort((a, b) => b.length - a.length);
   for (const prefix of sorted) {
+    // 1. 토큰이 프리픽스와 완전히 일치하는 경우
     if (token === prefix) {
       return {
         raw,
@@ -249,51 +271,85 @@ export function parseUtilityToken(token: string, prefixes: string[], hasSlash: b
         important,
       };
     }
+
+    // 2. 토큰이 프리픽스와 완전히 일치하는 경우
     if (token.startsWith(prefix + "-")) {
       let value = token.slice(prefix.length + 1);
       if (value === "") return null;
       let slash: string | undefined = undefined;
-      // 1. slash 먼저 분리
-      if (typeof value === 'string' && hasSlash) {
-        const slashIndex = value.lastIndexOf('/');
-        if (slashIndex > 0) {
-          slash = value.slice(slashIndex + 1);
-          value = value.slice(0, slashIndex);
-        }
-      }
-      // 2. value(슬래시 없는 값)에 대해 arbitrary/customProperty 처리
-      let customProperty = /^\(.+\)$/.test(value);
-      let arbitrary = /^\[.+\]$/.test(value);
+
+      // arbitrary 패턴 slash 분리 처리
+      const arbitraryMatch = value.match(/^(\[.+\])(?:\/(.+))?$/);
+      const customMatch = value.match(/^(\(.+\))(?:\/(.+))?$/);
+
       let arbitraryType: string | undefined = undefined;
       let arbitraryValue: string | undefined = undefined;
-      let finalValue = value;
-      if (arbitrary) {
+      let finalValue: string | undefined = undefined;
+
+      // 1. arbitrary/customProperty 패턴 slash 분리 처리
+      if (arbitraryMatch) {
+        if (hasSlash && arbitraryMatch[2]) {
+          // slash 분리
+          value = arbitraryMatch[1];
+          slash = arbitraryMatch[2];
+          console.log("arbitraryMatch", arbitraryMatch, value, slash);
+        } else {
+          // slash 분리 안 함: 전체를 value로
+          value = arbitraryMatch[1]; // 대괄호 포함 전체
+          slash = undefined;
+        }
+
         const inner = value.slice(1, -1);
         finalValue = inner;
-        arbitraryValue = inner;
         const funcMatch = inner.match(/^([a-zA-Z][a-zA-Z0-9_-]*)\((.*)\)$/);
         if (funcMatch) {
           arbitraryType = funcMatch[1];
           arbitraryValue = funcMatch[2];
         } else {
-          arbitraryType = inner.startsWith('#') ? 'hex' : undefined;
+          arbitraryType = inner.startsWith("#") ? "hex" : undefined;
           arbitraryValue = inner;
         }
-      } else if (customProperty) {
+
+      } else if (customMatch) {
+        if (hasSlash && customMatch[2]) {
+          value = customMatch[1];
+          slash = customMatch[2];
+        } else {
+          value = customMatch[1]; // 괄호 포함 전체
+          slash = undefined;
+        }
+
         const inner = value.slice(1, -1);
         finalValue = inner;
+
+      } else {
+        // 2. 그 외에는 slash 분리 적용
+        if (typeof value === "string" && hasSlash) {
+          const slashIndex = value.lastIndexOf("/");
+          if (slashIndex > 0) {
+            slash = value.slice(slashIndex + 1);
+            value = value.slice(0, slashIndex);
+          }
+        }
+
+        finalValue = value;
       }
-      const numeric = /^-?\d*\.?\d+$/.test(value);
-      const preset = value !== "" && !customProperty && !arbitrary;
+
+      // 2. value(슬래시 없는 값)에 대해 arbitrary/customProperty 처리
+      let customProperty = !!customMatch;
+      let arbitrary = !!arbitraryMatch;
+
+      const numeric = /^-?\d*\.?\d+$/.test(finalValue);
+      const preset = finalValue !== "" && !customProperty && !arbitrary;
       return {
         raw,
         prefix,
-        value: finalValue,
+        value: finalValue.replace(/_/g, " "),
         slash,
         customProperty,
         arbitrary,
         arbitraryType,
-        arbitraryValue,
+        arbitraryValue: arbitraryValue?.replace(/_/g, " "),
         numeric,
         preset,
         negative,
@@ -302,4 +358,4 @@ export function parseUtilityToken(token: string, prefixes: string[], hasSlash: b
     }
   }
   return null;
-} 
+}

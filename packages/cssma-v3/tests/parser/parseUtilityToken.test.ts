@@ -1310,16 +1310,16 @@ describe("parseUtilityToken", () => {
     // arbitrary value with slash inside, hasSlash: false
     expect(parseUtilityToken('bg-[rgba(0,0,0,0.5)]/10', ['bg'], false)).toMatchObject({
       prefix: 'bg',
-      value: '[rgba(0,0,0,0.5)]/10',
+      value: 'rgba(0,0,0,0.5)',
       slash: undefined,
-      arbitrary: false,
-      arbitraryType: undefined,
-      arbitraryValue: undefined,
+      arbitrary: true,
+      arbitraryType: 'rgba',
+      arbitraryValue: '0,0,0,0.5',
     });
     // customProperty with slash, hasSlash: false
     expect(parseUtilityToken('border-(--my-border)/20', ['border'], false)).toMatchObject({
       prefix: 'border',
-      value: '(--my-border)/20',
+      value: '--my-border',
       slash: undefined,
       customProperty: false,
     });
@@ -1336,6 +1336,65 @@ describe("parseUtilityToken", () => {
       value: '--foo',
       customProperty: true,
       slash: undefined,
+    });
+  });
+
+  it('parses CSS Color 4 oklch/lch/lab/color() arbitrary values', () => {
+    expect(parseUtilityToken('bg-[oklch(62.2345%_0.154_219.2_/_0.8)]', prefixes)).toEqual({
+      raw: 'bg-[oklch(62.2345%_0.154_219.2_/_0.8)]',
+      prefix: 'bg',
+      value: 'oklch(62.2345% 0.154 219.2 / 0.8)',
+      slash: undefined,
+      customProperty: false,
+      arbitrary: true,
+      arbitraryType: 'oklch',
+      arbitraryValue: '62.2345% 0.154 219.2 / 0.8',
+      numeric: false,
+      preset: false,
+      negative: false,
+      important: false,
+    });
+    expect(parseUtilityToken('bg-[lch(52%_0.2_180)]', prefixes)).toEqual({
+      raw: 'bg-[lch(52%_0.2_180)]',
+      prefix: 'bg',
+      value: 'lch(52% 0.2 180)',
+      slash: undefined,
+      customProperty: false,
+      arbitrary: true,
+      arbitraryType: 'lch',
+      arbitraryValue: '52% 0.2 180',
+      numeric: false,
+      preset: false,
+      negative: false,
+      important: false,
+    });
+    expect(parseUtilityToken('bg-[lab(52%_20_30)]', prefixes)).toEqual({
+      raw: 'bg-[lab(52%_20_30)]',
+      prefix: 'bg',
+      value: 'lab(52% 20 30)',
+      slash: undefined,
+      customProperty: false,
+      arbitrary: true,
+      arbitraryType: 'lab',
+      arbitraryValue: '52% 20 30',
+      numeric: false,
+      preset: false,
+      negative: false,
+      important: false,
+    });
+    expect(parseUtilityToken('bg-[color(display-p3_1_0.5_0)]', prefixes)).toEqual({
+      raw: 'bg-[color(display-p3_1_0.5_0)]',
+      prefix: 'bg',
+      value: 'color(display-p3 1 0.5 0)',
+      slash: undefined,
+      customProperty: false,
+      arbitrary: true,
+      arbitraryType: 'color',
+      arbitraryValue: 'display-p3 1 0.5 0',
+      numeric: false,
+      preset: false,
+      negative: false,
+      important: false,
     });
   });
 });
