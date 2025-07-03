@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 
 // Tailwind transition/animation utility parser (통합)
 // https://tailwindcss.com/docs/transition
@@ -21,5 +21,5 @@ const transitionAnimationPrefixes = [
 ];
 
 export function parseTransition(token: string) {
-  return parseUtilityToken(token, transitionAnimationPrefixes, true, true);
+  return parseBaseToken(token, transitionAnimationPrefixes, true, true);
 } 

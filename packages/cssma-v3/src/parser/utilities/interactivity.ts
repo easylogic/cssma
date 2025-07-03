@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 // Tailwind interactivity utility parser (통합)
 // https://tailwindcss.com/docs/cursor
 
@@ -21,5 +21,5 @@ const interactivityPrefixes = [
 ];
 
 export function parseInteractivity(token: string) {
-  return parseUtilityToken(token, interactivityPrefixes, true, true);
+  return parseBaseToken(token, interactivityPrefixes, true, true);
 } 

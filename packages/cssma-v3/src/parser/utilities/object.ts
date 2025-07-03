@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 // Tailwind object utility parser (통합)
 // https://tailwindcss.com/docs/object-fit
 
@@ -9,5 +9,5 @@ const objectPrefixes = [
 ].sort((a, b) => b.length - a.length);
 
 export function parseObject(token: string) {
-  return parseUtilityToken(token, objectPrefixes, true, true);
+  return parseBaseToken(token, objectPrefixes, true, true);
 } 

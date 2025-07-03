@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 
 // Tailwind box utility parser (통합)
 // https://tailwindcss.com/docs/box-decoration-break
@@ -15,5 +15,5 @@ const boxPrefixes = [
 ];
 
 export function parseBox(token: string) {
-  return parseUtilityToken(token, boxPrefixes, true, true);
+  return parseBaseToken(token, boxPrefixes, true, true);
 } 

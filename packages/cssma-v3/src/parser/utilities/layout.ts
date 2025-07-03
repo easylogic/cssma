@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 // Tailwind layout utility parser (통합)
 // https://tailwindcss.com/docs/flex
 
@@ -31,5 +31,5 @@ const layoutPrefixes = [
 ];
 
 export function parseLayout(token: string) {
-  return parseUtilityToken(token, layoutPrefixes, true, true);
+  return parseBaseToken(token, layoutPrefixes, true, true);
 } 

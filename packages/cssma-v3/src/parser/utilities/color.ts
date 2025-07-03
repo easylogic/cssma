@@ -1,7 +1,7 @@
 // Tailwind text color utility parser
 // https://tailwindcss.com/docs/color
 
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 
 const colorPrefixes = [
   "decoration",
@@ -15,5 +15,5 @@ const colorPrefixes = [
 ];
 
 export function parseColor(token: string) {
-  return parseUtilityToken(token, colorPrefixes, true, true);
+  return parseBaseToken(token, colorPrefixes, true, true);
 } 

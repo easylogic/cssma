@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 const breakPrefixes = [
   "break-inside",
   "break-before",
@@ -6,5 +6,5 @@ const breakPrefixes = [
   "box",
 ];
 export function parseBreak(token: string) {
-  return parseUtilityToken(token, breakPrefixes, true, true);
+  return parseBaseToken(token, breakPrefixes, true, true);
 } 

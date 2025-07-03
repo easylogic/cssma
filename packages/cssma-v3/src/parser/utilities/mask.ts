@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 const maskPrefixes = [
   "mask-type",
   "mask-size",
@@ -7,5 +7,5 @@ const maskPrefixes = [
   "mask-mode",
 ];
 export function parseMask(token: string) {
-  return parseUtilityToken(token, maskPrefixes, true, true);
+  return parseBaseToken(token, maskPrefixes, true, true);
 } 

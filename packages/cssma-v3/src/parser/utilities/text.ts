@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 
 // Tailwind text utility parser (통합)
 // https://tailwindcss.com/docs/text-indent
@@ -20,5 +20,5 @@ const textPrefixes = [
 ];
 
 export function parseText(token: string) {
-  return parseUtilityToken(token, textPrefixes, true, true);
+  return parseBaseToken(token, textPrefixes, true, true);
 } 

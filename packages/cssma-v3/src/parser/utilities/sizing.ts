@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 // Tailwind sizing utility parser (통합)
 // https://tailwindcss.com/docs/width
 // https://tailwindcss.com/docs/field-sizing
@@ -18,5 +18,5 @@ const sizingPrefixes = [
 ];
 
 export function parseSizing(token: string) {
-  return parseUtilityToken(token, sizingPrefixes, true, true);
+  return parseBaseToken(token, sizingPrefixes, true, true);
 } 

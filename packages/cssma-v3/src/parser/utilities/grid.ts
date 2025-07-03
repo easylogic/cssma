@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 
 // Tailwind grid utility parser (통합)
 // https://tailwindcss.com/docs/grid-auto-columns
@@ -17,5 +17,5 @@ const gridPrefixes = [
 ];
 
 export function parseGrid(token: string) {
-  return parseUtilityToken(token, gridPrefixes, true, true);
+  return parseBaseToken(token, gridPrefixes, true, true);
 } 

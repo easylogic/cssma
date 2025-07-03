@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 // Tailwind table utility parser (통합)
 // https://tailwindcss.com/docs/table-layout
 
@@ -22,5 +22,5 @@ const tablePrefixes = [
 ];
 
 export function parseTable(token: string) {
-  return parseUtilityToken(token, tablePrefixes, true, true);
+  return parseBaseToken(token, tablePrefixes, true, true);
 } 

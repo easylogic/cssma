@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 // Tailwind misc utility parser (통합)
 
 const miscPrefixes = [
@@ -12,5 +12,5 @@ const miscPrefixes = [
 ];
 
 export function parseMisc(token: string) {
-  return parseUtilityToken(token, miscPrefixes, true, true);
+  return parseBaseToken(token, miscPrefixes, true, true);
 } 

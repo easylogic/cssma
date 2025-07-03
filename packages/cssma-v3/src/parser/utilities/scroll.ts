@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 
 // Tailwind scroll utility parser (통합)
 // https://tailwindcss.com/docs/scroll-padding
@@ -44,5 +44,5 @@ const scrollPrefixes = [
 ];
 
 export function parseScroll(token: string) {
-  return parseUtilityToken(token, scrollPrefixes, true, true);
+  return parseBaseToken(token, scrollPrefixes, true, true);
 } 

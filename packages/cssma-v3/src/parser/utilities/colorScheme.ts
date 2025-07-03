@@ -2,7 +2,7 @@
 // https://tailwindcss.com/docs/color-scheme
 // https://tailwindcss.com/docs/forced-color-adjust
 
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 
 const colorSchemePrefixes = [
   "scheme-normal",
@@ -17,5 +17,5 @@ const colorSchemePrefixes = [
 ];
 
 export function parseColorScheme(token: string) {
-  return parseUtilityToken(token, colorSchemePrefixes, true, true);
+  return parseBaseToken(token, colorSchemePrefixes, true, true);
 } 

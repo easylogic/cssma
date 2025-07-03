@@ -1,5 +1,5 @@
 import type { CssmaContext } from '../../types';
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 // Tailwind spacing utility parser (통합)
 // https://tailwindcss.com/docs/margin
 
@@ -26,5 +26,5 @@ const spacingPrefixes = [
 ];
 
 export function parseSpacing(token: string, context?: CssmaContext) {
-  return parseUtilityToken(token, spacingPrefixes, true, true);
+  return parseBaseToken(token, spacingPrefixes, true, true);
 } 

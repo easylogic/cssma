@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 // Tailwind border utility parser (통합)
 // https://tailwindcss.com/docs/border-radius
 
@@ -45,5 +45,5 @@ const borderPrefixes = [
 ].sort((a, b) => b.length - a.length);
 
 export function parseBorder(token: string) {
-  return parseUtilityToken(token, borderPrefixes, true, true);
+  return parseBaseToken(token, borderPrefixes, true, true);
 } 

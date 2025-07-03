@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 // Tailwind typography utility parser (통합)
 // https://tailwindcss.com/docs/font-size
 // https://tailwindcss.com/docs/vertical-align
@@ -27,5 +27,5 @@ const typographyPrefixes = [
 ];
 
 export function parseTypography(token: string) {
-  return parseUtilityToken(token, typographyPrefixes, true, true);
+  return parseBaseToken(token, typographyPrefixes, true, true);
 } 

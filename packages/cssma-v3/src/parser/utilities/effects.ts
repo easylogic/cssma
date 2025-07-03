@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 // Tailwind effects & backdrop utility parser (통합)
 // https://tailwindcss.com/docs/box-shadow
 // https://tailwindcss.com/docs/backdrop-blur
@@ -32,5 +32,5 @@ const effectsPrefixes = [
 ];
 
 export function parseEffects(token: string) {
-  return parseUtilityToken(token, effectsPrefixes, true, true);
+  return parseBaseToken(token, effectsPrefixes, true, true);
 }

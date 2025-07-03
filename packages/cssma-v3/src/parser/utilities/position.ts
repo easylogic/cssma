@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 // Tailwind position utility parser (통합)
 // https://tailwindcss.com/docs/top-right-bottom-left
 
@@ -14,5 +14,5 @@ const positionPrefixes = [
 ];
 
 export function parsePosition(token: string) {
-  return parseUtilityToken(token, positionPrefixes, true, true);
+  return parseBaseToken(token, positionPrefixes, true, true);
 } 

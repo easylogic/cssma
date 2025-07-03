@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 import type { CssmaContext } from '../../types';
 // Tailwind transform utility parser (통합)
 // https://tailwindcss.com/docs/transform
@@ -34,5 +34,5 @@ const transformPrefixes = [
 ];
 
 export function parseTransform(token: string, context?: CssmaContext): any | null {
-  return parseUtilityToken(token, transformPrefixes, true, true);
+  return parseBaseToken(token, transformPrefixes, true, true);
 } 

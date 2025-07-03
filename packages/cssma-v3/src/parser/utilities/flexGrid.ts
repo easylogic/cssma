@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 // Tailwind flex/grid utility parser (통합)
 // https://tailwindcss.com/docs/flex
 
@@ -34,5 +34,5 @@ const flexGridPrefixes = [
 ];
 
 export function parseFlexGrid(token: string) {
-  return parseUtilityToken(token, flexGridPrefixes, true, true);
+  return parseBaseToken(token, flexGridPrefixes, true, true);
 } 

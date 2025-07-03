@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 // Tailwind visibility/z-index utility parser (통합)
 // https://tailwindcss.com/docs/visibility
 
@@ -11,5 +11,5 @@ const visibilityPrefixes = [
 ].sort((a, b) => b.length - a.length);
 
 export function parseVisibility(token: string) {
-  return parseUtilityToken(token, visibilityPrefixes, true, true);
+  return parseBaseToken(token, visibilityPrefixes, true, true);
 } 

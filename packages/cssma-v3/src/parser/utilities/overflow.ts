@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 // Tailwind overflow/scroll utility parser (통합)
 // https://tailwindcss.com/docs/overflow
 
@@ -28,5 +28,5 @@ const overflowPrefixes = [
 ].sort((a, b) => b.length - a.length);
 
 export function parseOverflow(token: string) {
-  return parseUtilityToken(token, overflowPrefixes, true, true);
+  return parseBaseToken(token, overflowPrefixes, true, true);
 } 

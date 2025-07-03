@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 // Tailwind gradient utility parser (통합)
 // https://tailwindcss.com/docs/gradient-color-stops
 
@@ -18,5 +18,5 @@ const gradientPrefixes = [
 ];
 
 export function parseGradient(token: string) {
-  return parseUtilityToken(token, gradientPrefixes, true, true);
+  return parseBaseToken(token, gradientPrefixes, true, true);
 } 

@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 
 // Tailwind list utility parser (통합)
 // https://tailwindcss.com/docs/list-style-type
@@ -16,5 +16,5 @@ const listPrefixes = [
 ];
 
 export function parseList(token: string) {
-  return parseUtilityToken(token, listPrefixes, true, true);
+  return parseBaseToken(token, listPrefixes, true, true);
 } 

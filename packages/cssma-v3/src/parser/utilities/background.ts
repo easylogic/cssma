@@ -1,9 +1,9 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 // Tailwind background utility parser (통합)
 // https://tailwindcss.com/docs/backgrounds
 
 export function parseBackground(token: string) {
-  return parseUtilityToken(token, [
+  return parseBaseToken(token, [
     "bg",
     "bg-none",
     "bg-gradient-to",

@@ -84,7 +84,7 @@ export type ParsedClassToken = {
  * @param token 전체 토큰 (예: border-x-2, border-t-[2vw], border-(--foo))
  * @param prefixes 유틸리티 prefix 배열 (예: ['border', 'm', 'p'])
  */
-export function parseUtilityToken(
+export function parseBaseToken(
   token: string,
   prefixes: string[],
   hasSlash: boolean = true,
@@ -243,7 +243,7 @@ export function parseModifierToken(
   }
 
 
-  const result = parseUtilityToken(token, prefixes, hasSlash, skipSort);
+  const result = parseBaseToken(token, prefixes, hasSlash, skipSort);
   if (result) {
     return {
       ...result,

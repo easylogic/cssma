@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 
 // Tailwind font utility parser (통합)
 // https://tailwindcss.com/docs/font-variant-numeric
@@ -37,5 +37,5 @@ const fontPrefixes = [
 ];
 
 export function parseFont(token: string) {
-  return parseUtilityToken(token, fontPrefixes, true, true);
+  return parseBaseToken(token, fontPrefixes, true, true);
 } 

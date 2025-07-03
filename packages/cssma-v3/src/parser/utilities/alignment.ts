@@ -1,4 +1,4 @@
-import { parseUtilityToken } from "../utils";
+import { parseBaseToken } from "../utils";
 // Tailwind alignment utility parser (통합)
 // https://tailwindcss.com/docs/justify-content
 
@@ -15,5 +15,5 @@ const alignmentPrefixes = [
 ];
 
 export function parseAlignment(token: string) {
-  return parseUtilityToken(token, alignmentPrefixes, true, true);
+  return parseBaseToken(token, alignmentPrefixes, true, true);
 } 
