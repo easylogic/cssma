@@ -1,3 +1,5 @@
+import { ParsedClassToken } from "./parser/utils";
+
 /**
  * 기본 설정 타입 (Tailwind v4 확장)
  */
@@ -385,8 +387,8 @@ export interface ParsedUtility {
 
 export interface ParsedClass {
   original: string;
-  modifiers: ParsedModifier[];
-  utility: ParsedUtility | null;
+  modifiers: ParsedClassToken[];
+  utility: ParsedClassToken | null;
 }
 
 // theme/config 관련 타입은 theme-types.ts에서 관리

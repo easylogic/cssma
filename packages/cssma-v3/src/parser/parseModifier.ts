@@ -1,6 +1,6 @@
 import type { CssmaContext } from '../types';
 // 단일 Tailwind modifier를 구조화된 객체로 파싱
-import { parseModifier as parseModifierBase } from './modifiers';
+import { parseModifierBase } from './modifiers';
 import { ParsedClassToken } from './utils';
 
 const modifierParsers = [

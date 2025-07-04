@@ -1,77 +1,73 @@
-import type { CssmaContext } from '../../src/types';
-import { describe, it, expect } from "vitest";
-import { parseTypography } from '../../src/parser/utilities/typography';
-import { createContext } from "../../src/config/context";
-import { defaultConfig } from "../../src/config/defaults";
-import { theme as themeGetter } from "../../src/config/theme-getter";
+import { describe, it, expect } from 'vitest';
+import { parseUtility } from '../../src/parser/parseUtility';
+import { baseUtility } from './base';
 
-// --- Mock context 단위 테스트 ---
-const mockThemeObj = {
-  colors: {
-    red: { 500: "#f00" },
-    primary: "#123456",
-    inherit: "inherit",
-    current: "currentColor",
-    transparent: "transparent",
-    black: "#000",
-    white: "#fff"
-  }
-};
-
-const mockContext: CssmaContext = {
-  theme: (...args: any[]) => themeGetter(mockThemeObj, ...args),
-  config: () => {},
-  plugins: []
-};
-
-describe("parseTextColor (mock context)", () => {
-  it("parses context palette colors", () => {
-    expect(parseTypography("text-red-500", mockContext)).toEqual({
-      type: "color", value: "red-500", raw: "text-red-500", arbitrary: false, customProperty: false, preset: "colors.red.500"
-    });
-    expect(parseTypography("text-primary", mockContext)).toEqual({
-      type: "color", value: "primary", raw: "text-primary", arbitrary: false, customProperty: false, preset: "colors.primary"
+describe('parseUtility (color)', () => {
+  describe('text color', () => {
+    it('should parse Tailwind v4 text color classes', () => {
+      expect(parseUtility('text-red-500')).toEqual(baseUtility({ prefix: 'text', value: 'red-500', raw: 'text-red-500' }));
+      expect(parseUtility('text-blue-100')).toEqual(baseUtility({ prefix: 'text', value: 'blue-100', raw: 'text-blue-100' }));
+      expect(parseUtility('text-[#ff0]')).toEqual(baseUtility({ prefix: 'text', value: '[#ff0]', raw: 'text-[#ff0]' }));
+      expect(parseUtility('text-[oklch(0.5_0.2_30)]')).toEqual(baseUtility({ prefix: 'text', value: '[oklch(0.5_0.2_30)]', raw: 'text-[oklch(0.5_0.2_30)]' }));
+      expect(parseUtility('text-red-500!')).toEqual(baseUtility({ prefix: 'text', value: 'red-500', raw: 'text-red-500!', important: true }));
+      expect(parseUtility('-text-blue-100')).toEqual(baseUtility({ prefix: 'text', value: 'blue-100', raw: '-text-blue-100', negative: true }));
+      expect(parseUtility('text-')).toEqual({ type: 'unknown', raw: 'text-' });
+      expect(parseUtility('text-foo')).toEqual({ type: 'unknown', raw: 'text-foo' });
     });
   });
-  it("parses custom property", () => {
-    expect(parseTypography("text-(--my-color)")).toEqual({
-      type: "color", value: "--my-color", raw: "text-(--my-color)", arbitrary: true, customProperty: true
-    });
-  });
-  it("parses arbitrary value", () => {
-    expect(parseTypography("text-[#50d71e]" )).toEqual({
-      type: "color", value: "#50d71e", raw: "text-[#50d71e]", arbitrary: true, customProperty: false
-    });
-    expect(parseTypography("text-[oklch(70%_0.2_200)]")).toEqual({
-      type: "color", value: "oklch(70%_0.2_200)", raw: "text-[oklch(70%_0.2_200)]", arbitrary: true, customProperty: false
-    });
-  });
-  it("returns null for missing context values", () => {
-    expect(parseTypography("text-blue-500", mockContext)).toBeNull();
-    expect(parseTypography("text-red-600", mockContext)).toBeNull();
-  });
-});
 
-// --- defaultConfig + createContext 통합 테스트 ---
-const defaultCtx = createContext(defaultConfig);
-
-describe("parseTextColor (defaultConfig context)", () => {
-  it("parses Tailwind palette colors", () => {
-    expect(parseTypography("text-red-500", defaultCtx)).toEqual({
-      type: "color", value: "red-500", raw: "text-red-500", arbitrary: false, customProperty: false, preset: "colors.red.500"
-    });
-    expect(parseTypography("text-blue-600", defaultCtx)).toEqual({
-      type: "color", value: "blue-600", raw: "text-blue-600", arbitrary: false, customProperty: false, preset: "colors.blue.600"
-    });
-    expect(parseTypography("text-emerald-200", defaultCtx)).toEqual({
-      type: "color", value: "emerald-200", raw: "text-emerald-200", arbitrary: false, customProperty: false, preset: "colors.emerald.200"
+  describe('fill color', () => {
+    it('should parse Tailwind v4 fill color classes', () => {
+      expect(parseUtility('fill-blue-400')).toEqual(baseUtility({ prefix: 'fill', value: 'blue-400', raw: 'fill-blue-400' }));
+      expect(parseUtility('fill-[#123456]')).toEqual(baseUtility({ prefix: 'fill', value: '[#123456]', raw: 'fill-[#123456]' }));
+      expect(parseUtility('fill-[oklch(0.5_0.2_30)]')).toEqual(baseUtility({ prefix: 'fill', value: '[oklch(0.5_0.2_30)]', raw: 'fill-[oklch(0.5_0.2_30)]' }));
+      expect(parseUtility('fill-blue-400!')).toEqual(baseUtility({ prefix: 'fill', value: 'blue-400', raw: 'fill-blue-400!', important: true }));
+      expect(parseUtility('fill-')).toEqual({ type: 'unknown', raw: 'fill-' });
+      expect(parseUtility('fill-foo')).toEqual({ type: 'unknown', raw: 'fill-foo' });
     });
   });
-  it("returns null for truly invalid values", () => {
-    expect(parseTypography("text-foo", defaultCtx)).toBeNull();
-    expect(parseTypography("text-red", defaultCtx)).toBeNull();
-    expect(parseTypography("text-red-abc", defaultCtx)).toBeNull();
-    expect(parseTypography("text-500", defaultCtx)).toBeNull();
-    expect(parseTypography("text-#fff", defaultCtx)).toBeNull();
+
+  describe('stroke color', () => {
+    it('should parse Tailwind v4 stroke color classes', () => {
+      expect(parseUtility('stroke-green-300')).toEqual(baseUtility({ prefix: 'stroke', value: 'green-300', raw: 'stroke-green-300' }));
+      expect(parseUtility('stroke-[#abc]')).toEqual(baseUtility({ prefix: 'stroke', value: '[#abc]', raw: 'stroke-[#abc]' }));
+      expect(parseUtility('stroke-[oklch(0.5_0.2_30)]')).toEqual(baseUtility({ prefix: 'stroke', value: '[oklch(0.5_0.2_30)]', raw: 'stroke-[oklch(0.5_0.2_30)]' }));
+      expect(parseUtility('stroke-green-300!')).toEqual(baseUtility({ prefix: 'stroke', value: 'green-300', raw: 'stroke-green-300!', important: true }));
+      expect(parseUtility('stroke-')).toEqual({ type: 'unknown', raw: 'stroke-' });
+      expect(parseUtility('stroke-foo')).toEqual({ type: 'unknown', raw: 'stroke-foo' });
+    });
+  });
+
+  describe('accent color', () => {
+    it('should parse Tailwind v4 accent color classes', () => {
+      expect(parseUtility('accent-pink-500')).toEqual(baseUtility({ prefix: 'accent', value: 'pink-500', raw: 'accent-pink-500' }));
+      expect(parseUtility('accent-[#ff0]')).toEqual(baseUtility({ prefix: 'accent', value: '[#ff0]', raw: 'accent-[#ff0]' }));
+      expect(parseUtility('accent-[oklch(0.5_0.2_30)]')).toEqual(baseUtility({ prefix: 'accent', value: '[oklch(0.5_0.2_30)]', raw: 'accent-[oklch(0.5_0.2_30)]' }));
+      expect(parseUtility('accent-pink-500!')).toEqual(baseUtility({ prefix: 'accent', value: 'pink-500', raw: 'accent-pink-500!', important: true }));
+      expect(parseUtility('accent-')).toEqual({ type: 'unknown', raw: 'accent-' });
+      expect(parseUtility('accent-foo')).toEqual({ type: 'unknown', raw: 'accent-foo' });
+    });
+  });
+
+  describe('caret color', () => {
+    it('should parse Tailwind v4 caret color classes', () => {
+      expect(parseUtility('caret-red-500')).toEqual(baseUtility({ prefix: 'caret', value: 'red-500', raw: 'caret-red-500' }));
+      expect(parseUtility('caret-[#ff0]')).toEqual(baseUtility({ prefix: 'caret', value: '[#ff0]', raw: 'caret-[#ff0]' }));
+      expect(parseUtility('caret-[oklch(0.5_0.2_30)]')).toEqual(baseUtility({ prefix: 'caret', value: '[oklch(0.5_0.2_30)]', raw: 'caret-[oklch(0.5_0.2_30)]' }));
+      expect(parseUtility('caret-red-500!')).toEqual(baseUtility({ prefix: 'caret', value: 'red-500', raw: 'caret-red-500!', important: true }));
+      expect(parseUtility('caret-')).toEqual({ type: 'unknown', raw: 'caret-' });
+      expect(parseUtility('caret-foo')).toEqual({ type: 'unknown', raw: 'caret-foo' });
+    });
+  });
+
+  describe('decoration color', () => {
+    it('should parse Tailwind v4 decoration color classes', () => {
+      expect(parseUtility('decoration-blue-500')).toEqual(baseUtility({ prefix: 'decoration', value: 'blue-500', raw: 'decoration-blue-500' }));
+      expect(parseUtility('decoration-[#ff0]')).toEqual(baseUtility({ prefix: 'decoration', value: '[#ff0]', raw: 'decoration-[#ff0]' }));
+      expect(parseUtility('decoration-[oklch(0.5_0.2_30)]')).toEqual(baseUtility({ prefix: 'decoration', value: '[oklch(0.5_0.2_30)]', raw: 'decoration-[oklch(0.5_0.2_30)]' }));
+      expect(parseUtility('decoration-blue-500!')).toEqual(baseUtility({ prefix: 'decoration', value: 'blue-500', raw: 'decoration-blue-500!', important: true }));
+      expect(parseUtility('decoration-')).toEqual({ type: 'unknown', raw: 'decoration-' });
+      expect(parseUtility('decoration-foo')).toEqual({ type: 'unknown', raw: 'decoration-foo' });
+    });
   });
 }); 

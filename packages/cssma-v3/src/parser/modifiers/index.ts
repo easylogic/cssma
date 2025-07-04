@@ -1,5 +1,5 @@
 import { CssmaContext } from './../../theme-types';
-import { parseModifierToken } from "../utils";
+import { ParsedClassToken, parseModifierToken } from "../utils";
 
 // Tailwind 공식 지원 modifier prefix/값 (최대한 고정값)
 export const MODIFIER_PREFIXES = [
@@ -106,7 +106,7 @@ export const MODIFIER_PREFIXES = [
   "target",
 ];
 
-export function parseModifier(token: string, context?: CssmaContext) {
+export function parseModifierBase(token: string, context?: CssmaContext): ParsedClassToken | { type: 'unknown'; raw: string } {
   const result = parseModifierToken(token, MODIFIER_PREFIXES, true, true);
   if (result) {
 

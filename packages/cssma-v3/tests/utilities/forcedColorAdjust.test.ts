@@ -1,19 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { parseForcedColorAdjust } from '../../src/parser/utilities/forcedColorAdjust';
+import { parseUtility } from '../../src/parser/parseUtility';
+import { baseUtility } from './base';
 
-describe('parseForcedColorAdjust', () => {
-  it('parses forced-color-adjust-auto', () => {
-    expect(parseForcedColorAdjust('forced-color-adjust-auto')).toEqual({ type: 'forced-color-adjust', value: 'auto', raw: 'forced-color-adjust-auto' });
-  });
-  it('parses forced-color-adjust-none', () => {
-    expect(parseForcedColorAdjust('forced-color-adjust-none')).toEqual({ type: 'forced-color-adjust', value: 'none', raw: 'forced-color-adjust-none' });
-  });
-  it('returns null for invalid input', () => {
-    expect(parseForcedColorAdjust('forced-color-adjust-')).toBeNull();
-    expect(parseForcedColorAdjust('forced-color-adjust-foo')).toBeNull();
-    expect(parseForcedColorAdjust('forced-color-adjust-[auto]')).toBeNull();
-    expect(parseForcedColorAdjust('forced-color-adjust-(--foo)')).toBeNull();
-    expect(parseForcedColorAdjust('forced-color-adjust-[var(--foo)]')).toBeNull();
-    expect(parseForcedColorAdjust('forced-color-adjust')).toBeNull();
+describe('parseUtility (forced-color-adjust)', () => {
+  describe('forced-color-adjust', () => {
+    it('should parse Tailwind v4 forced-color-adjust classes', () => {
+      expect(parseUtility('forced-color-adjust-auto')).toEqual(baseUtility({ prefix: 'forced-color-adjust', value: 'auto', raw: 'forced-color-adjust-auto' }));
+      expect(parseUtility('forced-color-adjust-none')).toEqual(baseUtility({ prefix: 'forced-color-adjust', value: 'none', raw: 'forced-color-adjust-none' }));
+      expect(parseUtility('forced-color-adjust-')).toEqual({ type: 'unknown', raw: 'forced-color-adjust-' });
+      expect(parseUtility('forced-color-adjust-foo')).toEqual({ type: 'unknown', raw: 'forced-color-adjust-foo' });
+    });
   });
 }); 

@@ -64,7 +64,7 @@ export function isSelectorModifier(mod: ParsedClassToken): boolean {
 }
 
 export type ParsedClassToken = {
-  type: "utility" | "modifier";
+  type: "utility" | "modifier" | "unknown";
   raw: string;
   prefix: string;
   value: string;
@@ -93,9 +93,9 @@ export function parseBaseToken(
   if (!Array.isArray(prefixes) || prefixes.length === 0) return null;
   let raw = token;
   let important = false;
-  if (token.startsWith("!")) {
+  if (token.endsWith("!")) {
     important = true;
-    token = token.slice(1);
+    token = token.slice(0, -1);
   }
   let negative = false;
   if (token.startsWith("-")) {
