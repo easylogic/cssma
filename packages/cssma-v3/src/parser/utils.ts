@@ -143,7 +143,6 @@ export function parseBaseToken(
           // slash 분리
           value = arbitraryMatch[1];
           slash = arbitraryMatch[2];
-          console.log("arbitraryMatch", arbitraryMatch, value, slash);
         } else {
           // slash 분리 안 함: 전체를 value로
           value = arbitraryMatch[1]; // 대괄호 포함 전체
@@ -189,12 +188,13 @@ export function parseBaseToken(
       // 2. value(슬래시 없는 값)에 대해 arbitrary/customProperty 처리
       let customProperty = !!customMatch;
       let arbitrary = !!arbitraryMatch;
+      const realValue = finalValue.replace(/_/g, " ");
 
-      const numeric = /^-?\d*\.?\d+$/.test(finalValue);
+      const numeric = isNumberValue(realValue);
       return {
         raw,
         prefix,
-        value: finalValue.replace(/_/g, " "),
+        value: realValue,
         slash,
         customProperty,
         arbitrary,

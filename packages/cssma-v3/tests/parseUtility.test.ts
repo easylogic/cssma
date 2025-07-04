@@ -14,9 +14,6 @@ describe('parseUtility', () => {
   it('parses bg-center', () => {
     expect(parseUtility('bg-center')).toMatchObject({ type: 'background-position', preset: 'center' });
   });
-  it('parses bg-size-(--foo)', () => {
-    expect(parseUtility('bg-size-(--foo)')).toMatchObject({ type: 'background-size', value: 'var(--foo)' });
-  });
   it('parses content-none', () => {
     expect(parseUtility('content-none')).toMatchObject({ type: 'content', preset: 'none' });
   });

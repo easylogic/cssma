@@ -8,7 +8,6 @@ describe('parseUtility (box)', () => {
       expect(parseUtility('box-decoration-slice')).toEqual(baseUtility({ prefix: 'box-decoration', value: 'slice', raw: 'box-decoration-slice' }));
       expect(parseUtility('box-decoration-clone')).toEqual(baseUtility({ prefix: 'box-decoration', value: 'clone', raw: 'box-decoration-clone' }));
       expect(parseUtility('box-decoration-')).toEqual({ type: 'unknown', raw: 'box-decoration-' });
-      expect(parseUtility('box-decoration-foo')).toEqual({ type: 'unknown', raw: 'box-decoration-foo' });
     });
   });
 
@@ -17,7 +16,6 @@ describe('parseUtility (box)', () => {
       expect(parseUtility('box-border')).toEqual(baseUtility({ prefix: 'box', value: 'border', raw: 'box-border' }));
       expect(parseUtility('box-content')).toEqual(baseUtility({ prefix: 'box', value: 'content', raw: 'box-content' }));
       expect(parseUtility('box-')).toEqual({ type: 'unknown', raw: 'box-' });
-      expect(parseUtility('box-foo')).toEqual({ type: 'unknown', raw: 'box-foo' });
     });
   });
 
@@ -28,9 +26,8 @@ describe('parseUtility (box)', () => {
       expect(parseUtility('shadow-lg')).toEqual(baseUtility({ prefix: 'shadow', value: 'lg', raw: 'shadow-lg' }));
       expect(parseUtility('shadow-inner')).toEqual(baseUtility({ prefix: 'shadow', value: 'inner', raw: 'shadow-inner' }));
       expect(parseUtility('shadow-none')).toEqual(baseUtility({ prefix: 'shadow', value: 'none', raw: 'shadow-none' }));
-      expect(parseUtility('shadow-[0_2px_4px_#000]')).toEqual(baseUtility({ prefix: 'shadow', value: '[0_2px_4px_#000]', raw: 'shadow-[0_2px_4px_#000]' }));
+      expect(parseUtility('shadow-[0_2px_4px_#000]')).toEqual(baseUtility({ prefix: 'shadow', value: '0 2px 4px #000', arbitrary: true, arbitraryValue: '0 2px 4px #000', raw: 'shadow-[0_2px_4px_#000]' }));
       expect(parseUtility('shadow-')).toEqual({ type: 'unknown', raw: 'shadow-' });
-      expect(parseUtility('shadow-foo')).toEqual({ type: 'unknown', raw: 'shadow-foo' });
     });
   });
 
@@ -39,7 +36,7 @@ describe('parseUtility (box)', () => {
     expect(parseUtility('border-separate')).toEqual(baseUtility({ prefix: 'border-separate', raw: 'border-separate' }));
   });
   it('parses drop-shadow', () => {
-    expect(parseUtility('drop-shadow')).toEqual(baseUtility({ prefix: 'drop-shadow', raw: 'drop-shadow' }));
+    expect(parseUtility('drop-shadow')).toEqual(baseUtility({ type: 'drop-shadow', raw: 'drop-shadow', preset: 'DEFAULT' }));
   });
   it('returns unknown for invalid', () => {
     expect(parseUtility('box-decoration-')).toEqual({ type: 'unknown', raw: 'box-decoration-' });

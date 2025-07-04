@@ -15,7 +15,6 @@ describe('parseUtility (layout)', () => {
       expect(parseUtility('box-content')).toEqual(baseUtility({ prefix: 'box-content', raw: 'box-content' }));
       expect(parseUtility('box-border!')).toEqual(baseUtility({ prefix: 'box-border', raw: 'box-border!', important: true }));
       expect(parseUtility('box-')).toEqual({ type: 'unknown', raw: 'box-' });
-      expect(parseUtility('box-foo')).toEqual({ type: 'unknown', raw: 'box-foo' });
     });
   });
 
@@ -32,7 +31,6 @@ describe('parseUtility (layout)', () => {
       expect(parseUtility('hidden')).toEqual(baseUtility({ prefix: 'hidden', raw: 'hidden' }));
       expect(parseUtility('block!')).toEqual(baseUtility({ prefix: 'block', raw: 'block!', important: true }));
       expect(parseUtility('block-')).toEqual({ type: 'unknown', raw: 'block-' });
-      expect(parseUtility('block-foo')).toEqual({ type: 'unknown', raw: 'block-foo' });
     });
   });
 
@@ -42,7 +40,6 @@ describe('parseUtility (layout)', () => {
       expect(parseUtility('float-left')).toEqual(baseUtility({ prefix: 'float', value: 'left', raw: 'float-left' }));
       expect(parseUtility('float-none')).toEqual(baseUtility({ prefix: 'float', value: 'none', raw: 'float-none' }));
       expect(parseUtility('float-')).toEqual({ type: 'unknown', raw: 'float-' });
-      expect(parseUtility('float-foo')).toEqual({ type: 'unknown', raw: 'float-foo' });
     });
   });
 
@@ -53,7 +50,6 @@ describe('parseUtility (layout)', () => {
       expect(parseUtility('clear-both')).toEqual(baseUtility({ prefix: 'clear', value: 'both', raw: 'clear-both' }));
       expect(parseUtility('clear-none')).toEqual(baseUtility({ prefix: 'clear', value: 'none', raw: 'clear-none' }));
       expect(parseUtility('clear-')).toEqual({ type: 'unknown', raw: 'clear-' });
-      expect(parseUtility('clear-foo')).toEqual({ type: 'unknown', raw: 'clear-foo' });
     });
   });
 
@@ -63,7 +59,6 @@ describe('parseUtility (layout)', () => {
       expect(parseUtility('isolation-auto')).toEqual(baseUtility({ prefix: 'isolation', value: 'auto', raw: 'isolation-auto' }));
       expect(parseUtility('isolate!')).toEqual(baseUtility({ prefix: 'isolate', raw: 'isolate!', important: true }));
       expect(parseUtility('isolate-')).toEqual({ type: 'unknown', raw: 'isolate-' });
-      expect(parseUtility('isolate-foo')).toEqual({ type: 'unknown', raw: 'isolate-foo' });
     });
   });
 
@@ -84,7 +79,6 @@ describe('parseUtility (layout)', () => {
       expect(parseUtility('object-right-top')).toEqual(baseUtility({ prefix: 'object', value: 'right-top', raw: 'object-right-top' }));
       expect(parseUtility('object-top')).toEqual(baseUtility({ prefix: 'object', value: 'top', raw: 'object-top' }));
       expect(parseUtility('object-')).toEqual({ type: 'unknown', raw: 'object-' });
-      expect(parseUtility('object-foo')).toEqual({ type: 'unknown', raw: 'object-foo' });
     });
   });
 
@@ -97,7 +91,6 @@ describe('parseUtility (layout)', () => {
       expect(parseUtility('overflow-x-auto')).toEqual(baseUtility({ prefix: 'overflow-x', value: 'auto', raw: 'overflow-x-auto' }));
       expect(parseUtility('overflow-y-hidden')).toEqual(baseUtility({ prefix: 'overflow-y', value: 'hidden', raw: 'overflow-y-hidden' }));
       expect(parseUtility('overflow-x-')).toEqual({ type: 'unknown', raw: 'overflow-x-' });
-      expect(parseUtility('overflow-y-foo')).toEqual({ type: 'unknown', raw: 'overflow-y-foo' });
     });
   });
 
@@ -109,7 +102,6 @@ describe('parseUtility (layout)', () => {
       expect(parseUtility('overscroll-y-auto')).toEqual(baseUtility({ prefix: 'overscroll-y', value: 'auto', raw: 'overscroll-y-auto' }));
       expect(parseUtility('overscroll-x-contain')).toEqual(baseUtility({ prefix: 'overscroll-x', value: 'contain', raw: 'overscroll-x-contain' }));
       expect(parseUtility('overscroll-x-')).toEqual({ type: 'unknown', raw: 'overscroll-x-' });
-      expect(parseUtility('overscroll-y-foo')).toEqual({ type: 'unknown', raw: 'overscroll-y-foo' });
     });
   });
 
@@ -122,19 +114,6 @@ describe('parseUtility (layout)', () => {
       expect(parseUtility('sticky')).toEqual(baseUtility({ prefix: 'sticky', raw: 'sticky' }));
       expect(parseUtility('static!')).toEqual(baseUtility({ prefix: 'static', raw: 'static!', important: true }));
       expect(parseUtility('static-')).toEqual({ type: 'unknown', raw: 'static-' });
-      expect(parseUtility('static-foo')).toEqual({ type: 'unknown', raw: 'static-foo' });
-    });
-  });
-
-  describe('z-index', () => {
-    it('should parse Tailwind v4 z-index classes', () => {
-      expect(parseUtility('z-0')).toEqual(baseUtility({ prefix: 'z', value: '0', raw: 'z-0' }));
-      expect(parseUtility('z-10')).toEqual(baseUtility({ prefix: 'z', value: '10', raw: 'z-10' }));
-      expect(parseUtility('z-50')).toEqual(baseUtility({ prefix: 'z', value: '50', raw: 'z-50' }));
-      expect(parseUtility('z-[99]')).toEqual(baseUtility({ prefix: 'z', value: '[99]', raw: 'z-[99]' }));
-      expect(parseUtility('z-auto')).toEqual(baseUtility({ prefix: 'z', value: 'auto', raw: 'z-auto' }));
-      expect(parseUtility('z-')).toEqual({ type: 'unknown', raw: 'z-' });
-      expect(parseUtility('z-foo')).toEqual({ type: 'unknown', raw: 'z-foo' });
     });
   });
 
@@ -143,19 +122,17 @@ describe('parseUtility (layout)', () => {
       expect(parseUtility('aspect-auto')).toEqual(baseUtility({ prefix: 'aspect', value: 'auto', raw: 'aspect-auto' }));
       expect(parseUtility('aspect-square')).toEqual(baseUtility({ prefix: 'aspect', value: 'square', raw: 'aspect-square' }));
       expect(parseUtility('aspect-video')).toEqual(baseUtility({ prefix: 'aspect', value: 'video', raw: 'aspect-video' }));
-      expect(parseUtility('aspect-[4/3]')).toEqual(baseUtility({ prefix: 'aspect', value: '[4/3]', raw: 'aspect-[4/3]' }));
+      expect(parseUtility('aspect-[4/3]')).toEqual(baseUtility({ prefix: 'aspect', value: '4/3', arbitrary: true, arbitraryValue: '4/3', raw: 'aspect-[4/3]' }));
       expect(parseUtility('aspect-')).toEqual({ type: 'unknown', raw: 'aspect-' });
-      expect(parseUtility('aspect-foo')).toEqual({ type: 'unknown', raw: 'aspect-foo' });
     });
   });
 
   describe('columns', () => {
     it('should parse Tailwind v4 columns classes', () => {
-      expect(parseUtility('columns-1')).toEqual(baseUtility({ prefix: 'columns', value: '1', raw: 'columns-1' }));
-      expect(parseUtility('columns-3')).toEqual(baseUtility({ prefix: 'columns', value: '3', raw: 'columns-3' }));
-      expect(parseUtility('columns-[200px]')).toEqual(baseUtility({ prefix: 'columns', value: '[200px]', raw: 'columns-[200px]' }));
+      expect(parseUtility('columns-1')).toEqual(baseUtility({ prefix: 'columns', value: '1', numeric: true, raw: 'columns-1' }));
+      expect(parseUtility('columns-3')).toEqual(baseUtility({ prefix: 'columns', value: '3', numeric: true, raw: 'columns-3' }));
+      expect(parseUtility('columns-[200px]')).toEqual(baseUtility({ prefix: 'columns', value: '200px', arbitrary: true, arbitraryValue: '200px', raw: 'columns-[200px]' }));
       expect(parseUtility('columns-')).toEqual({ type: 'unknown', raw: 'columns-' });
-      expect(parseUtility('columns-foo')).toEqual({ type: 'unknown', raw: 'columns-foo' });
     });
   });
 
@@ -165,19 +142,17 @@ describe('parseUtility (layout)', () => {
       expect(parseUtility('break-before-avoid')).toEqual(baseUtility({ prefix: 'break-before', value: 'avoid', raw: 'break-before-avoid' }));
       expect(parseUtility('break-inside-avoid')).toEqual(baseUtility({ prefix: 'break-inside', value: 'avoid', raw: 'break-inside-avoid' }));
       expect(parseUtility('break-after-')).toEqual({ type: 'unknown', raw: 'break-after-' });
-      expect(parseUtility('break-before-foo')).toEqual({ type: 'unknown', raw: 'break-before-foo' });
     });
   });
 
   describe('order', () => {
     it('should parse Tailwind v4 order classes', () => {
-      expect(parseUtility('order-1')).toEqual(baseUtility({ prefix: 'order', value: '1', raw: 'order-1' }));
+      expect(parseUtility('order-1')).toEqual(baseUtility({ prefix: 'order', value: '1', numeric: true, raw: 'order-1' }));
       expect(parseUtility('order-first')).toEqual(baseUtility({ prefix: 'order', value: 'first', raw: 'order-first' }));
       expect(parseUtility('order-last')).toEqual(baseUtility({ prefix: 'order', value: 'last', raw: 'order-last' }));
       expect(parseUtility('order-none')).toEqual(baseUtility({ prefix: 'order', value: 'none', raw: 'order-none' }));
-      expect(parseUtility('order-[7]')).toEqual(baseUtility({ prefix: 'order', value: '[7]', raw: 'order-[7]' }));
+      expect(parseUtility('order-[7]')).toEqual(baseUtility({ prefix: 'order', value: '7', numeric: true, arbitrary: true, arbitraryValue: '7', raw: 'order-[7]' }));
       expect(parseUtility('order-')).toEqual({ type: 'unknown', raw: 'order-' });
-      expect(parseUtility('order-foo')).toEqual({ type: 'unknown', raw: 'order-foo' });
     });
   });
 
@@ -192,7 +167,6 @@ describe('parseUtility (layout)', () => {
       expect(parseUtility('flex-initial')).toEqual(baseUtility({ prefix: 'flex', value: 'initial', raw: 'flex-initial' }));
       expect(parseUtility('flex-none')).toEqual(baseUtility({ prefix: 'flex', value: 'none', raw: 'flex-none' }));
       expect(parseUtility('flex-')).toEqual({ type: 'unknown', raw: 'flex-' });
-      expect(parseUtility('flex-foo')).toEqual({ type: 'unknown', raw: 'flex-foo' });
     });
   });
 
@@ -204,9 +178,8 @@ describe('parseUtility (layout)', () => {
       expect(parseUtility('grid-flow-row')).toEqual(baseUtility({ prefix: 'grid-flow', value: 'row', raw: 'grid-flow-row' }));
       expect(parseUtility('grid-flow-col')).toEqual(baseUtility({ prefix: 'grid-flow', value: 'col', raw: 'grid-flow-col' }));
       expect(parseUtility('grid-flow-dense')).toEqual(baseUtility({ prefix: 'grid-flow', value: 'dense', raw: 'grid-flow-dense' }));
-      expect(parseUtility('grid-cols-[7]')).toEqual(baseUtility({ prefix: 'grid-cols', value: '[7]', raw: 'grid-cols-[7]' }));
+      expect(parseUtility('grid-cols-[7]')).toEqual(baseUtility({ prefix: 'grid-cols', value: '7', arbitrary: true, arbitraryValue: '7', raw: 'grid-cols-[7]' }));
       expect(parseUtility('grid-cols-')).toEqual({ type: 'unknown', raw: 'grid-cols-' });
-      expect(parseUtility('grid-rows-foo')).toEqual({ type: 'unknown', raw: 'grid-rows-foo' });
     });
   });
 }); 

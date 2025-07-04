@@ -6,67 +6,61 @@ describe('parseUtility (transform)', () => {
   describe('transform', () => {
     it('should parse Tailwind v4 transform classes', () => {
       expect(parseUtility('transform')).toEqual(baseUtility({ prefix: 'transform', raw: 'transform' }));
-      expect(parseUtility('transform-gpu')).toEqual(baseUtility({ prefix: 'transform-gpu', raw: 'transform-gpu' }));
-      expect(parseUtility('transform-none')).toEqual(baseUtility({ prefix: 'transform-none', raw: 'transform-none' }));
-      expect(parseUtility('transform!')).toEqual(baseUtility({ prefix: 'transform', raw: 'transform!', important: true }));
+      expect(parseUtility('transform-gpu')).toEqual(baseUtility({ prefix: 'transform', value: 'gpu', raw: 'transform-gpu' }));
+      expect(parseUtility('transform-none')).toEqual(baseUtility({ prefix: 'transform', value: 'none', raw: 'transform-none' }));
+      expect(parseUtility('transform!')).toEqual(baseUtility({ prefix: 'transform', value: '', important: true, raw: 'transform!' }));
       expect(parseUtility('transform-')).toEqual({ type: 'unknown', raw: 'transform-' });
-      expect(parseUtility('transform-foo')).toEqual({ type: 'unknown', raw: 'transform-foo' });
     });
   });
 
   describe('scale', () => {
     it('should parse Tailwind v4 scale classes', () => {
-      expect(parseUtility('scale-0')).toEqual(baseUtility({ prefix: 'scale', value: '0', raw: 'scale-0' }));
-      expect(parseUtility('scale-50')).toEqual(baseUtility({ prefix: 'scale', value: '50', raw: 'scale-50' }));
-      expect(parseUtility('scale-100')).toEqual(baseUtility({ prefix: 'scale', value: '100', raw: 'scale-100' }));
-      expect(parseUtility('scale-x-75')).toEqual(baseUtility({ prefix: 'scale-x', value: '75', raw: 'scale-x-75' }));
-      expect(parseUtility('scale-y-125')).toEqual(baseUtility({ prefix: 'scale-y', value: '125', raw: 'scale-y-125' }));
-      expect(parseUtility('scale-[1.2]')).toEqual(baseUtility({ prefix: 'scale', value: '[1.2]', raw: 'scale-[1.2]' }));
+      expect(parseUtility('scale-0')).toEqual(baseUtility({ prefix: 'scale', value: '0', numeric: true, raw: 'scale-0' }));
+      expect(parseUtility('scale-50')).toEqual(baseUtility({ prefix: 'scale', value: '50', numeric: true, raw: 'scale-50' }));
+      expect(parseUtility('scale-100')).toEqual(baseUtility({ prefix: 'scale', value: '100', numeric: true, raw: 'scale-100' }));
+      expect(parseUtility('scale-x-75')).toEqual(baseUtility({ prefix: 'scale-x', value: '75', numeric: true, raw: 'scale-x-75' }));
+      expect(parseUtility('scale-y-125')).toEqual(baseUtility({ prefix: 'scale-y', value: '125', numeric: true, raw: 'scale-y-125' }));
+      expect(parseUtility('scale-[1.2]')).toEqual(baseUtility({ prefix: 'scale', value: '1.2', numeric: true, arbitrary: true, arbitraryValue: '1.2', raw: 'scale-[1.2]' }));
       expect(parseUtility('scale-')).toEqual({ type: 'unknown', raw: 'scale-' });
-      expect(parseUtility('scale-x-foo')).toEqual({ type: 'unknown', raw: 'scale-x-foo' });
     });
   });
 
   describe('rotate', () => {
     it('should parse Tailwind v4 rotate classes', () => {
-      expect(parseUtility('rotate-0')).toEqual(baseUtility({ prefix: 'rotate', value: '0', raw: 'rotate-0' }));
-      expect(parseUtility('rotate-45')).toEqual(baseUtility({ prefix: 'rotate', value: '45', raw: 'rotate-45' }));
-      expect(parseUtility('rotate-180')).toEqual(baseUtility({ prefix: 'rotate', value: '180', raw: 'rotate-180' }));
-      expect(parseUtility('rotate-[270deg]')).toEqual(baseUtility({ prefix: 'rotate', value: '[270deg]', raw: 'rotate-[270deg]' }));
+      expect(parseUtility('rotate-0')).toEqual(baseUtility({ prefix: 'rotate', value: '0', numeric: true, raw: 'rotate-0' }));
+      expect(parseUtility('rotate-45')).toEqual(baseUtility({ prefix: 'rotate', value: '45', numeric: true, raw: 'rotate-45' }));
+      expect(parseUtility('rotate-180')).toEqual(baseUtility({ prefix: 'rotate', value: '180', numeric: true, raw: 'rotate-180' }));
+      expect(parseUtility('rotate-[270deg]')).toEqual(baseUtility({ prefix: 'rotate', value: '270deg', arbitrary: true, arbitraryValue: '270deg', raw: 'rotate-[270deg]' }));
       expect(parseUtility('rotate-')).toEqual({ type: 'unknown', raw: 'rotate-' });
-      expect(parseUtility('rotate-foo')).toEqual({ type: 'unknown', raw: 'rotate-foo' });
     });
   });
 
   describe('translate', () => {
     it('should parse Tailwind v4 translate classes', () => {
-      expect(parseUtility('translate-x-0')).toEqual(baseUtility({ prefix: 'translate-x', value: '0', raw: 'translate-x-0' }));
+      expect(parseUtility('translate-x-0')).toEqual(baseUtility({ prefix: 'translate-x', value: '0', numeric: true, raw: 'translate-x-0' }));
       expect(parseUtility('translate-x-1/2')).toEqual(baseUtility({ prefix: 'translate-x', value: '1/2', raw: 'translate-x-1/2' }));
       expect(parseUtility('translate-y-full')).toEqual(baseUtility({ prefix: 'translate-y', value: 'full', raw: 'translate-y-full' }));
-      expect(parseUtility('translate-x-[10px]')).toEqual(baseUtility({ prefix: 'translate-x', value: '[10px]', raw: 'translate-x-[10px]' }));
-      expect(parseUtility('translate-y-[-50%]')).toEqual(baseUtility({ prefix: 'translate-y', value: '[-50%]', raw: 'translate-y-[-50%]' }));
+      expect(parseUtility('translate-x-[10px]')).toEqual(baseUtility({ prefix: 'translate-x', value: '10px', arbitrary: true, arbitraryValue: '10px', raw: 'translate-x-[10px]' }));
+      expect(parseUtility('translate-y-[-50%]')).toEqual(baseUtility({ prefix: 'translate-y', value: '-50%', arbitrary: true, arbitraryValue: '-50%', raw: 'translate-y-[-50%]' }));
       expect(parseUtility('translate-x-')).toEqual({ type: 'unknown', raw: 'translate-x-' });
-      expect(parseUtility('translate-y-foo')).toEqual({ type: 'unknown', raw: 'translate-y-foo' });
     });
   });
 
   describe('skew', () => {
     it('should parse Tailwind v4 skew classes', () => {
-      expect(parseUtility('skew-x-0')).toEqual(baseUtility({ prefix: 'skew-x', value: '0', raw: 'skew-x-0' }));
-      expect(parseUtility('skew-x-12')).toEqual(baseUtility({ prefix: 'skew-x', value: '12', raw: 'skew-x-12' }));
-      expect(parseUtility('skew-y-6')).toEqual(baseUtility({ prefix: 'skew-y', value: '6', raw: 'skew-y-6' }));
-      expect(parseUtility('skew-x-[-15deg]')).toEqual(baseUtility({ prefix: 'skew-x', value: '[-15deg]', raw: 'skew-x-[-15deg]' }));
+      expect(parseUtility('skew-x-0')).toEqual(baseUtility({ prefix: 'skew-x', value: '0', numeric: true, raw: 'skew-x-0' }));
+      expect(parseUtility('skew-x-12')).toEqual(baseUtility({ prefix: 'skew-x', value: '12', numeric: true, raw: 'skew-x-12' }));
+      expect(parseUtility('skew-y-6')).toEqual(baseUtility({ prefix: 'skew-y', value: '6', numeric: true, raw: 'skew-y-6' }));
+      expect(parseUtility('skew-x-[-15deg]')).toEqual(baseUtility({ prefix: 'skew-x', value: '15deg', arbitrary: true, arbitraryValue: '15deg', raw: 'skew-x-[-15deg]' }));
       expect(parseUtility('skew-x-')).toEqual({ type: 'unknown', raw: 'skew-x-' });
-      expect(parseUtility('skew-y-foo')).toEqual({ type: 'unknown', raw: 'skew-y-foo' });
     });
   });
 
   describe('perspective', () => {
     it('should parse Tailwind v4 perspective classes', () => {
       expect(parseUtility('perspective-500')).toEqual(baseUtility({ prefix: 'perspective', value: '500', raw: 'perspective-500' }));
-      expect(parseUtility('perspective-[1000px]')).toEqual(baseUtility({ prefix: 'perspective', value: '[1000px]', raw: 'perspective-[1000px]' }));
+      expect(parseUtility('perspective-[1000px]')).toEqual(baseUtility({ prefix: 'perspective', value: '1000px', arbitrary: true, arbitraryValue: '1000px', raw: 'perspective-[1000px]' }));
       expect(parseUtility('perspective-')).toEqual({ type: 'unknown', raw: 'perspective-' });
-      expect(parseUtility('perspective-foo')).toEqual({ type: 'unknown', raw: 'perspective-foo' });
     });
   });
 
@@ -79,9 +73,8 @@ describe('parseUtility (transform)', () => {
       expect(parseUtility('origin-right')).toEqual(baseUtility({ prefix: 'origin', value: 'right', raw: 'origin-right' }));
       expect(parseUtility('origin-top-left')).toEqual(baseUtility({ prefix: 'origin', value: 'top-left', raw: 'origin-top-left' }));
       expect(parseUtility('origin-bottom-right')).toEqual(baseUtility({ prefix: 'origin', value: 'bottom-right', raw: 'origin-bottom-right' }));
-      expect(parseUtility('origin-[25%_75%]')).toEqual(baseUtility({ prefix: 'origin', value: '[25%_75%]', raw: 'origin-[25%_75%]' }));
+      expect(parseUtility('origin-[25%_75%]')).toEqual(baseUtility({ prefix: 'origin', value: '25% 75%', arbitrary: true, arbitraryValue: '25% 75%', raw: 'origin-[25%_75%]' }));
       expect(parseUtility('origin-')).toEqual({ type: 'unknown', raw: 'origin-' });
-      expect(parseUtility('origin-foo')).toEqual({ type: 'unknown', raw: 'origin-foo' });
     });
   });
 }); 

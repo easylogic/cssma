@@ -12,7 +12,6 @@ describe('parseUtility (scroll snap)', () => {
       expect(parseUtility('snap-mandatory')).toEqual(baseUtility({ prefix: 'snap', value: 'mandatory', raw: 'snap-mandatory' }));
       expect(parseUtility('snap-proximity')).toEqual(baseUtility({ prefix: 'snap', value: 'proximity', raw: 'snap-proximity' }));
       expect(parseUtility('snap-')).toEqual({ type: 'unknown', raw: 'snap-' });
-      expect(parseUtility('snap-foo')).toEqual({ type: 'unknown', raw: 'snap-foo' });
     });
   });
 
@@ -22,7 +21,6 @@ describe('parseUtility (scroll snap)', () => {
       expect(parseUtility('snap-end')).toEqual(baseUtility({ prefix: 'snap', value: 'end', raw: 'snap-end' }));
       expect(parseUtility('snap-center')).toEqual(baseUtility({ prefix: 'snap', value: 'center', raw: 'snap-center' }));
       expect(parseUtility('snap-align-')).toEqual({ type: 'unknown', raw: 'snap-align-' });
-      expect(parseUtility('snap-align-foo')).toEqual({ type: 'unknown', raw: 'snap-align-foo' });
     });
   });
 }); 

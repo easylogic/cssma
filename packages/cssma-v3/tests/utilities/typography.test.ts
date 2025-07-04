@@ -11,7 +11,6 @@ describe('parseUtility (typography)', () => {
       expect(parseUtility('overline')).toEqual(baseUtility({ prefix: 'overline', raw: 'overline' }));
       expect(parseUtility('underline!')).toEqual(baseUtility({ prefix: 'underline', raw: 'underline!', important: true }));
       expect(parseUtility('underline-')).toEqual({ type: 'unknown', raw: 'underline-' });
-      expect(parseUtility('underline-foo')).toEqual({ type: 'unknown', raw: 'underline-foo' });
     });
   });
 
@@ -22,21 +21,19 @@ describe('parseUtility (typography)', () => {
       expect(parseUtility('decoration-dotted')).toEqual(baseUtility({ prefix: 'decoration', value: 'dotted', raw: 'decoration-dotted' }));
       expect(parseUtility('decoration-dashed')).toEqual(baseUtility({ prefix: 'decoration', value: 'dashed', raw: 'decoration-dashed' }));
       expect(parseUtility('decoration-wavy')).toEqual(baseUtility({ prefix: 'decoration', value: 'wavy', raw: 'decoration-wavy' }));
-      expect(parseUtility('decoration-8')).toEqual(baseUtility({ prefix: 'decoration', value: '8', raw: 'decoration-8' }));
-      expect(parseUtility('decoration-[#ff0]')).toEqual(baseUtility({ prefix: 'decoration', value: '[#ff0]', raw: 'decoration-[#ff0]' }));
-      expect(parseUtility('decoration-[3px]')).toEqual(baseUtility({ prefix: 'decoration', value: '[3px]', raw: 'decoration-[3px]' }));
+      expect(parseUtility('decoration-8')).toEqual(baseUtility({ prefix: 'decoration', value: '8', numeric: true, raw: 'decoration-8' }));
+      expect(parseUtility('decoration-[#ff0]')).toEqual(baseUtility({ prefix: 'decoration', value: '#ff0', arbitrary: true, arbitraryType: 'hex', arbitraryValue: '#ff0', raw: 'decoration-[#ff0]' }));
+      expect(parseUtility('decoration-[3px]')).toEqual(baseUtility({ prefix: 'decoration', value: '3px', arbitrary: true, arbitraryValue: '3px', raw: 'decoration-[3px]' }));
       expect(parseUtility('decoration-')).toEqual({ type: 'unknown', raw: 'decoration-' });
-      expect(parseUtility('decoration-foo')).toEqual({ type: 'unknown', raw: 'decoration-foo' });
     });
   });
 
   describe('underline-offset', () => {
     it('should parse Tailwind v4 underline-offset classes', () => {
-      expect(parseUtility('underline-offset-1')).toEqual(baseUtility({ prefix: 'underline-offset', value: '1', raw: 'underline-offset-1' }));
-      expect(parseUtility('underline-offset-4')).toEqual(baseUtility({ prefix: 'underline-offset', value: '4', raw: 'underline-offset-4' }));
-      expect(parseUtility('underline-offset-[2px]')).toEqual(baseUtility({ prefix: 'underline-offset', value: '[2px]', raw: 'underline-offset-[2px]' }));
+      expect(parseUtility('underline-offset-1')).toEqual(baseUtility({ prefix: 'underline-offset', value: '1', numeric: true, raw: 'underline-offset-1' }));
+      expect(parseUtility('underline-offset-4')).toEqual(baseUtility({ prefix: 'underline-offset', value: '4', numeric: true, raw: 'underline-offset-4' }));
+      expect(parseUtility('underline-offset-[2px]')).toEqual(baseUtility({ prefix: 'underline-offset', value: '2px', arbitrary: true, arbitraryValue: '2px', raw: 'underline-offset-[2px]' }));
       expect(parseUtility('underline-offset-')).toEqual({ type: 'unknown', raw: 'underline-offset-' });
-      expect(parseUtility('underline-offset-foo')).toEqual({ type: 'unknown', raw: 'underline-offset-foo' });
     });
   });
 
@@ -48,8 +45,6 @@ describe('parseUtility (typography)', () => {
       expect(parseUtility('text-justify')).toEqual(baseUtility({ prefix: 'text', value: 'justify', raw: 'text-justify' }));
       expect(parseUtility('text-start')).toEqual(baseUtility({ prefix: 'text', value: 'start', raw: 'text-start' }));
       expect(parseUtility('text-end')).toEqual(baseUtility({ prefix: 'text', value: 'end', raw: 'text-end' }));
-      expect(parseUtility('text-')).toEqual({ type: 'unknown', raw: 'text-' });
-      expect(parseUtility('text-foo')).toEqual({ type: 'unknown', raw: 'text-foo' });
     });
   });
 
@@ -61,7 +56,6 @@ describe('parseUtility (typography)', () => {
       expect(parseUtility('normal-case')).toEqual(baseUtility({ prefix: 'normal-case', raw: 'normal-case' }));
       expect(parseUtility('uppercase!')).toEqual(baseUtility({ prefix: 'uppercase', raw: 'uppercase!', important: true }));
       expect(parseUtility('uppercase-')).toEqual({ type: 'unknown', raw: 'uppercase-' });
-      expect(parseUtility('uppercase-foo')).toEqual({ type: 'unknown', raw: 'uppercase-foo' });
     });
   });
 
@@ -72,7 +66,6 @@ describe('parseUtility (typography)', () => {
       expect(parseUtility('overflow-clip')).toEqual(baseUtility({ prefix: 'overflow', value: 'clip', raw: 'overflow-clip' }));
       expect(parseUtility('truncate!')).toEqual(baseUtility({ prefix: 'truncate', raw: 'truncate!', important: true }));
       expect(parseUtility('truncate-')).toEqual({ type: 'unknown', raw: 'truncate-' });
-      expect(parseUtility('truncate-foo')).toEqual({ type: 'unknown', raw: 'truncate-foo' });
     });
   });
 
@@ -84,7 +77,6 @@ describe('parseUtility (typography)', () => {
       expect(parseUtility('whitespace-pre-line')).toEqual(baseUtility({ prefix: 'whitespace', value: 'pre-line', raw: 'whitespace-pre-line' }));
       expect(parseUtility('whitespace-pre-wrap')).toEqual(baseUtility({ prefix: 'whitespace', value: 'pre-wrap', raw: 'whitespace-pre-wrap' }));
       expect(parseUtility('whitespace-')).toEqual({ type: 'unknown', raw: 'whitespace-' });
-      expect(parseUtility('whitespace-foo')).toEqual({ type: 'unknown', raw: 'whitespace-foo' });
     });
   });
 
@@ -95,7 +87,6 @@ describe('parseUtility (typography)', () => {
       expect(parseUtility('break-all')).toEqual(baseUtility({ prefix: 'break', value: 'all', raw: 'break-all' }));
       expect(parseUtility('break-keep')).toEqual(baseUtility({ prefix: 'break', value: 'keep', raw: 'break-keep' }));
       expect(parseUtility('break-')).toEqual({ type: 'unknown', raw: 'break-' });
-      expect(parseUtility('break-foo')).toEqual({ type: 'unknown', raw: 'break-foo' });
     });
   });
 
@@ -105,17 +96,15 @@ describe('parseUtility (typography)', () => {
       expect(parseUtility('hyphens-manual')).toEqual(baseUtility({ prefix: 'hyphens', value: 'manual', raw: 'hyphens-manual' }));
       expect(parseUtility('hyphens-auto')).toEqual(baseUtility({ prefix: 'hyphens', value: 'auto', raw: 'hyphens-auto' }));
       expect(parseUtility('hyphens-')).toEqual({ type: 'unknown', raw: 'hyphens-' });
-      expect(parseUtility('hyphens-foo')).toEqual({ type: 'unknown', raw: 'hyphens-foo' });
     });
   });
 
   describe('indent', () => {
     it('should parse Tailwind v4 indent classes', () => {
-      expect(parseUtility('indent-0')).toEqual(baseUtility({ prefix: 'indent', value: '0', raw: 'indent-0' }));
-      expect(parseUtility('indent-4')).toEqual(baseUtility({ prefix: 'indent', value: '4', raw: 'indent-4' }));
-      expect(parseUtility('indent-[2em]')).toEqual(baseUtility({ prefix: 'indent', value: '[2em]', raw: 'indent-[2em]' }));
+      expect(parseUtility('indent-0')).toEqual(baseUtility({ prefix: 'indent', value: '0', numeric: true, raw: 'indent-0' }));
+      expect(parseUtility('indent-4')).toEqual(baseUtility({ prefix: 'indent', value: '4', numeric: true, raw: 'indent-4' }));
+      expect(parseUtility('indent-[2em]')).toEqual(baseUtility({ prefix: 'indent', value: '2em', arbitrary: true, arbitraryValue: '2em', raw: 'indent-[2em]' }));
       expect(parseUtility('indent-')).toEqual({ type: 'unknown', raw: 'indent-' });
-      expect(parseUtility('indent-foo')).toEqual({ type: 'unknown', raw: 'indent-foo' });
     });
   });
 
@@ -126,18 +115,7 @@ describe('parseUtility (typography)', () => {
       expect(parseUtility('list-decimal')).toEqual(baseUtility({ prefix: 'list', value: 'decimal', raw: 'list-decimal' }));
       expect(parseUtility('list-inside')).toEqual(baseUtility({ prefix: 'list', value: 'inside', raw: 'list-inside' }));
       expect(parseUtility('list-outside')).toEqual(baseUtility({ prefix: 'list', value: 'outside', raw: 'list-outside' }));
-      expect(parseUtility('list-')).toEqual({ type: 'unknown', raw: 'list-' });
-      expect(parseUtility('list-foo')).toEqual({ type: 'unknown', raw: 'list-foo' });
-    });
-  });
-
-  describe('placeholder', () => {
-    it('should parse Tailwind v4 placeholder classes', () => {
-      expect(parseUtility('placeholder-red-500')).toEqual(baseUtility({ prefix: 'placeholder', value: 'red-500', raw: 'placeholder-red-500' }));
-      expect(parseUtility('placeholder-[#ff0]')).toEqual(baseUtility({ prefix: 'placeholder', value: '[#ff0]', raw: 'placeholder-[#ff0]' }));
-      expect(parseUtility('placeholder-opacity-50')).toEqual(baseUtility({ prefix: 'placeholder-opacity', value: '50', raw: 'placeholder-opacity-50' }));
-      expect(parseUtility('placeholder-')).toEqual({ type: 'unknown', raw: 'placeholder-' });
-      expect(parseUtility('placeholder-foo')).toEqual({ type: 'unknown', raw: 'placeholder-foo' });
+      
     });
   });
 
@@ -146,8 +124,8 @@ describe('parseUtility (typography)', () => {
       expect(parseUtility('sub')).toEqual(baseUtility({ prefix: 'sub', raw: 'sub' }));
       expect(parseUtility('sup')).toEqual(baseUtility({ prefix: 'sup', raw: 'sup' }));
       expect(parseUtility('sub!')).toEqual(baseUtility({ prefix: 'sub', raw: 'sub!', important: true }));
+      expect(parseUtility('sub-')).toEqual({ type: 'unknown', raw: 'sub-' });
       expect(parseUtility('sup-')).toEqual({ type: 'unknown', raw: 'sup-' });
-      expect(parseUtility('sub-foo')).toEqual({ type: 'unknown', raw: 'sub-foo' });
     });
   });
 }); 

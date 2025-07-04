@@ -5,11 +5,11 @@ import { baseUtility } from './base';
 describe('parseUtility (table)', () => {
   it('parses table', () => {
     expect(parseUtility('table')).toEqual(baseUtility({ prefix: 'table', raw: 'table' }));
-    expect(parseUtility('table-fixed')).toEqual(baseUtility({ prefix: 'table-fixed', raw: 'table-fixed' }));
-    expect(parseUtility('table-auto')).toEqual(baseUtility({ prefix: 'table-auto', raw: 'table-auto' }));
+    expect(parseUtility('table-fixed')).toEqual(baseUtility({ prefix: 'table', value: 'fixed', raw: 'table-fixed' }));
+    expect(parseUtility('table-auto')).toEqual(baseUtility({ prefix: 'table', value: 'auto', raw: 'table-auto' }));
   });
   it('parses border-spacing', () => {
-    expect(parseUtility('border-spacing-2')).toEqual(baseUtility({ prefix: 'border-spacing', value: '2', raw: 'border-spacing-2' }));
+    expect(parseUtility('border-spacing-2')).toEqual(baseUtility({ prefix: 'border-spacing', value: '2', numeric: true, raw: 'border-spacing-2' }));
   });
   it('parses caption', () => {
     expect(parseUtility('caption-top')).toEqual(baseUtility({ prefix: 'caption-top', raw: 'caption-top' }));

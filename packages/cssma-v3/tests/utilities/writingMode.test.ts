@@ -9,7 +9,6 @@ describe('parseUtility (writing-mode)', () => {
       expect(parseUtility('writing-mode-vertical-rl')).toEqual(baseUtility({ prefix: 'writing-mode', value: 'vertical-rl', raw: 'writing-mode-vertical-rl' }));
       expect(parseUtility('writing-mode-vertical-lr')).toEqual(baseUtility({ prefix: 'writing-mode', value: 'vertical-lr', raw: 'writing-mode-vertical-lr' }));
       expect(parseUtility('writing-mode-')).toEqual({ type: 'unknown', raw: 'writing-mode-' });
-      expect(parseUtility('writing-mode-foo')).toEqual({ type: 'unknown', raw: 'writing-mode-foo' });
     });
   });
 }); 

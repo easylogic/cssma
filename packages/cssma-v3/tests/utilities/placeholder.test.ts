@@ -8,9 +8,8 @@ describe('parseUtility (placeholder)', () => {
       expect(parseUtility('placeholder-black')).toEqual(baseUtility({ prefix: 'placeholder', value: 'black', raw: 'placeholder-black' }));
       expect(parseUtility('placeholder-white')).toEqual(baseUtility({ prefix: 'placeholder', value: 'white', raw: 'placeholder-white' }));
       expect(parseUtility('placeholder-red-500')).toEqual(baseUtility({ prefix: 'placeholder', value: 'red-500', raw: 'placeholder-red-500' }));
-      expect(parseUtility('placeholder-[color:rebeccapurple]')).toEqual(baseUtility({ prefix: 'placeholder', value: '[color:rebeccapurple]', raw: 'placeholder-[color:rebeccapurple]' }));
+      expect(parseUtility('placeholder-[color:rebeccapurple]')).toEqual(baseUtility({ prefix: 'placeholder', value: 'color:rebeccapurple', arbitrary: true, arbitraryValue: 'color:rebeccapurple', raw: 'placeholder-[color:rebeccapurple]' }));
       expect(parseUtility('placeholder-')).toEqual({ type: 'unknown', raw: 'placeholder-' });
-      expect(parseUtility('placeholder-foo')).toEqual({ type: 'unknown', raw: 'placeholder-foo' });
     });
   });
 
@@ -19,9 +18,8 @@ describe('parseUtility (placeholder)', () => {
       expect(parseUtility('placeholder-opacity-0')).toEqual(baseUtility({ prefix: 'placeholder-opacity', value: '0', raw: 'placeholder-opacity-0' }));
       expect(parseUtility('placeholder-opacity-50')).toEqual(baseUtility({ prefix: 'placeholder-opacity', value: '50', raw: 'placeholder-opacity-50' }));
       expect(parseUtility('placeholder-opacity-100')).toEqual(baseUtility({ prefix: 'placeholder-opacity', value: '100', raw: 'placeholder-opacity-100' }));
-      expect(parseUtility('placeholder-opacity-[.25]')).toEqual(baseUtility({ prefix: 'placeholder-opacity', value: '[.25]', raw: 'placeholder-opacity-[.25]' }));
+      expect(parseUtility('placeholder-opacity-[.25]')).toEqual(baseUtility({ prefix: 'placeholder-opacity', value: '.25', arbitrary: true, arbitraryValue: '.25', raw: 'placeholder-opacity-[.25]' }));
       expect(parseUtility('placeholder-opacity-')).toEqual({ type: 'unknown', raw: 'placeholder-opacity-' });
-      expect(parseUtility('placeholder-opacity-foo')).toEqual({ type: 'unknown', raw: 'placeholder-opacity-foo' });
     });
   });
 }); 

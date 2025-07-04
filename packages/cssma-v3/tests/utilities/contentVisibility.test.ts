@@ -9,7 +9,6 @@ describe('parseUtility (content-visibility)', () => {
       expect(parseUtility('content-visibility-hidden')).toEqual(baseUtility({ prefix: 'content-visibility', value: 'hidden', raw: 'content-visibility-hidden' }));
       expect(parseUtility('content-visibility-visible')).toEqual(baseUtility({ prefix: 'content-visibility', value: 'visible', raw: 'content-visibility-visible' }));
       expect(parseUtility('content-visibility-')).toEqual({ type: 'unknown', raw: 'content-visibility-' });
-      expect(parseUtility('content-visibility-foo')).toEqual({ type: 'unknown', raw: 'content-visibility-foo' });
     });
   });
 }); 

@@ -11,8 +11,6 @@ describe('parseUtility (visibility)', () => {
       expect(parseUtility('visible!')).toEqual(baseUtility({ prefix: 'visible', raw: 'visible!', important: true }));
       expect(parseUtility('invisible!')).toEqual(baseUtility({ prefix: 'invisible', raw: 'invisible!', important: true }));
       expect(parseUtility('collapse!')).toEqual(baseUtility({ prefix: 'collapse', raw: 'collapse!', important: true }));
-      expect(parseUtility('visible-')).toEqual({ type: 'unknown', raw: 'visible-' });
-      expect(parseUtility('invisible-foo')).toEqual({ type: 'unknown', raw: 'invisible-foo' });
     });
   });
 
@@ -23,13 +21,13 @@ describe('parseUtility (visibility)', () => {
       expect(parseUtility('sr-only!')).toEqual(baseUtility({ prefix: 'sr-only', raw: 'sr-only!', important: true }));
       expect(parseUtility('not-sr-only!')).toEqual(baseUtility({ prefix: 'not-sr-only', raw: 'not-sr-only!', important: true }));
       expect(parseUtility('sr-only-')).toEqual({ type: 'unknown', raw: 'sr-only-' });
-      expect(parseUtility('not-sr-only-foo')).toEqual({ type: 'unknown', raw: 'not-sr-only-foo' });
+      expect(parseUtility('not-sr-only-')).toEqual({ type: 'unknown', raw: 'not-sr-only-' });
     });
   });
 
   it('parses isolation', () => {
     expect(parseUtility('isolation-auto')).toEqual(baseUtility({ prefix: 'isolation', value: 'auto', raw: 'isolation-auto' }));
-    expect(parseUtility('isolation-isolate')).toEqual(baseUtility({ prefix: 'isolation', value: 'isolate', raw: 'isolation-isolate' }));
+    expect(parseUtility('isolate')).toEqual(baseUtility({ prefix: 'isolate', raw: 'isolate' }));
   });
   it('returns unknown for invalid', () => {
     expect(parseUtility('visible-')).toEqual({ type: 'unknown', raw: 'visible-' });

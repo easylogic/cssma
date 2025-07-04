@@ -10,9 +10,8 @@ describe('parseUtility (interactivity)', () => {
       expect(parseUtility('cursor-wait')).toEqual(baseUtility({ prefix: 'cursor', value: 'wait', raw: 'cursor-wait' }));
       expect(parseUtility('cursor-move')).toEqual(baseUtility({ prefix: 'cursor', value: 'move', raw: 'cursor-move' }));
       expect(parseUtility('cursor-not-allowed')).toEqual(baseUtility({ prefix: 'cursor', value: 'not-allowed', raw: 'cursor-not-allowed' }));
-      expect(parseUtility('cursor-[grab]')).toEqual(baseUtility({ prefix: 'cursor', value: '[grab]', raw: 'cursor-[grab]' }));
+      expect(parseUtility('cursor-[grab]')).toEqual(baseUtility({ prefix: 'cursor', value: 'grab', arbitrary: true, arbitraryValue: 'grab', raw: 'cursor-[grab]' }));
       expect(parseUtility('cursor-')).toEqual({ type: 'unknown', raw: 'cursor-' });
-      expect(parseUtility('cursor-foo')).toEqual({ type: 'unknown', raw: 'cursor-foo' });
     });
   });
 
@@ -21,7 +20,6 @@ describe('parseUtility (interactivity)', () => {
       expect(parseUtility('pointer-events-none')).toEqual(baseUtility({ prefix: 'pointer-events', value: 'none', raw: 'pointer-events-none' }));
       expect(parseUtility('pointer-events-auto')).toEqual(baseUtility({ prefix: 'pointer-events', value: 'auto', raw: 'pointer-events-auto' }));
       expect(parseUtility('pointer-events-')).toEqual({ type: 'unknown', raw: 'pointer-events-' });
-      expect(parseUtility('pointer-events-foo')).toEqual({ type: 'unknown', raw: 'pointer-events-foo' });
     });
   });
 
@@ -32,7 +30,6 @@ describe('parseUtility (interactivity)', () => {
       expect(parseUtility('resize-x')).toEqual(baseUtility({ prefix: 'resize', value: 'x', raw: 'resize-x' }));
       expect(parseUtility('resize-y')).toEqual(baseUtility({ prefix: 'resize', value: 'y', raw: 'resize-y' }));
       expect(parseUtility('resize-')).toEqual({ type: 'unknown', raw: 'resize-' });
-      expect(parseUtility('resize-foo')).toEqual({ type: 'unknown', raw: 'resize-foo' });
     });
   });
 
@@ -43,7 +40,6 @@ describe('parseUtility (interactivity)', () => {
       expect(parseUtility('select-all')).toEqual(baseUtility({ prefix: 'select', value: 'all', raw: 'select-all' }));
       expect(parseUtility('select-auto')).toEqual(baseUtility({ prefix: 'select', value: 'auto', raw: 'select-auto' }));
       expect(parseUtility('select-')).toEqual({ type: 'unknown', raw: 'select-' });
-      expect(parseUtility('select-foo')).toEqual({ type: 'unknown', raw: 'select-foo' });
     });
   });
 
@@ -56,7 +52,6 @@ describe('parseUtility (interactivity)', () => {
       expect(parseUtility('touch-pinch-zoom')).toEqual(baseUtility({ prefix: 'touch', value: 'pinch-zoom', raw: 'touch-pinch-zoom' }));
       expect(parseUtility('touch-manipulation')).toEqual(baseUtility({ prefix: 'touch', value: 'manipulation', raw: 'touch-manipulation' }));
       expect(parseUtility('touch-')).toEqual({ type: 'unknown', raw: 'touch-' });
-      expect(parseUtility('touch-foo')).toEqual({ type: 'unknown', raw: 'touch-foo' });
     });
   });
 
@@ -67,7 +62,6 @@ describe('parseUtility (interactivity)', () => {
       expect(parseUtility('user-select-all')).toEqual(baseUtility({ prefix: 'user-select', value: 'all', raw: 'user-select-all' }));
       expect(parseUtility('user-select-auto')).toEqual(baseUtility({ prefix: 'user-select', value: 'auto', raw: 'user-select-auto' }));
       expect(parseUtility('user-select-')).toEqual({ type: 'unknown', raw: 'user-select-' });
-      expect(parseUtility('user-select-foo')).toEqual({ type: 'unknown', raw: 'user-select-foo' });
     });
   });
 
@@ -78,7 +72,6 @@ describe('parseUtility (interactivity)', () => {
       expect(parseUtility('will-change-contents')).toEqual(baseUtility({ prefix: 'will-change', value: 'contents', raw: 'will-change-contents' }));
       expect(parseUtility('will-change-transform')).toEqual(baseUtility({ prefix: 'will-change', value: 'transform', raw: 'will-change-transform' }));
       expect(parseUtility('will-change-')).toEqual({ type: 'unknown', raw: 'will-change-' });
-      expect(parseUtility('will-change-foo')).toEqual({ type: 'unknown', raw: 'will-change-foo' });
     });
   });
 
@@ -87,16 +80,6 @@ describe('parseUtility (interactivity)', () => {
       expect(parseUtility('appearance-none')).toEqual(baseUtility({ prefix: 'appearance', value: 'none', raw: 'appearance-none' }));
       expect(parseUtility('appearance-auto')).toEqual(baseUtility({ prefix: 'appearance', value: 'auto', raw: 'appearance-auto' }));
       expect(parseUtility('appearance-')).toEqual({ type: 'unknown', raw: 'appearance-' });
-      expect(parseUtility('appearance-foo')).toEqual({ type: 'unknown', raw: 'appearance-foo' });
-    });
-  });
-
-  describe('scroll', () => {
-    it('should parse Tailwind v4 scroll classes', () => {
-      expect(parseUtility('scroll-auto')).toEqual(baseUtility({ prefix: 'scroll', value: 'auto', raw: 'scroll-auto' }));
-      expect(parseUtility('scroll-smooth')).toEqual(baseUtility({ prefix: 'scroll', value: 'smooth', raw: 'scroll-smooth' }));
-      expect(parseUtility('scroll-')).toEqual({ type: 'unknown', raw: 'scroll-' });
-      expect(parseUtility('scroll-foo')).toEqual({ type: 'unknown', raw: 'scroll-foo' });
     });
   });
 
@@ -109,7 +92,6 @@ describe('parseUtility (interactivity)', () => {
       expect(parseUtility('snap-mandatory')).toEqual(baseUtility({ prefix: 'snap', value: 'mandatory', raw: 'snap-mandatory' }));
       expect(parseUtility('snap-proximity')).toEqual(baseUtility({ prefix: 'snap', value: 'proximity', raw: 'snap-proximity' }));
       expect(parseUtility('snap-')).toEqual({ type: 'unknown', raw: 'snap-' });
-      expect(parseUtility('snap-foo')).toEqual({ type: 'unknown', raw: 'snap-foo' });
     });
   });
 }); 

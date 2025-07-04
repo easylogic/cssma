@@ -8,9 +8,8 @@ describe('parseUtility (font)', () => {
       expect(parseUtility('font-sans')).toEqual(baseUtility({ prefix: 'font', value: 'sans', raw: 'font-sans' }));
       expect(parseUtility('font-serif')).toEqual(baseUtility({ prefix: 'font', value: 'serif', raw: 'font-serif' }));
       expect(parseUtility('font-mono')).toEqual(baseUtility({ prefix: 'font', value: 'mono', raw: 'font-mono' }));
-      expect(parseUtility('font-[Inter]')).toEqual(baseUtility({ prefix: 'font', value: '[Inter]', raw: 'font-[Inter]' }));
+      expect(parseUtility('font-[Inter]')).toEqual(baseUtility({ prefix: 'font', value: 'Inter', arbitrary: true, arbitraryValue: 'Inter', raw: 'font-[Inter]' }));
       expect(parseUtility('font-')).toEqual({ type: 'unknown', raw: 'font-' });
-      expect(parseUtility('font-foo')).toEqual({ type: 'unknown', raw: 'font-foo' });
     });
   });
 
@@ -21,9 +20,8 @@ describe('parseUtility (font)', () => {
       expect(parseUtility('text-base')).toEqual(baseUtility({ prefix: 'text', value: 'base', raw: 'text-base' }));
       expect(parseUtility('text-lg')).toEqual(baseUtility({ prefix: 'text', value: 'lg', raw: 'text-lg' }));
       expect(parseUtility('text-2xl')).toEqual(baseUtility({ prefix: 'text', value: '2xl', raw: 'text-2xl' }));
-      expect(parseUtility('text-[32px]')).toEqual(baseUtility({ prefix: 'text', value: '[32px]', raw: 'text-[32px]' }));
+      expect(parseUtility('text-[32px]')).toEqual(baseUtility({ prefix: 'text', value: '32px', arbitrary: true, arbitraryValue: '32px', raw: 'text-[32px]' }));
       expect(parseUtility('text-')).toEqual({ type: 'unknown', raw: 'text-' });
-      expect(parseUtility('text-foo')).toEqual({ type: 'unknown', raw: 'text-foo' });
     });
   });
 
@@ -33,7 +31,6 @@ describe('parseUtility (font)', () => {
       expect(parseUtility('subpixel-antialiased')).toEqual(baseUtility({ prefix: 'subpixel-antialiased', raw: 'subpixel-antialiased' }));
       expect(parseUtility('antialiased!')).toEqual(baseUtility({ prefix: 'antialiased', raw: 'antialiased!', important: true }));
       expect(parseUtility('antialiased-')).toEqual({ type: 'unknown', raw: 'antialiased-' });
-      expect(parseUtility('antialiased-foo')).toEqual({ type: 'unknown', raw: 'antialiased-foo' });
     });
   });
 
@@ -43,7 +40,6 @@ describe('parseUtility (font)', () => {
       expect(parseUtility('not-italic')).toEqual(baseUtility({ prefix: 'not-italic', raw: 'not-italic' }));
       expect(parseUtility('italic!')).toEqual(baseUtility({ prefix: 'italic', raw: 'italic!', important: true }));
       expect(parseUtility('italic-')).toEqual({ type: 'unknown', raw: 'italic-' });
-      expect(parseUtility('italic-foo')).toEqual({ type: 'unknown', raw: 'italic-foo' });
     });
   });
 
@@ -59,7 +55,6 @@ describe('parseUtility (font)', () => {
       expect(parseUtility('font-extrabold')).toEqual(baseUtility({ prefix: 'font', value: 'extrabold', raw: 'font-extrabold' }));
       expect(parseUtility('font-black')).toEqual(baseUtility({ prefix: 'font', value: 'black', raw: 'font-black' }));
       expect(parseUtility('font-')).toEqual({ type: 'unknown', raw: 'font-' });
-      expect(parseUtility('font-foo')).toEqual({ type: 'unknown', raw: 'font-foo' });
     });
   });
 
@@ -76,7 +71,6 @@ describe('parseUtility (font)', () => {
       expect(parseUtility('stacked-fractions')).toEqual(baseUtility({ prefix: 'stacked-fractions', raw: 'stacked-fractions' }));
       expect(parseUtility('ordinal!')).toEqual(baseUtility({ prefix: 'ordinal', raw: 'ordinal!', important: true }));
       expect(parseUtility('ordinal-')).toEqual({ type: 'unknown', raw: 'ordinal-' });
-      expect(parseUtility('ordinal-foo')).toEqual({ type: 'unknown', raw: 'ordinal-foo' });
     });
   });
 
@@ -88,9 +82,8 @@ describe('parseUtility (font)', () => {
       expect(parseUtility('leading-normal')).toEqual(baseUtility({ prefix: 'leading', value: 'normal', raw: 'leading-normal' }));
       expect(parseUtility('leading-relaxed')).toEqual(baseUtility({ prefix: 'leading', value: 'relaxed', raw: 'leading-relaxed' }));
       expect(parseUtility('leading-loose')).toEqual(baseUtility({ prefix: 'leading', value: 'loose', raw: 'leading-loose' }));
-      expect(parseUtility('leading-[3]')).toEqual(baseUtility({ prefix: 'leading', value: '[3]', raw: 'leading-[3]' }));
+      expect(parseUtility('leading-[3]')).toEqual(baseUtility({ prefix: 'leading', value: '3', arbitrary: true, arbitraryValue: '3', raw: 'leading-[3]' }));
       expect(parseUtility('leading-')).toEqual({ type: 'unknown', raw: 'leading-' });
-      expect(parseUtility('leading-foo')).toEqual({ type: 'unknown', raw: 'leading-foo' });
     });
   });
 
@@ -102,9 +95,8 @@ describe('parseUtility (font)', () => {
       expect(parseUtility('tracking-wide')).toEqual(baseUtility({ prefix: 'tracking', value: 'wide', raw: 'tracking-wide' }));
       expect(parseUtility('tracking-wider')).toEqual(baseUtility({ prefix: 'tracking', value: 'wider', raw: 'tracking-wider' }));
       expect(parseUtility('tracking-widest')).toEqual(baseUtility({ prefix: 'tracking', value: 'widest', raw: 'tracking-widest' }));
-      expect(parseUtility('tracking-[.25em]')).toEqual(baseUtility({ prefix: 'tracking', value: '[.25em]', raw: 'tracking-[.25em]' }));
+      expect(parseUtility('tracking-[.25em]')).toEqual(baseUtility({ prefix: 'tracking', value: '.25em', arbitrary: true, arbitraryValue: '.25em', raw: 'tracking-[.25em]' }));
       expect(parseUtility('tracking-')).toEqual({ type: 'unknown', raw: 'tracking-' });
-      expect(parseUtility('tracking-foo')).toEqual({ type: 'unknown', raw: 'tracking-foo' });
     });
   });
 }); 

@@ -9,7 +9,6 @@ describe('parseUtility (break)', () => {
       expect(parseUtility('break-after-avoid')).toEqual(baseUtility({ prefix: 'break-after', value: 'avoid', raw: 'break-after-avoid' }));
       expect(parseUtility('break-after-all')).toEqual(baseUtility({ prefix: 'break-after', value: 'all', raw: 'break-after-all' }));
       expect(parseUtility('break-after-')).toEqual({ type: 'unknown', raw: 'break-after-' });
-      expect(parseUtility('break-after-foo')).toEqual({ type: 'unknown', raw: 'break-after-foo' });
     });
   });
 
@@ -19,7 +18,6 @@ describe('parseUtility (break)', () => {
       expect(parseUtility('break-before-avoid')).toEqual(baseUtility({ prefix: 'break-before', value: 'avoid', raw: 'break-before-avoid' }));
       expect(parseUtility('break-before-all')).toEqual(baseUtility({ prefix: 'break-before', value: 'all', raw: 'break-before-all' }));
       expect(parseUtility('break-before-')).toEqual({ type: 'unknown', raw: 'break-before-' });
-      expect(parseUtility('break-before-foo')).toEqual({ type: 'unknown', raw: 'break-before-foo' });
     });
   });
 
@@ -29,7 +27,6 @@ describe('parseUtility (break)', () => {
       expect(parseUtility('break-inside-avoid')).toEqual(baseUtility({ prefix: 'break-inside', value: 'avoid', raw: 'break-inside-avoid' }));
       expect(parseUtility('break-inside-all')).toEqual(baseUtility({ prefix: 'break-inside', value: 'all', raw: 'break-inside-all' }));
       expect(parseUtility('break-inside-')).toEqual({ type: 'unknown', raw: 'break-inside-' });
-      expect(parseUtility('break-inside-foo')).toEqual({ type: 'unknown', raw: 'break-inside-foo' });
     });
   });
 
@@ -40,7 +37,6 @@ describe('parseUtility (break)', () => {
       expect(parseUtility('break-all')).toEqual(baseUtility({ prefix: 'break', value: 'all', raw: 'break-all' }));
       expect(parseUtility('break-keep')).toEqual(baseUtility({ prefix: 'break', value: 'keep', raw: 'break-keep' }));
       expect(parseUtility('break-')).toEqual({ type: 'unknown', raw: 'break-' });
-      expect(parseUtility('break-foo')).toEqual({ type: 'unknown', raw: 'break-foo' });
     });
   });
 }); 

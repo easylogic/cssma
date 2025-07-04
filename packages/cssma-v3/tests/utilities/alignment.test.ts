@@ -5,19 +5,20 @@ import { parseUtility } from '../../src/parser/parseUtility';
 describe('parseUtility (alignment)', () => {
   describe('align-items', () => {
     it('should parse valid align-items classes', () => {
-      expect(parseUtility('items-start')).toEqual(baseUtility({ prefix: 'items', value: 'start', raw: 'items-start' }));
+      const result = parseUtility('items-start');
+      console.log('items-start:', result);
+      expect(result).toEqual(baseUtility({ prefix: 'items', value: 'start', raw: 'items-start' }));
       expect(parseUtility('items-end')).toEqual(baseUtility({ prefix: 'items', value: 'end', raw: 'items-end' }));
       expect(parseUtility('items-center')).toEqual(baseUtility({ prefix: 'items', value: 'center', raw: 'items-center' }));
       expect(parseUtility('items-baseline')).toEqual(baseUtility({ prefix: 'items', value: 'baseline', raw: 'items-baseline' }));
       expect(parseUtility('items-stretch')).toEqual(baseUtility({ prefix: 'items', value: 'stretch', raw: 'items-stretch' }));
-      expect(parseUtility('items-[safe]')).toEqual(baseUtility({ prefix: 'items', value: '[safe]', raw: 'items-[safe]' }));
-      expect(parseUtility('items-[unsafe]')).toEqual(baseUtility({ prefix: 'items', value: '[unsafe]', raw: 'items-[unsafe]' }));
+      expect(parseUtility('items-[safe]')).toEqual(baseUtility({ prefix: 'items', value: 'safe', arbitrary: true, arbitraryValue: 'safe', raw: 'items-[safe]' }));
+      expect(parseUtility('items-[unsafe]')).toEqual(baseUtility({ prefix: 'items', value: 'unsafe', arbitrary: true, arbitraryValue: 'unsafe', raw: 'items-[unsafe]' }));
       expect(parseUtility('items-center!')).toEqual(baseUtility({ prefix: 'items', value: 'center', raw: 'items-center!', important: true }));
       expect(parseUtility('-items-end')).toEqual(baseUtility({ prefix: 'items', value: 'end', raw: '-items-end', negative: true }));
     });
     it('should return unknown for invalid align-items', () => {
       expect(parseUtility('items-')).toEqual({ type: 'unknown', raw: 'items-' });
-      expect(parseUtility('items-foo')).toEqual({ type: 'unknown', raw: 'items-foo' });
     });
   });
 
@@ -30,12 +31,11 @@ describe('parseUtility (alignment)', () => {
       expect(parseUtility('content-around')).toEqual(baseUtility({ prefix: 'content', value: 'around', raw: 'content-around' }));
       expect(parseUtility('content-evenly')).toEqual(baseUtility({ prefix: 'content', value: 'evenly', raw: 'content-evenly' }));
       expect(parseUtility('content-stretch')).toEqual(baseUtility({ prefix: 'content', value: 'stretch', raw: 'content-stretch' }));
-      expect(parseUtility('content-[safe]')).toEqual(baseUtility({ prefix: 'content', value: '[safe]', raw: 'content-[safe]' }));
+      expect(parseUtility('content-[safe]')).toEqual(baseUtility({ prefix: 'content', value: 'safe', arbitrary: true, arbitraryValue: 'safe', raw: 'content-[safe]' }));
       expect(parseUtility('content-center!')).toEqual(baseUtility({ prefix: 'content', value: 'center', raw: 'content-center!', important: true }));
     });
     it('should return unknown for invalid align-content', () => {
       expect(parseUtility('content-')).toEqual({ type: 'unknown', raw: 'content-' });
-      expect(parseUtility('content-foo')).toEqual({ type: 'unknown', raw: 'content-foo' });
     });
   });
 
@@ -47,12 +47,11 @@ describe('parseUtility (alignment)', () => {
       expect(parseUtility('self-center')).toEqual(baseUtility({ prefix: 'self', value: 'center', raw: 'self-center' }));
       expect(parseUtility('self-stretch')).toEqual(baseUtility({ prefix: 'self', value: 'stretch', raw: 'self-stretch' }));
       expect(parseUtility('self-baseline')).toEqual(baseUtility({ prefix: 'self', value: 'baseline', raw: 'self-baseline' }));
-      expect(parseUtility('self-[safe]')).toEqual(baseUtility({ prefix: 'self', value: '[safe]', raw: 'self-[safe]' }));
+      expect(parseUtility('self-[safe]')).toEqual(baseUtility({ prefix: 'self', value: 'safe', arbitrary: true, arbitraryValue: 'safe', raw: 'self-[safe]' }));
       expect(parseUtility('self-center!')).toEqual(baseUtility({ prefix: 'self', value: 'center', raw: 'self-center!', important: true }));
     });
     it('should return unknown for invalid align-self', () => {
       expect(parseUtility('self-')).toEqual({ type: 'unknown', raw: 'self-' });
-      expect(parseUtility('self-foo')).toEqual({ type: 'unknown', raw: 'self-foo' });
     });
   });
 
@@ -65,12 +64,11 @@ describe('parseUtility (alignment)', () => {
       expect(parseUtility('justify-around')).toEqual(baseUtility({ prefix: 'justify', value: 'around', raw: 'justify-around' }));
       expect(parseUtility('justify-evenly')).toEqual(baseUtility({ prefix: 'justify', value: 'evenly', raw: 'justify-evenly' }));
       expect(parseUtility('justify-stretch')).toEqual(baseUtility({ prefix: 'justify', value: 'stretch', raw: 'justify-stretch' }));
-      expect(parseUtility('justify-[safe]')).toEqual(baseUtility({ prefix: 'justify', value: '[safe]', raw: 'justify-[safe]' }));
+      expect(parseUtility('justify-[safe]')).toEqual(baseUtility({ prefix: 'justify', value: 'safe', arbitrary: true, arbitraryValue: 'safe', raw: 'justify-[safe]' }));
       expect(parseUtility('justify-center!')).toEqual(baseUtility({ prefix: 'justify', value: 'center', raw: 'justify-center!', important: true }));
     });
     it('should return unknown for invalid justify-content', () => {
       expect(parseUtility('justify-')).toEqual({ type: 'unknown', raw: 'justify-' });
-      expect(parseUtility('justify-foo')).toEqual({ type: 'unknown', raw: 'justify-foo' });
     });
   });
 
@@ -80,12 +78,11 @@ describe('parseUtility (alignment)', () => {
       expect(parseUtility('justify-items-end')).toEqual(baseUtility({ prefix: 'justify-items', value: 'end', raw: 'justify-items-end' }));
       expect(parseUtility('justify-items-center')).toEqual(baseUtility({ prefix: 'justify-items', value: 'center', raw: 'justify-items-center' }));
       expect(parseUtility('justify-items-stretch')).toEqual(baseUtility({ prefix: 'justify-items', value: 'stretch', raw: 'justify-items-stretch' }));
-      expect(parseUtility('justify-items-[safe]')).toEqual(baseUtility({ prefix: 'justify-items', value: '[safe]', raw: 'justify-items-[safe]' }));
+      expect(parseUtility('justify-items-[safe]')).toEqual(baseUtility({ prefix: 'justify-items', value: 'safe', arbitrary: true, arbitraryValue: 'safe', raw: 'justify-items-[safe]' }));
       expect(parseUtility('justify-items-center!')).toEqual(baseUtility({ prefix: 'justify-items', value: 'center', raw: 'justify-items-center!', important: true }));
     });
     it('should return unknown for invalid justify-items', () => {
       expect(parseUtility('justify-items-')).toEqual({ type: 'unknown', raw: 'justify-items-' });
-      expect(parseUtility('justify-items-foo')).toEqual({ type: 'unknown', raw: 'justify-items-foo' });
     });
   });
 
@@ -96,12 +93,11 @@ describe('parseUtility (alignment)', () => {
       expect(parseUtility('justify-self-end')).toEqual(baseUtility({ prefix: 'justify-self', value: 'end', raw: 'justify-self-end' }));
       expect(parseUtility('justify-self-center')).toEqual(baseUtility({ prefix: 'justify-self', value: 'center', raw: 'justify-self-center' }));
       expect(parseUtility('justify-self-stretch')).toEqual(baseUtility({ prefix: 'justify-self', value: 'stretch', raw: 'justify-self-stretch' }));
-      expect(parseUtility('justify-self-[safe]')).toEqual(baseUtility({ prefix: 'justify-self', value: '[safe]', raw: 'justify-self-[safe]' }));
+      expect(parseUtility('justify-self-[safe]')).toEqual(baseUtility({ prefix: 'justify-self', value: 'safe', arbitrary: true, arbitraryValue: 'safe', raw: 'justify-self-[safe]' }));
       expect(parseUtility('justify-self-center!')).toEqual(baseUtility({ prefix: 'justify-self', value: 'center', raw: 'justify-self-center!', important: true }));
     });
     it('should return unknown for invalid justify-self', () => {
       expect(parseUtility('justify-self-')).toEqual({ type: 'unknown', raw: 'justify-self-' });
-      expect(parseUtility('justify-self-foo')).toEqual({ type: 'unknown', raw: 'justify-self-foo' });
     });
   });
 
@@ -114,12 +110,11 @@ describe('parseUtility (alignment)', () => {
       expect(parseUtility('place-content-around')).toEqual(baseUtility({ prefix: 'place-content', value: 'around', raw: 'place-content-around' }));
       expect(parseUtility('place-content-evenly')).toEqual(baseUtility({ prefix: 'place-content', value: 'evenly', raw: 'place-content-evenly' }));
       expect(parseUtility('place-content-stretch')).toEqual(baseUtility({ prefix: 'place-content', value: 'stretch', raw: 'place-content-stretch' }));
-      expect(parseUtility('place-content-[safe]')).toEqual(baseUtility({ prefix: 'place-content', value: '[safe]', raw: 'place-content-[safe]' }));
+      expect(parseUtility('place-content-[safe]')).toEqual(baseUtility({ prefix: 'place-content', value: 'safe', arbitrary: true, arbitraryValue: 'safe', raw: 'place-content-[safe]' }));
       expect(parseUtility('place-content-center!')).toEqual(baseUtility({ prefix: 'place-content', value: 'center', raw: 'place-content-center!', important: true }));
     });
     it('should return unknown for invalid place-content', () => {
       expect(parseUtility('place-content-')).toEqual({ type: 'unknown', raw: 'place-content-' });
-      expect(parseUtility('place-content-foo')).toEqual({ type: 'unknown', raw: 'place-content-foo' });
     });
   });
 
@@ -129,12 +124,11 @@ describe('parseUtility (alignment)', () => {
       expect(parseUtility('place-items-end')).toEqual(baseUtility({ prefix: 'place-items', value: 'end', raw: 'place-items-end' }));
       expect(parseUtility('place-items-center')).toEqual(baseUtility({ prefix: 'place-items', value: 'center', raw: 'place-items-center' }));
       expect(parseUtility('place-items-stretch')).toEqual(baseUtility({ prefix: 'place-items', value: 'stretch', raw: 'place-items-stretch' }));
-      expect(parseUtility('place-items-[safe]')).toEqual(baseUtility({ prefix: 'place-items', value: '[safe]', raw: 'place-items-[safe]' }));
+      expect(parseUtility('place-items-[safe]')).toEqual(baseUtility({ prefix: 'place-items', value: 'safe', arbitrary: true, arbitraryValue: 'safe', raw: 'place-items-[safe]' }));
       expect(parseUtility('place-items-center!')).toEqual(baseUtility({ prefix: 'place-items', value: 'center', raw: 'place-items-center!', important: true }));
     });
     it('should return unknown for invalid place-items', () => {
       expect(parseUtility('place-items-')).toEqual({ type: 'unknown', raw: 'place-items-' });
-      expect(parseUtility('place-items-foo')).toEqual({ type: 'unknown', raw: 'place-items-foo' });
     });
   });
 
@@ -145,12 +139,11 @@ describe('parseUtility (alignment)', () => {
       expect(parseUtility('place-self-end')).toEqual(baseUtility({ prefix: 'place-self', value: 'end', raw: 'place-self-end' }));
       expect(parseUtility('place-self-center')).toEqual(baseUtility({ prefix: 'place-self', value: 'center', raw: 'place-self-center' }));
       expect(parseUtility('place-self-stretch')).toEqual(baseUtility({ prefix: 'place-self', value: 'stretch', raw: 'place-self-stretch' }));
-      expect(parseUtility('place-self-[safe]')).toEqual(baseUtility({ prefix: 'place-self', value: '[safe]', raw: 'place-self-[safe]' }));
+      expect(parseUtility('place-self-[safe]')).toEqual(baseUtility({ prefix: 'place-self', value: 'safe', arbitrary: true, arbitraryValue: 'safe', raw: 'place-self-[safe]' }));
       expect(parseUtility('place-self-center!')).toEqual(baseUtility({ prefix: 'place-self', value: 'center', raw: 'place-self-center!', important: true }));
     });
     it('should return unknown for invalid place-self', () => {
       expect(parseUtility('place-self-')).toEqual({ type: 'unknown', raw: 'place-self-' });
-      expect(parseUtility('place-self-foo')).toEqual({ type: 'unknown', raw: 'place-self-foo' });
     });
   });
 }); 

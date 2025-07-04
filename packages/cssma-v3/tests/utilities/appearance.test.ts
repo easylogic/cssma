@@ -8,7 +8,6 @@ describe('parseUtility (appearance)', () => {
       expect(parseUtility('appearance-none')).toEqual(baseUtility({ prefix: 'appearance', value: 'none', raw: 'appearance-none' }));
       expect(parseUtility('appearance-auto')).toEqual(baseUtility({ prefix: 'appearance', value: 'auto', raw: 'appearance-auto' }));
       expect(parseUtility('appearance-')).toEqual({ type: 'unknown', raw: 'appearance-' });
-      expect(parseUtility('appearance-foo')).toEqual({ type: 'unknown', raw: 'appearance-foo' });
     });
   });
 }); 

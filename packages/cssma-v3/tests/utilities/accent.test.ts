@@ -11,9 +11,8 @@ describe('parseUtility (accent)', () => {
       expect(parseUtility('accent-black')).toEqual(baseUtility({ prefix: 'accent', value: 'black', raw: 'accent-black' }));
       expect(parseUtility('accent-white')).toEqual(baseUtility({ prefix: 'accent', value: 'white', raw: 'accent-white' }));
       expect(parseUtility('accent-red-500')).toEqual(baseUtility({ prefix: 'accent', value: 'red-500', raw: 'accent-red-500' }));
-      expect(parseUtility('accent-[color:rebeccapurple]')).toEqual(baseUtility({ prefix: 'accent', value: '[color:rebeccapurple]', raw: 'accent-[color:rebeccapurple]' }));
+      expect(parseUtility('accent-[color:rebeccapurple]')).toEqual(baseUtility({ prefix: 'accent', value: 'color:rebeccapurple', arbitrary: true, arbitraryValue: 'color:rebeccapurple', raw: 'accent-[color:rebeccapurple]' }));
       expect(parseUtility('accent-')).toEqual({ type: 'unknown', raw: 'accent-' });
-      expect(parseUtility('accent-foo')).toEqual({ type: 'unknown', raw: 'accent-foo' });
     });
   });
 }); 

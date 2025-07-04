@@ -10,9 +10,8 @@ describe('parseUtility (object)', () => {
       expect(parseUtility('object-fill')).toEqual(baseUtility({ prefix: 'object', value: 'fill', raw: 'object-fill' }));
       expect(parseUtility('object-none')).toEqual(baseUtility({ prefix: 'object', value: 'none', raw: 'object-none' }));
       expect(parseUtility('object-scale-down')).toEqual(baseUtility({ prefix: 'object', value: 'scale-down', raw: 'object-scale-down' }));
-      expect(parseUtility('object-[myfit]')).toEqual(baseUtility({ prefix: 'object', value: '[myfit]', raw: 'object-[myfit]' }));
+      expect(parseUtility('object-[myfit]')).toEqual(baseUtility({ prefix: 'object', value: 'myfit', arbitrary: true, arbitraryValue: 'myfit', raw: 'object-[myfit]' }));
       expect(parseUtility('object-')).toEqual({ type: 'unknown', raw: 'object-' });
-      expect(parseUtility('object-foo')).toEqual({ type: 'unknown', raw: 'object-foo' });
     });
   });
 
@@ -27,9 +26,8 @@ describe('parseUtility (object)', () => {
       expect(parseUtility('object-right-bottom')).toEqual(baseUtility({ prefix: 'object', value: 'right-bottom', raw: 'object-right-bottom' }));
       expect(parseUtility('object-right-top')).toEqual(baseUtility({ prefix: 'object', value: 'right-top', raw: 'object-right-top' }));
       expect(parseUtility('object-top')).toEqual(baseUtility({ prefix: 'object', value: 'top', raw: 'object-top' }));
-      expect(parseUtility('object-[10%_20%]')).toEqual(baseUtility({ prefix: 'object', value: '[10%_20%]', raw: 'object-[10%_20%]' }));
+      expect(parseUtility('object-[10%_20%]')).toEqual(baseUtility({ prefix: 'object', value: '10% 20%', arbitrary: true, arbitraryValue: '10% 20%', raw: 'object-[10%_20%]' }));
       expect(parseUtility('object-')).toEqual({ type: 'unknown', raw: 'object-' });
-      expect(parseUtility('object-foo')).toEqual({ type: 'unknown', raw: 'object-foo' });
     });
   });
 

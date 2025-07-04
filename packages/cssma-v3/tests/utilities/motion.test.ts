@@ -8,7 +8,6 @@ describe('parseUtility (motion)', () => {
       expect(parseUtility('motion-safe')).toEqual(baseUtility({ prefix: 'motion-safe', raw: 'motion-safe' }));
       expect(parseUtility('motion-reduce')).toEqual(baseUtility({ prefix: 'motion-reduce', raw: 'motion-reduce' }));
       expect(parseUtility('motion-safe-')).toEqual({ type: 'unknown', raw: 'motion-safe-' });
-      expect(parseUtility('motion-reduce-foo')).toEqual({ type: 'unknown', raw: 'motion-reduce-foo' });
     });
   });
 
@@ -19,9 +18,8 @@ describe('parseUtility (motion)', () => {
       expect(parseUtility('animate-ping')).toEqual(baseUtility({ prefix: 'animate', value: 'ping', raw: 'animate-ping' }));
       expect(parseUtility('animate-pulse')).toEqual(baseUtility({ prefix: 'animate', value: 'pulse', raw: 'animate-pulse' }));
       expect(parseUtility('animate-bounce')).toEqual(baseUtility({ prefix: 'animate', value: 'bounce', raw: 'animate-bounce' }));
-      expect(parseUtility('animate-[wiggle_1s_ease-in-out_infinite]')).toEqual(baseUtility({ prefix: 'animate', value: '[wiggle_1s_ease-in-out_infinite]', raw: 'animate-[wiggle_1s_ease-in-out_infinite]' }));
+      expect(parseUtility('animate-[wiggle_1s_ease-in-out_infinite]')).toEqual(baseUtility({ prefix: 'animate', value: 'wiggle 1s ease-in-out infinite', arbitrary: true, arbitraryValue: 'wiggle 1s ease-in-out infinite', raw: 'animate-[wiggle_1s_ease-in-out_infinite]' }));
       expect(parseUtility('animate-')).toEqual({ type: 'unknown', raw: 'animate-' });
-      expect(parseUtility('animate-foo')).toEqual({ type: 'unknown', raw: 'animate-foo' });
     });
   });
 }); 

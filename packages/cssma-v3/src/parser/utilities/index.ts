@@ -12,6 +12,8 @@ export const ALL_UTILITY_PREFIXES = [
   "align-self",
   "justify",
   "align",
+  "self",
+  "items",
 
   // box
   "box-decoration-clone",
@@ -119,6 +121,7 @@ export const ALL_UTILITY_PREFIXES = [
 
   // gradient
   "bg-gradient-to",
+  "bg-gradient",
   "bg-linear",
   "bg-radial",
   "bg-conic",
@@ -138,13 +141,8 @@ export const ALL_UTILITY_PREFIXES = [
   "col-end",
 
   // list
-  "list-disc",
-  "list-decimal",
-  "list-none",
   "list-style-type",
-  "hyphens-none",
-  "hyphens-manual",
-  "hyphens-auto",
+  'list',
   "hyphens",
 
   // mask
@@ -155,7 +153,7 @@ export const ALL_UTILITY_PREFIXES = [
   "mask-mode",
 
   // misc
-  "white-space",
+  "whitespace",
   "display",
   "float",
   "clear",
@@ -179,8 +177,7 @@ export const ALL_UTILITY_PREFIXES = [
   "overflow-x",
   "overflow-y",
   "overflow",
-  "scroll-auto",
-  "scroll-smooth",
+  "scroll",
   "scroll-mx",
   "scroll-my",
   "scroll-mt",
@@ -225,18 +222,10 @@ export const ALL_UTILITY_PREFIXES = [
   "scroll-margin-inline-start",
   "scroll-margin-inline-end",
   "scroll-margin",
-  "snap-start",
-  "snap-end",
-  "snap-center",
-  "snap-align-none",
-  "snap-normal",
-  "snap-always",
-  "snap-none",
+  "snap-align",
   "snap-x",
   "snap-y",
-  "snap-both",
-  "snap-mandatory",
-  "snap-proximity",
+  "snap",
 
   // sizing
   "min-w",
@@ -283,23 +272,16 @@ export const ALL_UTILITY_PREFIXES = [
   "table-row",
   "table-cell",
   "table-column",
-  "table-fixed",
-  "table-auto",
+  "table",
   "border-spacing",
   "caption-top",
   "caption-bottom",
-  "table",
 
   // text
   "indent",
-  "overflow-wrap-break-word",
-  "overflow-wrap-anywhere",
-  "overflow-wrap-normal",
   "overflow-wrap",
-  "break-normal",
-  "break-all",
-  "break-keep",
-  "word-break",
+  "break",
+  "word",
   "text-shadow",
 
   // transform
@@ -319,6 +301,11 @@ export const ALL_UTILITY_PREFIXES = [
   "rotate-y",
   "rotate-z",
   "rotate",
+  "scale-x",
+  "scale-y",
+  "scale-z",
+  "scale",
+  "origin",
   "backface-hidden",
   "backface-visible",
   "backface-visibility",
@@ -339,6 +326,7 @@ export const ALL_UTILITY_PREFIXES = [
   // typography
   "line-clamp",
   "overline",
+  "line-through",
   "no-underline",
   "normal-case",
   "text-ellipsis",
@@ -347,13 +335,14 @@ export const ALL_UTILITY_PREFIXES = [
   "lowercase",
   "capitalize",
   "truncate",
+  "underline-offset",
   "underline",
   "leading",
   "tracking",
   "font",
 
   // visibility
-  "isolation",
+  "isolate",
   "visible",
   "invisible",
   "collapse",
@@ -415,6 +404,13 @@ export const ALL_UTILITY_PREFIXES = [
   "user-select",
   "touch-action",
   "resize",
+  "placeholder",
+  "sub",
+  "sup",
+  "sr-only",
+
+  // writing-mode
+  "writing-mode",
 ];
 
 export function parseUtilityBase(token: string): ParsedClassToken | { type: 'unknown'; raw: string } {

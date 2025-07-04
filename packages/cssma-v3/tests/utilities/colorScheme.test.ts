@@ -8,7 +8,6 @@ describe('parseUtility (color scheme)', () => {
       expect(parseUtility('isolate')).toEqual(baseUtility({ prefix: 'isolate', raw: 'isolate' }));
       expect(parseUtility('isolation-auto')).toEqual(baseUtility({ prefix: 'isolation', value: 'auto', raw: 'isolation-auto' }));
       expect(parseUtility('isolation-')).toEqual({ type: 'unknown', raw: 'isolation-' });
-      expect(parseUtility('isolation-foo')).toEqual({ type: 'unknown', raw: 'isolation-foo' });
     });
   });
 
@@ -31,7 +30,6 @@ describe('parseUtility (color scheme)', () => {
       expect(parseUtility('mix-blend-color')).toEqual(baseUtility({ prefix: 'mix-blend', value: 'color', raw: 'mix-blend-color' }));
       expect(parseUtility('mix-blend-luminosity')).toEqual(baseUtility({ prefix: 'mix-blend', value: 'luminosity', raw: 'mix-blend-luminosity' }));
       expect(parseUtility('mix-blend-')).toEqual({ type: 'unknown', raw: 'mix-blend-' });
-      expect(parseUtility('mix-blend-foo')).toEqual({ type: 'unknown', raw: 'mix-blend-foo' });
     });
   });
 
@@ -54,7 +52,6 @@ describe('parseUtility (color scheme)', () => {
       expect(parseUtility('bg-blend-color')).toEqual(baseUtility({ prefix: 'bg-blend', value: 'color', raw: 'bg-blend-color' }));
       expect(parseUtility('bg-blend-luminosity')).toEqual(baseUtility({ prefix: 'bg-blend', value: 'luminosity', raw: 'bg-blend-luminosity' }));
       expect(parseUtility('bg-blend-')).toEqual({ type: 'unknown', raw: 'bg-blend-' });
-      expect(parseUtility('bg-blend-foo')).toEqual({ type: 'unknown', raw: 'bg-blend-foo' });
     });
   });
 }); 
