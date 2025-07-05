@@ -20,6 +20,7 @@ export const ALL_UTILITY_PREFIXES = [
   "box-decoration-slice",
   "box-decoration-break",
   "box-decoration",
+  "box",
   "border-collapse",
   "border-separate",
   "drop-shadow",
@@ -75,6 +76,9 @@ export const ALL_UTILITY_PREFIXES = [
   "will-change",
 
   // flexGrid/layout
+  "inline",
+  "inline-block",
+  "block",
   "inline-flex",
   "inline-grid",
   "flex-basis",
@@ -177,13 +181,13 @@ export const ALL_UTILITY_PREFIXES = [
   "overflow-x",
   "overflow-y",
   "overflow",
-  "scroll",
   "scroll-mx",
   "scroll-my",
   "scroll-mt",
   "scroll-mb",
   "scroll-ml",
   "scroll-mr",
+  "scroll-m",
   "scroll-px",
   "scroll-py",
   "scroll-pt",
@@ -191,7 +195,7 @@ export const ALL_UTILITY_PREFIXES = [
   "scroll-pl",
   "scroll-pr",
   "scroll-p",
-  "scroll-m",
+  "scroll",
 
   // position
   "inset-x",
@@ -343,6 +347,7 @@ export const ALL_UTILITY_PREFIXES = [
 
   // visibility
   "isolate",
+  "isolation",
   "visible",
   "invisible",
   "collapse",
