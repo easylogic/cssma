@@ -192,13 +192,20 @@ interface BaroCSSContextType {
   isLoading: boolean
   error: string | null
   onAIResponse?: (response: AIResponse) => void
+  // Stored AI responses keyed by response.id
+  responseMap: Map<string, AIResponse>
+  getResponse: (id: string) => AIResponse | undefined
+  clearResponses: () => void
 }
 
 const BaroCSSContext = createContext<BaroCSSContextType>({
   director: null,
   isLoading: true,
   error: null,
-  onAIResponse: undefined
+  onAIResponse: undefined,
+  responseMap: new Map<string, AIResponse>(),
+  getResponse: () => undefined,
+  clearResponses: () => {}
 })
 
 export const useBaroCSS = () => {
@@ -218,11 +225,22 @@ export const BaroCSSProvider: React.FC<BaroCSSProviderProps> = ({ children, onAI
   const [director, setDirector] = useState<Director | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [responseMap, setResponseMap] = useState<Map<string, AIResponse>>(new Map())
+
+  // Internal handler to store responses and forward to consumer
+  const handleAndStoreAIResponse = (response: AIResponse) => {
+    setResponseMap(prev => {
+      const next = new Map(prev)
+      next.set(response.id, response)
+      return next
+    })
+    if (onAIResponse) onAIResponse(response)
+  }
 
   useEffect(() => {
     const initDirector = async () => {
       try {
-        const directorInstance = await initializeDirector({}, new MockAgent(onAIResponse) as any)
+        const directorInstance = await initializeDirector({}, new MockAgent(handleAndStoreAIResponse) as any)
         
         // Subscribe to events for debugging
         directorInstance.subscribeToEvents((e) => {
@@ -240,8 +258,11 @@ export const BaroCSSProvider: React.FC<BaroCSSProviderProps> = ({ children, onAI
     initDirector()
   }, [onAIResponse])
 
+  const getResponse = (id: string) => responseMap.get(id)
+  const clearResponses = () => setResponseMap(new Map())
+
   return (
-    <BaroCSSContext.Provider value={{ director, isLoading, error, onAIResponse }}>
+    <BaroCSSContext.Provider value={{ director, isLoading, error, onAIResponse, responseMap, getResponse, clearResponses }}>
       {children}
     </BaroCSSContext.Provider>
   )

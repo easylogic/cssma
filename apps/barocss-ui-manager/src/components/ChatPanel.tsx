@@ -30,7 +30,7 @@ export const ChatPanel: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const { handleAIResponse } = useWindowManager()
-  const { director, isLoading: isDirectorLoading } = useBaroCSS()
+  const { director, isLoading: isDirectorLoading, responseMap } = useBaroCSS()
   const { 
     sessions, 
     activeSessionId, 
