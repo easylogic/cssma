@@ -1,4 +1,4 @@
-import { AstNode, decl } from "./ast";
+import { AstNode } from "./ast";
 import { Context } from "./context";
 import { getModifier, getUtility } from "./registry";
 import { ParsedUtility, ParsedModifier } from "./parser";
@@ -156,8 +156,18 @@ export function jsonToAst(input: BaroJsonInput, ctx: Context): AstNode[] {
     // In JSON, variants are usually listed [sm, hover].
     // To wrap correctly (sm(hover(bg))), we process from right to left (hover then sm).
 
+    type Wrapper = {
+        type: string;
+        items?: AstNode[];
+        selector?: string;
+        flatten?: boolean;
+        source?: string;
+        name?: string;
+        params?: string;
+    };
+
     if (input.variants && input.variants.length > 0) {
-        const wrappers: any[] = [];
+        const wrappers: Wrapper[] = [];
         const selector = "&"; // Base selector
 
         // Process variants from right to left
@@ -228,8 +238,8 @@ export function jsonToAst(input: BaroJsonInput, ctx: Context): AstNode[] {
 
                 if (typeof result === "string" && result.includes("&")) {
                     wrappers.push({ type: "rule", selector: result });
-                } else if (typeof result === "object" && (result as any).selector) {
-                    const r = result as any;
+                } else if (typeof result === "object" && !Array.isArray(result) && (result as { selector?: string }).selector) {
+                    const r = result as { selector: string; wrappingType?: string; flatten?: boolean; source?: string };
                     const wrappingType = r.wrappingType || "rule";
                     wrappers.push({
                         type: wrappingType,
@@ -238,14 +248,15 @@ export function jsonToAst(input: BaroJsonInput, ctx: Context): AstNode[] {
                         source: r.source,
                     });
                 } else if (Array.isArray(result)) {
+                    // result is array of objects
                     wrappers.push({
                         type: "wrap",
-                        items: result.map((r) => ({
+                        items: (result as any[]).map((r) => ({
                             type: r.wrappingType || "rule",
                             selector: r.selector,
                             source: r.source,
-                            flatten: r.flatten,
-                        })),
+                            nodes: [], // Placeholder, will be filled when wrapping
+                        } as unknown as AstNode)),
                     });
                 }
             }
